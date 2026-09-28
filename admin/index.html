@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Administration — Jeremineralogie</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner"><div class="brand-row"><a class="brand" href="../index.html">Jeremineralogie</a><a class="link" href="../index.html">Retour au site</a></div></div></header>
+  <main class="admin-main">
+    <h1 class="page-title">Administration</h1>
+    <p class="lead">Espace privé de gestion du contenu.</p>
+    <p class="notice" id="admin-status" role="status" aria-live="polite">Vérification de la configuration…</p>
+    <section class="admin-panel" id="login-panel" hidden>
+      <h2>Connexion</h2>
+      <form id="login-form">
+        <label for="login-email">Adresse e-mail</label><input id="login-email" type="email" autocomplete="username" required>
+        <label for="login-password">Mot de passe</label><input id="login-password" type="password" autocomplete="current-password" required>
+        <button class="btn" type="submit">Se connecter</button>
+      </form>
+    </section>
+    <section id="cms-panel" hidden>
+      <div class="admin-toolbar"><h2>Ma collection</h2><button class="btn" id="new-specimen" type="button">Ajouter un spécimen</button><button class="admin-secondary" id="logout" type="button">Se déconnecter</button></div>
+      <div class="admin-columns">
+        <section class="admin-panel"><h3>Spécimens enregistrés</h3><div id="specimen-list" class="admin-list"></div></section>
+        <section class="admin-panel" id="editor-panel" hidden>
+          <h3 id="editor-title">Nouveau spécimen</h3>
+          <form id="specimen-form">
+            <input id="specimen-id" type="hidden">
+            <label for="mineral-id">Minéral</label><select id="mineral-id" required></select>
+            <label for="specimen-slug">Identifiant URL</label><input id="specimen-slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*">
+            <label for="provenance">Provenance</label><input id="provenance">
+            <label for="locality">Localité (facultatif)</label><input id="locality">
+            <label for="department-code">Code du département (ex. 63)</label><input id="department-code" inputmode="numeric" maxlength="3">
+            <label for="dimensions">Dimensions</label><input id="dimensions">
+            <label for="weight">Poids en grammes</label><input id="weight" type="number" min="0" step="0.001">
+            <label for="discovery-year">Année de découverte</label><input id="discovery-year" type="number" min="1000" max="2100">
+            <label for="associations">Associations (noms séparés par des virgules)</label><input id="associations">
+            <label for="description">Description</label><textarea id="description"></textarea>
+            <label for="history">Historique / provenance connue</label><textarea id="history"></textarea>
+            <label for="publication-status">Publication</label><select id="publication-status"><option value="draft">Brouillon</option><option value="published">Publié</option></select>
+            <label for="photos">Photos (plusieurs fichiers possibles)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+            <div id="existing-photos" class="admin-photos"></div>
+            <div class="admin-actions"><button class="btn" type="submit">Enregistrer</button><button class="admin-secondary" id="cancel-edit" type="button">Annuler</button><button class="admin-danger" id="delete-specimen" type="button" hidden>Supprimer</button></div>
+          </form>
+        </section>
+      </div>
+      <section class="admin-panel admin-future"><h3>Autres sections</h3><p>Boutique, articles, archives, référentiel géographique et paramètres du site seront intégrés aux prochaines étapes.</p></section>
+    </section>
+  </main>
+  <footer class="footer"><div class="footer-inner"><div class="footer-links"><a href="../identification.html">Identification</a><a href="../reseaux.html">Mes réseaux</a><a href="../contact.html">Contact</a><a href="../legal.html">Informations légales</a></div><div>© Jeremineralogie — Espace d’administration.</div></div></footer>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script type="module" src="../assets/js/admin.js"></script>
+</body>
+</html>
