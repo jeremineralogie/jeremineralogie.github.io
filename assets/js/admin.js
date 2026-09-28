@@ -68,7 +68,7 @@ async function showSession(session) {
 async function loadDashboard() {
   const [mineralResult, specimenResult] = await Promise.all([
     client.from("minerals").select("id,name").order("name"),
-    client.from("specimens").select("id,slug,publication_status,mineral:minerals(name)").order("updated_at", { ascending: false })
+    client.from("specimens").select("id,slug,publication_status,mineral:minerals!specimens_mineral_id_fkey(name)").order("updated_at", { ascending: false })
   ]);
   if (mineralResult.error || specimenResult.error) {
     message((mineralResult.error || specimenResult.error).message, true);
