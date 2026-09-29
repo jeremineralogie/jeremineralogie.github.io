@@ -8,9 +8,13 @@ const form = document.querySelector("#specimen-form");
 const list = document.querySelector("#specimen-list");
 const mineralInput = document.querySelector("#mineral-name");
 const mineralOptions = document.querySelector("#mineral-options");
+const regionOptions = document.querySelector("#region-options");
+const departmentOptions = document.querySelector("#department-options");
 const photoPreview = document.querySelector("#existing-photos");
 const client = getSupabase();
 let minerals = [];
+let regions = [];
+let departments = [];
 let media = [];
 
 function message(text, isError = false) {
@@ -67,18 +71,34 @@ async function showSession(session) {
 }
 
 async function loadDashboard() {
-  const [mineralResult, specimenResult] = await Promise.all([
+  const [mineralResult, specimenResult, regionResult, departmentResult] = await Promise.all([
     client.from("minerals").select("id,name").order("name"),
-    client.from("specimens").select("id,slug,publication_status,mineral:minerals!specimens_mineral_id_fkey(name)").order("updated_at", { ascending: false })
+    client.from("specimens").select("id,slug,publication_status,mineral:minerals!specimens_mineral_id_fkey(name)").order("updated_at", { ascending: false }),
+    client.from("regions").select("id,name").order("name"),
+    client.from("departments").select("code,name,region_id").order("name")
   ]);
-  if (mineralResult.error || specimenResult.error) {
-    message((mineralResult.error || specimenResult.error).message, true);
+  const failedResult = [mineralResult, specimenResult, regionResult, departmentResult].find(result => result.error);
+  if (failedResult) {
+    message(failedResult.error.message, true);
     return;
   }
   minerals = mineralResult.data || [];
+  regions = regionResult.data || [];
+  departments = departmentResult.data || [];
   mineralOptions.replaceChildren(...minerals.map(mineral => {
     const option = document.createElement("option");
     option.value = mineral.name;
+    return option;
+  }));
+  regionOptions.replaceChildren(...regions.map(region => {
+    const option = document.createElement("option");
+    option.value = region.name;
+    return option;
+  }));
+  departmentOptions.replaceChildren(...departments.map(department => {
+    const option = document.createElement("option");
+    option.value = department.name;
+    option.label = `${department.name} (${department.code})`;
     return option;
   }));
   list.replaceChildren();
@@ -103,20 +123,23 @@ function resetEditor(open = false) {
 }
 
 async function editSpecimen(id) {
-  const { data, error } = await client.from("specimens").select("*,specimen_associations(mineral_id,mineral:minerals(name)),specimen_media(*)").eq("id", id).single();
+  const { data, error } = await client.from("specimens").select("*,specimen_media(*)").eq("id", id).single();
   if (error) return message(error.message, true);
   document.querySelector("#specimen-id").value = data.id;
   document.querySelector("#specimen-slug").value = data.slug;
   mineralInput.value = minerals.find(mineral => mineral.id === data.mineral_id)?.name || "";
+  document.querySelector("#country").value = data.country || "";
+  const department = departments.find(item => item.code === data.department_code);
+  document.querySelector("#region").value = regions.find(item => item.id === department?.region_id)?.name || "";
+  document.querySelector("#department").value = department?.name || data.department_code || "";
   document.querySelector("#provenance").value = data.provenance || "";
   document.querySelector("#locality").value = data.locality_id ? await getLocalityName(data.locality_id) : "";
-  document.querySelector("#department-code").value = data.department_code || "";
+  document.querySelector("#site-type").value = data.site_type || "";
   document.querySelector("#dimensions").value = data.dimensions || "";
   document.querySelector("#weight").value = data.weight_grams ?? "";
-  document.querySelector("#discovery-year").value = data.discovery_year ?? "";
-  document.querySelector("#associations").value = (data.specimen_associations || []).map(item => item.mineral?.name).join(", ");
+  document.querySelector("#keywords").value = data.keywords || "";
+  document.querySelector("#specimen-date").value = data.discovered_on || data.discovery_year || "";
   document.querySelector("#description").value = data.description || "";
-  document.querySelector("#history").value = data.history || "";
   document.querySelector("#publication-status").value = data.publication_status;
   media = data.specimen_media || [];
   renderMedia();
@@ -151,25 +174,46 @@ async function saveSpecimen(event) {
   event.preventDefault();
   if (!mineralInput.value.trim()) return message("Saisissez le nom du minéral.", true);
   const id = document.querySelector("#specimen-id").value;
-  const slug = document.querySelector("#specimen-slug").value.trim();
+  let slug = document.querySelector("#specimen-slug").value.trim();
   const localityName = document.querySelector("#locality").value.trim();
+  const regionName = document.querySelector("#region").value.trim();
+  const departmentName = document.querySelector("#department").value.trim();
+  const siteType = document.querySelector("#site-type").value;
+  let specimenDate;
+  try {
+    specimenDate = parseSpecimenDate(document.querySelector("#specimen-date").value);
+  } catch (error) {
+    return message(error.message, true);
+  }
   message("Enregistrement…");
   try {
+    const region = regionName ? regions.find(item => normalizeGeographicName(item.name) === normalizeGeographicName(regionName)) : null;
+    if (regionName && !region) throw new Error("Choisissez une région existante dans la liste.");
+    const department = departmentName ? departments.find(item =>
+      normalizeGeographicName(item.name) === normalizeGeographicName(departmentName)
+      || normalizeGeographicName(item.code) === normalizeGeographicName(departmentName)
+    ) : null;
+    if (departmentName && !department) throw new Error("Choisissez un département existant par son nom ou son code.");
+    if (region && !department) throw new Error("Choisissez aussi un département pour rattacher le spécimen à cette région.");
+    if (region && department.region_id !== region.id) throw new Error("Le département choisi n'est pas rattaché à cette région.");
     const mineralId = await resolveMineralId(mineralInput.value);
     let localityId = null;
     if (localityName) {
       const localitySlug = localityName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const { data, error } = await client.from("localities").upsert({ slug: localitySlug, name: localityName, department_code: document.querySelector("#department-code").value || null, publication_status: document.querySelector("#publication-status").value }, { onConflict: "slug" }).select("id").single();
+      const { data, error } = await client.from("localities").upsert({ slug: localitySlug, name: localityName, department_code: department?.code || null, publication_status: document.querySelector("#publication-status").value }, { onConflict: "slug" }).select("id").single();
       if (error) throw error;
       localityId = data.id;
     }
+    if (!id) slug = await generateSpecimenSlug(mineralInput.value, document.querySelector("#provenance").value, localityName);
     const record = {
-      slug, mineral_id: mineralId, provenance: document.querySelector("#provenance").value.trim(),
-      locality_id: localityId, department_code: document.querySelector("#department-code").value.trim() || null,
+      slug, mineral_id: mineralId, country: document.querySelector("#country").value.trim() || null,
+      site_type: siteType || null, keywords: document.querySelector("#keywords").value.trim() || null,
+      provenance: document.querySelector("#provenance").value.trim(),
+      locality_id: localityId, department_code: department?.code || null,
       dimensions: document.querySelector("#dimensions").value.trim(),
       weight_grams: document.querySelector("#weight").value || null,
-      discovery_year: document.querySelector("#discovery-year").value || null,
-      description: document.querySelector("#description").value.trim(), history: document.querySelector("#history").value.trim(),
+      discovered_on: specimenDate.discoveredOn, discovery_year: specimenDate.discoveryYear,
+      description: document.querySelector("#description").value.trim(),
       publication_status: document.querySelector("#publication-status").value
     };
     let saved;
@@ -183,13 +227,48 @@ async function saveSpecimen(event) {
       saved = result.data;
     }
     await syncMediaVisibility(saved.id, slug, record.publication_status === "published" ? "site-media-public" : "admin-staging");
-    await saveAssociations(saved.id, document.querySelector("#associations").value);
     await uploadPhotos(saved.id, slug);
     await loadDashboard();
     resetEditor(false);
     message("Spécimen enregistré.");
   } catch (error) {
     message(error.message || "Enregistrement impossible.", true);
+  }
+}
+
+function normalizeGeographicName(value) {
+  return value.trim().replace(/\s+/g, " ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr");
+}
+
+function parseSpecimenDate(value) {
+  const date = value.trim();
+  if (!date) return { discoveredOn: null, discoveryYear: null };
+  if (/^\d{4}$/.test(date)) {
+    const year = Number(date);
+    if (year < 1000 || year > 2100) throw new Error("Saisissez une année entre 1000 et 2100.");
+    return { discoveredOn: null, discoveryYear: year };
+  }
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  if (!match) throw new Error("Saisissez une année (AAAA) ou une date complète (AAAA-MM-JJ).");
+  const [, year, month, day] = match.map(Number);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== day) {
+    throw new Error("La date saisie n'est pas valide.");
+  }
+  return { discoveredOn: date, discoveryYear: null };
+}
+
+async function generateSpecimenSlug(mineralName, provenance, localityName) {
+  const base = [mineralName, provenance, localityName].filter(value => value.trim()).join("-");
+  const baseSlug = base.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `specimen-${Date.now()}`;
+  let slug = baseSlug;
+  let suffix = 2;
+  while (true) {
+    const { data, error } = await client.from("specimens").select("id").eq("slug", slug).maybeSingle();
+    if (error) throw error;
+    if (!data) return slug;
+    slug = `${baseSlug}-${suffix++}`;
   }
 }
 
