@@ -30,7 +30,7 @@
           <h3 id="editor-title">Nouveau spécimen</h3>
           <form id="specimen-form">
             <input id="specimen-id" type="hidden">
-            <label for="mineral-id">Minéral</label><select id="mineral-id" required></select>
+            <label for="mineral-name">Minéral</label><input id="mineral-name" type="text" list="mineral-options" autocomplete="off" required><datalist id="mineral-options"></datalist>
             <label for="specimen-slug">Identifiant URL</label><input id="specimen-slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*">
             <label for="provenance">Provenance</label><input id="provenance">
             <label for="locality">Localité (facultatif)</label><input id="locality">

@@ -6,7 +6,8 @@ const cmsPanel = document.querySelector("#cms-panel");
 const editor = document.querySelector("#editor-panel");
 const form = document.querySelector("#specimen-form");
 const list = document.querySelector("#specimen-list");
-const mineralSelect = document.querySelector("#mineral-id");
+const mineralInput = document.querySelector("#mineral-name");
+const mineralOptions = document.querySelector("#mineral-options");
 const photoPreview = document.querySelector("#existing-photos");
 const client = getSupabase();
 let minerals = [];
@@ -75,7 +76,11 @@ async function loadDashboard() {
     return;
   }
   minerals = mineralResult.data || [];
-  mineralSelect.replaceChildren(...minerals.map(mineral => new Option(mineral.name, mineral.id)));
+  mineralOptions.replaceChildren(...minerals.map(mineral => {
+    const option = document.createElement("option");
+    option.value = mineral.name;
+    return option;
+  }));
   list.replaceChildren();
   (specimenResult.data || []).forEach(specimen => {
     const button = document.createElement("button");
@@ -84,7 +89,6 @@ async function loadDashboard() {
     button.addEventListener("click", () => void editSpecimen(specimen.id));
     list.append(button);
   });
-  if (!minerals.length) message("Ajoutez d’abord les minéraux nécessaires dans le référentiel Supabase.", true);
 }
 
 function resetEditor(open = false) {
@@ -103,7 +107,7 @@ async function editSpecimen(id) {
   if (error) return message(error.message, true);
   document.querySelector("#specimen-id").value = data.id;
   document.querySelector("#specimen-slug").value = data.slug;
-  document.querySelector("#mineral-id").value = data.mineral_id;
+  mineralInput.value = minerals.find(mineral => mineral.id === data.mineral_id)?.name || "";
   document.querySelector("#provenance").value = data.provenance || "";
   document.querySelector("#locality").value = data.locality_id ? await getLocalityName(data.locality_id) : "";
   document.querySelector("#department-code").value = data.department_code || "";
@@ -145,12 +149,13 @@ async function renderMedia() {
 
 async function saveSpecimen(event) {
   event.preventDefault();
-  if (!minerals.length) return message("Aucun minéral disponible dans le référentiel.", true);
+  if (!mineralInput.value.trim()) return message("Saisissez le nom du minéral.", true);
   const id = document.querySelector("#specimen-id").value;
   const slug = document.querySelector("#specimen-slug").value.trim();
   const localityName = document.querySelector("#locality").value.trim();
   message("Enregistrement…");
   try {
+    const mineralId = await resolveMineralId(mineralInput.value);
     let localityId = null;
     if (localityName) {
       const localitySlug = localityName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -159,7 +164,7 @@ async function saveSpecimen(event) {
       localityId = data.id;
     }
     const record = {
-      slug, mineral_id: mineralSelect.value, provenance: document.querySelector("#provenance").value.trim(),
+      slug, mineral_id: mineralId, provenance: document.querySelector("#provenance").value.trim(),
       locality_id: localityId, department_code: document.querySelector("#department-code").value.trim() || null,
       dimensions: document.querySelector("#dimensions").value.trim(),
       weight_grams: document.querySelector("#weight").value || null,
@@ -188,12 +193,56 @@ async function saveSpecimen(event) {
   }
 }
 
+function normalizeMineralName(name) {
+  return name.trim().replace(/\s+/g, " ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr");
+}
+
+async function resolveMineralId(inputName) {
+  const name = inputName.trim();
+  if (!name) throw new Error("Saisissez le nom du minéral.");
+
+  const { data: currentMinerals, error: fetchError } = await client
+    .from("minerals").select("id,name,slug").order("name");
+  if (fetchError) throw fetchError;
+  minerals = currentMinerals || [];
+
+  const normalizedName = normalizeMineralName(name);
+  const existing = minerals.find(mineral => normalizeMineralName(mineral.name) === normalizedName);
+  if (existing) return existing.id;
+
+  const baseSlug = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  if (!baseSlug) throw new Error("Le nom du minéral doit contenir des lettres ou des chiffres.");
+  let slug = baseSlug;
+  let suffix = 2;
+  while (minerals.some(mineral => mineral.slug === slug)) slug = `${baseSlug}-${suffix++}`;
+
+  const { data, error } = await client.from("minerals").insert({
+    name,
+    slug,
+    publication_status: document.querySelector("#publication-status").value
+  }).select("id,name,slug").single();
+  if (error) {
+    if (error.code === "23505") {
+      const { data: refreshed, error: refreshError } = await client.from("minerals").select("id,name,slug");
+      if (!refreshError) {
+        minerals = refreshed || [];
+        const duplicate = minerals.find(mineral => normalizeMineralName(mineral.name) === normalizedName);
+        if (duplicate) return duplicate.id;
+      }
+    }
+    throw error;
+  }
+  minerals.push(data);
+  return data.id;
+}
+
 async function saveAssociations(specimenId, input) {
   const names = [...new Set(input.split(",").map(name => name.trim()).filter(Boolean))];
   const { error: deleteError } = await client.from("specimen_associations").delete().eq("specimen_id", specimenId);
   if (deleteError) throw deleteError;
   for (const name of names) {
-    let mineral = minerals.find(item => item.name.toLocaleLowerCase("fr") === name.toLocaleLowerCase("fr"));
+    let mineral = minerals.find(item => normalizeMineralName(item.name) === normalizeMineralName(name));
     if (!mineral) {
       const slug = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       const { data, error } = await client.from("minerals").upsert({ name, slug, publication_status: document.querySelector("#publication-status").value }, { onConflict: "slug" }).select("id,name").single();
@@ -214,7 +263,7 @@ async function uploadPhotos(specimenId, slug) {
     const storagePath = `collection/${slug}/${Date.now()}-${index}-${safeName}`;
     const { error: uploadError } = await client.storage.from(bucket).upload(storagePath, file, { upsert: false, contentType: file.type });
     if (uploadError) throw uploadError;
-    const { error } = await client.from("specimen_media").insert({ specimen_id: specimenId, bucket_id: bucket, storage_path: storagePath, role: index ? "detail" : "general", alt_text: `${document.querySelector("#mineral-id").selectedOptions[0].text} — ${file.name}`, position: media.length + index });
+    const { error } = await client.from("specimen_media").insert({ specimen_id: specimenId, bucket_id: bucket, storage_path: storagePath, role: index ? "detail" : "general", alt_text: `${mineralInput.value.trim()} — ${file.name}`, position: media.length + index });
     if (error) throw error;
   }
 }
