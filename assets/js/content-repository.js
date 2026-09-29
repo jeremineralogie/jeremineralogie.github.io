@@ -1,0 +1,45 @@
+import { getSupabase } from "./supabase-client.js";
+
+export async function loadPublishedContent(section) {
+  const client = getSupabase();
+  if (!client) throw new Error("La connexion à Supabase n’est pas configurée.");
+  let query;
+  if (section === "shop") query = client.from("shop_items").select("*,media:shop_item_media(id,bucket_id,storage_path,alt_text,position)")
+    .eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });
+  else if (section === "articles") query = client.from("articles").select("*,media:article_media(id,bucket_id,storage_path,alt_text,caption,position)")
+    .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("updated_at", { ascending: false });
+  else if (section === "archives") query = client.from("archive_documents").select("id,slug,title,category,description,document_date,rights_note,bucket_id,storage_path,publication_status,updated_at")
+    .eq("publication_status", "published").eq("bucket_id", "site-media-public").order("document_date", { ascending: false, nullsFirst: false });
+  else throw new Error(`Section publique inconnue : ${section}`);
+  const { data, error } = await query;
+  if (error) throw error;
+  return { client, data: data || [] };
+}
+
+export function publicMediaUrl(client, media) {
+  if (!media || media.bucket_id !== "site-media-public" || !media.storage_path) return "";
+  return client.storage.from(media.bucket_id).getPublicUrl(media.storage_path).data.publicUrl;
+}
+
+export function watchContent(client, section, refresh) {
+  const table = section === "shop" ? "shop_items" : section === "articles" ? "articles" : "archive_documents";
+  const mediaTable = section === "shop" ? "shop_item_media" : section === "articles" ? "article_media" : null;
+  let queued = false;
+  const queue = () => { if (queued) return; queued = true; queueMicrotask(() => { queued = false; void refresh(); }); };
+  const channel = client.channel(`public-${section}-content`)
+    .on("postgres_changes", { event: "*", schema: "public", table }, queue);
+  if (mediaTable) channel.on("postgres_changes", { event: "*", schema: "public", table: mediaTable }, queue);
+  channel.subscribe(state => { if (state === "SUBSCRIBED") queue(); else if (["CHANNEL_ERROR", "TIMED_OUT"].includes(state)) console.error(`Realtime ${section} indisponible :`, state); });
+  const timer = window.setInterval(queue, 60000);
+  window.addEventListener("focus", queue);
+  window.addEventListener("online", queue);
+  window.addEventListener("pagehide", () => { clearInterval(timer); window.removeEventListener("focus", queue); window.removeEventListener("online", queue); void client.removeChannel(channel); }, { once: true });
+}
+
+export function showLoadError(error, status, grid, label) {
+  console.error(`Chargement public ${label} depuis Supabase :`, error);
+  grid.replaceChildren();
+  status.textContent = `Les ${label} ne peuvent pas être chargés depuis Supabase pour le moment. Réessayez dans quelques instants.`;
+  status.hidden = false;
+  status.classList.add("admin-error");
+}

@@ -19,6 +19,7 @@ let selectedPhotoUrls = [];
 let mediaRenderVersion = 0;
 let editorLoadVersion = 0;
 let editingSpecimen = null;
+let contentAdminInitialized = false;
 const dirtyReferenceFields = new Set();
 
 function message(text, isError = false) {
@@ -86,6 +87,16 @@ async function showSession(session) {
   cmsPanel.hidden = false;
   message("Connecté à l’espace privé.");
   await loadDashboard();
+  if (!contentAdminInitialized) {
+    try {
+      const { initContentAdmin } = await import("./admin-content.js");
+      await initContentAdmin(client);
+      contentAdminInitialized = true;
+    } catch (error) {
+      console.error("Impossible de charger les autres sections du CMS :", error);
+      message(`Ma collection est disponible, mais les autres sections n’ont pas pu être chargées : ${describeError(error)}`, true);
+    }
+  }
 }
 
 async function loadDashboard() {

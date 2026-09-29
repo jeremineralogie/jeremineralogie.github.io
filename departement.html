@@ -17,6 +17,7 @@
 <h2>Sélectionnez un département</h2>
 <p>Choisissez un département dans la liste ci-dessous pour ouvrir son espace documentaire.</p>
 </section>
+<section class="department-detail" id="department-live-content" aria-live="polite" hidden></section>
 
 <div class="department-regions">
 <section class="department-region"><h2>Auvergne-Rhône-Alpes</h2><div class="department-list">
@@ -73,4 +74,6 @@ if(code && names[code]){detail.innerHTML='<div class="department-code">Départem
  document.querySelectorAll('[data-department]').forEach(a=>a.classList.toggle('active',a.dataset.department===code));
 }
 </script>
+<script src="assets/js/supabase-config.js"></script>
+<script type="module" src="assets/js/geography-page.js"></script>
 </body></html>
