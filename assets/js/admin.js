@@ -10,12 +10,20 @@ const mineralInput = document.querySelector("#mineral-name");
 const mineralOptions = document.querySelector("#mineral-options");
 const regionOptions = document.querySelector("#region-options");
 const departmentOptions = document.querySelector("#department-options");
-const photoPreview = document.querySelector("#existing-photos");
+const photoInput = document.querySelector("#photos");
+const existingPhotoGroup = document.querySelector("#existing-photo-group");
+const existingPhotoPreview = document.querySelector("#existing-photos");
+const selectedPhotoGroup = document.querySelector("#selected-photo-group");
+const selectedPhotoPreview = document.querySelector("#selected-photos");
 const client = getSupabase();
 let minerals = [];
 let regions = [];
 let departments = [];
 let media = [];
+let selectedPhotoUrls = [];
+let mediaRenderVersion = 0;
+let editorLoadVersion = 0;
+let editingSpecimen = null;
 
 function message(text, isError = false) {
   status.textContent = text;
@@ -46,6 +54,7 @@ if (!client) {
   document.querySelector("#new-specimen").addEventListener("click", () => resetEditor(true));
   document.querySelector("#cancel-edit").addEventListener("click", () => resetEditor(false));
   document.querySelector("#delete-specimen").addEventListener("click", deleteSpecimen);
+  photoInput.addEventListener("change", renderSelectedPhotoPreviews);
   form.addEventListener("submit", saveSpecimen);
   void client.auth.getSession().then(({ data }) => showSession(data.session));
 }
@@ -80,7 +89,7 @@ async function loadDashboard() {
   const failedResult = [mineralResult, specimenResult, regionResult, departmentResult].find(result => result.error);
   if (failedResult) {
     message(failedResult.error.message, true);
-    return;
+    return false;
   }
   minerals = mineralResult.data || [];
   regions = regionResult.data || [];
@@ -109,22 +118,29 @@ async function loadDashboard() {
     button.addEventListener("click", () => void editSpecimen(specimen.id));
     list.append(button);
   });
+  return true;
 }
 
 function resetEditor(open = false) {
+  editorLoadVersion += 1;
+  clearPhotoState();
   form.reset();
   document.querySelector("#specimen-id").value = "";
+  document.querySelector("#specimen-slug").value = "";
   document.querySelector("#editor-title").textContent = "Nouveau spécimen";
   document.querySelector("#delete-specimen").hidden = true;
-  photoPreview.replaceChildren();
-  media = [];
+  editingSpecimen = null;
   editor.hidden = !open;
   if (open) editor.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 async function editSpecimen(id) {
+  resetEditor(false);
+  const loadVersion = editorLoadVersion;
   const { data, error } = await client.from("specimens").select("*,specimen_media(*)").eq("id", id).single();
+  if (loadVersion !== editorLoadVersion) return;
   if (error) return message(error.message, true);
+  editingSpecimen = data;
   document.querySelector("#specimen-id").value = data.id;
   document.querySelector("#specimen-slug").value = data.slug;
   mineralInput.value = minerals.find(mineral => mineral.id === data.mineral_id)?.name || "";
@@ -133,15 +149,17 @@ async function editSpecimen(id) {
   document.querySelector("#region").value = regions.find(item => item.id === department?.region_id)?.name || "";
   document.querySelector("#department").value = department?.name || data.department_code || "";
   document.querySelector("#provenance").value = data.provenance || "";
-  document.querySelector("#locality").value = data.locality_id ? await getLocalityName(data.locality_id) : "";
+  const localityName = data.locality_id ? await getLocalityName(data.locality_id) : "";
+  if (loadVersion !== editorLoadVersion) return;
+  document.querySelector("#locality").value = localityName;
   document.querySelector("#site-type").value = data.site_type || "";
   document.querySelector("#dimensions").value = data.dimensions || "";
   document.querySelector("#weight").value = data.weight_grams ?? "";
   document.querySelector("#keywords").value = data.keywords || "";
-  document.querySelector("#specimen-date").value = formatSpecimenDate(data.discovered_on, data.discovery_year);
+  document.querySelector("#specimen-date").value = formatSpecimenDate(data.discovered_on, data.discovery_year, data.discovery_month);
   document.querySelector("#description").value = data.description || "";
   document.querySelector("#publication-status").value = data.publication_status;
-  media = data.specimen_media || [];
+  media = [...(data.specimen_media || [])];
   renderMedia();
   document.querySelector("#editor-title").textContent = "Modifier le spécimen";
   document.querySelector("#delete-specimen").hidden = false;
@@ -155,25 +173,63 @@ async function getLocalityName(id) {
 }
 
 async function renderMedia() {
-  photoPreview.replaceChildren();
-  media.sort((a, b) => a.position - b.position).forEach(item => {
+  const renderVersion = ++mediaRenderVersion;
+  existingPhotoPreview.replaceChildren();
+  const currentMedia = media.filter(item => item.specimen_id === document.querySelector("#specimen-id").value)
+    .sort((a, b) => a.position - b.position);
+  existingPhotoGroup.hidden = currentMedia.length === 0;
+  for (const item of currentMedia) {
     const image = document.createElement("img");
     image.alt = item.alt_text || "Photo du spécimen";
-    photoPreview.append(image);
+    existingPhotoPreview.append(image);
     if (item.bucket_id === "site-media-public") {
       image.src = client.storage.from(item.bucket_id).getPublicUrl(item.storage_path).data.publicUrl;
     } else {
-      void client.storage.from(item.bucket_id).createSignedUrl(item.storage_path, 300).then(({ data }) => {
-        if (data) image.src = data.signedUrl;
-      });
+      const { data } = await client.storage.from(item.bucket_id).createSignedUrl(item.storage_path, 300);
+      if (renderVersion !== mediaRenderVersion) return;
+      if (data) image.src = data.signedUrl;
     }
+  }
+}
+
+function clearSelectedPhotoPreviews(clearInput = false) {
+  selectedPhotoUrls.forEach(url => URL.revokeObjectURL(url));
+  selectedPhotoUrls = [];
+  selectedPhotoPreview.replaceChildren();
+  selectedPhotoGroup.hidden = true;
+  if (clearInput) photoInput.value = "";
+}
+
+function clearPhotoState() {
+  mediaRenderVersion += 1;
+  clearSelectedPhotoPreviews(true);
+  existingPhotoPreview.replaceChildren();
+  existingPhotoGroup.hidden = true;
+  media = [];
+}
+
+function renderSelectedPhotoPreviews() {
+  clearSelectedPhotoPreviews();
+  const files = [...photoInput.files];
+  selectedPhotoGroup.hidden = files.length === 0;
+  files.forEach(file => {
+    const url = URL.createObjectURL(file);
+    selectedPhotoUrls.push(url);
+    const image = document.createElement("img");
+    image.src = url;
+    image.alt = `Aperçu temporaire — ${file.name}`;
+    selectedPhotoPreview.append(image);
   });
 }
 
 async function saveSpecimen(event) {
   event.preventDefault();
-  if (!mineralInput.value.trim()) return message("Saisissez le nom du minéral.", true);
+  if (!mineralInput.value.trim()) {
+    clearSelectedPhotoPreviews(true);
+    return message("Saisissez le nom du minéral.", true);
+  }
   const id = document.querySelector("#specimen-id").value;
+  const isNewSpecimen = !id;
   let slug = document.querySelector("#specimen-slug").value.trim();
   const localityName = document.querySelector("#locality").value.trim();
   const regionName = document.querySelector("#region").value.trim();
@@ -183,9 +239,13 @@ async function saveSpecimen(event) {
   try {
     specimenDate = parseSpecimenDate(document.querySelector("#specimen-date").value);
   } catch (error) {
+    clearSelectedPhotoPreviews(true);
     return message(error.message, true);
   }
   message("Enregistrement…");
+  let savedSpecimenId = null;
+  let specimenSaved = false;
+  let previousRecord = null;
   try {
     const region = regionName ? regions.find(item => normalizeGeographicName(item.name) === normalizeGeographicName(regionName)) : null;
     if (regionName && !region) throw new Error("Choisissez une région existante dans la liste.");
@@ -212,27 +272,57 @@ async function saveSpecimen(event) {
       locality_id: localityId, department_code: department?.code || null,
       dimensions: document.querySelector("#dimensions").value.trim(),
       weight_grams: document.querySelector("#weight").value || null,
-      discovered_on: specimenDate.discoveredOn, discovery_year: specimenDate.discoveryYear,
+      discovered_on: specimenDate.discoveredOn,
+      discovery_year: specimenDate.discoveryYear,
+      discovery_month: specimenDate.discoveryMonth,
       description: document.querySelector("#description").value.trim(),
       publication_status: document.querySelector("#publication-status").value
     };
     let saved;
     if (id) {
+      const fieldsToRestore = Object.keys(record);
+      previousRecord = Object.fromEntries(fieldsToRestore.map(field => [field, editingSpecimen?.[field] ?? null]));
       const result = await client.from("specimens").update(record).eq("id", id).select("id").single();
       if (result.error) throw result.error;
       saved = result.data;
+      savedSpecimenId = saved.id;
+      specimenSaved = true;
     } else {
       const result = await client.from("specimens").insert(record).select("id").single();
       if (result.error) throw result.error;
       saved = result.data;
+      savedSpecimenId = saved.id;
+      specimenSaved = true;
     }
-    await syncMediaVisibility(saved.id, slug, record.publication_status === "published" ? "site-media-public" : "admin-staging");
+    if (id && editingSpecimen?.publication_status !== record.publication_status) {
+      await syncMediaVisibility(saved.id, slug, record.publication_status === "published" ? "site-media-public" : "admin-staging");
+    }
     await uploadPhotos(saved.id, slug);
-    await loadDashboard();
+    const refreshed = await loadDashboard();
     resetEditor(false);
-    message("Spécimen enregistré.");
+    message(refreshed ? "Spécimen enregistré et liste actualisée." : "Spécimen enregistré, mais la liste n’a pas pu être actualisée. Rechargez la page.", !refreshed);
   } catch (error) {
-    message(error.message || "Enregistrement impossible.", true);
+    const cleanupErrors = [];
+    try {
+      if (isNewSpecimen && savedSpecimenId && specimenSaved) {
+        const { error: deleteError } = await client.from("specimens").delete().eq("id", savedSpecimenId);
+        if (deleteError) {
+          cleanupErrors.push(`La fiche créée partiellement n’a pas pu être supprimée (${deleteError.message}).`);
+          document.querySelector("#specimen-id").value = savedSpecimenId;
+          document.querySelector("#specimen-slug").value = slug;
+          document.querySelector("#editor-title").textContent = "Modifier le spécimen";
+          document.querySelector("#delete-specimen").hidden = false;
+        }
+      } else if (!isNewSpecimen && specimenSaved && previousRecord) {
+        const { error: restoreError } = await client.from("specimens").update(previousRecord).eq("id", id);
+        if (restoreError) cleanupErrors.push(`La restauration des champs modifiés a échoué (${restoreError.message}).`);
+      }
+    } catch (cleanupError) {
+      cleanupErrors.push(`Le nettoyage après échec a rencontré une erreur (${cleanupError.message}).`);
+    }
+    clearSelectedPhotoPreviews(true);
+    const details = [error.message || "Enregistrement impossible.", ...cleanupErrors].join(" ");
+    message(details, true);
   }
 }
 
@@ -242,14 +332,21 @@ function normalizeGeographicName(value) {
 
 function parseSpecimenDate(value) {
   const date = value.trim();
-  if (!date) return { discoveredOn: null, discoveryYear: null };
+  if (!date) return { discoveredOn: null, discoveryYear: null, discoveryMonth: null };
   if (/^\d{4}$/.test(date)) {
     const year = Number(date);
     if (year < 1000 || year > 2100) throw new Error("Saisissez une année entre 1000 et 2100.");
-    return { discoveredOn: null, discoveryYear: year };
+    return { discoveredOn: null, discoveryYear: year, discoveryMonth: null };
+  }
+  const monthMatch = /^(\d{2})\/(\d{4})$/.exec(date);
+  if (monthMatch) {
+    const [, month, year] = monthMatch.map(Number);
+    if (month < 1 || month > 12) throw new Error("Le mois doit être compris entre 01 et 12.");
+    if (year < 1000 || year > 2100) throw new Error("Saisissez une année entre 1000 et 2100.");
+    return { discoveredOn: null, discoveryYear: year, discoveryMonth: month };
   }
   const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date);
-  if (!match) throw new Error("Saisissez une date au format JJ/MM/AAAA ou une année seule (AAAA).");
+  if (!match) throw new Error("Saisissez une année (AAAA), un mois et une année (MM/AAAA) ou une date complète (JJ/MM/AAAA).");
   const [, day, month, year] = match.map(Number);
   const parsed = new Date(0);
   parsed.setUTCHours(0, 0, 0, 0);
@@ -258,16 +355,21 @@ function parseSpecimenDate(value) {
     throw new Error("La date saisie n'est pas valide.");
   }
   const isoDate = `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  return { discoveredOn: isoDate, discoveryYear: null };
+  return { discoveredOn: isoDate, discoveryYear: null, discoveryMonth: null };
 }
 
-function formatSpecimenDate(discoveredOn, discoveryYear) {
+function formatSpecimenDate(discoveredOn, discoveryYear, discoveryMonth) {
+  if (discoveredOn) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(discoveredOn);
+    if (match) {
+      const [, year, month, day] = match;
+      return `${day}/${month}/${year}`;
+    }
+    return discoveredOn;
+  }
+  if (discoveryYear && discoveryMonth) return `${String(discoveryMonth).padStart(2, "0")}/${discoveryYear}`;
   if (discoveryYear) return String(discoveryYear);
-  if (!discoveredOn) return "";
-  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(discoveredOn);
-  if (!match) return discoveredOn;
-  const [, year, month, day] = match;
-  return `${day}/${month}/${year}`;
+  return "";
 }
 
 async function generateSpecimenSlug(mineralName, provenance, localityName) {
@@ -347,16 +449,66 @@ async function saveAssociations(specimenId, input) {
 }
 
 async function uploadPhotos(specimenId, slug) {
-  const files = [...document.querySelector("#photos").files];
+  const files = [...photoInput.files];
+  if (!files.length) return [];
   const bucket = document.querySelector("#publication-status").value === "published" ? "site-media-public" : "admin-staging";
-  for (const [index, file] of files.entries()) {
-    const safeName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
-    const storagePath = `collection/${slug}/${Date.now()}-${index}-${safeName}`;
-    const { error: uploadError } = await client.storage.from(bucket).upload(storagePath, file, { upsert: false, contentType: file.type });
-    if (uploadError) throw uploadError;
-    const { error } = await client.from("specimen_media").insert({ specimen_id: specimenId, bucket_id: bucket, storage_path: storagePath, role: index ? "detail" : "general", alt_text: `${mineralInput.value.trim()} — ${file.name}`, position: media.length + index });
-    if (error) throw error;
+  const uploaded = [];
+  try {
+    for (const [index, file] of files.entries()) {
+      const safeName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
+      const storagePath = `collection/${slug}/${Date.now()}-${index}-${safeName}`;
+      const item = { bucketId: bucket, storagePath, mediaId: null };
+      uploaded.push(item);
+      const { error: uploadError } = await client.storage.from(bucket).upload(storagePath, file, { upsert: false, contentType: file.type });
+      if (uploadError) throw uploadError;
+      const { data, error } = await client.from("specimen_media").insert({
+        specimen_id: specimenId,
+        bucket_id: bucket,
+        storage_path: storagePath,
+        role: index ? "detail" : "general",
+        alt_text: `${mineralInput.value.trim()} — ${file.name}`,
+        position: media.length + index
+      }).select("id").single();
+      if (error) throw error;
+      item.mediaId = data.id;
+    }
+    return uploaded;
+  } catch (error) {
+    let cleanupErrors = [];
+    try {
+      cleanupErrors = await cleanupUploadedPhotos(specimenId, uploaded);
+    } catch (cleanupError) {
+      cleanupErrors.push(`nettoyage des nouvelles photos : ${cleanupError.message}`);
+    }
+    if (cleanupErrors.length) {
+      throw new Error(`${error.message || "Échec du téléversement."} Nettoyage incomplet : ${cleanupErrors.join(" ")}`);
+    }
+    throw error;
   }
+}
+
+async function cleanupUploadedPhotos(specimenId, uploaded) {
+  const errors = [];
+  const storagePaths = uploaded.map(item => item.storagePath);
+  if (storagePaths.length) {
+    try {
+      const { error } = await client.from("specimen_media").delete().eq("specimen_id", specimenId).in("storage_path", storagePaths);
+      if (error) errors.push(`suppression des références photo : ${error.message}`);
+    } catch (error) {
+      errors.push(`suppression des références photo : ${error.message}`);
+    }
+  }
+  const buckets = [...new Set(uploaded.map(item => item.bucketId))];
+  for (const bucket of buckets) {
+    const paths = uploaded.filter(item => item.bucketId === bucket).map(item => item.storagePath);
+    try {
+      const { error } = await client.storage.from(bucket).remove(paths);
+      if (error) errors.push(`suppression des fichiers dans ${bucket} : ${error.message}`);
+    } catch (error) {
+      errors.push(`suppression des fichiers dans ${bucket} : ${error.message}`);
+    }
+  }
+  return errors;
 }
 
 async function syncMediaVisibility(specimenId, slug, targetBucket) {
