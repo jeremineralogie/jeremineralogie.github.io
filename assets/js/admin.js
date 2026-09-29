@@ -8,6 +8,12 @@ const cmsPanel = document.querySelector("#cms-panel");
 const editor = document.querySelector("#editor-panel");
 const form = document.querySelector("#specimen-form");
 const list = document.querySelector("#specimen-list");
+const mainNav = document.querySelector("#admin-main-nav");
+const collectionPanel = document.querySelector("#collection-panel");
+const collectionTabs = document.querySelector("#collection-tabs");
+const collectionAddView = document.querySelector("#collection-add-view");
+const collectionListView = document.querySelector("#collection-list-view");
+const contentManager = document.querySelector("#content-manager");
 const mineralInput = document.querySelector("#mineral-name");
 const photoInput = document.querySelector("#photos");
 const existingPhotoGroup = document.querySelector("#existing-photo-group");
@@ -21,6 +27,8 @@ let mediaRenderVersion = 0;
 let editorLoadVersion = 0;
 let editingSpecimen = null;
 let contentAdminInitialized = false;
+let contentModule = null;
+let activeMain = "collection";
 const dirtyReferenceFields = new Set();
 
 function message(text, isError = false) {
@@ -60,7 +68,16 @@ if (!client) {
     await client.auth.signOut();
     await showSession(null);
   });
-  document.querySelector("#new-specimen").addEventListener("click", () => resetEditor(true));
+  mainNav.addEventListener("click", event => {
+    const button = event.target.closest("[data-main]");
+    if (button) void showMainSection(button.dataset.main);
+  });
+  collectionTabs.addEventListener("click", event => {
+    const button = event.target.closest("[data-collection-view]");
+    if (!button) return;
+    if (button.dataset.collectionView === "add") resetEditor(true);
+    else setCollectionView("list");
+  });
   document.querySelector("#cancel-edit").addEventListener("click", () => resetEditor(false));
   document.querySelector("#delete-specimen").addEventListener("click", deleteSpecimen);
   [mineralInput, document.querySelector("#region"), document.querySelector("#department"), document.querySelector("#locality")]
@@ -75,6 +92,7 @@ async function showSession(session) {
   cmsPanel.hidden = true;
   if (!session) {
     loginPanel.hidden = false;
+    activeMain = "collection";
     message("Connectez-vous avec le compte administrateur.");
     return;
   }
@@ -87,17 +105,52 @@ async function showSession(session) {
   }
   cmsPanel.hidden = false;
   message("Connecté à l’espace privé.");
+  resetEditor(false);
+  await showMainSection(activeMain);
   await loadDashboard();
   if (!contentAdminInitialized) {
     try {
-      const { initContentAdmin } = await import("./admin-content.js");
-      await initContentAdmin(client);
+      const module = await import("./admin-content.js");
+      await module.initContentAdmin(client);
+      contentModule = module;
       contentAdminInitialized = true;
     } catch (error) {
       console.error("Impossible de charger les autres sections du CMS :", error);
       message(`Ma collection est disponible, mais les autres sections n’ont pas pu être chargées : ${describeError(error)}`, true);
     }
   }
+  if (contentModule && activeMain !== "collection") await showMainSection(activeMain);
+}
+
+// Navigation principale : Ma collection / Boutique / Articles / Archives / Référentiels.
+async function showMainSection(id) {
+  activeMain = id;
+  mainNav.querySelectorAll("[data-main]").forEach(button => {
+    const active = button.dataset.main === id;
+    button.classList.toggle("is-active", active);
+    if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
+  });
+  const isCollection = id === "collection";
+  collectionPanel.hidden = !isCollection;
+  contentManager.hidden = isCollection;
+  if (isCollection) return;
+  if (!contentModule) {
+    message("Chargement de la section…");
+    return;
+  }
+  await contentModule.openGroup(id);
+}
+
+// Sous-onglets de Ma collection : « Ajouter un spécimen » (formulaire) / « Ma collection » (liste).
+function setCollectionView(view) {
+  const isAdd = view === "add";
+  collectionAddView.hidden = !isAdd;
+  collectionListView.hidden = isAdd;
+  collectionTabs.querySelectorAll("[data-collection-view]").forEach(button => {
+    const active = button.dataset.collectionView === view;
+    button.classList.toggle("is-active", active);
+    if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
+  });
 }
 
 async function loadDashboard() {
@@ -137,6 +190,7 @@ function resetEditor(open = false) {
     editorStatus.hidden = true;
   }
   editor.hidden = !open;
+  setCollectionView(open ? "add" : "list");
   if (open) editor.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -170,6 +224,7 @@ async function editSpecimen(id) {
     document.querySelector("#editor-title").textContent = "Modifier le spécimen";
     document.querySelector("#delete-specimen").hidden = false;
     editor.hidden = false;
+    setCollectionView("add");
     editor.scrollIntoView({ behavior: "smooth", block: "start" });
     message("Fiche chargée. Chargement des anciennes relations et des photos…");
 

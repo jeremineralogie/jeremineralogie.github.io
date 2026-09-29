@@ -23,9 +23,25 @@
       </form>
     </section>
     <section id="cms-panel" hidden>
-      <div class="admin-toolbar"><h2>Ma collection</h2><button class="btn" id="new-specimen" type="button">Ajouter un spécimen</button><button class="admin-secondary" id="logout" type="button">Se déconnecter</button></div>
-      <div class="admin-columns">
-        <section class="admin-panel"><h3>Spécimens enregistrés</h3><div id="specimen-list" class="admin-list"></div></section>
+      <div class="admin-toolbar admin-mainbar">
+        <nav class="admin-nav" id="admin-main-nav" aria-label="Sections de l’administration">
+          <button type="button" class="admin-tab is-active" data-main="collection" aria-current="page">Ma collection</button>
+          <button type="button" class="admin-tab" data-main="shop">Boutique</button>
+          <button type="button" class="admin-tab" data-main="articles">Articles</button>
+          <button type="button" class="admin-tab" data-main="archives">Archives &amp; Documentation</button>
+          <button type="button" class="admin-tab" data-main="referentiels">Référentiels &amp; réglages</button>
+        </nav>
+        <button class="admin-secondary" id="logout" type="button">Se déconnecter</button>
+      </div>
+      <section id="collection-panel" aria-label="Ma collection">
+        <nav class="admin-tabs" id="collection-tabs" aria-label="Ma collection">
+          <button type="button" class="admin-tab" data-collection-view="add">Ajouter un spécimen</button>
+          <button type="button" class="admin-tab is-active" data-collection-view="list" aria-current="page">Ma collection</button>
+        </nav>
+        <div id="collection-list-view">
+          <section class="admin-panel"><h3>Spécimens enregistrés</h3><div id="specimen-list" class="admin-list"></div></section>
+        </div>
+        <div id="collection-add-view" hidden>
         <section class="admin-panel" id="editor-panel" hidden>
           <h3 id="editor-title">Nouveau spécimen</h3>
           <form id="specimen-form" novalidate>
@@ -51,10 +67,10 @@
             <div class="admin-actions"><button class="btn" type="submit">Enregistrer</button><button class="admin-secondary" id="cancel-edit" type="button">Annuler</button><button class="admin-danger" id="delete-specimen" type="button" hidden>Supprimer</button></div>
           </form>
         </section>
-      </div>
-      <section class="admin-panel" id="content-manager" aria-label="Gestion des autres contenus" hidden>
-        <h2>Autres contenus</h2>
-        <nav class="admin-tabs" id="content-tabs" aria-label="Sections du CMS"></nav>
+        </div>
+      </section>
+      <section class="admin-panel" id="content-manager" aria-label="Boutique, articles, archives et référentiels" hidden>
+        <nav class="admin-tabs" id="content-tabs" aria-label="Onglets de la section"></nav>
         <p class="notice" id="content-status" role="status" aria-live="polite">Sélectionnez une section.</p>
         <div id="content-workspace"></div>
       </section>
