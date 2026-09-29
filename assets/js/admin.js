@@ -225,11 +225,8 @@ function renderSelectedPhotoPreviews() {
 async function saveSpecimen(event) {
   event.preventDefault();
   let id = "";
-  let isNewSpecimen = true;
   let slug = "";
-  let savedSpecimenId = null;
-  let specimenSaved = false;
-  let previousRecord = null;
+  let saved;
   try {
     message("Enregistrement…");
     if (!form.checkValidity()) {
@@ -242,7 +239,6 @@ async function saveSpecimen(event) {
     if (!mineralInput.value.trim()) throw new Error("Saisissez le nom du minéral.");
 
     id = document.querySelector("#specimen-id").value;
-    isNewSpecimen = !id;
     slug = document.querySelector("#specimen-slug").value.trim();
     const localityName = document.querySelector("#locality").value.trim();
     const regionName = document.querySelector("#region").value.trim();
@@ -281,56 +277,55 @@ async function saveSpecimen(event) {
       description: document.querySelector("#description").value.trim(),
       publication_status: document.querySelector("#publication-status").value
     };
-    let saved;
     if (id) {
-      const fieldsToRestore = Object.keys(record);
-      previousRecord = Object.fromEntries(fieldsToRestore.map(field => [field, editingSpecimen?.[field] ?? null]));
       const result = await client.from("specimens").update(record).eq("id", id).select("id").single();
       if (result.error) throw result.error;
       saved = result.data;
-      savedSpecimenId = saved.id;
-      specimenSaved = true;
     } else {
       const result = await client.from("specimens").insert(record).select("id").single();
       if (result.error) throw result.error;
       saved = result.data;
-      savedSpecimenId = saved.id;
-      specimenSaved = true;
     }
-    if (id && editingSpecimen?.publication_status !== record.publication_status) {
-      await syncMediaVisibility(saved.id, slug, record.publication_status === "published" ? "site-media-public" : "admin-staging");
-    }
-    await uploadPhotos(saved.id, slug);
-    const refreshed = await loadDashboard();
-    resetEditor(false);
-    message(refreshed ? "Spécimen enregistré et liste actualisée." : "Spécimen enregistré, mais la liste n’a pas pu être actualisée. Rechargez la page.", !refreshed);
   } catch (error) {
-    const cleanupErrors = [];
-    try {
-      if (isNewSpecimen && savedSpecimenId && specimenSaved) {
-        const { error: deleteError } = await client.from("specimens").delete().eq("id", savedSpecimenId);
-        if (deleteError) {
-          cleanupErrors.push(`La fiche créée partiellement n’a pas pu être supprimée (${deleteError.message}).`);
-          document.querySelector("#specimen-id").value = savedSpecimenId;
-          document.querySelector("#specimen-slug").value = slug;
-          document.querySelector("#editor-title").textContent = "Modifier le spécimen";
-          document.querySelector("#delete-specimen").hidden = false;
-        }
-      } else if (!isNewSpecimen && specimenSaved && previousRecord) {
-        const { error: restoreError } = await client.from("specimens").update(previousRecord).eq("id", id);
-        if (restoreError) cleanupErrors.push(`La restauration des champs modifiés a échoué (${restoreError.message}).`);
-      }
-    } catch (cleanupError) {
-      cleanupErrors.push(`Le nettoyage après échec a rencontré une erreur (${cleanupError.message}).`);
-    }
+    let details = error.message || "Enregistrement impossible.";
     try {
       clearSelectedPhotoPreviews(true);
     } catch (cleanupError) {
-      cleanupErrors.push(`Le nettoyage des prévisualisations a échoué (${cleanupError.message}).`);
+      details += ` Le nettoyage des prévisualisations a échoué (${cleanupError.message}).`;
     }
-    const details = [error.message || "Enregistrement impossible.", ...cleanupErrors].join(" ");
-    message(details, true);
+    message(`Enregistrement impossible : ${details}`, true);
+    return;
   }
+
+  message("Spécimen enregistré en base.");
+  const secondaryErrors = [];
+  try {
+    if (id && editingSpecimen?.publication_status !== document.querySelector("#publication-status").value) {
+      const targetBucket = document.querySelector("#publication-status").value === "published" ? "site-media-public" : "admin-staging";
+      await syncMediaVisibility(saved.id, slug, targetBucket);
+    }
+    await uploadPhotos(saved.id, slug);
+  } catch (error) {
+    secondaryErrors.push(`La fiche est enregistrée, mais les photos n’ont pas pu être traitées : ${error.message || "erreur inconnue."}`);
+    try {
+      clearSelectedPhotoPreviews(true);
+    } catch (cleanupError) {
+      secondaryErrors.push(`Le nettoyage des prévisualisations a échoué : ${cleanupError.message}.`);
+    }
+  }
+
+  let refreshed = false;
+  try {
+    refreshed = await loadDashboard();
+  } catch (error) {
+    secondaryErrors.push(`La fiche est enregistrée, mais le rafraîchissement de la liste a échoué : ${error.message || "erreur inconnue."}`);
+  }
+  if (!refreshed && !secondaryErrors.some(error => error.includes("rafraîchissement"))) {
+    secondaryErrors.push("La fiche est enregistrée, mais la liste n’a pas pu être actualisée. Rechargez la page.");
+  }
+  resetEditor(false);
+  if (secondaryErrors.length) message(secondaryErrors.join(" "), true);
+  else message("Spécimen enregistré en base et liste actualisée.");
 }
 
 function normalizeGeographicName(value) {

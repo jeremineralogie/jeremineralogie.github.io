@@ -2,7 +2,7 @@ import { getSupabase } from "./supabase-client.js";
 
 const specimenSelect = [
   "id", "slug", "provenance", "department_code", "dimensions", "weight_grams",
-  "description", "history", "discovered_on", "discovery_year",
+  "description", "history", "discovered_on", "discovery_year", "discovery_month",
   "mineral:minerals!specimens_mineral_id_fkey(name)",
   "department:departments!specimens_department_code_fkey(name,region:regions!departments_region_id_fkey(name))",
   "locality:localities!specimens_locality_id_fkey(name)",
@@ -23,7 +23,9 @@ function mapSpecimen(client, row) {
     weight: row.weight_grams == null ? "" : row.weight_grams + " g",
     associations: (row.associations || []).map(item => item.mineral?.name).filter(Boolean),
     description: row.description || "", history: row.history || "",
-    discoveryDate: row.discovered_on || row.discovery_year || "", photos,
+    discoveryDate: row.discovered_on || (row.discovery_year && row.discovery_month
+      ? `${String(row.discovery_month).padStart(2, "0")}/${row.discovery_year}`
+      : row.discovery_year || ""), photos,
     scientific: {
       formula: mineral.formula, crystalSystem: mineral.crystal_system, hardness: mineral.hardness,
       density: mineral.density, colors: mineral.colors, luster: mineral.luster,
@@ -34,7 +36,7 @@ function mapSpecimen(client, row) {
 
 export async function listPublishedSpecimens() {
   const client = getSupabase();
-  if (!client) return null;
+  if (!client) throw new Error("La connexion à Supabase n’est pas configurée.");
   const { data, error } = await client.from("specimens").select(specimenSelect)
     .eq("publication_status", "published").order("created_at", { ascending: false });
   if (error) throw error;
@@ -43,7 +45,7 @@ export async function listPublishedSpecimens() {
 
 export async function getPublishedSpecimen(slug) {
   const client = getSupabase();
-  if (!client) return null;
+  if (!client) throw new Error("La connexion à Supabase n’est pas configurée.");
   const { data, error } = await client.from("specimens").select(specimenSelect)
     .eq("slug", slug).eq("publication_status", "published").maybeSingle();
   if (error) throw error;

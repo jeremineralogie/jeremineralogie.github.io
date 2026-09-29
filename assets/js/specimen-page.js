@@ -1,19 +1,30 @@
 import { getPublishedSpecimen } from "./collection-repository.js";
 
 const slug = new URLSearchParams(location.search).get("id");
-if (slug) {
+if (!slug) {
+  showMissing();
+} else {
   try {
     const specimen = await getPublishedSpecimen(slug);
     if (specimen) renderSpecimen(specimen);
-    else if (window.JEREMINERALOGIE_SUPABASE?.url && !window.JEREMINERALOGIE_SUPABASE.url.includes("PLACEHOLDER")) showMissing();
+    else showMissing();
   } catch (error) {
     console.error("Chargement Supabase du spécimen :", error);
+    showLoadError();
   }
+}
+
+function showLoadError() {
+  document.querySelector("#specimen-detail").hidden = true;
+  document.querySelector("#specimen-content").hidden = true;
+  document.querySelector("#specimen-not-found").hidden = true;
+  document.querySelector("#specimen-load-error").hidden = false;
 }
 
 function showMissing() {
   document.querySelector("#specimen-detail").hidden = true;
   document.querySelector("#specimen-content").hidden = true;
+  document.querySelector("#specimen-load-error").hidden = true;
   document.querySelector("#specimen-not-found").hidden = false;
 }
 

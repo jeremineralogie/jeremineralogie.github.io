@@ -1,87 +1,12 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Spécimen — Jeremineralogie</title><link rel="stylesheet" href="styles.css"></head><body>
 <header class="site-header"><div class="header-inner"><div class="brand-row"><a class="brand" href="index.html">Jeremineralogie</a><div class="search">⌕ <input data-search placeholder="Rechercher un minéral, une localité, une mine..."></div></div><nav class="nav"><a href="boutique.html">Boutique</a><a href="articles.html">Articles</a><a href="archives.html">Archives & Documentation</a><a href="collection.html">Ma collection</a></nav></div></header>
-<main><p class="notice" id="specimen-not-found" hidden>Cette fiche de spécimen est introuvable. <a href="collection.html">Retour à Ma collection</a>.</p>
+<main><p class="notice" id="specimen-load-error" role="alert" hidden>Impossible de charger cette fiche depuis Supabase. Réessayez plus tard.</p><p class="notice" id="specimen-not-found" hidden>Cette fiche de spécimen est introuvable. <a href="collection.html">Retour à Ma collection</a>.</p>
 <div class="specimen" id="specimen-detail" hidden><div><div class="gallery-main" data-gallery></div><div class="thumbs" data-thumbnails></div></div>
 <div class="details"><div class="kicker">Ma collection</div><h1 class="page-title" data-mineral></h1><p class="meta" data-location-summary></p><dl>
 <dt>Minéral</dt><dd data-mineral></dd><dt>Provenance</dt><dd data-provenance></dd><dt>Département</dt><dd><a class="link" data-department></a></dd><dt>Région</dt><dd data-region></dd><dt>Localité</dt><dd data-locality></dd><dt>Dimensions</dt><dd data-dimensions></dd><dt>Poids</dt><dd data-weight></dd><dt>Associations</dt><dd data-associations></dd><dt>Date de découverte</dt><dd data-discovery-date></dd>
 </dl></div></div>
 <div class="content section" id="specimen-content" hidden><h2>Description du spécimen</h2><p data-description></p><section data-scientific-section hidden><h2>Documentation minéralogique</h2><dl class="scientific-details" data-scientific></dl></section><p><a class="link" href="collection.html">← Retour à Ma collection</a></p></div></main>
 <footer class="footer"><div class="footer-inner"><div class="footer-links"><a href="identification.html">Identification</a><a href="reseaux.html">Mes réseaux</a><a href="contact.html">Contact</a><a href="legal.html">Informations légales</a></div><div>© Jeremineralogie — Minéraux français, spécimens de collection et patrimoine minier.</div></div></footer>
-<script src="script.js"></script><script src="collection-data.js"></script>
-<script>
-(() => {
-  const specimens = window.collectionSpecimens || [];
-  const id = new URLSearchParams(window.location.search).get("id");
-  const specimen = specimens.find(item => item.id === id);
-  const root = document.getElementById("specimen-detail");
-  const content = document.getElementById("specimen-content");
-  if (!specimen) {
-    document.getElementById("specimen-not-found").hidden = false;
-    return;
-  }
-  root.hidden = false; content.hidden = false;
-  document.title = (specimen.mineral || "Spécimen") + " — Ma collection — Jeremineralogie";
-  root.querySelectorAll("[data-mineral]").forEach(element => element.textContent = specimen.mineral || "Spécimen");
-  const put = (selector, value) => {
-    const element = root.querySelector(selector);
-    if (element) element.textContent = value || "Non renseigné";
-  };
-  put("[data-location-summary]", [specimen.locality, specimen.department, specimen.region].filter(Boolean).join(" · ") || "Localisation à compléter");
-  put("[data-provenance]", specimen.provenance);
-  put("[data-locality]", specimen.locality);
-  put("[data-region]", specimen.region);
-  put("[data-dimensions]", specimen.dimensions);
-  put("[data-weight]", specimen.weight);
-  put("[data-associations]", (specimen.associations || []).join(", "));
-  put("[data-discovery-date]", specimen.discoveryDate);
-  content.querySelector("[data-description]").textContent = specimen.description || "Non renseigné";
-  const department = root.querySelector("[data-department]");
-  department.textContent = specimen.department
-    ? specimen.department + (specimen.departmentCode ? " (" + specimen.departmentCode + ")" : "")
-    : "Non renseigné";
-  if (specimen.departmentCode) department.href = "departement.html?dep=" + encodeURIComponent(specimen.departmentCode);
-  const gallery = root.querySelector("[data-gallery]");
-  const thumbnails = root.querySelector("[data-thumbnails]");
-  const photos = (specimen.photos || []).filter(Boolean);
-  const makeImage = (src, alt) => { const image = document.createElement("img"); image.src = src; image.alt = alt; return image; };
-  if (photos.length) {
-    const main = makeImage(photos[0], specimen.mineral || "Spécimen");
-    gallery.append(main);
-    photos.forEach((photo, index) => {
-      const thumb = makeImage(photo, (specimen.mineral || "Spécimen") + " — photo " + (index + 1));
-      thumb.tabIndex = 0; thumb.setAttribute("role", "button");
-      const choose = () => { main.src = photo; main.alt = thumb.alt; };
-      thumb.addEventListener("click", choose);
-      thumb.addEventListener("keydown", event => {
-        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); }
-      });
-      thumbnails.append(thumb);
-    });
-  } else {
-    const placeholder = document.createElement("div");
-    placeholder.className = "gallery-photo-placeholder";
-    placeholder.textContent = "Photographie à ajouter";
-    placeholder.setAttribute("role", "img");
-    placeholder.setAttribute("aria-label", "Photographie non disponible pour " + (specimen.mineral || "ce spécimen"));
-    gallery.append(placeholder); thumbnails.hidden = true;
-  }
-  const labels = {
-    formula: "Formule", crystalSystem: "Système cristallin", hardness: "Dureté", density: "Densité",
-    colors: "Couleurs", luster: "Éclat", cleavage: "Clivage", habit: "Habitus", formation: "Formation",
-    representativeDeposits: "Gisements représentatifs", frenchOccurrences: "Occurrences françaises",
-    bibliography: "Bibliographie"
-  };
-  const scientificList = content.querySelector("[data-scientific]");
-  Object.entries(labels).forEach(([key, label]) => {
-    const value = (specimen.scientific || {})[key];
-    if (!value || (Array.isArray(value) && value.length === 0)) return;
-    const term = document.createElement("dt"); term.textContent = label;
-    const description = document.createElement("dd");
-    description.textContent = Array.isArray(value) ? value.join(", ") : value;
-    scientificList.append(term, description);
-  });
-  content.querySelector("[data-scientific-section]").hidden = scientificList.children.length === 0;
-})();
-</script><script type="module" src="assets/js/specimen-page.js"></script>
+<script src="script.js"></script><script type="module" src="assets/js/specimen-page.js"></script>
 </body></html>

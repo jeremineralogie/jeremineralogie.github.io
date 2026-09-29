@@ -44,7 +44,7 @@
             <label for="specimen-date">Date de découverte ou d'entrée en collection</label><input id="specimen-date" type="text" lang="fr" inputmode="numeric" placeholder="AAAA, MM/AAAA ou JJ/MM/AAAA" pattern="([0-9]{4}|[0-9]{2}/[0-9]{4}|[0-9]{2}/[0-9]{2}/[0-9]{4})" aria-describedby="specimen-date-help"><small id="specimen-date-help">Exemples : 2018, 09/2018 ou 29/09/2018.</small>
             <label for="photos">Ajouter photo(s)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
             <input id="specimen-slug" type="hidden">
-            <input id="publication-status" type="hidden" value="draft">
+            <input id="publication-status" type="hidden" value="published">
             <div id="existing-photo-group" hidden><small>Photos enregistrées sur ce spécimen</small><div id="existing-photos" class="admin-photos"></div></div>
             <div id="selected-photo-group" hidden><small>Nouvelles photos sélectionnées</small><div id="selected-photos" class="admin-photos"></div></div>
             <div class="admin-actions"><button class="btn" type="submit">Enregistrer</button><button class="admin-secondary" id="cancel-edit" type="button">Annuler</button><button class="admin-danger" id="delete-specimen" type="button" hidden>Supprimer</button></div>
