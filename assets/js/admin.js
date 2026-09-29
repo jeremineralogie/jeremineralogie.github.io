@@ -14,6 +14,12 @@ const existingPhotoGroup = document.querySelector("#existing-photo-group");
 const existingPhotoPreview = document.querySelector("#existing-photos");
 const selectedPhotoGroup = document.querySelector("#selected-photo-group");
 const selectedPhotoPreview = document.querySelector("#selected-photos");
+const mainTabs = [...document.querySelectorAll("[data-main-tab]")];
+const collectionPanel = document.querySelector("#panel-collection");
+const contentPanel = document.querySelector("#panel-content");
+const collectionColumns = document.querySelector("#collection-columns");
+const specimenListPanel = document.querySelector("#specimen-list-panel");
+const collectionViewButtons = [...document.querySelectorAll("[data-collection-view]")];
 const client = getSupabase();
 let media = [];
 let selectedPhotoUrls = [];
@@ -21,6 +27,10 @@ let mediaRenderVersion = 0;
 let editorLoadVersion = 0;
 let editingSpecimen = null;
 let contentAdminInitialized = false;
+let contentAdmin = null;
+let activeMainTab = "collection";
+let collectionView = "list";
+let mainTabVersion = 0;
 const dirtyReferenceFields = new Set();
 
 function message(text, isError = false) {
@@ -60,7 +70,11 @@ if (!client) {
     await client.auth.signOut();
     await showSession(null);
   });
-  document.querySelector("#new-specimen").addEventListener("click", () => resetEditor(true));
+  mainTabs.forEach(tab => {
+    tab.addEventListener("click", () => void selectMainTab(tab.dataset.mainTab));
+    tab.addEventListener("keydown", onMainTabKeydown);
+  });
+  collectionViewButtons.forEach(button => button.addEventListener("click", () => setCollectionView(button.dataset.collectionView)));
   document.querySelector("#cancel-edit").addEventListener("click", () => resetEditor(false));
   document.querySelector("#delete-specimen").addEventListener("click", deleteSpecimen);
   [mineralInput, document.querySelector("#region"), document.querySelector("#department"), document.querySelector("#locality")]
@@ -90,14 +104,80 @@ async function showSession(session) {
   await loadDashboard();
   if (!contentAdminInitialized) {
     try {
-      const { initContentAdmin } = await import("./admin-content.js");
-      await initContentAdmin(client);
+      contentAdmin = await import("./admin-content.js");
+      await contentAdmin.initContentAdmin(client);
       contentAdminInitialized = true;
     } catch (error) {
+      contentAdmin = null;
       console.error("Impossible de charger les autres sections du CMS :", error);
       message(`Ma collection est disponible, mais les autres sections n’ont pas pu être chargées : ${describeError(error)}`, true);
     }
   }
+  const requestedTab = decodeURIComponent(location.hash.slice(1));
+  await selectMainTab(mainTabs.some(tab => tab.dataset.mainTab === requestedTab) ? requestedTab : activeMainTab, { focus: false });
+}
+
+async function selectMainTab(tabId, { focus = false } = {}) {
+  const version = ++mainTabVersion;
+  activeMainTab = tabId;
+  mainTabs.forEach(tab => {
+    const selected = tab.dataset.mainTab === tabId;
+    tab.setAttribute("aria-selected", String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    if (selected && focus) tab.focus();
+  });
+  const isCollection = tabId === "collection";
+  collectionPanel.hidden = !isCollection;
+  contentPanel.hidden = isCollection;
+  if (!isCollection) contentPanel.setAttribute("aria-labelledby", `tab-${tabId}`);
+  if (location.hash.slice(1) !== tabId) history.replaceState(null, "", `#${tabId}`);
+  if (isCollection) {
+    setCollectionView(collectionView);
+    return;
+  }
+  if (!contentAdmin) {
+    const contentStatus = document.querySelector("#content-status");
+    document.querySelector("#content-subtabs").replaceChildren();
+    document.querySelector("#content-workspace").replaceChildren();
+    contentStatus.textContent = "Cette section n’a pas pu être chargée. Rechargez la page ou consultez le message d’erreur ci-dessus.";
+    contentStatus.classList.add("admin-error");
+    return;
+  }
+  if (version === mainTabVersion) await contentAdmin.showContentGroup(tabId);
+}
+
+function onMainTabKeydown(event) {
+  const index = mainTabs.indexOf(event.currentTarget);
+  let next = null;
+  if (event.key === "ArrowRight") next = (index + 1) % mainTabs.length;
+  else if (event.key === "ArrowLeft") next = (index - 1 + mainTabs.length) % mainTabs.length;
+  else if (event.key === "Home") next = 0;
+  else if (event.key === "End") next = mainTabs.length - 1;
+  if (next == null) return;
+  event.preventDefault();
+  void selectMainTab(mainTabs[next].dataset.mainTab, { focus: true });
+}
+
+function isEditingExistingSpecimen() {
+  return Boolean(document.querySelector("#specimen-id").value);
+}
+
+function setCollectionView(view) {
+  collectionView = view === "add" ? "add" : "list";
+  collectionViewButtons.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.collectionView === collectionView)));
+  if (collectionView === "add") {
+    // Une fiche existante ouverte depuis la liste n’est pas reprise en création ; un brouillon de création est conservé.
+    if (isEditingExistingSpecimen()) resetEditor(true);
+  } else if (!isEditingExistingSpecimen()) {
+    editor.hidden = true;
+  }
+  updateCollectionLayout();
+}
+
+function updateCollectionLayout() {
+  specimenListPanel.hidden = collectionView === "add";
+  if (collectionView === "add") editor.hidden = false;
+  collectionColumns.classList.toggle("admin-single", specimenListPanel.hidden || editor.hidden);
 }
 
 async function loadDashboard() {
@@ -136,7 +216,8 @@ function resetEditor(open = false) {
     editorStatus.classList.remove("admin-error");
     editorStatus.hidden = true;
   }
-  editor.hidden = !open;
+  editor.hidden = !open && collectionView !== "add";
+  updateCollectionLayout();
   if (open) editor.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -170,6 +251,7 @@ async function editSpecimen(id) {
     document.querySelector("#editor-title").textContent = "Modifier le spécimen";
     document.querySelector("#delete-specimen").hidden = false;
     editor.hidden = false;
+    updateCollectionLayout();
     editor.scrollIntoView({ behavior: "smooth", block: "start" });
     message("Fiche chargée. Chargement des anciennes relations et des photos…");
 

@@ -36,8 +36,36 @@ const sections = [
   { id: "settings", label: "Paramètres du site", table: "site_settings", title: "Paramètres du site", fields: [{ key: "key", label: "Clé", required: true }, { key: "value", label: "Valeur JSON", type: "textarea" }, { key: "is_public", label: "Visible publiquement", type: "checkbox" }] }
 ];
 
+// Onglets principaux de l’administration : chaque groupe n’affiche que ses propres sous-sections.
+const groups = {
+  shop: { section: "shop", views: [
+    { id: "add", label: "Ajouter un produit", heading: "Ajouter un produit" },
+    { id: "list", label: "Produits dans la boutique", heading: "Produits dans la boutique" }
+  ] },
+  articles: { section: "articles", views: [
+    { id: "add", label: "Créer un article", heading: "Créer un article" },
+    { id: "list", label: "Articles en ligne", heading: "Articles en ligne" }
+  ] },
+  archives: { section: "archives", views: [
+    { id: "add", label: "Ajouter une archive", heading: "Ajouter une archive" },
+    { id: "list", label: "Archives en ligne", heading: "Archives en ligne" }
+  ] },
+  references: { sections: ["regions", "departments", "localities", "mines", "minerals", "occurrences", "settings"] }
+};
+
 let client;
 let tabs;
+let activeGroupId = null;
+let activeView = "both";
+let loadVersion = 0;
+const groupState = {};
+let pendingOperation = Promise.resolve();
+
+// Les enregistrements et suppressions s’appuient sur la section active : la navigation attend leur fin.
+function trackOperation(run) {
+  pendingOperation = run.catch(() => {});
+  return run;
+}
 let workspace;
 let status;
 let activeSection;
@@ -60,37 +88,84 @@ function errorText(error) {
 
 export async function initContentAdmin(supabase) {
   client = supabase;
-  tabs = document.querySelector("#content-tabs");
+  tabs = document.querySelector("#content-subtabs");
   workspace = document.querySelector("#content-workspace");
   status = document.querySelector("#content-status");
-  const manager = document.querySelector("#content-manager");
-  manager.hidden = false;
-  sections.forEach(section => {
+}
+
+const sectionById = id => sections.find(section => section.id === id);
+
+function groupSubTabs(group) {
+  if (group.views) return group.views.map(view => ({ key: view.id, label: view.label, section: group.section, view: view.id }));
+  return group.sections.map(id => ({ key: id, label: sectionById(id).label, section: id, view: "both" }));
+}
+
+export async function showContentGroup(groupId) {
+  const group = groups[groupId];
+  if (!group) throw new Error(`Section d’administration inconnue : ${groupId}`);
+  activeGroupId = groupId;
+  const subTabs = groupSubTabs(group);
+  const remembered = subTabs.find(item => item.key === groupState[groupId]);
+  const initial = remembered || (group.views ? subTabs.find(item => item.view === "list") : subTabs[0]);
+  await openSubTab(initial, groupId);
+}
+
+function renderSubTabs(currentKey) {
+  tabs.replaceChildren();
+  for (const item of groupSubTabs(groups[activeGroupId])) {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "admin-secondary";
-    button.textContent = section.label;
-    button.addEventListener("click", () => void openSection(section));
+    button.textContent = item.label;
+    button.dataset.subTab = item.key;
+    button.setAttribute("aria-pressed", String(item.key === currentKey));
+    button.addEventListener("click", () => void openSubTab(item, activeGroupId));
     tabs.append(button);
-  });
-  await openSection(sections[0]);
+  }
+}
+
+async function openSubTab(item, groupId) {
+  report("Opération en cours, veuillez patienter…");
+  await pendingOperation;
+  if (groupId !== activeGroupId) return;
+  groupState[activeGroupId] = item.key;
+  renderSubTabs(item.key);
+  const section = sectionById(item.section);
+  if (activeSection === section && workspace.childElementCount && item.view !== "both") {
+    // Même table (ajout ↔ liste) : pas de rechargement, on bascule simplement l’affichage.
+    if (activeView !== item.view) { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; }
+    activeView = item.view;
+    renderWorkspace();
+    report(item.view === "add" ? `Nouveau contenu — ${section.title.toLocaleLowerCase("fr")}.` : `${section.title} chargés depuis Supabase.`);
+    return;
+  }
+  activeView = item.view;
+  await openSection(section);
 }
 
 async function openSection(section) {
+  const version = ++loadVersion;
   clearNewMediaSelection();
   activeSection = section;
   selectedRecord = null;
+  workspace.replaceChildren();
   report(`Chargement de ${section.title.toLocaleLowerCase("fr")}…`);
   try {
     await loadReferences(section);
+    if (version !== loadVersion) return;
     await loadRecords();
+    if (version !== loadVersion) return;
     renderWorkspace();
-    report(`${section.title} chargés depuis Supabase.`);
+    report(activeView === "add" ? `Nouveau contenu — ${section.title.toLocaleLowerCase("fr")}.` : `${section.title} chargés depuis Supabase.`);
   } catch (error) {
+    if (version !== loadVersion) return;
     workspace.replaceChildren();
     report(`Impossible de charger ${section.title.toLocaleLowerCase("fr")} : ${errorText(error)}`, true);
     console.error(`Chargement CMS ${section.id}:`, error);
   }
+}
+
+function viewHeading(viewId) {
+  return groups[activeGroupId]?.views?.find(view => view.id === viewId)?.heading;
 }
 
 async function loadReferences(section) {
@@ -116,14 +191,19 @@ async function loadRecords() {
 
 function renderWorkspace() {
   workspace.replaceChildren();
+  if (activeView === "add") selectedRecord = null;
   const columns = document.createElement("div");
   columns.className = "admin-columns";
   const listPanel = document.createElement("section");
   listPanel.className = "admin-panel";
   const toolbar = document.createElement("div"); toolbar.className = "admin-toolbar";
-  const heading = document.createElement("h3"); heading.textContent = activeSection.title;
-  const add = document.createElement("button"); add.type = "button"; add.className = "admin-secondary"; add.textContent = "Nouveau";
-  add.addEventListener("click", () => { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; renderWorkspace(); report(`Nouveau contenu — ${activeSection.title.toLocaleLowerCase("fr")} .`); });
+  const heading = document.createElement("h3"); heading.textContent = viewHeading("list") || activeSection.title;
+  const add = document.createElement("button"); add.type = "button"; add.className = "admin-secondary"; add.textContent = viewHeading("add") || "Nouveau";
+  add.addEventListener("click", () => {
+    const addTab = groups[activeGroupId]?.views && groupSubTabs(groups[activeGroupId]).find(item => item.view === "add");
+    if (addTab) { void openSubTab(addTab, activeGroupId); return; }
+    clearNewMediaSelection(); selectedRecord = null; currentMedia = []; renderWorkspace(); report(`Nouveau contenu — ${activeSection.title.toLocaleLowerCase("fr")}.`);
+  });
   toolbar.append(heading, add); listPanel.append(toolbar);
   const list = document.createElement("div"); list.className = "admin-list";
   records.forEach(record => {
@@ -135,20 +215,28 @@ function renderWorkspace() {
   });
   listPanel.append(list);
   const editorPanel = document.createElement("section"); editorPanel.className = "admin-panel";
-  const title = document.createElement("h3"); title.textContent = selectedRecord ? "Modifier" : "Nouveau contenu"; editorPanel.append(title);
+  const title = document.createElement("h3"); title.textContent = selectedRecord ? "Modifier" : viewHeading("add") || "Nouveau contenu"; editorPanel.append(title);
   const form = document.createElement("form"); form.noValidate = true;
   activeSection.fields.forEach(field => form.append(createField(field, selectedRecord?.[field.key])));
   if (activeSection.mediaTable || activeSection.singleFile) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
   if (selectedRecord) {
+    if (activeView === "list") {
+      const close = document.createElement("button"); close.type = "button"; close.className = "admin-secondary"; close.textContent = "Fermer";
+      close.addEventListener("click", () => { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; renderWorkspace(); }); actions.append(close);
+    }
     const remove = document.createElement("button"); remove.type = "button"; remove.className = "admin-danger"; remove.textContent = "Supprimer";
     remove.addEventListener("click", () => void deleteRecord()); actions.append(remove);
   }
   form.append(actions);
   form.addEventListener("submit", event => { event.preventDefault(); void saveRecord(form); });
   editorPanel.append(form);
-  columns.append(listPanel, editorPanel); workspace.append(columns);
+  // « Ajouter » : formulaire seul ; « Liste » : liste seule, puis liste + fiche quand un élément est ouvert.
+  if (activeView === "add") { columns.classList.add("admin-single"); columns.append(editorPanel); }
+  else if (activeView === "list" && !selectedRecord) { columns.classList.add("admin-single"); columns.append(listPanel); }
+  else columns.append(listPanel, editorPanel);
+  workspace.append(columns);
 }
 
 function createField(field, value) {
@@ -243,6 +331,8 @@ async function setMediaLink(link, bucket, path) { try { link.href = await resolv
 
 async function selectRecord(record) {
   clearNewMediaSelection();
+  const section = activeSection;
+  const version = loadVersion;
   selectedRecord = { ...record };
   try {
     if (activeSection.links) {
@@ -256,11 +346,14 @@ async function selectRecord(record) {
     }
     if (activeSection.mediaTable) { const { data, error } = await client.from(activeSection.mediaTable).select("*").eq(activeSection.foreignKey, record.id).order("position"); if (error) throw error; currentMedia = data || []; }
     else currentMedia = [];
+    if (section !== activeSection || version !== loadVersion) return;
     renderWorkspace();
   } catch (error) { report(`Impossible de charger les médias : ${errorText(error)}`, true); console.error(error); }
 }
 
-async function saveRecord(form) {
+function saveRecord(form) { return trackOperation(saveRecordNow(form)); }
+
+async function saveRecordNow(form) {
   const section = activeSection;
   let databaseSaved = false;
   report("Enregistrement…");
@@ -305,6 +398,7 @@ async function saveRecord(form) {
       if (section.mediaTable && current && current.publication_status !== saved.publication_status) await syncMedia(saved);
       report("Contenu enregistré. Rechargement de la liste…");
     }
+    if (section !== activeSection) { report(`Enregistrement terminé (${section.title}).`); return; }
     await loadRecords(); selectedRecord = null; clearNewMediaSelection(); renderWorkspace(); report("Enregistrement terminé. La liste est à jour.");
   } catch (error) {
     console.error(`Échec enregistrement CMS ${section.id}:`, error);
@@ -439,7 +533,9 @@ async function saveArchiveFile(parent, previous) {
   if (oldPath && (oldPath !== path || previous.bucket_id !== bucket)) await removeStorageIfUnreferenced(previous.bucket_id, oldPath);
 }
 
-async function deleteRecord() {
+function deleteRecord() { return trackOperation(deleteRecordNow()); }
+
+async function deleteRecordNow() {
   if (!selectedRecord || !confirm("Supprimer définitivement cet élément ?")) return;
   const section = activeSection;
   let mediaToClean = [];
@@ -458,6 +554,7 @@ async function deleteRecord() {
       try { await removeStorageIfUnreferenced(item.bucket_id, item.storage_path); }
       catch (storageError) { storageErrors.push(`${item.storage_path} : ${errorText(storageError)}`); }
     }
+    if (section !== activeSection) { report(storageErrors.length ? `Élément supprimé de la base, mais certains fichiers Storage restent à nettoyer : ${storageErrors.join(" ; ")}` : `Élément supprimé (${section.title}).`, storageErrors.length > 0); return; }
     await loadRecords(); selectedRecord = null; clearNewMediaSelection(); renderWorkspace(); report("Élément supprimé.");
     if (storageErrors.length) report(`Élément supprimé de la base, mais certains fichiers Storage restent à nettoyer : ${storageErrors.join(" ; ")}`, true);
   } catch (error) { console.error("Suppression CMS :", error); report(`Suppression incomplète : ${errorText(error)}`, true); }
