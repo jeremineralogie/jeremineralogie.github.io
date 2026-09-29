@@ -1,4 +1,5 @@
 import { getSupabase } from "./supabase-client.js";
+import { ficheUrl } from "./entity-links.js";
 
 const client = getSupabase();
 const content = document.querySelector("#department-live-content");
@@ -127,9 +128,9 @@ async function loadDepartment() {
   const heading = document.createElement("h2"); heading.textContent = "Données publiées du référentiel"; content.append(heading);
   section("Spécimens de ma collection", specimens);
   section("Pièces disponibles en boutique", shop);
-  section("Localités publiées", localities);
-  section("Mines et gisements publiés", mines);
-  section("Minéraux documentés", minerals);
+  section("Localités publiées", localities.map(row => ({ name: row.name, href: ficheUrl("locality", row.slug) })));
+  section("Mines et gisements publiés", mines.map(row => ({ name: row.name, href: ficheUrl("mine", row.slug) })));
+  section("Minéraux documentés", minerals.map(row => ({ name: row.name, href: ficheUrl("mineral", row.slug) })));
   section("Archives et documents associés", archives);
   section("Articles associés", articles);
 }

@@ -180,3 +180,12 @@ Puis améliorer progressivement recherche, filtres, départements, archives, art
 Le site doit progressivement relier :
 Minéral ↔ Spécimen ↔ Localité ↔ Département ↔ Mine/Gisement ↔ Article ↔ Archive
 Toute évolution doit préserver cette logique.
+
+## 14. Liens entre contenus, listes « Autre » et fiches génériques (30 septembre 2026)
+
+- **Fiche générique** `fiche.html?type=mine|mineral|locality&id=<slug>` (script `assets/js/entity-page.js`) : gisement, minéral ou commune. Elle réunit les spécimens de la collection (avec photo), les pièces disponibles en boutique, les articles et les archives liés. Ce n'est pas une page par mine : une seule page HTML générique, comme `specimen.html`.
+- **Base de données** : `specimens.mine_id` et `shop_items.mine_id` (FK vers `mines`, migration `20260930030000`). `provenance` reste le texte saisi ; `mine_id` le relie à la fiche gisement.
+- **Création automatique** (`ensureNamed` dans `reference-resolver.js`) : saisir un minéral, une commune ou un gisement dans une fiche spécimen (ou une provenance dans la boutique) retrouve la fiche existante (sans tenir compte de la casse, des accents et des tirets) ou en crée une, publiée, avec un slug unique. Aucun département ni aucune région n'est créé automatiquement. Aucune donnée scientifique n'est inventée : une fiche créée ne contient que son nom.
+- **Listes déroulantes** : type de site = Mine, Tranchée, Carrière, Alluvion, Affleurement, Travaux publics + « Autre » (valeur libre conservée et proposée ensuite). Catégories d'articles/archives, minéral/gisement/localité/région et liens d'articles/archives : option « Autre » créant la valeur. Pas d'« Autre » sur les états système (publication, disponibilité) ni sur le département (le code est un identifiant officiel). Les champs texte du formulaire spécimen proposent aussi des suggestions (`datalist`) tirées des référentiels.
+- **Articles** : les noms de minéraux, gisements et communes publiés sont reliés automatiquement dans le texte (`entity-links.js`, un lien par nom et par article, nom le plus long prioritaire, sans tenir compte des accents). Les liens choisis dans l'administration s'affichent aussi sous « Fiches liées ».
+- **Ancres** : `articles.html#<slug>`, `archives.html#<slug>`, `boutique.html#<référence>`.

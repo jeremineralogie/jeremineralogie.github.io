@@ -45,3 +45,56 @@ export async function resolveReferences(client, values) {
     localityId: (uniqueByName(localityPool, values.locality) || uniqueByName(localities, values.locality))?.id ?? null
   };
 }
+
+// ---------------------------------------------------------------------------
+// Valeurs communes : « Autre », types de gisement, catégories, création automatique de fiches.
+// ---------------------------------------------------------------------------
+export const OTHER = "__other__";
+
+export const slugify = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+// Types de site prévus par le cahier des charges ; toute autre valeur saisie est conservée telle quelle.
+export const SITE_TYPES = [
+  ["mine", "Mine"], ["tranchee", "Tranchée"], ["carriere", "Carrière"],
+  ["alluvion", "Alluvion"], ["affleurement", "Affleurement"], ["travaux_publics", "Travaux publics"]
+];
+export const siteTypeLabel = value => SITE_TYPES.find(([key]) => key === value)?.[1] ?? value ?? "";
+
+export const CATEGORY_LABELS = {
+  mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie", "mines-histoire": "Mines & histoire",
+  decouvertes: "Découvertes", identification: "Identification", collection: "Collection", pedagogie: "Pédagogie",
+  "mine-gisement": "Mine / gisement", "archive-historique": "Archive historique", "plan-carte": "Plan / carte",
+  "histoire-exploitation": "Histoire de l’exploitation", "publication-scientifique": "Publication scientifique",
+  catalogue: "Catalogue", bibliographie: "Bibliographie", "photographie-ancienne": "Photographie ancienne"
+};
+export const categoryLabel = value => CATEGORY_LABELS[value] ?? value ?? "";
+
+const CREATE_DEFAULTS = {
+  minerals: { colors: [], publication_status: "published" },
+  mines: { description: "", publication_status: "published" },
+  localities: { notes: "", publication_status: "published" },
+  regions: {}
+};
+
+// Retrouve une fiche par son nom (sans tenir compte de la casse, des accents ni des tirets) ou la crée.
+// Renvoie { id, name, created } ou null si le nom est vide. Ne crée jamais de département.
+export async function ensureNamed(client, table, name, extra = {}) {
+  const clean = String(name ?? "").replace(/\s+/g, " ").trim();
+  if (!clean || !(table in CREATE_DEFAULTS)) return null;
+  const columns = table === "localities" ? "id,name,slug,department_code" : "id,name,slug";
+  const { data, error } = await client.from(table).select(columns);
+  if (error) throw error;
+  const wanted = normalizeName(clean);
+  const same = (data || []).filter(row => normalizeName(row.name) === wanted);
+  const found = (extra.department_code && same.find(row => row.department_code === extra.department_code)) || same[0];
+  if (found) return { id: found.id, name: found.name, created: false };
+  const slugs = new Set((data || []).map(row => row.slug));
+  const base = slugify(clean) || `${table}-${crypto.randomUUID()}`;
+  let slug = base; let suffix = 2;
+  while (slugs.has(slug)) slug = `${base}-${suffix++}`;
+  const { data: row, error: insertError } = await client.from(table)
+    .insert({ name: clean, slug, ...CREATE_DEFAULTS[table], ...extra }).select("id,name").single();
+  if (insertError) throw insertError;
+  return { id: row.id, name: row.name, created: true };
+}

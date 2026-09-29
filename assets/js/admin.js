@@ -1,5 +1,5 @@
 import { getSupabase } from "./supabase-client.js";
-import { resolveReferences } from "./reference-resolver.js";
+import { resolveReferences, ensureNamed, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
 
 const status = document.querySelector("#admin-status");
 const editorStatus = document.querySelector("#specimen-status");
@@ -15,6 +15,8 @@ const collectionAddView = document.querySelector("#collection-add-view");
 const collectionListView = document.querySelector("#collection-list-view");
 const contentManager = document.querySelector("#content-manager");
 const mineralInput = document.querySelector("#mineral-name");
+const siteTypeSelect = document.querySelector("#site-type");
+const siteTypeOther = document.querySelector("#site-type-other");
 const photoInput = document.querySelector("#photos");
 const existingPhotoGroup = document.querySelector("#existing-photo-group");
 const existingPhotoPreview = document.querySelector("#existing-photos");
@@ -27,6 +29,7 @@ let mediaRenderVersion = 0;
 let editorLoadVersion = 0;
 let editingSpecimen = null;
 let contentAdminInitialized = false;
+let knownCustomSiteTypes = [];
 let contentModule = null;
 let activeMain = "collection";
 const dirtyReferenceFields = new Set();
@@ -80,9 +83,11 @@ if (!client) {
   });
   document.querySelector("#cancel-edit").addEventListener("click", () => resetEditor(false));
   document.querySelector("#delete-specimen").addEventListener("click", deleteSpecimen);
-  [mineralInput, document.querySelector("#region"), document.querySelector("#department"), document.querySelector("#locality")]
+  [mineralInput, document.querySelector("#region"), document.querySelector("#department"), document.querySelector("#locality"), document.querySelector("#provenance")]
     .forEach(input => input.addEventListener("input", () => dirtyReferenceFields.add(input.id)));
   photoInput.addEventListener("change", renderSelectedPhotoPreviews);
+  siteTypeSelect.addEventListener("change", syncSiteTypeOther);
+  setSiteType("");
   form.addEventListener("submit", saveSpecimen);
   void client.auth.getSession().then(({ data }) => showSession(data.session));
 }
@@ -171,7 +176,58 @@ async function loadDashboard() {
     button.addEventListener("click", () => void editSpecimen(specimen.id));
     list.append(button);
   });
+  void loadSuggestions();
   return true;
+}
+
+// ----- Type de site (liste + « Autre ») et listes de suggestions alimentées par les référentiels -----
+function renderSiteTypeOptions(selected) {
+  siteTypeSelect.replaceChildren();
+  const add = (value, label) => { const option = document.createElement("option"); option.value = value; option.textContent = label; siteTypeSelect.append(option); };
+  add("", "— Non renseigné —");
+  SITE_TYPES.forEach(([value, label]) => add(value, label));
+  const extras = new Set(knownCustomSiteTypes);
+  if (selected && !SITE_TYPES.some(([value]) => value === selected)) extras.add(selected);
+  [...extras].sort((a, b) => a.localeCompare(b, "fr")).forEach(value => add(value, value));
+  add(OTHER, "Autre (saisir une valeur)…");
+}
+function setSiteType(value) {
+  const clean = (value ?? "").trim();
+  const byLabel = SITE_TYPES.find(([, label]) => normalizeName(label) === normalizeName(clean));
+  renderSiteTypeOptions(byLabel ? "" : clean);
+  siteTypeSelect.value = byLabel ? byLabel[0] : clean;
+  siteTypeOther.value = "";
+  syncSiteTypeOther();
+}
+function syncSiteTypeOther() {
+  siteTypeOther.hidden = siteTypeSelect.value !== OTHER;
+  if (!siteTypeOther.hidden) siteTypeOther.focus();
+}
+function getSiteType() {
+  return siteTypeSelect.value === OTHER ? siteTypeOther.value.trim() : siteTypeSelect.value;
+}
+function fillDatalist(id, values) {
+  const datalist = document.querySelector(id);
+  datalist.replaceChildren(...[...new Set(values.filter(Boolean).map(value => String(value).trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b, "fr")).map(value => { const option = document.createElement("option"); option.value = value; return option; }));
+}
+async function loadSuggestions() {
+  try {
+    const names = async (table, column = "name") => { const { data, error } = await client.from(table).select(column); if (error) throw error; return (data || []).map(row => row[column]); };
+    const [minerals, mines, localities, regions, departments, specimenRows] = await Promise.all([
+      names("minerals"), names("mines"), names("localities"), names("regions"), names("departments"),
+      client.from("specimens").select("country,site_type").then(({ data, error }) => { if (error) throw error; return data || []; })
+    ]);
+    fillDatalist("#dl-minerals", minerals); fillDatalist("#dl-mines", mines); fillDatalist("#dl-localities", localities);
+    fillDatalist("#dl-regions", regions); fillDatalist("#dl-departments", departments);
+    fillDatalist("#dl-countries", ["France", ...specimenRows.map(row => row.country)]);
+    const baseKeys = SITE_TYPES.map(([key]) => key);
+    knownCustomSiteTypes = specimenRows.map(row => row.site_type).filter(value => value && !baseKeys.includes(value));
+    const current = getSiteType();
+    if (siteTypeSelect.value !== OTHER) setSiteType(current);
+  } catch (error) {
+    console.error("Chargement des suggestions de saisie :", error);
+  }
 }
 
 function resetEditor(open = false) {
@@ -183,6 +239,7 @@ function resetEditor(open = false) {
   document.querySelector("#specimen-slug").value = "";
   document.querySelector("#editor-title").textContent = "Nouveau spécimen";
   document.querySelector("#delete-specimen").hidden = true;
+  setSiteType("");
   editingSpecimen = null;
   if (editorStatus) {
     editorStatus.textContent = "";
@@ -213,7 +270,7 @@ async function editSpecimen(id) {
     document.querySelector("#department").value = data.department_name ?? "";
     document.querySelector("#provenance").value = data.provenance || "";
     document.querySelector("#locality").value = data.locality_name ?? "";
-    document.querySelector("#site-type").value = data.site_type ?? "";
+    setSiteType(data.site_type);
     document.querySelector("#dimensions").value = data.dimensions || "";
     document.querySelector("#weight").value = data.weight_text ?? data.weight_grams ?? "";
     document.querySelector("#keywords").value = data.keywords || "";
@@ -516,6 +573,7 @@ async function saveSpecimen(event) {
   let slug = "";
   let saved;
   let unresolvedDepartment = false;
+  const created = [];
   try {
     message("Enregistrement…");
     id = document.querySelector("#specimen-id").value;
@@ -527,7 +585,7 @@ async function saveSpecimen(event) {
       department: document.querySelector("#department").value,
       locality: document.querySelector("#locality").value,
       provenance: document.querySelector("#provenance").value,
-      siteType: document.querySelector("#site-type").value,
+      siteType: getSiteType(),
       dimensions: document.querySelector("#dimensions").value,
       weight: document.querySelector("#weight").value,
       description: document.querySelector("#description").value,
@@ -581,6 +639,14 @@ async function saveSpecimen(event) {
     record.locality_id = record.locality_id ?? resolved.localityId;
     if (resolved.department) { record.department_code = resolved.department.code; record.department_name = resolved.department.name; }
     else if (values.department.trim() && !record.department_code) unresolvedDepartment = true;
+    // Chaque nom saisi devient une fiche de référentiel (créée si elle n'existe pas) : minéral, commune, gisement.
+    const track = result => { if (result?.created) created.push(result.name); return result; };
+    if (!record.mineral_id && values.mineral.trim()) record.mineral_id = track(await ensureNamed(client, "minerals", values.mineral))?.id ?? null;
+    if (!record.locality_id && values.locality.trim()) record.locality_id = track(await ensureNamed(client, "localities", values.locality, { department_code: record.department_code || null }))?.id ?? null;
+    const gisement = values.provenance.trim();
+    if (!gisement) record.mine_id = null;
+    else if (isUpdate && old.mine_id && !dirtyReferenceFields.has("provenance")) record.mine_id = old.mine_id;
+    else record.mine_id = track(await ensureNamed(client, "mines", gisement, { locality_id: record.locality_id || null }))?.id ?? null;
     if (isUpdate) {
       const result = await client.from("specimens").update(record).eq("id", id).select("id").single();
       if (result.error) throw result.error;
@@ -638,7 +704,7 @@ async function saveSpecimen(event) {
   }
   resetEditor(false);
   if (secondaryErrors.length) message(secondaryErrors.join(" "), true);
-  else message("Spécimen enregistré en base et liste actualisée.");
+  else message(`Spécimen enregistré en base et liste actualisée.${created.length ? ` Nouvelles fiches créées dans les référentiels : ${created.join(", ")}.` : ""}`);
   status.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 

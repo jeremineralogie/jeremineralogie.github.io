@@ -1,3 +1,5 @@
+import { ensureNamed, OTHER } from "./reference-resolver.js";
+
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
 const $ = (root, selector) => root.querySelector(selector);
@@ -8,7 +10,7 @@ const slugify = value => text(value).normalize("NFD").replace(/[\u0300-\u036f]/g
 const sections = [
   { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", fields: [
     { key: "reference", label: "Référence", required: true }, { key: "title", label: "Titre", required: true },
-    { key: "mineral_id", label: "Minéral", ref: "minerals", display: "name" }, { key: "provenance", label: "Provenance", notNull: true },
+    { key: "mineral_id", label: "Minéral", ref: "minerals", display: "name" }, { key: "provenance", label: "Provenance", notNull: true }, { key: "mine_id", label: "Gisement", ref: "mines", display: "name" },
     { key: "locality_id", label: "Localité", ref: "localities", display: "name" }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" },
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_grams", label: "Poids (g)", type: "number", step: "0.001" },
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "price_cents", label: "Prix (euros)", type: "number", step: "0.01", required: true, euros: true },
@@ -16,13 +18,13 @@ const sections = [
     { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }
   ] },
   { id: "articles", label: "Articles", table: "articles", title: "Articles", mediaTable: "article_media", foreignKey: "article_id", path: "articles", links: [["article_specimens", "specimen_id", "specimens"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_minerals", "mineral_id", "minerals"]], fields: [
-    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", options: [["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"], ["mines-histoire", "Mines & histoire"], ["decouvertes", "Découvertes"], ["identification", "Identification"], ["collection", "Collection"], ["pedagogie", "Pédagogie"]] },
+    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"], ["mines-histoire", "Mines & histoire"], ["decouvertes", "Découvertes"], ["identification", "Identification"], ["collection", "Collection"], ["pedagogie", "Pédagogie"]] },
     { key: "excerpt", label: "Résumé", type: "textarea", notNull: true }, { key: "body", label: "Contenu (un paragraphe par ligne vide)", type: "textarea", body: true, notNull: true },
     { key: "published_on", label: "Date de publication", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] },
     { key: "link_specimens", label: "Spécimens liés", ref: "specimens", display: "slug", multi: true }, { key: "link_mines", label: "Mines liées", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Localités liées", ref: "localities", display: "name", multi: true }, { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }
   ] },
   { id: "archives", label: "Archives & Documentation", table: "archive_documents", title: "Archives & Documentation", singleFile: true, path: "archives", links: [["archive_specimens", "specimen_id", "specimens"], ["archive_articles", "article_id", "articles"], ["archive_mines", "mine_id", "mines"], ["archive_localities", "locality_id", "localities"], ["archive_minerals", "mineral_id", "minerals"]], fields: [
-    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", options: [["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
+    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "document_date", label: "Date du document", type: "date" },
     { key: "rights_note", label: "Droits / crédit", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] },
     { key: "link_specimens", label: "Spécimens liés", ref: "specimens", display: "slug", multi: true }, { key: "link_articles", label: "Articles liés", ref: "articles", display: "title", multi: true }, { key: "link_mines", label: "Mines liées", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Localités liées", ref: "localities", display: "name", multi: true }, { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }
@@ -52,6 +54,11 @@ let activeGroupId = null;
 let activeViewId = null;
 let viewMode = "both";
 let openToken = 0;
+let pendingLinkExtras = {};
+let createdNames = [];
+// Listes dont la valeur « Autre » crée une nouvelle fiche (ou une nouvelle catégorie) enregistrée pour les saisies suivantes.
+const CREATABLE_REFS = ["minerals", "mines", "localities", "regions"];
+const allowsOther = field => (field.ref && CREATABLE_REFS.includes(field.ref)) || Boolean(field.customOptions);
 
 // Navigation : chaque groupe = une section principale ; chaque vue = un sous-onglet.
 // mode « add » = formulaire seul, « list » = liste seule, « both » = liste + formulaire (référentiels).
@@ -252,7 +259,13 @@ function createField(field, value) {
     }
   } else if (field.options) {
     input = document.createElement("select");
+    const known = new Set(field.options.map(([key]) => key));
     field.options.forEach(([key, labelText]) => { const option = document.createElement("option"); option.value = key; option.textContent = labelText; input.append(option); });
+    if (field.customOptions) {
+      const custom = new Set(records.map(record => record[field.key]).filter(item => item && !known.has(item)));
+      if (value && !known.has(value)) custom.add(value);
+      [...custom].sort((x, y) => x.localeCompare(y, "fr")).forEach(item => { const option = document.createElement("option"); option.value = item; option.textContent = item; input.append(option); });
+    }
   } else if (field.type === "textarea") input = document.createElement("textarea");
   else if (field.type === "checkbox") input = document.createElement("input");
   else input = document.createElement("input");
@@ -263,7 +276,14 @@ function createField(field, value) {
   if (field.type === "checkbox") input.checked = Boolean(value);
   else if (value != null && value !== "") input.value = field.body ? bodyToText(value) : field.key === "value" ? JSON.stringify(value, null, 2) : field.euros ? (Number(value) / 100).toFixed(2) : field.array && Array.isArray(value) ? value.join(", ") : String(value);
   label.htmlFor = `content-${field.key}`; input.id = label.htmlFor; input.name = field.key;
+  if (allowsOther(field) && !field.multi) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "Autre (saisir une valeur)…"; input.append(other); }
   wrapper.append(input);
+  if (allowsOther(field)) {
+    const box = document.createElement("input"); box.type = "text"; box.name = `${field.key}__other`; box.id = `content-${field.key}__other`;
+    if (field.multi) { box.placeholder = "Autres, séparés par des virgules (créés automatiquement)"; }
+    else { box.hidden = true; box.placeholder = "Saisir la nouvelle valeur"; input.addEventListener("change", () => { box.hidden = input.value !== OTHER; if (!box.hidden) box.focus(); }); }
+    wrapper.append(box);
+  }
   return wrapper;
 }
 
@@ -351,6 +371,7 @@ async function selectRecord(record) {
 async function saveRecord(form) {
   const section = activeSection;
   let databaseSaved = false;
+  pendingLinkExtras = {}; createdNames = [];
   report("Enregistrement…");
   try {
     const record = {};
@@ -358,13 +379,23 @@ async function saveRecord(form) {
       const input = form.elements.namedItem(field.key);
       if (!input) throw new Error(`Le champ « ${field.label} » est introuvable dans le formulaire.`);
       let value = field.type === "checkbox" ? input.checked : field.multi ? [...input.selectedOptions].map(option => option.value) : text(input.value);
+      if (!field.multi && value === OTHER) {
+        const typed = text(form.elements.namedItem(`${field.key}__other`)?.value);
+        if (field.ref) value = typed ? String(await ensureRef(field.ref, typed)) : "";
+        else value = typed;
+      }
       if (field.required && !value && value !== 0 && value !== false) throw new Error(`Le champ « ${field.label} » est requis par le schéma actuel.`);
       if (field.euros && value !== "") { const amount = Number(value); if (!Number.isFinite(amount) || amount < 0) throw new Error("Le prix doit être un nombre positif ou nul."); value = Math.round(amount * 100); }
       else if (field.type === "number" && value !== "") { value = Number(value); if (!Number.isFinite(value)) throw new Error(`Valeur numérique invalide pour « ${field.label} ».`); }
       if (field.body) value = value ? value.split(/\n\s*\n/).map(paragraph => ({ type: "paragraph", text: paragraph.trim() })).filter(block => block.text) : [];
       if (field.array) value = value ? value.split(",").map(part => part.trim()).filter(Boolean) : [];
       if (field.key === "value") { try { value = value ? JSON.parse(value) : {}; } catch { throw new Error("La valeur du paramètre doit être du JSON valide."); } }
-      if (field.multi) continue;
+      if (field.multi) {
+        const typedList = text(form.elements.namedItem(`${field.key}__other`)?.value).split(",").map(part => part.trim()).filter(Boolean);
+        pendingLinkExtras[field.key] = [];
+        for (const typed of typedList) pendingLinkExtras[field.key].push(String(await ensureRef(field.ref, typed)));
+        continue;
+      }
       record[field.key] = value === "" ? (field.notNull ? "" : field.key === "value" ? {} : null) : value;
     }
     if (section.id === "settings") {
@@ -376,6 +407,10 @@ async function saveRecord(form) {
       const current = selectedRecord;
       if (["regions", "localities", "mines", "minerals"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.name, section.table);
       if (["shop", "articles", "archives"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.title, section.table);
+      if (section.id === "shop" && !record.mine_id && record.provenance) {
+        const mine = await ensureNamed(client, "mines", record.provenance, { locality_id: record.locality_id || null });
+        if (mine) { record.mine_id = mine.id; if (mine.created) createdNames.push(mine.name); }
+      }
       if (section.id === "shop" && record.price_cents == null) throw new Error("Le schéma de la boutique exige un prix (0 est accepté).");
       let saved;
       if (current?.id || current?.code) {
@@ -393,11 +428,18 @@ async function saveRecord(form) {
       if (section.mediaTable && current && current.publication_status !== saved.publication_status) await syncMedia(saved);
       report("Contenu enregistré. Rechargement de la liste…");
     }
-    await loadRecords(); selectedRecord = null; clearNewMediaSelection(); setListMode(); renderWorkspace(); report("Enregistrement terminé. La liste est à jour.");
+    await loadReferences(section); await loadRecords(); selectedRecord = null; clearNewMediaSelection(); setListMode(); renderWorkspace();
+    report(`Enregistrement terminé. La liste est à jour.${createdNames.length ? ` Nouvelles valeurs ajoutées aux listes : ${createdNames.join(", ")}.` : ""}`);
   } catch (error) {
     console.error(`Échec enregistrement CMS ${section.id}:`, error);
     report(`${databaseSaved ? "Le contenu principal est enregistré en base, mais une opération secondaire a échoué" : "Enregistrement impossible"} : ${errorText(error)}`, true);
   }
+}
+
+async function ensureRef(table, name) {
+  const result = await ensureNamed(client, table, name);
+  if (result.created) createdNames.push(result.name);
+  return result.id;
 }
 
 async function saveLinks(parent, form) {
@@ -407,7 +449,7 @@ async function saveLinks(parent, form) {
     const fieldKey = `link_${table.replace(isArticle ? "article_" : "archive_", "")}`;
     const linkField = form.elements.namedItem(fieldKey);
     if (!linkField) throw new Error(`Le champ de relations « ${fieldKey} » est introuvable.`);
-    const desired = [...linkField.selectedOptions].map(option => option.value);
+    const desired = [...new Set([...[...linkField.selectedOptions].map(option => option.value), ...(pendingLinkExtras[fieldKey] || [])])];
     const { data: current, error: readError } = await client.from(table).select(column).eq(ownerColumn, parent.id);
     if (readError) throw readError;
     const currentIds = (current || []).map(row => String(row[column]));

@@ -1,5 +1,6 @@
 import { getSupabase } from "./supabase-client.js";
-import { normalizeName } from "./reference-resolver.js";
+import { normalizeName, categoryLabel } from "./reference-resolver.js";
+import { ficheUrl } from "./entity-links.js";
 
 const query = (new URLSearchParams(location.search).get("q") || "").trim();
 const status = document.querySelector("#search-status");
@@ -11,17 +12,17 @@ const sources = [
   { type: "Spécimen", table: "specimens", select: "slug,mineral_name,provenance,locality_name,department_name,country,keywords,description,mineral:minerals!specimens_mineral_id_fkey(name)",
     map: r => ({ title: r.mineral_name ?? r.mineral?.name ?? "Spécimen", meta: [r.provenance, r.locality_name, r.department_name].filter(Boolean).join(" · "), href: `specimen.html?id=${encodeURIComponent(r.slug)}`, haystack: [r.mineral_name, r.mineral?.name, r.provenance, r.locality_name, r.department_name, r.country, r.keywords, r.description] }) },
   { type: "Boutique", table: "shop_items", select: "reference,title,provenance,description", filter: q => q.eq("sale_status", "available"),
-    map: r => ({ title: r.title, meta: [r.reference, r.provenance].filter(Boolean).join(" · "), href: "boutique.html", haystack: [r.reference, r.title, r.provenance, r.description] }) },
-  { type: "Article", table: "articles", select: "title,excerpt,category",
-    map: r => ({ title: r.title, meta: r.category.replaceAll("-", " "), href: "articles.html", haystack: [r.title, r.excerpt, r.category] }) },
-  { type: "Archive", table: "archive_documents", select: "title,description,category",
-    map: r => ({ title: r.title, meta: r.category.replaceAll("-", " "), href: "archives.html", haystack: [r.title, r.description, r.category] }) },
-  { type: "Mine / gisement", table: "mines", select: "name,description,locality:localities(department_code)",
-    map: r => ({ title: r.name, meta: "", href: r.locality?.department_code ? `departement.html?dep=${encodeURIComponent(r.locality.department_code)}` : "", haystack: [r.name, r.description] }) },
-  { type: "Localité", table: "localities", select: "name,department_code,notes",
-    map: r => ({ title: r.name, meta: r.department_code || "", href: r.department_code ? `departement.html?dep=${encodeURIComponent(r.department_code)}` : "", haystack: [r.name, r.notes] }) },
-  { type: "Minéral", table: "minerals", select: "name,formula",
-    map: r => ({ title: r.name, meta: r.formula || "", href: `collection.html?mineral=${encodeURIComponent(r.name)}`, haystack: [r.name, r.formula] }) },
+    map: r => ({ title: r.title, meta: [r.reference, r.provenance].filter(Boolean).join(" · "), href: `boutique.html#${encodeURIComponent(r.reference)}`, haystack: [r.reference, r.title, r.provenance, r.description] }) },
+  { type: "Article", table: "articles", select: "slug,title,excerpt,category",
+    map: r => ({ title: r.title, meta: categoryLabel(r.category), href: `articles.html#${encodeURIComponent(r.slug)}`, haystack: [r.title, r.excerpt, r.category] }) },
+  { type: "Archive", table: "archive_documents", select: "slug,title,description,category",
+    map: r => ({ title: r.title, meta: categoryLabel(r.category), href: `archives.html#${encodeURIComponent(r.slug)}`, haystack: [r.title, r.description, r.category] }) },
+  { type: "Mine / gisement", table: "mines", select: "name,slug,description,locality:localities(department_code)",
+    map: r => ({ title: r.name, meta: "", href: ficheUrl("mine", r.slug), haystack: [r.name, r.description] }) },
+  { type: "Localité", table: "localities", select: "name,slug,department_code,notes",
+    map: r => ({ title: r.name, meta: r.department_code || "", href: ficheUrl("locality", r.slug), haystack: [r.name, r.notes] }) },
+  { type: "Minéral", table: "minerals", select: "name,slug,formula",
+    map: r => ({ title: r.name, meta: r.formula || "", href: ficheUrl("mineral", r.slug), haystack: [r.name, r.formula] }) },
   { type: "Département", table: "departments", select: "code,name",
     map: r => ({ title: `${r.name} (${r.code})`, meta: "", href: `departement.html?dep=${encodeURIComponent(r.code)}`, haystack: [r.name, r.code] }) },
   { type: "Région", table: "regions", select: "name",
