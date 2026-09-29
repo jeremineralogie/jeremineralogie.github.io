@@ -31,6 +31,12 @@ function message(text, isError = false) {
   status.hidden = false;
 }
 
+function describeError(error) {
+  if (!error) return "Erreur inconnue.";
+  return [error.message, error.code && `Code : ${error.code}`, error.details, error.hint && `Indication : ${error.hint}`]
+    .filter(Boolean).join(" — ");
+}
+
 if (!client) {
   message("Configuration Supabase absente : renseignez l’URL et la clé publique dans assets/js/supabase-config.js.", true);
 } else {
@@ -88,7 +94,7 @@ async function loadDashboard() {
   ]);
   const failedResult = [mineralResult, specimenResult, regionResult, departmentResult].find(result => result.error);
   if (failedResult) {
-    message(failedResult.error.message, true);
+    message(describeError(failedResult.error), true);
     return false;
   }
   minerals = mineralResult.data || [];
@@ -137,38 +143,72 @@ function resetEditor(open = false) {
 async function editSpecimen(id) {
   resetEditor(false);
   const loadVersion = editorLoadVersion;
-  const { data, error } = await client.from("specimens").select("*,specimen_media(*)").eq("id", id).single();
-  if (loadVersion !== editorLoadVersion) return;
-  if (error) return message(error.message, true);
-  editingSpecimen = data;
-  document.querySelector("#specimen-id").value = data.id;
-  document.querySelector("#specimen-slug").value = data.slug;
-  mineralInput.value = minerals.find(mineral => mineral.id === data.mineral_id)?.name || "";
-  document.querySelector("#country").value = data.country || "";
-  const department = departments.find(item => item.code === data.department_code);
-  document.querySelector("#region").value = regions.find(item => item.id === department?.region_id)?.name || "";
-  document.querySelector("#department").value = department?.name || data.department_code || "";
-  document.querySelector("#provenance").value = data.provenance || "";
-  const localityName = data.locality_id ? await getLocalityName(data.locality_id) : "";
-  if (loadVersion !== editorLoadVersion) return;
-  document.querySelector("#locality").value = localityName;
-  document.querySelector("#site-type").value = data.site_type || "";
-  document.querySelector("#dimensions").value = data.dimensions || "";
-  document.querySelector("#weight").value = data.weight_grams ?? "";
-  document.querySelector("#keywords").value = data.keywords || "";
-  document.querySelector("#specimen-date").value = formatSpecimenDate(data.discovered_on, data.discovery_year, data.discovery_month);
-  document.querySelector("#description").value = data.description || "";
-  document.querySelector("#publication-status").value = data.publication_status;
-  media = [...(data.specimen_media || [])];
-  renderMedia();
-  document.querySelector("#editor-title").textContent = "Modifier le spécimen";
-  document.querySelector("#delete-specimen").hidden = false;
-  editor.hidden = false;
-  editor.scrollIntoView({ behavior: "smooth", block: "start" });
+  message("Chargement du spécimen…");
+  try {
+    const { data, error } = await client.from("specimens").select("*").eq("id", id).single();
+    if (loadVersion !== editorLoadVersion) return;
+    if (error) throw error;
+    if (!data) throw new Error("La fiche demandée est introuvable.");
+
+    editingSpecimen = data;
+    document.querySelector("#specimen-id").value = data.id;
+    document.querySelector("#specimen-slug").value = data.slug;
+    mineralInput.value = minerals.find(mineral => mineral.id === data.mineral_id)?.name || "";
+    document.querySelector("#country").value = data.country || "";
+    const department = departments.find(item => item.code === data.department_code);
+    document.querySelector("#region").value = regions.find(item => item.id === department?.region_id)?.name || "";
+    document.querySelector("#department").value = department?.name || data.department_code || "";
+    document.querySelector("#provenance").value = data.provenance || "";
+    document.querySelector("#locality").value = "";
+    document.querySelector("#site-type").value = data.site_type || "";
+    document.querySelector("#dimensions").value = data.dimensions || "";
+    document.querySelector("#weight").value = data.weight_grams ?? "";
+    document.querySelector("#keywords").value = data.keywords || "";
+    document.querySelector("#specimen-date").value = formatSpecimenDate(data.discovered_on, data.discovery_year, data.discovery_month);
+    document.querySelector("#description").value = data.description || "";
+    document.querySelector("#publication-status").value = data.publication_status;
+    media = [];
+    document.querySelector("#editor-title").textContent = "Modifier le spécimen";
+    document.querySelector("#delete-specimen").hidden = false;
+    editor.hidden = false;
+    editor.scrollIntoView({ behavior: "smooth", block: "start" });
+    message("Fiche chargée. Chargement de la commune et des photos…");
+
+    const secondaryErrors = [];
+    if (data.locality_id) {
+      try {
+        const localityName = await getLocalityName(data.locality_id);
+        if (loadVersion !== editorLoadVersion) return;
+        document.querySelector("#locality").value = localityName;
+      } catch (localityError) {
+        secondaryErrors.push(`Commune non chargée : ${describeError(localityError)}`);
+      }
+    }
+    if (loadVersion !== editorLoadVersion) return;
+
+    try {
+      const { data: specimenMedia, error: mediaError } = await client.from("specimen_media")
+        .select("*").eq("specimen_id", data.id).order("position", { ascending: true });
+      if (mediaError) throw mediaError;
+      if (loadVersion !== editorLoadVersion) return;
+      media = specimenMedia || [];
+      await renderMedia();
+    } catch (mediaError) {
+      secondaryErrors.push(`Photos non chargées : ${describeError(mediaError)}`);
+    }
+    if (loadVersion !== editorLoadVersion) return;
+    if (secondaryErrors.length) message(`Fiche modifiable. ${secondaryErrors.join(" ")}`, true);
+    else message("Fiche chargée et prête à être modifiée.");
+  } catch (error) {
+    if (loadVersion !== editorLoadVersion) return;
+    console.error("Chargement de la fiche spécimen :", error);
+    message(`Impossible de charger la fiche : ${describeError(error)}`, true);
+  }
 }
 
 async function getLocalityName(id) {
-  const { data } = await client.from("localities").select("name").eq("id", id).maybeSingle();
+  const { data, error } = await client.from("localities").select("name").eq("id", id).maybeSingle();
+  if (error) throw error;
   return data?.name || "";
 }
 
@@ -185,7 +225,8 @@ async function renderMedia() {
     if (item.bucket_id === "site-media-public") {
       image.src = client.storage.from(item.bucket_id).getPublicUrl(item.storage_path).data.publicUrl;
     } else {
-      const { data } = await client.storage.from(item.bucket_id).createSignedUrl(item.storage_path, 300);
+      const { data, error } = await client.storage.from(item.bucket_id).createSignedUrl(item.storage_path, 300);
+      if (error) throw error;
       if (renderVersion !== mediaRenderVersion) return;
       if (data) image.src = data.signedUrl;
     }
