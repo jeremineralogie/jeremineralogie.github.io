@@ -1,4 +1,5 @@
 import { getSupabase } from "./supabase-client.js";
+import { resolveReferences } from "./reference-resolver.js";
 
 const status = document.querySelector("#admin-status");
 const editorStatus = document.querySelector("#specimen-status");
@@ -459,6 +460,7 @@ async function saveSpecimen(event) {
   let id = "";
   let slug = "";
   let saved;
+  let unresolvedDepartment = false;
   try {
     message("Enregistrement…");
     id = document.querySelector("#specimen-id").value;
@@ -518,6 +520,12 @@ async function saveSpecimen(event) {
       description: values.description,
       publication_status: document.querySelector("#publication-status").value
     };
+    const resolved = await resolveReferences(client, values);
+    record.mineral_id = record.mineral_id ?? resolved.mineralId;
+    record.region_id = record.region_id ?? resolved.regionId;
+    record.locality_id = record.locality_id ?? resolved.localityId;
+    if (resolved.department) { record.department_code = resolved.department.code; record.department_name = resolved.department.name; }
+    else if (values.department.trim() && !record.department_code) unresolvedDepartment = true;
     if (isUpdate) {
       const result = await client.from("specimens").update(record).eq("id", id).select("id").single();
       if (result.error) throw result.error;
@@ -541,6 +549,7 @@ async function saveSpecimen(event) {
 
   message("Spécimen enregistré en base.");
   const secondaryErrors = [];
+  if (unresolvedDepartment) secondaryErrors.push("Département non reconnu dans le référentiel : la fiche est enregistrée, mais sans lien vers la page département (saisissez le nom exact ou le code, ex. « Puy-de-Dôme » ou « 63 »).");
   if (id && editingSpecimen?.publication_status !== document.querySelector("#publication-status").value) {
     try {
       const targetBucket = document.querySelector("#publication-status").value === "published" ? "site-media-public" : "admin-staging";

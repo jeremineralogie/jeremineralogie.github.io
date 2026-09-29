@@ -13,6 +13,8 @@ let specimens = [];
 let refreshInProgress = false;
 let refreshQueued = false;
 let pollingFallback = null;
+let presetsApplied = false;
+const presets = new URLSearchParams(location.search);
 
 function renderFilters() {
   filters.forEach(filter => {
@@ -64,6 +66,14 @@ async function refreshCollection() {
   try {
     specimens = await listPublishedSpecimens();
     renderFilters();
+    if (!presetsApplied) {
+      presetsApplied = true;
+      filters.forEach(filter => {
+        const wanted = normalize(presets.get(filter.dataset.filter));
+        const option = wanted && [...filter.options].find(item => normalize(item.value) === wanted);
+        if (option) filter.value = option.value;
+      });
+    }
     renderCollection();
     status.textContent = "Collection synchronisée avec Supabase.";
   } catch (error) {

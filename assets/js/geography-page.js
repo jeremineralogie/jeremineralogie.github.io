@@ -9,8 +9,21 @@ function section(title, entries) {
   const block = document.createElement("div");
   const heading = document.createElement("h3"); heading.textContent = title; block.append(heading);
   if (!entries.length) line(block, "Aucune donnée publiée.");
-  else { const list = document.createElement("ul"); entries.forEach(entry => { const li = document.createElement("li"); li.textContent = entry.name; list.append(li); }); block.append(list); }
+  else {
+    const list = document.createElement("ul");
+    entries.forEach(entry => {
+      const li = document.createElement("li");
+      if (entry.href) { const a = document.createElement("a"); a.className = "link"; a.href = entry.href; a.textContent = entry.name; li.append(a); }
+      else li.textContent = entry.name;
+      list.append(li);
+    });
+    block.append(list);
+  }
   content.append(block);
+}
+// Chaque bloc secondaire échoue indépendamment : une table indisponible ne vide pas la page.
+async function safely(label, task) {
+  try { return await task(); } catch (error) { console.error(`Département ${code} — ${label} :`, error); return null; }
 }
 
 async function loadDirectory() {
@@ -23,18 +36,12 @@ async function loadDirectory() {
   const regionById = new Map((regions || []).map(region => [region.id, region.name]));
   document.querySelector("#supabase-region-index")?.remove();
   document.querySelector("#supabase-department-index")?.remove();
-  if (regions?.length) {
-    const regionBox = document.createElement("section"); regionBox.id = "supabase-region-index"; regionBox.className = "department-region";
-    const regionHeading = document.createElement("h2"); regionHeading.textContent = "Régions du référentiel"; regionBox.append(regionHeading);
-    const regionList = document.createElement("div"); regionList.className = "department-list";
-    regions.forEach(region => { const item = document.createElement("span"); item.textContent = region.name; regionList.append(item); });
-    regionBox.append(regionList); document.querySelector(".department-regions").prepend(regionBox);
-  }
   const known = new Set();
   document.querySelectorAll("[data-department]").forEach(link => {
     const row = departments?.find(department => department.code === link.dataset.department);
     if (row) { link.textContent = `${row.name} (${row.code})`; known.add(row.code); }
   });
+  // Départements du référentiel absents de la liste statique (la liste statique reste la référence d'affichage).
   const extra = (departments || []).filter(department => !known.has(department.code));
   if (extra.length) {
     const group = document.createElement("section"); group.id = "supabase-department-index"; group.className = "department-region";
@@ -44,6 +51,7 @@ async function loadDirectory() {
     document.querySelector(".department-regions").prepend(group); group.append(list);
   }
   if (code) {
+    document.querySelectorAll("[data-department]").forEach(link => link.classList.toggle("active", link.dataset.department === code));
     const selected = (departments || []).find(department => department.code === code);
     if (selected) {
       const detail = document.querySelector("#department-detail"); detail.replaceChildren();
@@ -59,23 +67,71 @@ async function loadDirectory() {
 async function loadDepartment() {
   if (!code) return;
   content.hidden = false;
+  if (!client) throw new Error("La connexion à Supabase n’est pas configurée.");
+  const sections = [];
+  const localities = await safely("localités", async () => {
+    const { data, error } = await client.from("localities").select("id,name,slug,department_code").eq("department_code", code).eq("publication_status", "published").order("name");
+    if (error) throw error; return data || [];
+  }) || [];
+  const ids = localities.map(row => row.id);
+  const mines = ids.length ? await safely("mines", async () => {
+    const { data, error } = await client.from("mines").select("id,name,slug,locality_id").in("locality_id", ids).eq("publication_status", "published").order("name");
+    if (error) throw error; return data || [];
+  }) || [] : [];
+  const minerals = await safely("minéraux", async () => {
+    const { data: occurrences, error } = await client.from("mineral_occurrences").select("mineral_id").eq("department_code", code);
+    if (error) throw error;
+    const mineralIds = [...new Set((occurrences || []).map(item => item.mineral_id))];
+    if (!mineralIds.length) return [];
+    const { data, error: mineralError } = await client.from("minerals").select("id,name,slug").in("id", mineralIds).eq("publication_status", "published").order("name");
+    if (mineralError) throw mineralError; return data || [];
+  }) || [];
+  const specimens = await safely("collection", async () => {
+    const { data, error } = await client.from("specimens").select("slug,mineral_name,provenance,locality_name,mineral:minerals!specimens_mineral_id_fkey(name)")
+      .eq("department_code", code).eq("publication_status", "published").order("created_at", { ascending: false });
+    if (error) throw error;
+    return (data || []).map(row => ({ name: [row.mineral_name ?? row.mineral?.name ?? "Spécimen", row.provenance, row.locality_name].filter(Boolean).join(" — "), href: `specimen.html?id=${encodeURIComponent(row.slug)}` }));
+  }) || [];
+  const shop = await safely("boutique", async () => {
+    const { data, error } = await client.from("shop_items").select("reference,title").eq("department_code", code).eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });
+    if (error) throw error;
+    return (data || []).map(row => ({ name: `${row.title} (${row.reference})`, href: `contact.html?reference=${encodeURIComponent(row.reference)}` }));
+  }) || [];
+  const archives = await safely("archives", async () => {
+    const links = [];
+    if (ids.length) {
+      const { data, error } = await client.from("archive_localities").select("archive:archive_documents(id,title)").in("locality_id", ids);
+      if (error) throw error; links.push(...(data || []));
+    }
+    if (mines.length) {
+      const { data, error } = await client.from("archive_mines").select("archive:archive_documents(id,title)").in("mine_id", mines.map(mine => mine.id));
+      if (error) throw error; links.push(...(data || []));
+    }
+    const seen = new Map(); links.forEach(link => { if (link.archive) seen.set(link.archive.id, link.archive); });
+    return [...seen.values()].map(archive => ({ name: archive.title, href: "archives.html" }));
+  }) || [];
+  const articles = await safely("articles", async () => {
+    const links = [];
+    if (ids.length) {
+      const { data, error } = await client.from("article_localities").select("article:articles(id,title)").in("locality_id", ids);
+      if (error) throw error; links.push(...(data || []));
+    }
+    if (mines.length) {
+      const { data, error } = await client.from("article_mines").select("article:articles(id,title)").in("mine_id", mines.map(mine => mine.id));
+      if (error) throw error; links.push(...(data || []));
+    }
+    const seen = new Map(); links.forEach(link => { if (link.article) seen.set(link.article.id, link.article); });
+    return [...seen.values()].map(article => ({ name: article.title, href: "articles.html" }));
+  }) || [];
   content.replaceChildren();
   const heading = document.createElement("h2"); heading.textContent = "Données publiées du référentiel"; content.append(heading);
-  if (!client) throw new Error("La connexion à Supabase n’est pas configurée.");
-  const { data: localities, error: localityError } = await client.from("localities").select("id,name,slug,department_code")
-    .eq("department_code", code).eq("publication_status", "published").order("name");
-  if (localityError) throw localityError;
-  const ids = (localities || []).map(row => row.id);
-  let mines = [];
-  if (ids.length) { const { data, error } = await client.from("mines").select("name,slug,locality_id").in("locality_id", ids).eq("publication_status", "published").order("name"); if (error) throw error; mines = data || []; }
-  const { data: occurrences, error: occurrenceError } = await client.from("mineral_occurrences").select("mineral_id,locality_id,source_note").eq("department_code", code);
-  if (occurrenceError) throw occurrenceError;
-  const mineralIds = [...new Set((occurrences || []).map(item => item.mineral_id))];
-  let minerals = [];
-  if (mineralIds.length) { const { data, error } = await client.from("minerals").select("id,name,slug").in("id", mineralIds).eq("publication_status", "published").order("name"); if (error) throw error; minerals = data || []; }
-  section("Localités publiées", localities || []);
+  section("Spécimens de ma collection", specimens);
+  section("Pièces disponibles en boutique", shop);
+  section("Localités publiées", localities);
   section("Mines et gisements publiés", mines);
   section("Minéraux documentés", minerals);
+  section("Archives et documents associés", archives);
+  section("Articles associés", articles);
 }
 
 async function refresh() {
@@ -84,15 +140,12 @@ async function refresh() {
 }
 await refresh();
 if (client) {
-  const queue = () => void refresh();
-  const channel = client.channel("public-geography")
-    .on("postgres_changes", { event: "*", schema: "public", table: "regions" }, queue)
-    .on("postgres_changes", { event: "*", schema: "public", table: "departments" }, queue)
-    .on("postgres_changes", { event: "*", schema: "public", table: "localities" }, queue)
-    .on("postgres_changes", { event: "*", schema: "public", table: "mines" }, queue)
-    .on("postgres_changes", { event: "*", schema: "public", table: "minerals" }, queue)
-    .on("postgres_changes", { event: "*", schema: "public", table: "mineral_occurrences" }, queue)
-    .subscribe();
+  let queued = false;
+  const queue = () => { if (queued) return; queued = true; setTimeout(() => { queued = false; void refresh(); }, 300); };
+  const channel = client.channel("public-geography");
+  ["regions", "departments", "localities", "mines", "minerals", "mineral_occurrences", "specimens", "shop_items"]
+    .forEach(table => channel.on("postgres_changes", { event: "*", schema: "public", table }, queue));
+  channel.subscribe();
   const timer = setInterval(queue, 60000);
   window.addEventListener("pagehide", () => { clearInterval(timer); void client.removeChannel(channel); }, { once: true });
 }
