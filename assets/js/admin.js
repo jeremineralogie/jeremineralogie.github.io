@@ -224,29 +224,32 @@ function renderSelectedPhotoPreviews() {
 
 async function saveSpecimen(event) {
   event.preventDefault();
-  if (!mineralInput.value.trim()) {
-    clearSelectedPhotoPreviews(true);
-    return message("Saisissez le nom du minéral.", true);
-  }
-  const id = document.querySelector("#specimen-id").value;
-  const isNewSpecimen = !id;
-  let slug = document.querySelector("#specimen-slug").value.trim();
-  const localityName = document.querySelector("#locality").value.trim();
-  const regionName = document.querySelector("#region").value.trim();
-  const departmentName = document.querySelector("#department").value.trim();
-  const siteType = document.querySelector("#site-type").value;
-  let specimenDate;
-  try {
-    specimenDate = parseSpecimenDate(document.querySelector("#specimen-date").value);
-  } catch (error) {
-    clearSelectedPhotoPreviews(true);
-    return message(error.message, true);
-  }
-  message("Enregistrement…");
+  let id = "";
+  let isNewSpecimen = true;
+  let slug = "";
   let savedSpecimenId = null;
   let specimenSaved = false;
   let previousRecord = null;
   try {
+    message("Enregistrement…");
+    if (!form.checkValidity()) {
+      const invalidField = form.querySelector(":invalid");
+      const fieldLabel = invalidField?.labels?.[0]?.textContent.trim() || invalidField?.id || "Un champ";
+      const reason = invalidField?.validationMessage || "vérifiez sa valeur.";
+      invalidField?.focus();
+      throw new Error(`${fieldLabel} : ${reason}`);
+    }
+    if (!mineralInput.value.trim()) throw new Error("Saisissez le nom du minéral.");
+
+    id = document.querySelector("#specimen-id").value;
+    isNewSpecimen = !id;
+    slug = document.querySelector("#specimen-slug").value.trim();
+    const localityName = document.querySelector("#locality").value.trim();
+    const regionName = document.querySelector("#region").value.trim();
+    const departmentName = document.querySelector("#department").value.trim();
+    const siteType = document.querySelector("#site-type").value;
+    const specimenDate = parseSpecimenDate(document.querySelector("#specimen-date").value);
+
     const region = regionName ? regions.find(item => normalizeGeographicName(item.name) === normalizeGeographicName(regionName)) : null;
     if (regionName && !region) throw new Error("Choisissez une région existante dans la liste.");
     const department = departmentName ? departments.find(item =>
@@ -320,7 +323,11 @@ async function saveSpecimen(event) {
     } catch (cleanupError) {
       cleanupErrors.push(`Le nettoyage après échec a rencontré une erreur (${cleanupError.message}).`);
     }
-    clearSelectedPhotoPreviews(true);
+    try {
+      clearSelectedPhotoPreviews(true);
+    } catch (cleanupError) {
+      cleanupErrors.push(`Le nettoyage des prévisualisations a échoué (${cleanupError.message}).`);
+    }
     const details = [error.message || "Enregistrement impossible.", ...cleanupErrors].join(" ");
     message(details, true);
   }

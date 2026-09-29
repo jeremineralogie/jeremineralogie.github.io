@@ -28,7 +28,7 @@
         <section class="admin-panel"><h3>Spécimens enregistrés</h3><div id="specimen-list" class="admin-list"></div></section>
         <section class="admin-panel" id="editor-panel" hidden>
           <h3 id="editor-title">Nouveau spécimen</h3>
-          <form id="specimen-form">
+          <form id="specimen-form" novalidate>
             <input id="specimen-id" type="hidden">
             <label for="mineral-name">Minéral</label><input id="mineral-name" type="text" list="mineral-options" autocomplete="off" required><datalist id="mineral-options"></datalist>
             <label for="country">Pays</label><input id="country" type="text" autocomplete="country-name">
