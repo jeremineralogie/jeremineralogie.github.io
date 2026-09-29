@@ -1,9 +1,10 @@
 import { getSupabase } from "./supabase-client.js";
 
 const specimenSelect = [
-  "id", "slug", "provenance", "department_code", "dimensions", "weight_grams",
+  "id", "slug", "provenance", "department_code", "region_id", "dimensions", "weight_grams",
   "description", "history", "discovered_on", "discovery_year", "discovery_month",
   "mineral:minerals!specimens_mineral_id_fkey(name)",
+  "specimenRegion:regions!specimens_region_id_fkey(name)",
   "department:departments!specimens_department_code_fkey(name,region:regions!departments_region_id_fkey(name))",
   "locality:localities!specimens_locality_id_fkey(name)",
   "associations:specimen_associations(mineral:minerals(name))",
@@ -19,7 +20,7 @@ function mapSpecimen(client, row) {
   return {
     id: row.slug, mineral: row.mineral?.name || "", provenance: row.provenance || "",
     locality: row.locality?.name || "", department: row.department?.name || "", departmentCode: row.department_code || "",
-    region: row.department?.region?.name || "", dimensions: row.dimensions || "",
+    region: row.specimenRegion?.name || row.department?.region?.name || "", dimensions: row.dimensions || "",
     weight: row.weight_grams == null ? "" : row.weight_grams + " g",
     associations: (row.associations || []).map(item => item.mineral?.name).filter(Boolean),
     description: row.description || "", history: row.history || "",

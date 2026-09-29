@@ -168,7 +168,8 @@ async function editSpecimen(id) {
     mineralInput.value = minerals.find(mineral => mineral.id === data.mineral_id)?.name || "";
     document.querySelector("#country").value = data.country || "";
     const department = departments.find(item => item.code === data.department_code);
-    document.querySelector("#region").value = regions.find(item => item.id === department?.region_id)?.name || "";
+    const specimenRegion = regions.find(item => item.id === data.region_id) || regions.find(item => item.id === department?.region_id);
+    document.querySelector("#region").value = specimenRegion?.name || "";
     document.querySelector("#department").value = department?.name || data.department_code || "";
     document.querySelector("#provenance").value = data.provenance || "";
     document.querySelector("#locality").value = "";
@@ -232,9 +233,26 @@ async function renderMedia() {
     .sort((a, b) => a.position - b.position);
   existingPhotoGroup.hidden = currentMedia.length === 0;
   for (const item of currentMedia) {
+    const card = document.createElement("div");
+    card.className = "admin-photo-item";
     const image = document.createElement("img");
     image.alt = item.alt_text || "Photo du spécimen";
-    existingPhotoPreview.append(image);
+    card.append(image);
+    const actions = document.createElement("div");
+    actions.className = "admin-photo-actions";
+    const replaceButton = document.createElement("button");
+    replaceButton.type = "button";
+    replaceButton.className = "admin-secondary";
+    replaceButton.textContent = "Remplacer";
+    replaceButton.addEventListener("click", () => chooseReplacementPhoto(item));
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "admin-danger";
+    deleteButton.textContent = "Supprimer";
+    deleteButton.addEventListener("click", () => void deleteSpecimenPhoto(item));
+    actions.append(replaceButton, deleteButton);
+    card.append(actions);
+    existingPhotoPreview.append(card);
     if (item.bucket_id === "site-media-public") {
       image.src = client.storage.from(item.bucket_id).getPublicUrl(item.storage_path).data.publicUrl;
     } else {
@@ -243,6 +261,142 @@ async function renderMedia() {
       if (renderVersion !== mediaRenderVersion) return;
       if (data) image.src = data.signedUrl;
     }
+  }
+}
+
+function chooseReplacementPhoto(item) {
+  const picker = document.createElement("input");
+  picker.type = "file";
+  picker.accept = "image/jpeg,image/png,image/webp";
+  picker.addEventListener("change", () => {
+    const file = picker.files?.[0];
+    if (file) void replaceSpecimenPhoto(item, file);
+  }, { once: true });
+  picker.click();
+}
+
+async function hasOtherMediaReference(item) {
+  const checks = await Promise.all([
+    client.from("specimen_media").select("id").eq("bucket_id", item.bucket_id)
+      .eq("storage_path", item.storage_path).neq("id", item.id).limit(1),
+    client.from("shop_item_media").select("id").eq("bucket_id", item.bucket_id).eq("storage_path", item.storage_path).limit(1),
+    client.from("article_media").select("id").eq("bucket_id", item.bucket_id).eq("storage_path", item.storage_path).limit(1),
+    client.from("archive_documents").select("id").eq("bucket_id", item.bucket_id).eq("storage_path", item.storage_path).limit(1)
+  ]);
+  const failed = checks.find(result => result.error);
+  if (failed) throw failed.error;
+  return checks.some(result => (result.data || []).length > 0);
+}
+
+async function deleteMediaEntry(item) {
+  const { data, error } = await client.from("specimen_media").delete()
+    .eq("id", item.id).eq("specimen_id", item.specimen_id).select("id").maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error("La photo n'est plus associée à ce spécimen.");
+}
+
+async function removeUnusedStorageFile(item) {
+  const { error } = await client.storage.from(item.bucket_id).remove([item.storage_path]);
+  if (error) throw error;
+}
+
+async function refreshMediaPreview() {
+  try {
+    await renderMedia();
+    return "";
+  } catch (error) {
+    console.error("Actualisation des aperçus photo :", error);
+    return ` L'aperçu n'a pas pu être actualisé : ${describeError(error)}`;
+  }
+}
+
+async function deleteSpecimenPhoto(item) {
+  if (!window.confirm("Supprimer définitivement cette photo du spécimen ?")) return;
+  message("Suppression de la photo…");
+  try {
+    const shared = await hasOtherMediaReference(item);
+    await deleteMediaEntry(item);
+    media = media.filter(existing => existing.id !== item.id);
+    let notice = await refreshMediaPreview();
+    if (!shared) {
+      try {
+        await removeUnusedStorageFile(item);
+      } catch (storageError) {
+        console.error("La référence photo est supprimée, mais le fichier Storage reste présent :", storageError);
+        notice += ` L'entrée photo est supprimée, mais le fichier Storage n'a pas pu être supprimé : ${describeError(storageError)}`;
+      }
+    }
+    message(`Photo supprimée.${shared ? " Le fichier reste présent car une autre entrée média l'utilise." : ""}${notice}`, Boolean(notice));
+  } catch (error) {
+    console.error("Suppression de la photo du spécimen :", error);
+    message(`Impossible de supprimer la photo : ${describeError(error)}`, true);
+  }
+}
+
+async function replaceSpecimenPhoto(item, file) {
+  message("Remplacement de la photo…");
+  const specimenId = document.querySelector("#specimen-id").value;
+  if (!specimenId || specimenId !== item.specimen_id || !editingSpecimen || editingSpecimen.id !== item.specimen_id) {
+    message("Impossible de remplacer une photo qui n'appartient pas à la fiche ouverte.", true);
+    return;
+  }
+  const safeName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
+  let storagePath = "";
+  let uploaded = false;
+  let inserted = false;
+  try {
+    storagePath = `collection/${editingSpecimen.slug}/${crypto.randomUUID()}-${safeName}`;
+    const shared = await hasOtherMediaReference(item);
+    const { error: uploadError } = await client.storage.from(item.bucket_id).upload(storagePath, file, {
+      upsert: false, contentType: file.type
+    });
+    if (uploadError) throw uploadError;
+    uploaded = true;
+    const { data: newMedia, error: insertError } = await client.from("specimen_media").insert({
+      specimen_id: item.specimen_id, bucket_id: item.bucket_id, storage_path: storagePath,
+      role: item.role, alt_text: item.alt_text || `${mineralInput.value.trim() || "Spécimen"} — ${file.name}`,
+      position: item.position
+    }).select("*").single();
+    if (insertError) throw insertError;
+    inserted = true;
+    await deleteMediaEntry(item);
+    media = media.map(existing => existing.id === item.id ? newMedia : existing);
+    let notice = await refreshMediaPreview();
+    if (!shared) {
+      try {
+        await removeUnusedStorageFile(item);
+      } catch (storageError) {
+        console.error("Nouvelle photo enregistrée, mais l'ancien fichier Storage reste présent :", storageError);
+        notice += ` L'ancienne entrée a été remplacée, mais son fichier Storage n'a pas pu être supprimé : ${describeError(storageError)}`;
+      }
+    }
+    message(`Photo remplacée.${shared ? " L'ancien fichier est conservé car une autre entrée média l'utilise." : ""}${notice}`, Boolean(notice));
+  } catch (error) {
+    console.error("Remplacement de la photo du spécimen :", error);
+    if (uploaded) {
+      const cleanupErrors = [];
+      let referenceRemoved = !inserted;
+      if (inserted) {
+        try {
+          const { data: deleted, error: deleteError } = await client.from("specimen_media").delete()
+            .eq("specimen_id", specimenId).eq("storage_path", storagePath).select("id").maybeSingle();
+          referenceRemoved = !deleteError && Boolean(deleted);
+          if (!referenceRemoved) cleanupErrors.push(`référence photo : ${describeError(deleteError) || "l'entrée n'a pas pu être supprimée"}`);
+        } catch (cleanupError) {
+          cleanupErrors.push(`référence photo : ${describeError(cleanupError)}`);
+        }
+      }
+      if (referenceRemoved) {
+        try {
+          const { error: storageError } = await client.storage.from(item.bucket_id).remove([storagePath]);
+          if (storageError) cleanupErrors.push(`fichier temporaire : ${describeError(storageError)}`);
+        } catch (cleanupError) {
+          cleanupErrors.push(`fichier temporaire : ${describeError(cleanupError)}`);
+        }
+      }
+      if (cleanupErrors.length) error = new Error(`${describeError(error)} Nettoyage incomplet (${cleanupErrors.join("; ")}).`);
+    }
+    message(`Impossible de remplacer la photo : ${describeError(error)}`, true);
   }
 }
 
@@ -283,21 +437,19 @@ async function saveSpecimen(event) {
   let saved;
   try {
     message("Enregistrement…");
-    if (!form.checkValidity()) {
-      const invalidField = form.querySelector(":invalid");
-      const fieldLabel = invalidField?.labels?.[0]?.textContent.trim() || invalidField?.id || "Un champ";
-      const reason = invalidField?.validationMessage || "vérifiez sa valeur.";
-      invalidField?.focus();
-      throw new Error(`${fieldLabel} : ${reason}`);
-    }
-    if (!mineralInput.value.trim()) throw new Error("Saisissez le nom du minéral.");
-
     id = document.querySelector("#specimen-id").value;
     slug = document.querySelector("#specimen-slug").value.trim();
     const localityName = document.querySelector("#locality").value.trim();
     const regionName = document.querySelector("#region").value.trim();
     const departmentName = document.querySelector("#department").value.trim();
     const siteType = document.querySelector("#site-type").value;
+    const weightInput = document.querySelector("#weight");
+    if (weightInput.validity.badInput) throw new Error("Le poids doit être un nombre en grammes.");
+    const weightValue = weightInput.value.trim();
+    const scaledWeight = Number(weightValue) * 1000;
+    if (weightValue && (!Number.isFinite(Number(weightValue)) || Number(weightValue) < 0 || Math.abs(scaledWeight - Math.round(scaledWeight)) > 1e-8)) {
+      throw new Error("Le poids doit être positif ou nul et comporter au maximum trois décimales.");
+    }
     const specimenDate = parseSpecimenDate(document.querySelector("#specimen-date").value);
 
     const region = regionName ? regions.find(item => normalizeGeographicName(item.name) === normalizeGeographicName(regionName)) : null;
@@ -307,9 +459,12 @@ async function saveSpecimen(event) {
       || normalizeGeographicName(item.code) === normalizeGeographicName(departmentName)
     ) : null;
     if (departmentName && !department) throw new Error("Choisissez un département existant par son nom ou son code.");
-    if (region && !department) throw new Error("Choisissez aussi un département pour rattacher le spécimen à cette région.");
-    if (region && department.region_id !== region.id) throw new Error("Le département choisi n'est pas rattaché à cette région.");
+    if (region && department && department.region_id !== region.id) throw new Error("Le département choisi n'est pas rattaché à cette région.");
     const mineralId = await resolveMineralId(mineralInput.value);
+    const isUpdate = Boolean(id);
+    const generatedId = !isUpdate && ![mineralInput.value, document.querySelector("#provenance").value, localityName].some(value => value.trim())
+      ? crypto.randomUUID()
+      : null;
     let localityId = null;
     if (localityName) {
       const localitySlug = localityName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -317,21 +472,23 @@ async function saveSpecimen(event) {
       if (error) throw error;
       localityId = data.id;
     }
-    if (!id) slug = await generateSpecimenSlug(mineralInput.value, document.querySelector("#provenance").value, localityName);
+    if (!isUpdate) slug = await generateSpecimenSlug(mineralInput.value, document.querySelector("#provenance").value, localityName, generatedId);
     const record = {
-      slug, mineral_id: mineralId, country: document.querySelector("#country").value.trim() || null,
+      ...(generatedId ? { id: generatedId } : {}),
+      slug, mineral_id: mineralId, region_id: region?.id || department?.region_id || null,
+      country: document.querySelector("#country").value.trim() || null,
       site_type: siteType || null, keywords: document.querySelector("#keywords").value.trim() || null,
       provenance: document.querySelector("#provenance").value.trim(),
       locality_id: localityId, department_code: department?.code || null,
       dimensions: document.querySelector("#dimensions").value.trim(),
-      weight_grams: document.querySelector("#weight").value || null,
+      weight_grams: weightValue ? Number(weightValue) : null,
       discovered_on: specimenDate.discoveredOn,
       discovery_year: specimenDate.discoveryYear,
       discovery_month: specimenDate.discoveryMonth,
       description: document.querySelector("#description").value.trim(),
       publication_status: document.querySelector("#publication-status").value
     };
-    if (id) {
+    if (isUpdate) {
       const result = await client.from("specimens").update(record).eq("id", id).select("id").single();
       if (result.error) throw result.error;
       saved = result.data;
@@ -432,10 +589,10 @@ function formatSpecimenDate(discoveredOn, discoveryYear, discoveryMonth) {
   return "";
 }
 
-async function generateSpecimenSlug(mineralName, provenance, localityName) {
+async function generateSpecimenSlug(mineralName, provenance, localityName, fallbackId = null) {
   const base = [mineralName, provenance, localityName].filter(value => value.trim()).join("-");
   const baseSlug = base.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `specimen-${Date.now()}`;
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `specimen-${fallbackId || crypto.randomUUID()}`;
   let slug = baseSlug;
   let suffix = 2;
   while (true) {
@@ -452,7 +609,7 @@ function normalizeMineralName(name) {
 
 async function resolveMineralId(inputName) {
   const name = inputName.trim();
-  if (!name) throw new Error("Saisissez le nom du minéral.");
+  if (!name) return null;
 
   const { data: currentMinerals, error: fetchError } = await client
     .from("minerals").select("id,name,slug").order("name");
@@ -513,6 +670,7 @@ async function uploadPhotos(specimenId, slug) {
   if (!files.length) return [];
   const bucket = document.querySelector("#publication-status").value === "published" ? "site-media-public" : "admin-staging";
   const uploaded = [];
+  const nextPosition = media.reduce((highest, item) => Math.max(highest, Number(item.position) || 0), -1) + 1;
   try {
     for (const [index, file] of files.entries()) {
       const safeName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
@@ -526,8 +684,8 @@ async function uploadPhotos(specimenId, slug) {
         bucket_id: bucket,
         storage_path: storagePath,
         role: index ? "detail" : "general",
-        alt_text: `${mineralInput.value.trim()} — ${file.name}`,
-        position: media.length + index
+        alt_text: `${mineralInput.value.trim() || "Spécimen"} — ${file.name}`,
+        position: nextPosition + index
       }).select("id").single();
       if (error) throw error;
       item.mediaId = data.id;
