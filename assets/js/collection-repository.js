@@ -3,6 +3,8 @@ import { getSupabase } from "./supabase-client.js";
 const specimenSelect = [
   "id", "slug", "provenance", "department_code", "region_id", "dimensions", "weight_grams",
   "description", "history", "discovered_on", "discovery_year", "discovery_month",
+  "mineral_name", "country", "region_name", "department_name", "locality_name", "site_type",
+  "weight_text", "keywords", "discovery_date_text",
   "mineral:minerals!specimens_mineral_id_fkey(name)",
   "specimenRegion:regions!specimens_region_id_fkey(name)",
   "department:departments!specimens_department_code_fkey(name,region:regions!departments_region_id_fkey(name))",
@@ -18,15 +20,18 @@ function mapSpecimen(client, row) {
     .map(media => client.storage.from(media.bucket_id).getPublicUrl(media.storage_path).data.publicUrl);
   const mineral = row.mineral || {};
   return {
-    id: row.slug, mineral: row.mineral?.name || "", provenance: row.provenance || "",
-    locality: row.locality?.name || "", department: row.department?.name || "", departmentCode: row.department_code || "",
-    region: row.specimenRegion?.name || row.department?.region?.name || "", dimensions: row.dimensions || "",
-    weight: row.weight_grams == null ? "" : row.weight_grams + " g",
+    id: row.slug, mineral: row.mineral_name ?? mineral.name ?? "", country: row.country ?? "",
+    provenance: row.provenance ?? "", locality: row.locality_name ?? row.locality?.name ?? "",
+    department: row.department_name ?? row.department?.name ?? "", departmentCode: row.department_code || "",
+    region: row.region_name ?? row.specimenRegion?.name ?? row.department?.region?.name ?? "",
+    siteType: row.site_type ?? "", dimensions: row.dimensions ?? "",
+    weight: row.weight_text ?? (row.weight_grams == null ? "" : `${row.weight_grams} g`),
+    keywords: row.keywords ?? "",
     associations: (row.associations || []).map(item => item.mineral?.name).filter(Boolean),
     description: row.description || "", history: row.history || "",
-    discoveryDate: row.discovered_on || (row.discovery_year && row.discovery_month
+    discoveryDate: row.discovery_date_text ?? (row.discovered_on || (row.discovery_year && row.discovery_month
       ? `${String(row.discovery_month).padStart(2, "0")}/${row.discovery_year}`
-      : row.discovery_year || ""), photos,
+      : row.discovery_year || "")), photos,
     scientific: {
       formula: mineral.formula, crystalSystem: mineral.crystal_system, hardness: mineral.hardness,
       density: mineral.density, colors: mineral.colors, luster: mineral.luster,

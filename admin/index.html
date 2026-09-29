@@ -30,15 +30,15 @@
           <h3 id="editor-title">Nouveau spécimen</h3>
           <form id="specimen-form" novalidate>
             <input id="specimen-id" type="hidden">
-            <label for="mineral-name">Minéral</label><input id="mineral-name" type="text" list="mineral-options" autocomplete="off"><datalist id="mineral-options"></datalist>
+            <label for="mineral-name">Minéral</label><input id="mineral-name" type="text" autocomplete="off">
             <label for="country">Pays</label><input id="country" type="text" autocomplete="country-name">
-            <label for="region">Région</label><input id="region" type="text" list="region-options" autocomplete="address-level1"><datalist id="region-options"></datalist>
-            <label for="department">Département</label><input id="department" type="text" list="department-options" autocomplete="address-level2"><datalist id="department-options"></datalist>
+            <label for="region">Région</label><input id="region" type="text" autocomplete="address-level1">
+            <label for="department">Département</label><input id="department" type="text" autocomplete="address-level2">
             <label for="locality">Commune</label><input id="locality" type="text">
             <label for="provenance">Nom du gisement</label><input id="provenance" type="text">
-            <label for="site-type">Type de site</label><select id="site-type"><option value="">Choisir un type</option><option value="mine">Mine</option><option value="carriere">Carrière</option><option value="alluvion">Alluvion</option><option value="affleurement">Affleurement</option><option value="travaux_publics">Travaux publics</option><option value="tranchee">Tranchée</option><option value="autre">Autre</option></select>
+            <label for="site-type">Type de site</label><input id="site-type" type="text">
             <label for="dimensions">Dimensions</label><input id="dimensions">
-            <label for="weight">Poids</label><input id="weight" type="number" min="0" step="0.001"><small>grammes</small>
+            <label for="weight">Poids</label><input id="weight" type="text" inputmode="decimal"><small>grammes</small>
             <label for="description">Description</label><textarea id="description"></textarea>
             <label for="keywords">Mots-clés</label><input id="keywords" type="text">
             <label for="specimen-date">Date de découverte ou d'entrée en collection</label><input id="specimen-date" type="text" lang="fr" inputmode="numeric" placeholder="AAAA, MM/AAAA ou JJ/MM/AAAA" aria-describedby="specimen-date-help"><small id="specimen-date-help">Exemples : 2018, 09/2018 ou 29/09/2018.</small>

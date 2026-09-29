@@ -1,16 +1,36 @@
+import { getSupabase } from "./supabase-client.js";
 import { getPublishedSpecimen } from "./collection-repository.js";
 
 const slug = new URLSearchParams(location.search).get("id");
-if (!slug) {
-  showMissing();
-} else {
+const client = getSupabase();
+let sequence = 0;
+let loading = false;
+let refreshQueued = false;
+let pollingFallback = null;
+
+async function refreshSpecimen() {
+  if (!slug) return showMissing();
+  if (loading) {
+    refreshQueued = true;
+    return;
+  }
+  loading = true;
+  const current = ++sequence;
   try {
     const specimen = await getPublishedSpecimen(slug);
+    if (current !== sequence) return;
     if (specimen) renderSpecimen(specimen);
     else showMissing();
   } catch (error) {
-    console.error("Chargement Supabase du spécimen :", error);
+    if (current !== sequence) return;
+    console.error("Chargement/actualisation Supabase du spécimen :", error);
     showLoadError();
+  } finally {
+    loading = false;
+    if (refreshQueued) {
+      refreshQueued = false;
+      queueMicrotask(() => void refreshSpecimen());
+    }
   }
 }
 
@@ -18,7 +38,9 @@ function showLoadError() {
   document.querySelector("#specimen-detail").hidden = true;
   document.querySelector("#specimen-content").hidden = true;
   document.querySelector("#specimen-not-found").hidden = true;
-  document.querySelector("#specimen-load-error").hidden = false;
+  const error = document.querySelector("#specimen-load-error");
+  error.textContent = "Impossible de charger ou d’actualiser cette fiche depuis Supabase. Vérifiez votre connexion puis réessayez.";
+  error.hidden = false;
 }
 
 function showMissing() {
@@ -33,19 +55,23 @@ function renderSpecimen(specimen) {
   const content = document.querySelector("#specimen-content");
   const notFound = document.querySelector("#specimen-not-found");
   notFound.hidden = true;
+  document.querySelector("#specimen-load-error").hidden = true;
   root.hidden = false;
   content.hidden = false;
   document.title = `${specimen.mineral || "Spécimen"} — Ma collection — Jeremineralogie`;
   root.querySelectorAll("[data-mineral]").forEach(element => { element.textContent = specimen.mineral || "Spécimen"; });
   const put = (selector, value) => { const element = root.querySelector(selector); element.textContent = value || "Non renseigné"; };
-  put("[data-location-summary]", [specimen.locality, specimen.department, specimen.region].filter(Boolean).join(" · ") || "Localisation à compléter");
+  put("[data-location-summary]", [specimen.locality, specimen.department, specimen.region, specimen.country].filter(Boolean).join(" · ") || "Localisation à compléter");
   put("[data-provenance]", specimen.provenance); put("[data-locality]", specimen.locality);
-  put("[data-region]", specimen.region); put("[data-dimensions]", specimen.dimensions); put("[data-weight]", specimen.weight);
+  put("[data-region]", specimen.region); put("[data-country]", specimen.country);
+  put("[data-site-type]", specimen.siteType); put("[data-keywords]", specimen.keywords);
+  put("[data-dimensions]", specimen.dimensions); put("[data-weight]", specimen.weight);
   put("[data-associations]", (specimen.associations || []).join(", ")); put("[data-discovery-date]", specimen.discoveryDate);
   content.querySelector("[data-description]").textContent = specimen.description || "Non renseigné";
   const department = root.querySelector("[data-department]");
   department.textContent = specimen.department ? specimen.department + (specimen.departmentCode ? ` (${specimen.departmentCode})` : "") : "Non renseigné";
   if (specimen.departmentCode) department.href = "departement.html?dep=" + encodeURIComponent(specimen.departmentCode);
+  else department.removeAttribute("href");
   const gallery = root.querySelector("[data-gallery]"); const thumbs = root.querySelector("[data-thumbnails]");
   gallery.replaceChildren(); thumbs.replaceChildren();
   const photos = (specimen.photos || []).filter(Boolean);
@@ -72,4 +98,38 @@ function renderSpecimen(specimen) {
     science.append(term, description);
   });
   content.querySelector("[data-scientific-section]").hidden = science.children.length === 0;
+}
+
+void refreshSpecimen();
+
+if (client) {
+  const queueRefresh = () => {
+    if (refreshQueued) return;
+    refreshQueued = true;
+    queueMicrotask(() => {
+      refreshQueued = false;
+      void refreshSpecimen();
+    });
+  };
+  pollingFallback = window.setInterval(queueRefresh, 60000);
+  const channel = client.channel(`public-specimen-${slug || "missing"}`)
+    .on("postgres_changes", { event: "*", schema: "public", table: "specimens" }, queueRefresh)
+    .on("postgres_changes", { event: "*", schema: "public", table: "specimen_media" }, queueRefresh)
+    .subscribe(subscriptionStatus => {
+      if (subscriptionStatus === "SUBSCRIBED") {
+        queueRefresh();
+      }
+      else if (subscriptionStatus === "CHANNEL_ERROR" || subscriptionStatus === "TIMED_OUT") {
+        console.error("Synchronisation Realtime de la fiche indisponible :", subscriptionStatus);
+        if (!pollingFallback) pollingFallback = window.setInterval(queueRefresh, 30000);
+      }
+    });
+  window.addEventListener("focus", queueRefresh);
+  window.addEventListener("online", queueRefresh);
+  window.addEventListener("pagehide", () => {
+    window.removeEventListener("focus", queueRefresh);
+    window.removeEventListener("online", queueRefresh);
+    if (pollingFallback) window.clearInterval(pollingFallback);
+    void client.removeChannel(channel);
+  }, { once: true });
 }

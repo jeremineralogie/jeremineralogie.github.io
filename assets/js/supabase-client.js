@@ -7,7 +7,10 @@ export function getSupabase() {
       config.url.includes("PLACEHOLDER") || config.publishableKey.includes("PLACEHOLDER")) return null;
   if (!client) {
     client = createClient(config.url, config.publishableKey, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+      global: {
+        fetch: (input, init = {}) => fetch(input, { ...init, cache: "no-store" })
+      }
     });
   }
   return client;

@@ -8,23 +8,18 @@ const editor = document.querySelector("#editor-panel");
 const form = document.querySelector("#specimen-form");
 const list = document.querySelector("#specimen-list");
 const mineralInput = document.querySelector("#mineral-name");
-const mineralOptions = document.querySelector("#mineral-options");
-const regionOptions = document.querySelector("#region-options");
-const departmentOptions = document.querySelector("#department-options");
 const photoInput = document.querySelector("#photos");
 const existingPhotoGroup = document.querySelector("#existing-photo-group");
 const existingPhotoPreview = document.querySelector("#existing-photos");
 const selectedPhotoGroup = document.querySelector("#selected-photo-group");
 const selectedPhotoPreview = document.querySelector("#selected-photos");
 const client = getSupabase();
-let minerals = [];
-let regions = [];
-let departments = [];
 let media = [];
 let selectedPhotoUrls = [];
 let mediaRenderVersion = 0;
 let editorLoadVersion = 0;
 let editingSpecimen = null;
+const dirtyReferenceFields = new Set();
 
 function message(text, isError = false) {
   status.textContent = text;
@@ -66,6 +61,8 @@ if (!client) {
   document.querySelector("#new-specimen").addEventListener("click", () => resetEditor(true));
   document.querySelector("#cancel-edit").addEventListener("click", () => resetEditor(false));
   document.querySelector("#delete-specimen").addEventListener("click", deleteSpecimen);
+  [mineralInput, document.querySelector("#region"), document.querySelector("#department"), document.querySelector("#locality")]
+    .forEach(input => input.addEventListener("input", () => dirtyReferenceFields.add(input.id)));
   photoInput.addEventListener("change", renderSelectedPhotoPreviews);
   form.addEventListener("submit", saveSpecimen);
   void client.auth.getSession().then(({ data }) => showSession(data.session));
@@ -92,42 +89,20 @@ async function showSession(session) {
 }
 
 async function loadDashboard() {
-  const [mineralResult, specimenResult, regionResult, departmentResult] = await Promise.all([
-    client.from("minerals").select("id,name").order("name"),
-    client.from("specimens").select("id,slug,publication_status,mineral:minerals!specimens_mineral_id_fkey(name)").order("updated_at", { ascending: false }),
-    client.from("regions").select("id,name").order("name"),
-    client.from("departments").select("code,name,region_id").order("name")
-  ]);
-  const failedResult = [mineralResult, specimenResult, regionResult, departmentResult].find(result => result.error);
-  if (failedResult) {
-    console.error("Erreur Supabase pendant le chargement du dashboard :", failedResult.error);
-    message(describeError(failedResult.error), true);
+  const { data: specimens, error } = await client.from("specimens")
+    .select("id,slug,publication_status,mineral_name,mineral:minerals!specimens_mineral_id_fkey(name)")
+    .order("updated_at", { ascending: false });
+  if (error) {
+    list.replaceChildren();
+    console.error("Erreur Supabase pendant le chargement du dashboard :", error);
+    message(describeError(error), true);
     return false;
   }
-  minerals = mineralResult.data || [];
-  regions = regionResult.data || [];
-  departments = departmentResult.data || [];
-  mineralOptions.replaceChildren(...minerals.map(mineral => {
-    const option = document.createElement("option");
-    option.value = mineral.name;
-    return option;
-  }));
-  regionOptions.replaceChildren(...regions.map(region => {
-    const option = document.createElement("option");
-    option.value = region.name;
-    return option;
-  }));
-  departmentOptions.replaceChildren(...departments.map(department => {
-    const option = document.createElement("option");
-    option.value = department.name;
-    option.label = `${department.name} (${department.code})`;
-    return option;
-  }));
   list.replaceChildren();
-  (specimenResult.data || []).forEach(specimen => {
+  (specimens || []).forEach(specimen => {
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = `${specimen.mineral?.name || "Minéral"} — ${specimen.slug} (${specimen.publication_status === "published" ? "publié" : "brouillon"})`;
+    button.textContent = `${specimen.mineral_name ?? specimen.mineral?.name ?? "Spécimen"} — ${specimen.slug} (${specimen.publication_status === "published" ? "publié" : "brouillon"})`;
     button.addEventListener("click", () => void editSpecimen(specimen.id));
     list.append(button);
   });
@@ -136,6 +111,7 @@ async function loadDashboard() {
 
 function resetEditor(open = false) {
   editorLoadVersion += 1;
+  dirtyReferenceFields.clear();
   clearPhotoState();
   form.reset();
   document.querySelector("#specimen-id").value = "";
@@ -165,19 +141,17 @@ async function editSpecimen(id) {
     editingSpecimen = data;
     document.querySelector("#specimen-id").value = data.id;
     document.querySelector("#specimen-slug").value = data.slug;
-    mineralInput.value = minerals.find(mineral => mineral.id === data.mineral_id)?.name || "";
-    document.querySelector("#country").value = data.country || "";
-    const department = departments.find(item => item.code === data.department_code);
-    const specimenRegion = regions.find(item => item.id === data.region_id) || regions.find(item => item.id === department?.region_id);
-    document.querySelector("#region").value = specimenRegion?.name || "";
-    document.querySelector("#department").value = department?.name || data.department_code || "";
+    mineralInput.value = data.mineral_name ?? "";
+    document.querySelector("#country").value = data.country ?? "";
+    document.querySelector("#region").value = data.region_name ?? "";
+    document.querySelector("#department").value = data.department_name ?? "";
     document.querySelector("#provenance").value = data.provenance || "";
-    document.querySelector("#locality").value = "";
-    document.querySelector("#site-type").value = data.site_type || "";
+    document.querySelector("#locality").value = data.locality_name ?? "";
+    document.querySelector("#site-type").value = data.site_type ?? "";
     document.querySelector("#dimensions").value = data.dimensions || "";
-    document.querySelector("#weight").value = data.weight_grams ?? "";
+    document.querySelector("#weight").value = data.weight_text ?? data.weight_grams ?? "";
     document.querySelector("#keywords").value = data.keywords || "";
-    document.querySelector("#specimen-date").value = formatSpecimenDate(data.discovered_on, data.discovery_year, data.discovery_month);
+    document.querySelector("#specimen-date").value = data.discovery_date_text ?? formatSpecimenDate(data.discovered_on, data.discovery_year, data.discovery_month);
     document.querySelector("#description").value = data.description || "";
     document.querySelector("#publication-status").value = data.publication_status;
     media = [];
@@ -185,18 +159,44 @@ async function editSpecimen(id) {
     document.querySelector("#delete-specimen").hidden = false;
     editor.hidden = false;
     editor.scrollIntoView({ behavior: "smooth", block: "start" });
-    message("Fiche chargée. Chargement de la commune et des photos…");
+    message("Fiche chargée. Chargement des anciennes relations et des photos…");
 
     const secondaryErrors = [];
-    if (data.locality_id) {
+    const relationRequests = [
+      ["mineral", "minerals", "id", data.mineral_id, "mineral_name"],
+      ["region", "regions", "id", data.region_id, "region_name"],
+      ["department", "departments", "code", data.department_code, "department_name"],
+      ["locality", "localities", "id", data.locality_id, "locality_name"]
+    ];
+    const relationResults = await Promise.all(relationRequests.map(async ([key, table, column, value, rawField]) => {
+      if (!value || data[rawField] != null) return [key, null, null];
       try {
-        const localityName = await getLocalityName(data.locality_id);
-        if (loadVersion !== editorLoadVersion) return;
-        document.querySelector("#locality").value = localityName;
-      } catch (localityError) {
-        secondaryErrors.push(`Commune non chargée : ${describeError(localityError)}`);
+        const result = await client.from(table).select("*").eq(column, value).maybeSingle();
+        return [key, result.data, result.error];
+      } catch (relationError) {
+        return [key, null, relationError];
+      }
+    }));
+    if (loadVersion !== editorLoadVersion) return;
+    const relationLabels = {};
+    for (const [key, relation, relationError] of relationResults) {
+      if (relationError) secondaryErrors.push(`Référence ${key} non chargée : ${describeError(relationError)}`);
+      else if (relation?.name) relationLabels[key] = relation.name;
+      if (key === "department" && relation?.region_id && !data.region_id) {
+        try {
+          const { data: parentRegion, error: parentError } = await client.from("regions").select("name").eq("id", relation.region_id).maybeSingle();
+          if (parentError) throw parentError;
+          relationLabels.region = parentRegion?.name || "";
+        } catch (regionError) {
+          secondaryErrors.push(`Région non chargée : ${describeError(regionError)}`);
+        }
       }
     }
+    editingSpecimen = { ...data, relationLabels };
+    if (data.mineral_name == null) mineralInput.value = relationLabels.mineral || "";
+    if (data.region_name == null) document.querySelector("#region").value = relationLabels.region || "";
+    if (data.department_name == null) document.querySelector("#department").value = relationLabels.department || data.department_code || "";
+    if (data.locality_name == null) document.querySelector("#locality").value = relationLabels.locality || "";
     if (loadVersion !== editorLoadVersion) return;
 
     try {
@@ -276,9 +276,11 @@ function chooseReplacementPhoto(item) {
 }
 
 async function hasOtherMediaReference(item) {
+  let specimenMediaQuery = client.from("specimen_media").select("id").eq("bucket_id", item.bucket_id)
+    .eq("storage_path", item.storage_path).limit(1);
+  if (item.id) specimenMediaQuery = specimenMediaQuery.neq("id", item.id);
   const checks = await Promise.all([
-    client.from("specimen_media").select("id").eq("bucket_id", item.bucket_id)
-      .eq("storage_path", item.storage_path).neq("id", item.id).limit(1),
+    specimenMediaQuery,
     client.from("shop_item_media").select("id").eq("bucket_id", item.bucket_id).eq("storage_path", item.storage_path).limit(1),
     client.from("article_media").select("id").eq("bucket_id", item.bucket_id).eq("storage_path", item.storage_path).limit(1),
     client.from("archive_documents").select("id").eq("bucket_id", item.bucket_id).eq("storage_path", item.storage_path).limit(1)
@@ -296,8 +298,10 @@ async function deleteMediaEntry(item) {
 }
 
 async function removeUnusedStorageFile(item) {
+  if (await hasOtherMediaReference(item)) return false;
   const { error } = await client.storage.from(item.bucket_id).remove([item.storage_path]);
   if (error) throw error;
+  return true;
 }
 
 async function refreshMediaPreview() {
@@ -314,13 +318,21 @@ async function deleteSpecimenPhoto(item) {
   if (!window.confirm("Supprimer définitivement cette photo du spécimen ?")) return;
   message("Suppression de la photo…");
   try {
-    const shared = await hasOtherMediaReference(item);
     await deleteMediaEntry(item);
     media = media.filter(existing => existing.id !== item.id);
     let notice = await refreshMediaPreview();
+    let shared;
+    try {
+      shared = await hasOtherMediaReference(item);
+    } catch (referenceError) {
+      console.error("La référence photo a été supprimée, mais les références Storage n'ont pas pu être vérifiées :", referenceError);
+      message(`Photo supprimée de la fiche. Le fichier Storage est conservé car ses autres références n’ont pas pu être vérifiées : ${describeError(referenceError)}${notice}`, true);
+      return;
+    }
     if (!shared) {
       try {
-        await removeUnusedStorageFile(item);
+        const removed = await removeUnusedStorageFile(item);
+        if (!removed) notice += " Le fichier reste présent car une autre entrée média l'utilise.";
       } catch (storageError) {
         console.error("La référence photo est supprimée, mais le fichier Storage reste présent :", storageError);
         notice += ` L'entrée photo est supprimée, mais le fichier Storage n'a pas pu être supprimé : ${describeError(storageError)}`;
@@ -346,7 +358,7 @@ async function replaceSpecimenPhoto(item, file) {
   let inserted = false;
   try {
     storagePath = `collection/${editingSpecimen.slug}/${crypto.randomUUID()}-${safeName}`;
-    const shared = await hasOtherMediaReference(item);
+    const sharedBefore = await hasOtherMediaReference(item);
     const { error: uploadError } = await client.storage.from(item.bucket_id).upload(storagePath, file, {
       upsert: false, contentType: file.type
     });
@@ -362,15 +374,16 @@ async function replaceSpecimenPhoto(item, file) {
     await deleteMediaEntry(item);
     media = media.map(existing => existing.id === item.id ? newMedia : existing);
     let notice = await refreshMediaPreview();
-    if (!shared) {
+    if (!sharedBefore) {
       try {
-        await removeUnusedStorageFile(item);
+        const removed = await removeUnusedStorageFile(item);
+        if (!removed) notice += " L'ancien fichier reste présent car une autre entrée média l'utilise.";
       } catch (storageError) {
         console.error("Nouvelle photo enregistrée, mais l'ancien fichier Storage reste présent :", storageError);
         notice += ` L'ancienne entrée a été remplacée, mais son fichier Storage n'a pas pu être supprimé : ${describeError(storageError)}`;
       }
     }
-    message(`Photo remplacée.${shared ? " L'ancien fichier est conservé car une autre entrée média l'utilise." : ""}${notice}`, Boolean(notice));
+    message(`Photo remplacée.${sharedBefore ? " L'ancien fichier est conservé car une autre entrée média l'utilise." : ""}${notice}`, Boolean(notice));
   } catch (error) {
     console.error("Remplacement de la photo du spécimen :", error);
     if (uploaded) {
@@ -439,53 +452,59 @@ async function saveSpecimen(event) {
     message("Enregistrement…");
     id = document.querySelector("#specimen-id").value;
     slug = document.querySelector("#specimen-slug").value.trim();
-    const localityName = document.querySelector("#locality").value.trim();
-    const regionName = document.querySelector("#region").value.trim();
-    const departmentName = document.querySelector("#department").value.trim();
-    const siteType = document.querySelector("#site-type").value;
-    const weightInput = document.querySelector("#weight");
-    if (weightInput.validity.badInput) throw new Error("Le poids doit être un nombre en grammes.");
-    const weightValue = weightInput.value.trim();
-    const scaledWeight = Number(weightValue) * 1000;
-    if (weightValue && (!Number.isFinite(Number(weightValue)) || Number(weightValue) < 0 || Math.abs(scaledWeight - Math.round(scaledWeight)) > 1e-8)) {
-      throw new Error("Le poids doit être positif ou nul et comporter au maximum trois décimales.");
-    }
-    const specimenDate = parseSpecimenDate(document.querySelector("#specimen-date").value);
-
-    const region = regionName ? regions.find(item => normalizeGeographicName(item.name) === normalizeGeographicName(regionName)) : null;
-    if (regionName && !region) throw new Error("Choisissez une région existante dans la liste.");
-    const department = departmentName ? departments.find(item =>
-      normalizeGeographicName(item.name) === normalizeGeographicName(departmentName)
-      || normalizeGeographicName(item.code) === normalizeGeographicName(departmentName)
-    ) : null;
-    if (departmentName && !department) throw new Error("Choisissez un département existant par son nom ou son code.");
-    if (region && department && department.region_id !== region.id) throw new Error("Le département choisi n'est pas rattaché à cette région.");
-    const mineralId = await resolveMineralId(mineralInput.value);
+    const values = {
+      mineral: mineralInput.value,
+      country: document.querySelector("#country").value,
+      region: document.querySelector("#region").value,
+      department: document.querySelector("#department").value,
+      locality: document.querySelector("#locality").value,
+      provenance: document.querySelector("#provenance").value,
+      siteType: document.querySelector("#site-type").value,
+      dimensions: document.querySelector("#dimensions").value,
+      weight: document.querySelector("#weight").value,
+      description: document.querySelector("#description").value,
+      keywords: document.querySelector("#keywords").value,
+      discoveryDate: document.querySelector("#specimen-date").value
+    };
+    const old = editingSpecimen || {};
+    const relationLabels = old.relationLabels || {};
+    const numericWeight = /^\d+(?:[.,]\d{1,3})?$/.test(values.weight.trim())
+      ? Number(values.weight.trim().replace(",", ".")) : null;
+    const unchangedReference = (key, value, rawValue, legacyLabel, referenceId) => {
+      if (!isUpdate || !referenceId) return null;
+      if (!dirtyReferenceFields.has(key)) return referenceId;
+      return value === (rawValue ?? legacyLabel ?? "") ? referenceId : null;
+    };
+    const parsedDate = parseSpecimenDate(values.discoveryDate);
     const isUpdate = Boolean(id);
-    const generatedId = !isUpdate && ![mineralInput.value, document.querySelector("#provenance").value, localityName].some(value => value.trim())
-      ? crypto.randomUUID()
-      : null;
-    let localityId = null;
-    if (localityName) {
-      const localitySlug = localityName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const { data, error } = await client.from("localities").upsert({ slug: localitySlug, name: localityName, department_code: department?.code || null, publication_status: document.querySelector("#publication-status").value }, { onConflict: "slug" }).select("id").single();
-      if (error) throw error;
-      localityId = data.id;
+    let newSpecimenId = null;
+    if (!isUpdate) {
+      newSpecimenId = crypto.randomUUID();
+      slug = await generateSpecimenSlug(values.mineral, values.provenance, values.locality, newSpecimenId);
+      document.querySelector("#specimen-slug").value = slug;
     }
-    if (!isUpdate) slug = await generateSpecimenSlug(mineralInput.value, document.querySelector("#provenance").value, localityName, generatedId);
     const record = {
-      ...(generatedId ? { id: generatedId } : {}),
-      slug, mineral_id: mineralId, region_id: region?.id || department?.region_id || null,
-      country: document.querySelector("#country").value.trim() || null,
-      site_type: siteType || null, keywords: document.querySelector("#keywords").value.trim() || null,
-      provenance: document.querySelector("#provenance").value.trim(),
-      locality_id: localityId, department_code: department?.code || null,
-      dimensions: document.querySelector("#dimensions").value.trim(),
-      weight_grams: weightValue ? Number(weightValue) : null,
-      discovered_on: specimenDate.discoveredOn,
-      discovery_year: specimenDate.discoveryYear,
-      discovery_month: specimenDate.discoveryMonth,
-      description: document.querySelector("#description").value.trim(),
+      slug,
+      mineral_name: values.mineral || null,
+      mineral_id: unchangedReference("mineral-name", values.mineral, old.mineral_name, relationLabels.mineral, old.mineral_id),
+      country: values.country || null,
+      region_name: values.region || null,
+      region_id: unchangedReference("region", values.region, old.region_name, relationLabels.region, old.region_id),
+      department_name: values.department || null,
+      department_code: unchangedReference("department", values.department, old.department_name, relationLabels.department, old.department_code),
+      locality_name: values.locality || null,
+      locality_id: unchangedReference("locality", values.locality, old.locality_name, relationLabels.locality, old.locality_id),
+      provenance: values.provenance,
+      site_type: values.siteType || null,
+      dimensions: values.dimensions,
+      weight_text: values.weight || null,
+      weight_grams: Number.isFinite(numericWeight) && numericWeight <= 9999999.999 ? numericWeight : null,
+      discovery_date_text: values.discoveryDate || null,
+      discovered_on: parsedDate.discoveredOn,
+      discovery_year: parsedDate.discoveryYear,
+      discovery_month: parsedDate.discoveryMonth,
+      keywords: values.keywords || null,
+      description: values.description,
       publication_status: document.querySelector("#publication-status").value
     };
     if (isUpdate) {
@@ -493,7 +512,7 @@ async function saveSpecimen(event) {
       if (result.error) throw result.error;
       saved = result.data;
     } else {
-      const result = await client.from("specimens").insert(record).select("id").single();
+      const result = await client.from("specimens").insert({ id: newSpecimenId, ...record }).select("id").single();
       if (result.error) throw result.error;
       saved = result.data;
     }
@@ -511,11 +530,16 @@ async function saveSpecimen(event) {
 
   message("Spécimen enregistré en base.");
   const secondaryErrors = [];
-  try {
-    if (id && editingSpecimen?.publication_status !== document.querySelector("#publication-status").value) {
+  if (id && editingSpecimen?.publication_status !== document.querySelector("#publication-status").value) {
+    try {
       const targetBucket = document.querySelector("#publication-status").value === "published" ? "site-media-public" : "admin-staging";
       await syncMediaVisibility(saved.id, slug, targetBucket);
+    } catch (error) {
+      console.error("Échec du changement de visibilité des photos :", error);
+      secondaryErrors.push(`La fiche est enregistrée, mais certaines photos n’ont pas pu changer de visibilité : ${describeError(error)}`);
     }
+  }
+  try {
     await uploadPhotos(saved.id, slug);
   } catch (error) {
     console.error("Échec du traitement des opérations secondaires du spécimen :", error);
@@ -543,34 +567,27 @@ async function saveSpecimen(event) {
   status.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-function normalizeGeographicName(value) {
-  return value.trim().replace(/\s+/g, " ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr");
-}
-
 function parseSpecimenDate(value) {
   const date = value.trim();
   if (!date) return { discoveredOn: null, discoveryYear: null, discoveryMonth: null };
   if (/^\d{4}$/.test(date)) {
     const year = Number(date);
-    if (year < 1000 || year > 2100) throw new Error("Saisissez une année entre 1000 et 2100.");
-    return { discoveredOn: null, discoveryYear: year, discoveryMonth: null };
+    return { discoveredOn: null, discoveryYear: year >= 1000 && year <= 2100 ? year : null, discoveryMonth: null };
   }
   const monthMatch = /^(\d{2})\/(\d{4})$/.exec(date);
   if (monthMatch) {
     const [, month, year] = monthMatch.map(Number);
-    if (month < 1 || month > 12) throw new Error("Le mois doit être compris entre 01 et 12.");
-    if (year < 1000 || year > 2100) throw new Error("Saisissez une année entre 1000 et 2100.");
-    return { discoveredOn: null, discoveryYear: year, discoveryMonth: month };
+    const valid = month >= 1 && month <= 12 && year >= 1000 && year <= 2100;
+    return { discoveredOn: null, discoveryYear: valid ? year : null, discoveryMonth: valid ? month : null };
   }
   const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date);
-  if (!match) throw new Error("Saisissez une année (AAAA), un mois et une année (MM/AAAA) ou une date complète (JJ/MM/AAAA).");
+  if (!match) return { discoveredOn: null, discoveryYear: null, discoveryMonth: null };
   const [, day, month, year] = match.map(Number);
   const parsed = new Date(0);
   parsed.setUTCHours(0, 0, 0, 0);
   parsed.setUTCFullYear(year, month - 1, day);
-  if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== day) {
-    throw new Error("La date saisie n'est pas valide.");
-  }
+  if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== day)
+    return { discoveredOn: null, discoveryYear: null, discoveryMonth: null };
   const isoDate = `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   return { discoveredOn: isoDate, discoveryYear: null, discoveryMonth: null };
 }
@@ -603,68 +620,6 @@ async function generateSpecimenSlug(mineralName, provenance, localityName, fallb
   }
 }
 
-function normalizeMineralName(name) {
-  return name.trim().replace(/\s+/g, " ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr");
-}
-
-async function resolveMineralId(inputName) {
-  const name = inputName.trim();
-  if (!name) return null;
-
-  const { data: currentMinerals, error: fetchError } = await client
-    .from("minerals").select("id,name,slug").order("name");
-  if (fetchError) throw fetchError;
-  minerals = currentMinerals || [];
-
-  const normalizedName = normalizeMineralName(name);
-  const existing = minerals.find(mineral => normalizeMineralName(mineral.name) === normalizedName);
-  if (existing) return existing.id;
-
-  const baseSlug = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  if (!baseSlug) throw new Error("Le nom du minéral doit contenir des lettres ou des chiffres.");
-  let slug = baseSlug;
-  let suffix = 2;
-  while (minerals.some(mineral => mineral.slug === slug)) slug = `${baseSlug}-${suffix++}`;
-
-  const { data, error } = await client.from("minerals").insert({
-    name,
-    slug,
-    publication_status: document.querySelector("#publication-status").value
-  }).select("id,name,slug").single();
-  if (error) {
-    if (error.code === "23505") {
-      const { data: refreshed, error: refreshError } = await client.from("minerals").select("id,name,slug");
-      if (!refreshError) {
-        minerals = refreshed || [];
-        const duplicate = minerals.find(mineral => normalizeMineralName(mineral.name) === normalizedName);
-        if (duplicate) return duplicate.id;
-      }
-    }
-    throw error;
-  }
-  minerals.push(data);
-  return data.id;
-}
-
-async function saveAssociations(specimenId, input) {
-  const names = [...new Set(input.split(",").map(name => name.trim()).filter(Boolean))];
-  const { error: deleteError } = await client.from("specimen_associations").delete().eq("specimen_id", specimenId);
-  if (deleteError) throw deleteError;
-  for (const name of names) {
-    let mineral = minerals.find(item => normalizeMineralName(item.name) === normalizeMineralName(name));
-    if (!mineral) {
-      const slug = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const { data, error } = await client.from("minerals").upsert({ name, slug, publication_status: document.querySelector("#publication-status").value }, { onConflict: "slug" }).select("id,name").single();
-      if (error) throw error;
-      mineral = data;
-      minerals.push(mineral);
-    }
-    const { error } = await client.from("specimen_associations").insert({ specimen_id: specimenId, mineral_id: mineral.id });
-    if (error) throw error;
-  }
-}
-
 async function uploadPhotos(specimenId, slug) {
   const files = [...photoInput.files];
   if (!files.length) return [];
@@ -674,7 +629,7 @@ async function uploadPhotos(specimenId, slug) {
   try {
     for (const [index, file] of files.entries()) {
       const safeName = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
-      const storagePath = `collection/${slug}/${Date.now()}-${index}-${safeName}`;
+      const storagePath = `collection/${slug}/${crypto.randomUUID()}-${index}-${safeName}`;
       const item = { bucketId: bucket, storagePath, mediaId: null };
       uploaded.push(item);
       const { error: uploadError } = await client.storage.from(bucket).upload(storagePath, file, { upsert: false, contentType: file.type });
@@ -707,23 +662,23 @@ async function uploadPhotos(specimenId, slug) {
 
 async function cleanupUploadedPhotos(specimenId, uploaded) {
   const errors = [];
-  const storagePaths = uploaded.map(item => item.storagePath);
-  if (storagePaths.length) {
+  for (const item of uploaded) {
+    let referencesRemoved = false;
     try {
-      const { error } = await client.from("specimen_media").delete().eq("specimen_id", specimenId).in("storage_path", storagePaths);
-      if (error) errors.push(`suppression des références photo : ${error.message}`);
+      const { error } = await client.from("specimen_media").delete()
+        .eq("specimen_id", specimenId).eq("bucket_id", item.bucketId).eq("storage_path", item.storagePath);
+      if (error) throw error;
+      referencesRemoved = true;
     } catch (error) {
-      errors.push(`suppression des références photo : ${error.message}`);
+      errors.push(`suppression de la référence ${item.storagePath} : ${describeError(error)}`);
     }
-  }
-  const buckets = [...new Set(uploaded.map(item => item.bucketId))];
-  for (const bucket of buckets) {
-    const paths = uploaded.filter(item => item.bucketId === bucket).map(item => item.storagePath);
+    if (!referencesRemoved) continue;
     try {
-      const { error } = await client.storage.from(bucket).remove(paths);
-      if (error) errors.push(`suppression des fichiers dans ${bucket} : ${error.message}`);
+      if (await hasOtherMediaReference({ bucket_id: item.bucketId, storage_path: item.storagePath })) continue;
+      const { error } = await client.storage.from(item.bucketId).remove([item.storagePath]);
+      if (error) throw error;
     } catch (error) {
-      errors.push(`suppression des fichiers dans ${bucket} : ${error.message}`);
+      errors.push(`suppression du fichier ${item.storagePath} : ${describeError(error)}`);
     }
   }
   return errors;
@@ -746,8 +701,10 @@ async function syncMediaVisibility(specimenId, slug, targetBucket) {
       await destination.remove([targetPath]);
       throw updateError;
     }
-    const { error: removeError } = await source.remove([item.storage_path]);
-    if (removeError) throw removeError;
+    if (!await hasOtherMediaReference(item)) {
+      const { error: removeError } = await source.remove([item.storage_path]);
+      if (removeError) throw removeError;
+    }
   }
 }
 
@@ -755,17 +712,46 @@ async function deleteSpecimen() {
   const id = document.querySelector("#specimen-id").value;
   if (!id) return;
   if (!window.confirm("Supprimer cette fiche et ses associations ? Les fichiers photo liés seront également supprimés.")) return;
-  const { error } = await client.from("specimens").delete().eq("id", id);
-  if (error) return message(error.message, true);
-  for (const bucket of ["site-media-public", "admin-staging"]) {
-    const paths = media.filter(item => item.bucket_id === bucket).map(item => item.storage_path);
-    if (paths.length) {
-      const { error: storageError } = await client.storage.from(bucket).remove(paths);
-      if (storageError) message(`Fiche supprimée, nettoyage Storage incomplet : ${storageError.message}`, true);
+  message("Suppression du spécimen…");
+  let specimenMedia;
+  try {
+    const { data, error: mediaError } = await client.from("specimen_media").select("*").eq("specimen_id", id);
+    if (mediaError) throw mediaError;
+    specimenMedia = data || [];
+  } catch (error) {
+    console.error("Chargement des médias avant suppression du spécimen :", error);
+    message(`Suppression annulée : les photos n’ont pas pu être vérifiées. ${describeError(error)}`, true);
+    return;
+  }
+  let shareStatus;
+  try {
+    shareStatus = await Promise.all(specimenMedia.map(item => hasOtherMediaReference(item)));
+  } catch (error) {
+    console.error("Vérification des fichiers liés au spécimen :", error);
+    message(`Suppression annulée : impossible de vérifier les références photo. ${describeError(error)}`, true);
+    return;
+  }
+  const { data: deleted, error } = await client.from("specimens").delete().eq("id", id).select("id").maybeSingle();
+  if (error) {
+    console.error("Suppression du spécimen :", error);
+    return message(describeError(error), true);
+  }
+  if (!deleted) return message("Le spécimen n’a pas été supprimé : la fiche est introuvable ou les droits sont insuffisants.", true);
+  const cleanupErrors = [];
+  for (const [index, item] of specimenMedia.entries()) {
+    if (shareStatus[index]) continue;
+    try {
+      await removeUnusedStorageFile(item);
+    } catch (storageError) {
+      cleanupErrors.push(`${item.storage_path} : ${describeError(storageError)}`);
     }
   }
   media = [];
   resetEditor(false);
-  await loadDashboard();
-  message("Fiche supprimée.");
+  let refreshed = false;
+  try { refreshed = await loadDashboard(); }
+  catch (refreshError) { cleanupErrors.push(`actualisation de la liste : ${describeError(refreshError)}`); }
+  message(cleanupErrors.length
+    ? `Spécimen supprimé, mais le nettoyage est incomplet : ${cleanupErrors.join(" ; ")}`
+    : refreshed ? "Spécimen supprimé et liste actualisée." : "Spécimen supprimé ; la liste n’a pas pu être actualisée.", !refreshed || cleanupErrors.length > 0);
 }
