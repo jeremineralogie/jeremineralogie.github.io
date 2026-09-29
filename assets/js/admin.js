@@ -1,6 +1,7 @@
 import { getSupabase } from "./supabase-client.js";
 
 const status = document.querySelector("#admin-status");
+const editorStatus = document.querySelector("#specimen-status");
 const loginPanel = document.querySelector("#login-panel");
 const cmsPanel = document.querySelector("#cms-panel");
 const editor = document.querySelector("#editor-panel");
@@ -29,6 +30,11 @@ function message(text, isError = false) {
   status.textContent = text;
   status.classList.toggle("admin-error", isError);
   status.hidden = false;
+  if (!editor.hidden && editorStatus) {
+    editorStatus.textContent = text;
+    editorStatus.classList.toggle("admin-error", isError);
+    editorStatus.hidden = false;
+  }
 }
 
 function describeError(error) {
@@ -94,6 +100,7 @@ async function loadDashboard() {
   ]);
   const failedResult = [mineralResult, specimenResult, regionResult, departmentResult].find(result => result.error);
   if (failedResult) {
+    console.error("Erreur Supabase pendant le chargement du dashboard :", failedResult.error);
     message(describeError(failedResult.error), true);
     return false;
   }
@@ -136,6 +143,11 @@ function resetEditor(open = false) {
   document.querySelector("#editor-title").textContent = "Nouveau spécimen";
   document.querySelector("#delete-specimen").hidden = true;
   editingSpecimen = null;
+  if (editorStatus) {
+    editorStatus.textContent = "";
+    editorStatus.classList.remove("admin-error");
+    editorStatus.hidden = true;
+  }
   editor.hidden = !open;
   if (open) editor.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -203,6 +215,7 @@ async function editSpecimen(id) {
     if (loadVersion !== editorLoadVersion) return;
     console.error("Chargement de la fiche spécimen :", error);
     message(`Impossible de charger la fiche : ${describeError(error)}`, true);
+    status.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 }
 
@@ -328,7 +341,8 @@ async function saveSpecimen(event) {
       saved = result.data;
     }
   } catch (error) {
-    let details = error.message || "Enregistrement impossible.";
+    console.error("Échec de l’enregistrement du spécimen :", error);
+    let details = describeError(error) || "Enregistrement impossible.";
     try {
       clearSelectedPhotoPreviews(true);
     } catch (cleanupError) {
@@ -347,7 +361,8 @@ async function saveSpecimen(event) {
     }
     await uploadPhotos(saved.id, slug);
   } catch (error) {
-    secondaryErrors.push(`La fiche est enregistrée, mais les photos n’ont pas pu être traitées : ${error.message || "erreur inconnue."}`);
+    console.error("Échec du traitement des opérations secondaires du spécimen :", error);
+    secondaryErrors.push(`La fiche est enregistrée, mais les photos n’ont pas pu être traitées : ${describeError(error)}`);
     try {
       clearSelectedPhotoPreviews(true);
     } catch (cleanupError) {
@@ -359,7 +374,8 @@ async function saveSpecimen(event) {
   try {
     refreshed = await loadDashboard();
   } catch (error) {
-    secondaryErrors.push(`La fiche est enregistrée, mais le rafraîchissement de la liste a échoué : ${error.message || "erreur inconnue."}`);
+    console.error("Échec du rafraîchissement du dashboard après sauvegarde :", error);
+    secondaryErrors.push(`La fiche est enregistrée, mais le rafraîchissement de la liste a échoué : ${describeError(error)}`);
   }
   if (!refreshed && !secondaryErrors.some(error => error.includes("rafraîchissement"))) {
     secondaryErrors.push("La fiche est enregistrée, mais la liste n’a pas pu être actualisée. Rechargez la page.");
@@ -367,6 +383,7 @@ async function saveSpecimen(event) {
   resetEditor(false);
   if (secondaryErrors.length) message(secondaryErrors.join(" "), true);
   else message("Spécimen enregistré en base et liste actualisée.");
+  status.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function normalizeGeographicName(value) {
