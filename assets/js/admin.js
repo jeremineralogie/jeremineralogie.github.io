@@ -138,7 +138,7 @@ async function editSpecimen(id) {
   document.querySelector("#dimensions").value = data.dimensions || "";
   document.querySelector("#weight").value = data.weight_grams ?? "";
   document.querySelector("#keywords").value = data.keywords || "";
-  document.querySelector("#specimen-date").value = data.discovered_on || data.discovery_year || "";
+  document.querySelector("#specimen-date").value = formatSpecimenDate(data.discovered_on, data.discovery_year);
   document.querySelector("#description").value = data.description || "";
   document.querySelector("#publication-status").value = data.publication_status;
   media = data.specimen_media || [];
@@ -248,14 +248,26 @@ function parseSpecimenDate(value) {
     if (year < 1000 || year > 2100) throw new Error("Saisissez une année entre 1000 et 2100.");
     return { discoveredOn: null, discoveryYear: year };
   }
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
-  if (!match) throw new Error("Saisissez une année (AAAA) ou une date complète (AAAA-MM-JJ).");
-  const [, year, month, day] = match.map(Number);
-  const parsed = new Date(Date.UTC(year, month - 1, day));
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(date);
+  if (!match) throw new Error("Saisissez une date au format JJ/MM/AAAA ou une année seule (AAAA).");
+  const [, day, month, year] = match.map(Number);
+  const parsed = new Date(0);
+  parsed.setUTCHours(0, 0, 0, 0);
+  parsed.setUTCFullYear(year, month - 1, day);
   if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== day) {
     throw new Error("La date saisie n'est pas valide.");
   }
-  return { discoveredOn: date, discoveryYear: null };
+  const isoDate = `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return { discoveredOn: isoDate, discoveryYear: null };
+}
+
+function formatSpecimenDate(discoveredOn, discoveryYear) {
+  if (discoveryYear) return String(discoveryYear);
+  if (!discoveredOn) return "";
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(discoveredOn);
+  if (!match) return discoveredOn;
+  const [, year, month, day] = match;
+  return `${day}/${month}/${year}`;
 }
 
 async function generateSpecimenSlug(mineralName, provenance, localityName) {

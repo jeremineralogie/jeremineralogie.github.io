@@ -41,7 +41,7 @@
             <label for="weight">Poids</label><input id="weight" type="number" min="0" step="0.001"><small>grammes</small>
             <label for="description">Description</label><textarea id="description"></textarea>
             <label for="keywords">Mots-clés</label><input id="keywords" type="text">
-            <label for="specimen-date">Date de découverte ou d'entrée en collection</label><input id="specimen-date" type="text" inputmode="numeric" placeholder="AAAA ou AAAA-MM-JJ" pattern="[0-9]{4}(-[0-9]{2}-[0-9]{2})?">
+            <label for="specimen-date">Date de découverte ou d'entrée en collection</label><input id="specimen-date" type="text" lang="fr" inputmode="numeric" placeholder="JJ/MM/AAAA" pattern="([0-9]{2}/[0-9]{2}/[0-9]{4}|[0-9]{4})" aria-describedby="specimen-date-help"><small id="specimen-date-help">Format : JJ/MM/AAAA (ex. 29/09/2026). Une année seule reste acceptée.</small>
             <label for="photos">Ajouter photo(s)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
             <input id="specimen-slug" type="hidden">
             <input id="publication-status" type="hidden" value="draft">
