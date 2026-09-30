@@ -1,4 +1,5 @@
 import { ensureNamed, normalizeName, OTHER } from "./reference-resolver.js";
+import { enhanceCombobox } from "./combobox.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -290,6 +291,7 @@ function createField(field, value) {
     if (field.multi) { box.placeholder = "Autres, séparés par des virgules (créés automatiquement)"; }
     else { box.hidden = true; box.placeholder = "Saisir la nouvelle valeur"; input.addEventListener("change", () => { box.hidden = input.value !== OTHER; if (!box.hidden) box.focus(); }); }
     wrapper.append(box);
+    if (!field.multi) enhanceCombobox(input, { otherValue: OTHER, otherInput: box, placeholder: `${field.label}…` });
   }
   return wrapper;
 }
