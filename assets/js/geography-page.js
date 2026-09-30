@@ -1,5 +1,6 @@
 import { getSupabase } from "./supabase-client.js";
 import { ficheUrl } from "./entity-links.js";
+import { articleUrl, documentUrl, pieceUrl } from "./detail-nav.js";
 
 const client = getSupabase();
 const content = document.querySelector("#department-live-content");
@@ -94,35 +95,35 @@ async function loadDepartment() {
     return (data || []).map(row => ({ name: [row.mineral_name ?? row.mineral?.name ?? "Spécimen", row.provenance, row.locality_name].filter(Boolean).join(" — "), href: `specimen.html?id=${encodeURIComponent(row.slug)}` }));
   }) || [];
   const shop = await safely("boutique", async () => {
-    const { data, error } = await client.from("shop_items").select("reference,title").eq("department_code", code).eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });
+    const { data, error } = await client.from("shop_items").select("reference,slug,title").eq("department_code", code).eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });
     if (error) throw error;
-    return (data || []).map(row => ({ name: `${row.title} (${row.reference})`, href: `contact.html?reference=${encodeURIComponent(row.reference)}` }));
+    return (data || []).map(row => ({ name: `${row.title} (${row.reference})`, href: pieceUrl(row) }));
   }) || [];
   const archives = await safely("archives", async () => {
     const links = [];
     if (ids.length) {
-      const { data, error } = await client.from("archive_localities").select("archive:archive_documents(id,title)").in("locality_id", ids);
+      const { data, error } = await client.from("archive_localities").select("archive:archive_documents(id,title,slug)").in("locality_id", ids);
       if (error) throw error; links.push(...(data || []));
     }
     if (mines.length) {
-      const { data, error } = await client.from("archive_mines").select("archive:archive_documents(id,title)").in("mine_id", mines.map(mine => mine.id));
+      const { data, error } = await client.from("archive_mines").select("archive:archive_documents(id,title,slug)").in("mine_id", mines.map(mine => mine.id));
       if (error) throw error; links.push(...(data || []));
     }
     const seen = new Map(); links.forEach(link => { if (link.archive) seen.set(link.archive.id, link.archive); });
-    return [...seen.values()].map(archive => ({ name: archive.title, href: "archives.html" }));
+    return [...seen.values()].map(archive => ({ name: archive.title, href: documentUrl(archive) }));
   }) || [];
   const articles = await safely("articles", async () => {
     const links = [];
     if (ids.length) {
-      const { data, error } = await client.from("article_localities").select("article:articles(id,title)").in("locality_id", ids);
+      const { data, error } = await client.from("article_localities").select("article:articles(id,title,slug)").in("locality_id", ids);
       if (error) throw error; links.push(...(data || []));
     }
     if (mines.length) {
-      const { data, error } = await client.from("article_mines").select("article:articles(id,title)").in("mine_id", mines.map(mine => mine.id));
+      const { data, error } = await client.from("article_mines").select("article:articles(id,title,slug)").in("mine_id", mines.map(mine => mine.id));
       if (error) throw error; links.push(...(data || []));
     }
     const seen = new Map(); links.forEach(link => { if (link.article) seen.set(link.article.id, link.article); });
-    return [...seen.values()].map(article => ({ name: article.title, href: "articles.html" }));
+    return [...seen.values()].map(article => ({ name: article.title, href: articleUrl(article) }));
   }) || [];
   content.replaceChildren();
   const heading = document.createElement("h2"); heading.textContent = "Données publiées du référentiel"; content.append(heading);

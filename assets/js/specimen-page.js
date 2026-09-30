@@ -1,5 +1,6 @@
 import { getSupabase } from "./supabase-client.js";
-import { getPublishedSpecimen } from "./collection-repository.js";
+import { getPublishedSpecimen, listPublishedSpecimens } from "./collection-repository.js";
+import { renderNeighbours, specimenUrl } from "./detail-nav.js";
 import { siteTypeLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
 
@@ -9,6 +10,18 @@ let sequence = 0;
 let loading = false;
 let refreshQueued = false;
 let pollingFallback = null;
+let neighboursLoaded = false;
+
+// Précédent / suivant : même ordre que la liste « Ma collection » (sans filtre).
+async function loadNeighbours() {
+  if (neighboursLoaded) return;
+  neighboursLoaded = true;
+  try {
+    const list = await listPublishedSpecimens();
+    const index = list.findIndex(item => item.id === slug);
+    if (index >= 0) renderNeighbours(document.querySelectorAll("[data-nav]"), list, index, specimenUrl, item => item.mineral || item.provenance);
+  } catch (error) { neighboursLoaded = false; console.error("Chargement de la navigation entre spécimens :", error); }
+}
 
 async function refreshSpecimen() {
   if (!slug) return showMissing();
@@ -108,6 +121,7 @@ function renderSpecimen(specimen) {
     science.append(term, description);
   });
   content.querySelector("[data-scientific-section]").hidden = science.children.length === 0;
+  void loadNeighbours();
 }
 
 void refreshSpecimen();

@@ -1,5 +1,6 @@
 import { loadPublishedContent, showLoadError, watchContent } from "./content-repository.js";
 import { categoryLabel } from "./reference-resolver.js";
+import { documentUrl } from "./detail-nav.js";
 
 const grid = document.querySelector("#archives-grid");
 const status = document.querySelector("#archives-status");
@@ -23,17 +24,13 @@ function render() {
   if (!visible.length) { status.textContent = rows.length ? "Aucun document ne correspond à cette catégorie." : "Aucun document publié pour le moment."; status.hidden = false; return; }
   status.hidden = true;
   for (const documentRow of visible) {
-    const card = document.createElement("article"); card.className = "card"; card.id = documentRow.slug;
+    const card = document.createElement("a"); card.className = "card"; card.href = documentUrl(documentRow);
     const body = document.createElement("div"); body.className = "card-body";
     const category = document.createElement("div"); category.className = "kicker"; category.textContent = categoryLabel(documentRow.category); body.append(category);
     const title = document.createElement("h3"); title.textContent = documentRow.title; body.append(title);
     const meta = document.createElement("div"); meta.className = "meta"; meta.textContent = [documentRow.document_date && new Intl.DateTimeFormat("fr-FR").format(new Date(`${documentRow.document_date}T00:00:00`)), documentRow.rights_note].filter(Boolean).join(" · "); body.append(meta);
-    if (documentRow.description) { const description = document.createElement("p"); description.textContent = documentRow.description; body.append(description); }
-    if (documentRow.storage_path && documentRow.bucket_id === "site-media-public") {
-      const link = document.createElement("a"); link.className = "btn"; link.target = "_blank"; link.rel = "noopener";
-      link.href = client.storage.from(documentRow.bucket_id).getPublicUrl(documentRow.storage_path).data.publicUrl;
-      link.textContent = /\.pdf$/i.test(documentRow.storage_path) ? "Ouvrir le document PDF" : "Ouvrir le document"; body.append(link);
-    }
+    if (documentRow.description) { const description = document.createElement("p"); description.className = "summary"; description.textContent = documentRow.description; body.append(description); }
+    const more = document.createElement("div"); more.className = "more"; more.textContent = "Consulter le document"; body.append(more);
     card.append(body); grid.append(card);
   }
 }
@@ -45,5 +42,6 @@ async function refresh() {
   catch (error) { rows = []; showLoadError(error, status, grid, "documents d’archives"); }
 }
 await refresh();
-if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+// Anciens liens archives.html#slug : ouvrent directement le document.
+if (location.hash) { const wanted = decodeURIComponent(location.hash.slice(1)); const hit = rows.find(row => row.slug === wanted); if (hit) location.replace(documentUrl(hit)); }
 if (client) watchContent(client, "archives", refresh);
