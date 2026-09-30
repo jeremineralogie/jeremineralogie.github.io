@@ -169,11 +169,7 @@ async function showMainSection(id) {
   collectionPanel.hidden = !isCollection;
   contentManager.hidden = isCollection || isAppearance;
   appearancePanel.hidden = !isAppearance;
-  if (isAppearance) {
-    const frame = appearancePanel.querySelector("iframe");
-    if (!frame.src) frame.src = frame.dataset.src;
-    return;
-  }
+  if (isAppearance) return;
   if (isCollection) return;
   if (!contentModule) {
     message("Chargement de la section…");
@@ -1094,10 +1090,3 @@ async function deleteSpecimen() {
     ? `Spécimen supprimé, mais le nettoyage est incomplet : ${cleanupErrors.join(" ; ")}`
     : refreshed ? "Spécimen supprimé et liste actualisée." : "Spécimen supprimé ; la liste n’a pas pu être actualisée.", !refreshed || cleanupErrors.length > 0);
 }
-
-window.addEventListener("message", event => {
-  if (event.origin !== location.origin || !event.data || event.data.ed !== "fs") return;
-  const frame = document.querySelector("#appearance-frame");
-  const on = frame.classList.toggle("is-fullscreen");
-  document.body.style.overflow = on ? "hidden" : "";
-});
