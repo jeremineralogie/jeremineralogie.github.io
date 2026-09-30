@@ -309,3 +309,5 @@ form[data-message-form]{max-width:640px;margin:0 auto}
 .map-chip input:checked+span{background:#4a1c8f;border-color:#b58cff;color:#fff}
 .map-chip input:focus-visible+span{outline:2px solid #b58cff;outline-offset:2px}
 .map-note{text-align:center}
+.map-view .map-tiles{filter:invert(1) hue-rotate(200deg) brightness(.78) contrast(1.05) saturate(.45) sepia(.25)}
+.map-view{background:#0b0712}
