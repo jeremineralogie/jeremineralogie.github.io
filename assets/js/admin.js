@@ -15,8 +15,13 @@ const collectionAddView = document.querySelector("#collection-add-view");
 const collectionListView = document.querySelector("#collection-list-view");
 const contentManager = document.querySelector("#content-manager");
 const mineralInput = document.querySelector("#mineral-name");
-const mineralAssociationSelect = document.querySelector("#mineral-association");
+const mineralAssociationSelect = document.querySelector("#mineral-association-select");
+const mineralAssociationOther = document.querySelector("#mineral-association-other");
+const mineralAssociationAddBtn = document.querySelector("#mineral-association-add");
+const mineralAssociationList = document.querySelector("#mineral-association-list");
+const mineralAssociationData = document.querySelector("#mineral-association-data");
 const siteTypeSelect = document.querySelector("#site-type");
+let mineralAssociationItems = [];
 const siteTypeOther = document.querySelector("#site-type-other");
 const photoInput = document.querySelector("#photos");
 const existingPhotoGroup = document.querySelector("#existing-photo-group");
@@ -93,6 +98,21 @@ if (!client) {
         if (select.value === "OTHER" && otherInput) otherInput.focus();
       });
     });
+  mineralAssociationSelect.addEventListener("change", () => {
+    if (mineralAssociationSelect.value === "OTHER") {
+      mineralAssociationOther.hidden = false;
+      mineralAssociationOther.focus();
+    } else {
+      mineralAssociationOther.hidden = true;
+    }
+  });
+  mineralAssociationAddBtn.addEventListener("click", addMineralAssociation);
+  mineralAssociationSelect.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); addMineralAssociation(); }
+  });
+  mineralAssociationOther.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); addMineralAssociation(); }
+  });
   photoInput.addEventListener("change", renderSelectedPhotoPreviews);
   siteTypeSelect.addEventListener("change", syncSiteTypeOther);
   setSiteType("");
@@ -230,7 +250,7 @@ async function loadSuggestions() {
 
     // Populate select elements
     populateSelect("#mineral-name", mineralData, "name", "id");
-    populateSelectMultiple("#mineral-association", mineralData, "name", "id");
+    populateSelect("#mineral-association-select", mineralData, "name", "id");
     populateSelect("#region", regionData, "name", "id");
     populateSelect("#department", departmentData, "name", "code");
     populateSelect("#locality", localityData, "name", "id");
@@ -276,6 +296,54 @@ function populateSelectMultiple(selector, data, displayField, valueField) {
     option.textContent = item[displayField];
     select.append(option);
   });
+}
+
+function addMineralAssociation() {
+  let id = "", name = "";
+  if (mineralAssociationSelect.value === "OTHER") {
+    name = mineralAssociationOther.value.trim();
+  } else {
+    id = mineralAssociationSelect.value;
+    name = mineralAssociationSelect.options[mineralAssociationSelect.selectedIndex]?.text || "";
+  }
+  if (!id && !name) return;
+
+  // Éviter les doublons
+  if (mineralAssociationItems.some(item => item.id === id && item.name === name)) {
+    mineralAssociationSelect.value = "";
+    mineralAssociationOther.value = "";
+    mineralAssociationOther.hidden = true;
+    return;
+  }
+
+  mineralAssociationItems.push({ id, name });
+  renderMineralAssociationList();
+  mineralAssociationSelect.value = "";
+  mineralAssociationOther.value = "";
+  mineralAssociationOther.hidden = true;
+}
+
+function removeMineralAssociation(index) {
+  mineralAssociationItems.splice(index, 1);
+  renderMineralAssociationList();
+}
+
+function renderMineralAssociationList() {
+  mineralAssociationList.replaceChildren();
+  mineralAssociationItems.forEach((item, index) => {
+    const tag = document.createElement("div");
+    tag.style.cssText = "display:flex;align-items:center;gap:8px;background:#1a1222;border:1px solid #2b2033;border-radius:999px;padding:6px 12px;font-size:0.94rem";
+    tag.textContent = item.name;
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.textContent = "×";
+    removeBtn.style.cssText = "background:transparent;border:none;color:#f4f1f5;cursor:pointer;font-size:1.2rem;padding:0;line-height:1";
+    removeBtn.addEventListener("click", () => removeMineralAssociation(index));
+    tag.append(removeBtn);
+    mineralAssociationList.append(tag);
+  });
+  // Mettre à jour le champ caché avec les IDs
+  mineralAssociationData.value = JSON.stringify(mineralAssociationItems.map(item => item.id).filter(Boolean));
 }
 
 function setSelectValue(selector, id, fallbackName) {
@@ -324,8 +392,12 @@ function resetEditor(open = false) {
     const otherInput = document.querySelector(`#${select.id}-other`);
     if (otherInput) otherInput.hidden = true;
   });
-  // Reset multiple select
-  mineralAssociationSelect.value = [];
+  // Reset mineral association tags
+  mineralAssociationItems = [];
+  mineralAssociationSelect.value = "";
+  mineralAssociationOther.value = "";
+  mineralAssociationOther.hidden = true;
+  renderMineralAssociationList();
   editingSpecimen = null;
   if (editorStatus) {
     editorStatus.textContent = "";
@@ -352,12 +424,20 @@ async function editSpecimen(id) {
     document.querySelector("#specimen-slug").value = data.slug;
     // Set select values by ID when available, fallback to custom text
     setSelectValue("#mineral-name", data.mineral_id, data.mineral_name);
-    // Set multiple select for associated minerals
+    // Load associated minerals
+    mineralAssociationItems = [];
     const associatedIds = data.mineral_association_ids ? (typeof data.mineral_association_ids === "string" ? JSON.parse(data.mineral_association_ids) : data.mineral_association_ids) : [];
-    mineralAssociationSelect.value = [];
-    [...mineralAssociationSelect.options].forEach(option => {
-      option.selected = associatedIds.includes(option.value);
-    });
+    if (Array.isArray(associatedIds) && associatedIds.length > 0) {
+      // Find mineral names for the IDs
+      const mineralOptions = mineralAssociationSelect.options;
+      associatedIds.forEach(id => {
+        const option = Array.from(mineralOptions).find(opt => opt.value === id);
+        if (option) {
+          mineralAssociationItems.push({ id, name: option.text });
+        }
+      });
+      renderMineralAssociationList();
+    }
     document.querySelector("#country").value = data.country ?? "";
     setSelectValue("#region", data.region_id, data.region_name);
     setSelectValue("#department", data.department_code, data.department_name);
@@ -677,7 +757,8 @@ async function saveSpecimen(event) {
     const localityValue = getSelectValue("#locality");
     const provenanceValue = getSelectValue("#provenance");
 
-    const associatedMineralIds = [...mineralAssociationSelect.selectedOptions].map(option => option.value);
+    // Récupérer les IDs des minéraux associés depuis la liste de tags
+    const associatedMineralIds = mineralAssociationItems.map(item => item.id).filter(Boolean);
 
     const values = {
       mineral: mineralValue.text,

@@ -47,7 +47,16 @@
           <form id="specimen-form" novalidate>
             <input id="specimen-id" type="hidden">
             <label for="mineral-name">Minéral principal</label><select id="mineral-name"></select><input id="mineral-name-other" type="text" placeholder="Ajouter un minéral" hidden>
-            <label for="mineral-association">Minéraux associés (secondaires)</label><select id="mineral-association" multiple></select>
+            <label>Minéraux associés (secondaires)</label>
+            <div style="display:flex;gap:8px;margin-bottom:16px;align-items:flex-start">
+              <div style="flex:1">
+                <select id="mineral-association-select"></select>
+                <input id="mineral-association-other" type="text" placeholder="Ajouter un minéral associé" hidden style="width:100%;margin-top:8px">
+              </div>
+              <button id="mineral-association-add" type="button" style="padding:10px 16px;margin-top:27px;background:transparent;border:1px solid #2b2033;border-radius:8px;cursor:pointer;color:#f4f1f5;font-inherit">Ajouter</button>
+            </div>
+            <div id="mineral-association-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px"></div>
+            <input id="mineral-association-data" type="hidden">
             <label for="country">Pays</label><input id="country" type="text" autocomplete="country-name" list="dl-countries">
             <label for="region">Région</label><select id="region"></select><input id="region-other" type="text" placeholder="Ajouter une région" hidden>
             <label for="department">Département</label><select id="department"></select><input id="department-other" type="text" placeholder="Ajouter un département" hidden>
