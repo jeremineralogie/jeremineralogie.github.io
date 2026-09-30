@@ -1,0 +1,51 @@
+# Référencement : fabrique chaque nuit les pages « déjà remplies » des fiches et le plan du site pour Google.
+# Lecture seule dans Supabase (clé publique du site). Aucune modification de l'admin ni des pages existantes.
+name: Référencement (pages pour Google)
+
+on:
+  schedule:
+    - cron: "17 2 * * *"   # chaque nuit vers 3 h ou 4 h, heure de Paris
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore: ["mineraux/**", "pieces/**", "specimens/**", "lire/**", "documents/**", "glossaire/**", "sitemap.xml"]
+  pull_request:              # vérification sans publication
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: seo-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fabriquer les pages et le plan du site
+        run: node tools/seo/build.mjs
+      - name: Publier les pages mises à jour
+        id: publish
+        if: github.event_name != 'pull_request'
+        run: |
+          git add -A
+          if git diff --cached --quiet; then echo "Aucun changement à publier."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Référencement : mise à jour automatique des pages pour Google"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: Relancer la publication du site
+        if: steps.publish.outputs.changed == 'true'
+        continue-on-error: true
+        run: >
+          curl -fsS -X POST
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
+          -H "Accept: application/vnd.github+json"
+          "https://api.github.com/repos/${{ github.repository }}/pages/builds"

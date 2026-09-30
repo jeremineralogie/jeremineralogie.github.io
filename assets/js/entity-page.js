@@ -2,6 +2,7 @@ import { shopItemName } from "./content-repository.js";
 import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
+import { mineralTitle } from "./seo-titles.js";
 import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
@@ -12,7 +13,7 @@ const KINDS = {
   mineral: { table: "minerals", label: "Minéral", fk: "mineral_id", select: "*,media:mineral_media(bucket_id,storage_path,alt_text,position)", articles: ["article_minerals", "mineral_id"], archives: ["archive_minerals", "mineral_id"] },
   locality: { table: "localities", label: "Commune", fk: "locality_id", select: "id,name,slug,notes,department_code,department:departments(name)", articles: ["article_localities", "locality_id"], archives: ["archive_localities", "locality_id"] }
 };
-const params = new URLSearchParams(location.search);
+const params = new URLSearchParams(window.JM_PARAMS ?? location.search);
 const kind = KINDS[params.get("type")];
 const slug = params.get("id");
 const client = getSupabase();
@@ -53,7 +54,7 @@ async function load() {
   const { data: entity, error } = await client.from(kind.table).select(kind.select).eq("slug", slug).maybeSingle();
   if (error) throw error;
   if (!entity) return notFound();
-  document.title = `${entity.name} — Jeremineralogie`;
+  document.title = kind === KINDS.mineral ? mineralTitle(entity) : `${entity.name} — Jeremineralogie`;
   document.querySelector("#fiche-kind").textContent = kind.label;
   document.querySelector("#fiche-title").textContent = entity.name;
   const description = entity.description ?? entity.notes ?? "";
@@ -127,6 +128,7 @@ async function load() {
   if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: documentUrl(row) }))));
   if (!sectionsBox.children.length && !description && !science.children.length) { const empty = document.createElement("p"); empty.className = "meta"; empty.textContent = "Aucun contenu publié n’est encore lié à cette fiche."; sectionsBox.append(empty); }
   status.hidden = true; root.hidden = false;
+  document.querySelector("[data-seo]")?.remove();
   void applyGlossary(document.querySelector("#fiche-description"), [...science.querySelectorAll("dd")]);
 }
 

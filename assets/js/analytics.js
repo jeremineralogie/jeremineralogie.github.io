@@ -17,8 +17,8 @@
     visit.last = now;
     try { sessionStorage.setItem("jm-visit", JSON.stringify(visit)); } catch { /* visite comptée sans suite */ }
 
-    const params = new URLSearchParams(location.search);
-    const page = (location.pathname.split("/").pop() || "index.html").replace(/\.html$/, "") || "index";
+    const params = new URLSearchParams(window.JM_PARAMS ?? location.search);
+    const page = window.JM_PAGE || (location.pathname.split("/").pop() || "index.html").replace(/\.html$/, "") || "index";
     const ENTITY = {
       specimen: ["specimen", "id"], piece: ["piece", "ref"], article: ["article", "slug"],
       document: ["archive", "slug"], departement: ["departement", "dep"]

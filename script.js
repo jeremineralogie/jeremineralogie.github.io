@@ -8,7 +8,7 @@ const build=(a,page,edit)=>{let css='';for(const [bp,mq] of BP){let part='';for(
 const texts=(a,page)=>{const r=layer(a,'page','base',page);for(const s in r){const t=r[s].__text;if(t==null)continue;try{const el=document.querySelector(s);if(el&&!el.children.length&&el.textContent!==t)el.textContent=t}catch(e){}}};
 window.__layoutEngine={layer,build,texts};
 if(/[?&]ed=1/.test(location.search))return;
-const page=(location.pathname.split('/').pop()||'index.html'),cfg=window.JEREMINERALOGIE_SUPABASE,K='layout_overrides_cache';
+const page=window.JM_PAGE?window.JM_PAGE+'.html':(location.pathname.split('/').pop()||'index.html'),cfg=window.JEREMINERALOGIE_SUPABASE,K='layout_overrides_cache';
 const apply=v=>{try{const css=build(v,page,false);let st=document.getElementById('layout-overrides');if(!st){st=document.createElement('style');st.id='layout-overrides';document.head.appendChild(st)}st.textContent=css;if(/font-family/.test(css)&&!document.getElementById('layout-fonts')){const l=document.createElement('link');l.id='layout-fonts';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Playfair+Display&family=Cormorant+Garamond&family=Lora&family=Montserrat&family=Poppins&family=Oswald&display=swap';document.head.appendChild(l)}const t=()=>texts(v,page);t();setTimeout(t,1200);setTimeout(t,3500)}catch(e){}};
 try{apply(JSON.parse(localStorage.getItem(K)))}catch(e){}
 if(!cfg||!cfg.url||String(cfg.url).includes('PLACEHOLDER'))return;

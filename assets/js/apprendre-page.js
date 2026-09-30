@@ -31,6 +31,8 @@ function showTab(name) {
   Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== tab; });
 }
 window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
+// Sous-onglets : changement sans quitter la page (y compris depuis les pages préparées pour Google, dont les liens partent de la racine).
+tabs.forEach(tab => tab.addEventListener("click", event => { event.preventDefault(); showTab(tab.dataset.tab); history.replaceState(null, "", `${location.pathname}${location.search}#${tab.dataset.tab}`); }));
 
 // Filtres : champ texte + listes, compteur « Filtre (n) » et réinitialisation, comme sur les autres pages.
 function bindPanel(panel, onChange) {
@@ -270,11 +272,12 @@ async function load() {
   renderGlossary();
   setupIdentification();
   status.hidden = true;
+  document.querySelector("[data-seo]")?.remove();
   // Lien depuis une bulle du glossaire : apprendre.html?terme=<slug>#glossaire
-  const wanted = new URLSearchParams(location.search).get("terme");
+  const wanted = new URLSearchParams(window.JM_PARAMS ?? location.search).get("terme");
   if (wanted) { showTab("glossaire"); requestAnimationFrame(() => openTerm(wanted)); }
 }
 
-showTab(location.hash.slice(1));
+showTab(location.hash.slice(1) || window.JM_TAB || "");
 try { await load(); }
 catch (error) { console.error("Chargement de l'onglet Apprendre :", error); status.textContent = "Impossible de charger le contenu pour le moment. Réessayez dans quelques instants."; }

@@ -1,16 +1,17 @@
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
+import { pieceTitle } from "./seo-titles.js";
 import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, renderNeighbours } from "./detail-nav.js";
 
-const key = new URLSearchParams(location.search).get("ref");
+const key = new URLSearchParams(window.JM_PARAMS ?? location.search).get("ref");
 const status = document.querySelector("#detail-status");
 const root = document.querySelector("#detail");
 
 function render(client, item) {
   const name = shopItemName(item);
-  document.title = `${name} — Boutique — Jeremineralogie`;
+  document.title = pieceTitle(name, item.mine?.name);
   const photos = (item.media || []).filter(media => media.bucket_id === "site-media-public").sort((a, b) => a.position - b.position);
   const wrap = document.createElement("div"); wrap.className = "specimen";
   const left = document.createElement("div"); const gallery = document.createElement("div"); gallery.className = "gallery-main"; left.append(gallery);
@@ -69,6 +70,7 @@ function render(client, item) {
   const favorite = favoriteButton({ type: "piece", id: item.reference || item.slug, name: shopItemName(item), href: pieceUrl(item), meta: [clean(item.mine?.name), clean(item.reference)].filter(Boolean).join(" · "), image: cover });
   details.append(kicker, title, list, price, contact, favorite);
   wrap.append(left, details); root.replaceChildren(wrap);
+  document.querySelector("[data-seo]")?.remove();
   if (item.description) {
     const section = document.createElement("div"); section.className = "content";
     const heading = document.createElement("h2"); heading.textContent = "Description";
