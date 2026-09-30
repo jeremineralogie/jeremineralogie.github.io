@@ -1,4 +1,4 @@
-import { loadPublishedContent, publicMediaUrl, showLoadError } from "./content-repository.js";
+import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { pieceUrl, renderNeighbours } from "./detail-nav.js";
 
@@ -7,17 +7,18 @@ const status = document.querySelector("#detail-status");
 const root = document.querySelector("#detail");
 
 function render(client, item) {
-  document.title = `${item.title} — Boutique — Jeremineralogie`;
+  const name = shopItemName(item);
+  document.title = `${name} — Boutique — Jeremineralogie`;
   const photos = (item.media || []).filter(media => media.bucket_id === "site-media-public").sort((a, b) => a.position - b.position);
   const wrap = document.createElement("div"); wrap.className = "specimen";
   const left = document.createElement("div"); const gallery = document.createElement("div"); gallery.className = "gallery-main"; left.append(gallery);
   if (!photos.length) { const placeholder = document.createElement("div"); placeholder.className = "gallery-photo-placeholder"; placeholder.textContent = "Photographie à ajouter"; gallery.append(placeholder); }
   else {
-    const main = document.createElement("img"); main.src = publicMediaUrl(client, photos[0]); main.alt = photos[0].alt_text || item.title; gallery.append(main);
+    const main = document.createElement("img"); main.src = publicMediaUrl(client, photos[0]); main.alt = photos[0].alt_text || name; gallery.append(main);
     if (photos.length > 1) {
       const thumbs = document.createElement("div"); thumbs.className = "thumbs";
       photos.forEach((photo, index) => {
-        const thumb = document.createElement("img"); thumb.src = publicMediaUrl(client, photo); thumb.alt = photo.alt_text || `${item.title} — photo ${index + 1}`;
+        const thumb = document.createElement("img"); thumb.src = publicMediaUrl(client, photo); thumb.alt = photo.alt_text || `${name} — photo ${index + 1}`;
         thumb.tabIndex = 0; thumb.setAttribute("role", "button");
         const choose = () => { main.src = thumb.src; main.alt = thumb.alt; };
         thumb.addEventListener("click", choose); thumb.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
@@ -28,7 +29,7 @@ function render(client, item) {
   }
   const details = document.createElement("div"); details.className = "details";
   const kicker = document.createElement("div"); kicker.className = "kicker"; kicker.textContent = "Boutique";
-  const title = document.createElement("h1"); title.className = "page-title"; title.textContent = item.title;
+  const title = document.createElement("h1"); title.className = "page-title"; title.textContent = name;
   const list = document.createElement("dl");
   const row = (label, value) => {
     if (!value) return;
@@ -90,6 +91,6 @@ try {
   if (!key || index < 0) { root.replaceChildren(); status.textContent = "Cette pièce n’est plus disponible en boutique."; }
   else {
     status.hidden = true; render(client, data[index]);
-    renderNeighbours(document.querySelectorAll("[data-nav]"), data, index, pieceUrl, item => item.title);
+    renderNeighbours(document.querySelectorAll("[data-nav]"), data, index, pieceUrl, shopItemName);
   }
 } catch (error) { showLoadError(error, status, root, "articles de la boutique"); }

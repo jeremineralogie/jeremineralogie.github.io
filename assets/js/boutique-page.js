@@ -1,4 +1,4 @@
-import { loadPublishedContent, publicMediaUrl, showLoadError, watchContent } from "./content-repository.js";
+import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError, watchContent } from "./content-repository.js";
 import { pieceUrl } from "./detail-nav.js";
 import { bindFilterPanel, fillFilterOptions } from "./filter-panel.js";
 
@@ -12,7 +12,7 @@ const count = document.querySelector("#shop-count");
 const empty = document.querySelector("#shop-empty");
 const clean = value => String(value || "").trim();
 const facet = (item, key) => clean({
-  mineral: item.mineral_name || item.mineral?.name || item.title,
+  mineral: shopItemName(item),
   region: item.department?.region?.name,
   department: item.department_name || item.department?.name,
   locality: item.locality_name || item.locality?.name,
@@ -31,10 +31,10 @@ function render() {
   visible.forEach(item => {
     const card = document.createElement("a"); card.className = "card"; card.href = pieceUrl(item);
     const photo = (item.media || []).filter(media => media.bucket_id === "site-media-public").sort((a, b) => a.position - b.position)[0];
-    if (photo) { const image = document.createElement("img"); image.src = publicMediaUrl(client, photo); image.alt = photo.alt_text || item.title; card.append(image); }
+    if (photo) { const image = document.createElement("img"); image.src = publicMediaUrl(client, photo); image.alt = photo.alt_text || shopItemName(item); card.append(image); }
     else { const placeholder = document.createElement("div"); placeholder.className = "card-photo-placeholder"; placeholder.textContent = "Photographie à ajouter"; placeholder.setAttribute("role", "img"); card.append(placeholder); }
     const body = document.createElement("div"); body.className = "card-body";
-    const heading = document.createElement("h3"); heading.textContent = item.title; body.append(heading);
+    const heading = document.createElement("h3"); heading.textContent = shopItemName(item); body.append(heading);
     const meta = document.createElement("div"); meta.className = "meta";
     meta.textContent = item.mine?.name || item.provenance || ""; body.append(meta);
     const price = document.createElement("div"); price.className = "price"; price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100); body.append(price);

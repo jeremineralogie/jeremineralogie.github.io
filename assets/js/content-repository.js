@@ -43,3 +43,8 @@ export function showLoadError(error, status, grid, label) {
   status.hidden = false;
   status.classList.add("admin-error");
 }
+
+// Nom affiché côté public pour une pièce de la boutique : le minéral, jamais le titre interne.
+export function shopItemName(item) {
+  return String(item?.mineral_name || item?.mineral?.name || "").trim() || String(item?.title || "").trim() || "Spécimen";
+}
