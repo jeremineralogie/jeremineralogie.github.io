@@ -1,16 +1,34 @@
 import { loadPublishedContent, publicMediaUrl, showLoadError, watchContent } from "./content-repository.js";
 import { pieceUrl } from "./detail-nav.js";
+import { bindFilterPanel, fillFilterOptions } from "./filter-panel.js";
 
 const grid = document.querySelector("#shop-grid");
 const status = document.querySelector("#shop-status");
 let rows = [];
 let client;
+const panel = document.querySelector(".filter-panel");
+const selects = [...panel.querySelectorAll("[data-filter]")];
+const count = document.querySelector("#shop-count");
+const empty = document.querySelector("#shop-empty");
+const clean = value => String(value || "").trim();
+const facet = (item, key) => clean({
+  mineral: item.mineral_name || item.mineral?.name || item.title,
+  region: item.department?.region?.name,
+  department: item.department_name || item.department?.name,
+  locality: item.locality_name || item.locality?.name,
+  mine: item.mine?.name
+}[key]);
+const updatePanel = bindFilterPanel(panel, selects, render);
 
 function render() {
   grid.replaceChildren();
-  if (!rows.length) { status.textContent = "Aucun spécimen n’est actuellement disponible dans la boutique."; status.hidden = false; return; }
-  status.hidden = true;
-  rows.forEach(item => {
+  if (!rows.length) { status.textContent = "Aucun spécimen n’est actuellement disponible dans la boutique."; status.hidden = false; panel.hidden = true; count.textContent = ""; empty.hidden = true; return; }
+  status.hidden = true; panel.hidden = false;
+  const chosen = selects.filter(select => select.value).map(select => [select.dataset.filter, select.value.toLocaleLowerCase("fr")]);
+  const visible = rows.filter(item => chosen.every(([key, value]) => facet(item, key).toLocaleLowerCase("fr") === value));
+  count.textContent = `${visible.length} spécimen${visible.length === 1 ? "" : "s"}`;
+  empty.hidden = visible.length > 0;
+  visible.forEach(item => {
     const card = document.createElement("a"); card.className = "card"; card.href = pieceUrl(item);
     const photo = (item.media || []).filter(media => media.bucket_id === "site-media-public").sort((a, b) => a.position - b.position)[0];
     if (photo) { const image = document.createElement("img"); image.src = publicMediaUrl(client, photo); image.alt = photo.alt_text || item.title; card.append(image); }
@@ -26,8 +44,8 @@ function render() {
 }
 
 async function refresh() {
-  status.textContent = "Chargement de la boutique depuis Supabase…"; status.hidden = false;
-  try { const result = await loadPublishedContent("shop"); client = result.client; rows = result.data; render(); }
+  if (!rows.length) { status.textContent = "Chargement de la boutique…"; status.hidden = false; }
+  try { const result = await loadPublishedContent("shop"); client = result.client; rows = result.data; fillFilterOptions(selects, rows, (item, key) => [facet(item, key)]); updatePanel(); render(); }
   catch (error) { rows = []; showLoadError(error, status, grid, "articles de la boutique"); }
 }
 await refresh();

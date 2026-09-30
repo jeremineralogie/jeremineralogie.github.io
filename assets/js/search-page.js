@@ -51,7 +51,7 @@ function card(result) {
 async function run() {
   if (!query) return;
   status.hidden = false; status.textContent = "Recherche en cours…";
-  if (!client) { status.textContent = "La connexion à Supabase n’est pas configurée."; return; }
+  if (!client) { status.textContent = "La recherche est momentanément indisponible."; return; }
   const terms = normalizeName(query).split(" ").filter(Boolean);
   const settled = await Promise.allSettled(sources.map(async source => {
     let request = client.from(source.table).select(source.select);

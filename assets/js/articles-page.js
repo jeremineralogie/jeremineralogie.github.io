@@ -34,7 +34,7 @@ function render() {
 }
 
 async function refresh() {
-  status.textContent = "Chargement des articles depuis Supabase…"; status.hidden = false;
+  status.textContent = "Chargement des articles…"; status.hidden = false;
   try { const result = await loadPublishedContent("articles"); client = result.client; rows = result.data; render(); }
   catch (error) { rows = []; showLoadError(error, status, grid, "articles"); }
 }

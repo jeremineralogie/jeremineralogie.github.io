@@ -37,7 +37,7 @@ function render() {
 
 categoryFilter.addEventListener("change", render);
 async function refresh() {
-  status.textContent = "Chargement des archives depuis Supabase…"; status.hidden = false;
+  status.textContent = "Chargement des archives…"; status.hidden = false;
   try { const result = await loadPublishedContent("archives"); client = result.client; rows = result.data; render(); }
   catch (error) { rows = []; showLoadError(error, status, grid, "documents d’archives"); }
 }

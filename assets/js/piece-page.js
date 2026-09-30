@@ -37,11 +37,22 @@ function render(client, item) {
     if (value instanceof Node) description.append(value); else description.textContent = value;
     list.append(term, description);
   };
-  row("Référence", item.reference);
-  if (item.provenance && item.mine?.slug) { const link = document.createElement("a"); link.className = "link"; link.href = ficheUrl("mine", item.mine.slug); link.textContent = item.provenance; row("Provenance", link); }
-  else row("Provenance", item.provenance);
-  row("Dimensions", item.dimensions);
-  row("Poids", item.weight_grams == null ? "" : `${item.weight_grams} g`);
+  const link = (text, href) => { if (!text) return ""; if (!href) return text; const anchor = document.createElement("a"); anchor.className = "link"; anchor.href = href; anchor.textContent = text; return anchor; };
+  const clean = value => String(value ?? "").trim();
+  const mineralName = clean(item.mineral_name || item.mineral?.name);
+  const mineName = clean(item.mine?.name);
+  const provenance = clean(item.provenance);
+  const localityName = clean(item.locality_name || item.locality?.name);
+  const departmentName = clean(item.department_name || item.department?.name);
+  row("Référence", clean(item.reference));
+  row("Minéral", link(mineralName, item.mineral?.slug && ficheUrl("mineral", item.mineral.slug)));
+  row("Gisement", link(mineName, item.mine?.slug && ficheUrl("mine", item.mine.slug)));
+  if (provenance && provenance !== mineName) row("Provenance", provenance);
+  row("Localité", link(localityName, item.locality?.slug && ficheUrl("locality", item.locality.slug)));
+  row("Département", link(departmentName && (departmentName + (item.department_code ? ` (${item.department_code})` : "")), item.department_code && `departement.html?dep=${encodeURIComponent(item.department_code)}`));
+  row("Région", clean(item.department?.region?.name));
+  row("Dimensions", clean(item.dimensions));
+  row("Poids", item.weight_grams == null ? "" : `${String(item.weight_grams).replace(".", ",")} g`);
   const price = document.createElement("div"); price.className = "price";
   price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100);
   const contact = document.createElement("a"); contact.className = "btn"; contact.href = `contact.html?reference=${encodeURIComponent(item.reference)}`; contact.textContent = "Me contacter";
@@ -51,6 +62,19 @@ function render(client, item) {
     const section = document.createElement("div"); section.className = "content";
     const heading = document.createElement("h2"); heading.textContent = "Description";
     const text = document.createElement("p"); text.textContent = item.description; section.append(heading, text); root.append(section);
+  }
+  const labels = { formula: "Formule", crystal_system: "Système cristallin", hardness: "Dureté", density: "Densité", colors: "Couleurs", luster: "Éclat", cleavage: "Clivage", habit: "Habitus", formation: "Formation" };
+  const science = document.createElement("dl"); science.className = "scientific-details";
+  Object.entries(labels).forEach(([field, label]) => {
+    const value = item.mineral?.[field]; if (value == null || value === "" || (Array.isArray(value) && !value.length)) return;
+    const term = document.createElement("dt"); term.textContent = label;
+    const description = document.createElement("dd"); description.textContent = Array.isArray(value) ? value.join(", ") : String(value);
+    science.append(term, description);
+  });
+  if (science.children.length) {
+    const section = document.createElement("div"); section.className = "content";
+    const heading = document.createElement("h2"); heading.textContent = "Documentation minéralogique";
+    section.append(heading, science); root.append(section);
   }
 }
 
