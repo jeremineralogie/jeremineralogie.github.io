@@ -8,5 +8,4 @@
 .admin-tab.is-active{border-color:var(--violet);background:#1a1222;box-shadow:inset 0 -2px 0 var(--violet)}
 .admin-mainbar .admin-tab{font-weight:600}.admin-empty{color:var(--muted);margin:8px 0}
 @media(max-width:760px){.admin-nav{width:100%}.admin-mainbar .admin-secondary{margin-left:auto}}
-#appearance-frame.is-fullscreen{position:fixed!important;inset:0;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;border:0!important;z-index:1000}
 html{overscroll-behavior:none}
