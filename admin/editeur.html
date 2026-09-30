@@ -94,7 +94,7 @@ import { getSupabase } from "../assets/js/supabase-client.js";
 const $=id=>document.getElementById(id);
 const frame=$('frame');
 const sb=getSupabase();
-const PAGES=[['index.html','Accueil'],['boutique.html','Boutique'],['articles.html','Articles'],['archives.html','Archives & Documentation'],['collection.html','Ma collection'],['carte.html','Carte'],['apprendre.html','Apprendre'],['identification.html','Identification'],['reseaux.html','Mes réseaux'],['contact.html','Contact'],['legal.html','Informations légales']];
+const PAGES=[['index.html','Accueil'],['boutique.html','Boutique'],['articles.html','Articles'],['archives.html','Archives & Documentation'],['collection.html','Ma collection'],['carte.html','Carte'],['apprendre.html','Apprendre'],['favoris.html','Mes favoris'],['identification.html','Identification'],['reseaux.html','Mes réseaux'],['contact.html','Contact'],['legal.html','Informations légales']];
 const FONTS=[["Georgia,'Times New Roman',serif",'Georgia'],["Inter,system-ui,-apple-system,'Segoe UI',sans-serif",'Inter'],["'Playfair Display',serif",'Playfair Display'],["'Cormorant Garamond',serif",'Cormorant'],['Lora,serif','Lora'],['Montserrat,sans-serif','Montserrat'],['Poppins,sans-serif','Poppins'],['Oswald,sans-serif','Oswald'],['Arial,Helvetica,sans-serif','Arial'],["'Courier New',monospace",'Courier']];
 const FONT_LINK='https://fonts.googleapis.com/css2?family=Playfair+Display&family=Cormorant+Garamond&family=Lora&family=Montserrat&family=Poppins&family=Oswald&display=swap';
 FONTS.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;$('font').append(o)});

@@ -1,6 +1,7 @@
 import { loadPublishedContent, showLoadError } from "./content-repository.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { documentUrl, renderNeighbours } from "./detail-nav.js";
+import { applyGlossary } from "./glossary-links.js";
 
 const slug = new URLSearchParams(location.search).get("slug");
 const status = document.querySelector("#detail-status");
@@ -14,7 +15,7 @@ function render(client, row) {
   const meta = document.createElement("div"); meta.className = "meta";
   meta.textContent = [row.document_date && new Intl.DateTimeFormat("fr-FR").format(new Date(`${row.document_date}T00:00:00`)), row.rights_note].filter(Boolean).join(" · ");
   page.append(category, title, meta);
-  if (row.description) { const description = document.createElement("p"); description.textContent = row.description; page.append(description); }
+  if (row.description) { const description = document.createElement("p"); description.textContent = row.description; page.append(description); void applyGlossary(description); }
   if (row.storage_path && row.bucket_id === "site-media-public") {
     const url = client.storage.from(row.bucket_id).getPublicUrl(row.storage_path).data.publicUrl;
     const open = document.createElement("a"); open.className = "btn"; open.href = url; open.target = "_blank"; open.rel = "noopener"; open.textContent = "Ouvrir dans un nouvel onglet";

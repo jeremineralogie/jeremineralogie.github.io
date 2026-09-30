@@ -4,7 +4,7 @@ import { ficheUrl } from "./entity-links.js";
 // Onglet « Apprendre » : fiches minéraux (référentiel minerals) et glossaire (glossary_terms), avec filtres et index A–Z.
 const status = document.querySelector("#learn-status");
 const tabs = [...document.querySelectorAll(".learn-tabs [data-tab]")];
-const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire") };
+const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire"), identification: document.querySelector("#panel-identification") };
 const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
 const COLORS = [
   ["incolore", /incolore|limpide/], ["blanc", /blanc|argent/], ["gris", /gris|plomb|acier/], ["noir", /noir/],
@@ -193,11 +193,69 @@ function openTerm(slug) {
   target.classList.remove("is-flash"); void target.offsetWidth; target.classList.add("is-flash");
 }
 
+// ----- Aide à l'identification -----
+const iPanel = panels.identification;
+const criteria = [...iPanel.querySelectorAll("select[data-crit]")];
+const overlaps = (min, max, range) => { if (min == null) return null; const [low, high] = range.split("-").map(Number); const top = max ?? min; return Number(top) >= low && Number(min) <= high; };
+const TESTS = {
+  luster: (m, v) => m.luster ? v.split("|").some(word => fold(m.luster).includes(word)) : null,
+  color: (m, v) => (m.colors || []).length ? colorKeys(m).includes(v) : null,
+  streak: (m, v) => m.streak ? v.split("|").some(word => fold(m.streak).includes(word)) : null,
+  hardness: (m, v) => overlaps(m.hardness, m.hardness_max, v),
+  density: (m, v) => overlaps(m.density, m.density_max, v),
+  transparency: (m, v) => m.transparency ? fold(m.transparency).includes(v) : null,
+  system: (m, v) => m.crystal_system ? v.split("|").includes(m.crystal_system) : null,
+  special: (m, v) => {
+    const text = fold(m.description);
+    if (v === "magnetic") return /magnetique/.test(text) && !/(pas|non) magnetique/.test(text);
+    if (v === "fizz") return m.chemical_class === "Carbonates";
+    if (v === "fluo") return Boolean(m.fluorescence);
+    if (v === "cleavage") return m.cleavage ? /parfait/.test(fold(m.cleavage)) : null;
+    return null;
+  }
+};
+function setupIdentification() {
+  const colorSelect = iPanel.querySelector("#i-color");
+  const used = new Set(minerals.flatMap(colorKeys));
+  COLORS.forEach(([key]) => { if (used.has(key)) colorSelect.add(new Option(key.charAt(0).toUpperCase() + key.slice(1), key)); });
+  criteria.forEach(select => select.addEventListener("change", renderIdentification));
+  iPanel.querySelector("#ident-reset").addEventListener("click", () => { criteria.forEach(select => { select.value = ""; }); renderIdentification(); });
+  renderIdentification();
+}
+function renderIdentification() {
+  const chosen = criteria.filter(select => select.value).map(select => [select.dataset.crit, select.value, select.options[select.selectedIndex].text]);
+  const results = iPanel.querySelector("#ident-results");
+  const count = iPanel.querySelector("#ident-count");
+  if (!chosen.length) { results.replaceChildren(); count.textContent = "Choisissez au moins un critère pour voir les minéraux possibles."; return; }
+  const scored = minerals.map(mineral => {
+    const checks = chosen.map(([key, value, label]) => ({ label, ok: TESTS[key](mineral, value) }));
+    const matched = checks.filter(check => check.ok === true).length;
+    const missed = checks.filter(check => check.ok === false).length;
+    return { mineral, checks, matched, missed };
+  }).filter(entry => entry.matched > 0).sort((a, b) => a.missed - b.missed || b.matched - a.matched || a.mineral.name.localeCompare(b.mineral.name, "fr"));
+  const best = scored.filter(entry => entry.missed <= Math.max(0, scored[0]?.missed ?? 0) + (chosen.length > 2 ? 1 : 0)).slice(0, 15);
+  const perfect = scored.filter(entry => entry.missed === 0).length;
+  count.textContent = perfect ? `${perfect} minéra${perfect > 1 ? "ux correspondent" : "l correspond"} à tous vos critères` : "Aucun minéral ne correspond à tous les critères : voici les plus proches.";
+  results.replaceChildren(...best.map(({ mineral, checks, missed }) => {
+    const card = link(ficheUrl("mineral", mineral.slug), "", "ident-result");
+    const head = element("span", "learn-mineral-head");
+    head.append(element("strong", "learn-mineral-name", mineral.name));
+    if (mineral.formula) head.append(element("span", "learn-formula", mineral.formula));
+    card.append(head);
+    card.append(element("span", `ident-score${missed ? "" : " is-full"}`, `${checks.length - missed} critère${checks.length - missed > 1 ? "s" : ""} sur ${checks.length}`));
+    const misses = checks.filter(check => check.ok === false).map(check => check.label);
+    if (misses.length) card.append(element("span", "ident-miss", `Ne correspond pas : ${misses.join(" · ")}`));
+    const facts = [mineral.luster && `éclat ${mineral.luster}`, mineral.streak && `trait ${mineral.streak}`, mineral.hardness != null && `dureté ${range(mineral.hardness, mineral.hardness_max)}`].filter(Boolean).join(" · ");
+    if (facts) card.append(element("span", "learn-mineral-facts", facts));
+    return card;
+  }));
+}
+
 async function load() {
   const client = getSupabase();
   if (!client) { status.textContent = "Contenu momentanément indisponible."; return; }
   const [mineralResult, termResult, specimenResult, shopResult] = await Promise.all([
-    client.from("minerals").select("id,name,slug,formula,chemical_class,crystal_system,hardness,hardness_max,colors").eq("publication_status", "published"),
+    client.from("minerals").select("id,name,slug,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,colors,streak,luster,transparency,cleavage,fluorescence,description").eq("publication_status", "published"),
     client.from("glossary_terms").select("term,slug,domain,definition,see_also,related_minerals").eq("publication_status", "published"),
     client.from("specimens").select("mineral_id").eq("publication_status", "published"),
     client.from("shop_items").select("mineral_id").eq("publication_status", "published").eq("sale_status", "available")
@@ -210,7 +268,11 @@ async function load() {
   fillMineralFilters();
   renderMinerals();
   renderGlossary();
+  setupIdentification();
   status.hidden = true;
+  // Lien depuis une bulle du glossaire : apprendre.html?terme=<slug>#glossaire
+  const wanted = new URLSearchParams(location.search).get("terme");
+  if (wanted) { showTab("glossaire"); requestAnimationFrame(() => openTerm(wanted)); }
 }
 
 showTab(location.hash.slice(1));

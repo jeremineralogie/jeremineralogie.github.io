@@ -2,6 +2,8 @@ import { shopItemName } from "./content-repository.js";
 import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
+import { applyGlossary } from "./glossary-links.js";
+import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 
 // Fiche générique d'un minéral, d'un gisement ou d'une commune : fiche.html?type=mineral|mine|locality&id=<slug>.
@@ -82,6 +84,8 @@ async function load() {
     const gallery = document.querySelector("#fiche-photos");
     gallery.replaceChildren(...photos.map(item => { const image = document.createElement("img"); image.src = publicUrl(item); image.alt = item.alt_text || entity.name; image.loading = "lazy"; return image; }));
     gallery.hidden = !photos.length;
+    document.querySelector("#fiche .fav-btn")?.remove();
+    subtitle.after(favoriteButton({ type: "mineral", id: entity.slug, name: entity.name, href: ficheUrl("mineral", entity.slug), meta: [entity.formula, entity.crystal_system].filter(Boolean).join(" · "), image: photos[0] ? publicUrl(photos[0]) : "" }));
     const back = document.querySelector("#fiche-back");
     back.href = "apprendre.html#mineraux"; back.textContent = "← Retour aux fiches minéraux";
     const learn = document.querySelector('.nav a[href="apprendre.html"]'); if (learn) learn.setAttribute("aria-current", "page");
@@ -123,6 +127,7 @@ async function load() {
   if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: documentUrl(row) }))));
   if (!sectionsBox.children.length && !description && !science.children.length) { const empty = document.createElement("p"); empty.className = "meta"; empty.textContent = "Aucun contenu publié n’est encore lié à cette fiche."; sectionsBox.append(empty); }
   status.hidden = true; root.hidden = false;
+  void applyGlossary(document.querySelector("#fiche-description"), [...science.querySelectorAll("dd")]);
 }
 
 function notFound() { root.hidden = true; status.hidden = false; status.textContent = "Cette fiche est introuvable."; }

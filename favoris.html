@@ -1,8 +1,11 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fiche — Jeremineralogie</title><link rel="stylesheet" href="styles.css"></head><body>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mes favoris — Jeremineralogie</title><link rel="stylesheet" href="styles.css"></head><body>
 <header class="site-header"><div class="header-inner"><div class="brand-row"><a class="brand" href="index.html">Jeremineralogie</a><div class="search">⌕ <input data-search placeholder="Minéral, localité, gisement…" aria-label="Rechercher un minéral, une localité ou un gisement"></div></div><nav class="nav"><a href="boutique.html">Boutique</a><a href="articles.html">Articles</a><a href="archives.html">Archives & Documentation</a><a href="collection.html">Ma collection</a><a href="carte.html">Carte</a><a href="apprendre.html">Apprendre</a></nav></div></header>
-<main><p class="notice" id="fiche-status" role="status" aria-live="polite">Chargement de la fiche…</p>
-<article id="fiche" hidden><div class="kicker" id="fiche-kind"></div><h1 class="page-title" id="fiche-title"></h1><p class="meta" id="fiche-subtitle"></p><div class="fiche-photos" id="fiche-photos" hidden></div><p id="fiche-description"></p><dl class="scientific-details" id="fiche-scientific"></dl><div id="fiche-sections"></div><p><a class="link" id="fiche-back" href="collection.html">← Retour à Ma collection</a></p></article></main>
+<main><h1 class="page-title">Mes favoris</h1><p class="lead">Les pièces, spécimens et fiches que vous avez marqués d’un cœur. Ils sont gardés sur cet appareil uniquement, sans compte à créer.</p>
+<p class="meta fav-count" id="fav-count" aria-live="polite"></p>
+<div id="fav-list"></div>
+<p class="notice" id="fav-empty" hidden>Vous n’avez encore aucun favori. Touchez « ♡ Ajouter à mes favoris » sur une pièce de la boutique, un spécimen de la collection ou une fiche minéral pour la retrouver ici.</p>
+</main>
 <footer class="footer"><div class="footer-inner"><div class="footer-links"><a href="identification.html">Identification</a><a href="reseaux.html">Mes réseaux</a><a href="contact.html">Contact</a><a href="legal.html">Informations légales</a><a href="favoris.html">Mes favoris</a></div><div>© Jeremineralogie — Minéraux français, spécimens de collection et patrimoine minier.</div></div></footer>
-<script src="script.js"></script><script src="assets/js/supabase-config.js"></script><script src="assets/js/analytics.js" defer></script><script type="module" src="assets/js/entity-page.js"></script>
+<script src="script.js"></script><script src="assets/js/supabase-config.js"></script><script src="assets/js/analytics.js" defer></script><script type="module" src="assets/js/favoris-page.js"></script>
 </body></html>

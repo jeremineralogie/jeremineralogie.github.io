@@ -3,6 +3,8 @@ import { getPublishedSpecimen, listPublishedSpecimens } from "./collection-repos
 import { renderNeighbours, specimenUrl } from "./detail-nav.js";
 import { siteTypeLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
+import { applyGlossary } from "./glossary-links.js";
+import { favoriteButton } from "./favorites.js";
 
 const slug = new URLSearchParams(location.search).get("id");
 const client = getSupabase();
@@ -83,6 +85,9 @@ function renderSpecimen(specimen) {
   put("[data-dimensions]", specimen.dimensions); put("[data-weight]", specimen.weight);
   put("[data-associations]", (specimen.associations || []).join(", ")); put("[data-discovery-date]", specimen.discoveryDate);
   content.querySelector("[data-description]").textContent = specimen.description || "Non renseigné";
+  if (specimen.description) void applyGlossary(content.querySelector("[data-description]"));
+  root.querySelector(".fav-btn")?.remove();
+  root.querySelector("[data-location-summary]").after(favoriteButton({ type: "specimen", id: specimen.id, name: specimen.mineral || "Spécimen", href: specimenUrl({ id: specimen.id }), meta: [specimen.provenance || specimen.locality, specimen.department].filter(Boolean).join(" · "), image: (specimen.photos || [])[0] || "" }));
   const linkField = (selector, text, href) => {
     const element = root.querySelector(selector);
     if (!text || !href) return;
