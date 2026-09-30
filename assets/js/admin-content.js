@@ -10,6 +10,11 @@ const text = value => String(value ?? "").trim();
 const slugify = value => text(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
+const MINERAL_CLASSES = ["Éléments natifs", "Sulfures et sulfosels", "Halogénures", "Oxydes et hydroxydes", "Carbonates", "Sulfates, chromates, molybdates et tungstates",
+  "Phosphates, arséniates et vanadates", "Silicates (nésosilicates)", "Silicates (sorosilicates)", "Silicates (cyclosilicates)", "Silicates (inosilicates)",
+  "Silicates (phyllosilicates)", "Silicates (tectosilicates)", "Composés organiques"];
+const CRYSTAL_SYSTEMS = ["Cubique", "Quadratique", "Hexagonal", "Trigonal", "Orthorhombique", "Monoclinique", "Triclinique", "Amorphe"];
+
 const sections = [
   { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", fields: [
     { key: "reference", label: "Référence", required: true }, { key: "title", label: "Titre", required: true },
@@ -37,7 +42,24 @@ const sections = [
   { id: "departments", label: "Départements", table: "departments", title: "Départements", fields: [{ key: "code", label: "Code (identifiant)", required: true }, { key: "name", label: "Nom", required: true }, { key: "region_id", label: "Région", ref: "regions", display: "name" }] },
   { id: "localities", label: "Localités", table: "localities", title: "Localités", fields: [{ key: "name", label: "Nom", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "postal_code", label: "Code postal" }, { key: "insee_code", label: "Code INSEE" }, { key: "latitude", label: "Latitude", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude", type: "number", step: "0.000001" }, { key: "notes", label: "Notes", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
   { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Localité", ref: "localities", display: "name" }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
-  { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral", fields: [{ key: "name", label: "Nom", required: true }, { key: "formula", label: "Formule" }, { key: "crystal_system", label: "Système cristallin" }, { key: "hardness", label: "Dureté", type: "number", step: "0.01" }, { key: "density", label: "Densité", type: "number", step: "0.001" }, { key: "colors", label: "Couleurs (séparées par des virgules)", array: true }, { key: "luster", label: "Éclat" }, { key: "cleavage", label: "Clivage" }, { key: "habit", label: "Habitus" }, { key: "formation", label: "Formation", type: "textarea" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
+  { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral (fiches Apprendre)", mediaTable: "mineral_media", foreignKey: "mineral_id", path: "minerals", fields: [
+    { key: "name", label: "Nom", required: true }, { key: "formula", label: "Formule chimique (ex. CaCO₃)" },
+    { key: "chemical_class", label: "Famille chimique", type: "select", customOptions: true, options: MINERAL_CLASSES.map(value => [value, value]) },
+    { key: "crystal_system", label: "Système cristallin", type: "select", customOptions: true, options: CRYSTAL_SYSTEMS.map(value => [value, value]) },
+    { key: "hardness", label: "Dureté minimale (Mohs)", type: "number", step: "0.01" }, { key: "hardness_max", label: "Dureté maximale (Mohs)", type: "number", step: "0.01" },
+    { key: "density", label: "Densité minimale", type: "number", step: "0.001" }, { key: "density_max", label: "Densité maximale", type: "number", step: "0.001" },
+    { key: "colors", label: "Couleurs (séparées par des virgules)", array: true }, { key: "streak", label: "Trait" }, { key: "luster", label: "Éclat" }, { key: "transparency", label: "Transparence" },
+    { key: "cleavage", label: "Clivage" }, { key: "fracture", label: "Cassure" }, { key: "habit", label: "Habitus", type: "textarea" }, { key: "fluorescence", label: "Fluorescence" },
+    { key: "description", label: "Présentation", type: "textarea" }, { key: "formation", label: "Formation et gisements", type: "textarea" },
+    { key: "varieties", label: "Variétés", type: "textarea" }, { key: "confusions", label: "Confusions possibles", type: "textarea" }, { key: "etymology", label: "Étymologie", type: "textarea" },
+    { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
+  { id: "glossary", label: "Glossaire", table: "glossary_terms", title: "Glossaire (onglet Apprendre)", fields: [
+    { key: "term", label: "Terme", required: true },
+    { key: "domain", label: "Domaine", type: "select", required: true, options: [["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"]] },
+    { key: "definition", label: "Définition", type: "textarea", notNull: true },
+    { key: "see_also", label: "Voir aussi : autres termes du glossaire (séparés par des virgules)", array: true },
+    { key: "related_minerals", label: "Minéraux liés (noms séparés par des virgules) : liens vers les fiches, la collection et la boutique", array: true },
+    { key: "publication_status", label: "Publication", type: "select", options: [["published", "Publié"], ["draft", "Brouillon"]] }] },
   { id: "occurrences", label: "Occurrences minérales", table: "mineral_occurrences", title: "Occurrences minérales", fields: [{ key: "mineral_id", label: "Minéral", ref: "minerals", display: "name", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code", required: true }, { key: "locality_id", label: "Localité (facultative)", ref: "localities", display: "name" }, { key: "source_note", label: "Source / note", type: "textarea", notNull: true }] },
   { id: "settings", label: "Paramètres du site", table: "site_settings", title: "Paramètres du site", fields: [{ key: "key", label: "Clé", required: true }, { key: "value", label: "Valeur JSON", type: "textarea" }, { key: "is_public", label: "Visible publiquement", type: "checkbox" }] }
 ];
@@ -69,7 +91,7 @@ const allowsOther = field => (field.ref && CREATABLE_REFS.includes(field.ref)) |
 
 // Navigation : chaque groupe = une section principale ; chaque vue = un sous-onglet.
 // mode « add » = formulaire seul, « list » = liste seule, « both » = liste + formulaire (référentiels).
-const referentialViews = ["regions", "departments", "localities", "mines", "minerals", "occurrences", "settings"]
+const referentialViews = ["regions", "departments", "localities", "mines", "minerals", "glossary", "occurrences", "settings"]
   .map(id => ({ id, label: sections.find(section => section.id === id).label, section: id, mode: "both" }));
 const groups = {
   shop: { start: "list", views: [
@@ -196,7 +218,8 @@ async function loadReferences(section) {
 async function loadRecords() {
   const ordering = activeSection.table === "departments" ? "code" : activeSection.table === "site_settings" ? "key" : "updated_at";
   let query = client.from(activeSection.table).select("*").order(ordering, { ascending: ordering !== "updated_at" });
-  if (activeSection.table === "minerals" || activeSection.table === "localities" || activeSection.table === "mines") query = query.order("name");
+  if (activeSection.table === "minerals" || activeSection.table === "localities" || activeSection.table === "mines") query = client.from(activeSection.table).select("*").order("name");
+  if (activeSection.table === "glossary_terms") query = client.from(activeSection.table).select("*").order("term");
   const { data, error } = await query;
   if (error) throw error;
   records = data || [];
@@ -227,7 +250,7 @@ function buildListPanel() {
   const list = document.createElement("div"); list.className = "admin-list";
   records.forEach(record => {
     const button = document.createElement("button"); button.type = "button";
-    const labelField = activeSection.table === "shop_items" || activeSection.table === "articles" || activeSection.table === "archive_documents" ? "title" : activeSection.table === "site_settings" ? "key" : "name";
+    const labelField = activeSection.table === "shop_items" || activeSection.table === "articles" || activeSection.table === "archive_documents" ? "title" : activeSection.table === "site_settings" ? "key" : activeSection.table === "glossary_terms" ? "term" : "name";
     const label = record[labelField] || record.code || record.reference || (activeSection.table === "mineral_occurrences" ? `${refs.minerals?.find(item => item.id === record.mineral_id)?.name || "Minéral"} · ${refs.departments?.find(item => item.code === record.department_code)?.name || record.department_code}` : "Entrée");
     button.textContent = `${label}${record.publication_status ? ` — ${record.publication_status === "published" ? "publié" : "brouillon"}` : ""}`;
     button.addEventListener("click", () => void selectRecord(record)); list.append(button);
@@ -436,6 +459,7 @@ async function saveRecord(form) {
       const current = selectedRecord;
       if (["regions", "localities", "mines", "minerals"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.name, section.table);
       if (["shop", "articles", "archives"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.title, section.table);
+      if (section.id === "glossary") record.slug = current?.slug || await uniqueSlug(record.term, section.table);
       if (section.id === "shop" && !record.mine_id && record.provenance) {
         const mine = await ensureNamed(client, "mines", record.provenance, { locality_id: record.locality_id || null });
         if (mine) { record.mine_id = mine.id; if (mine.created) createdNames.push(mine.name); }
@@ -659,7 +683,7 @@ async function replaceMedia(item, file, image, button) {
 }
 
 async function removeStorageIfUnreferenced(bucket, path, exceptTable = null) {
-  const mediaTables = ["specimen_media", "shop_item_media", "article_media"];
+  const mediaTables = ["specimen_media", "shop_item_media", "article_media", "mineral_media"];
   for (const table of mediaTables) {
     if (table === exceptTable) continue;
     const { data, error } = await client.from(table).select("id").eq("bucket_id", bucket).eq("storage_path", path).limit(1);

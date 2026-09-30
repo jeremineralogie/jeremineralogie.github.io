@@ -7,7 +7,7 @@ import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 // Fiche générique d'un minéral, d'un gisement ou d'une commune : fiche.html?type=mineral|mine|locality&id=<slug>.
 const KINDS = {
   mine: { table: "mines", label: "Gisement", fk: "mine_id", select: "id,name,slug,description,locality:localities(name,slug)", articles: ["article_mines", "mine_id"], archives: ["archive_mines", "mine_id"] },
-  mineral: { table: "minerals", label: "Minéral", fk: "mineral_id", select: "*", articles: ["article_minerals", "mineral_id"], archives: ["archive_minerals", "mineral_id"] },
+  mineral: { table: "minerals", label: "Minéral", fk: "mineral_id", select: "*,media:mineral_media(bucket_id,storage_path,alt_text,position)", articles: ["article_minerals", "mineral_id"], archives: ["archive_minerals", "mineral_id"] },
   locality: { table: "localities", label: "Commune", fk: "locality_id", select: "id,name,slug,notes,department_code,department:departments(name)", articles: ["article_localities", "locality_id"], archives: ["archive_localities", "locality_id"] }
 };
 const params = new URLSearchParams(location.search);
@@ -65,10 +65,26 @@ async function load() {
   subtitle.hidden = !subtitle.childNodes.length;
   const science = document.querySelector("#fiche-scientific"); science.replaceChildren();
   if (kind === KINDS.mineral) {
-    Object.entries({ crystal_system: "Système cristallin", hardness: "Dureté", density: "Densité", colors: "Couleurs", luster: "Éclat", cleavage: "Clivage", habit: "Habitus", formation: "Formation" }).forEach(([key, label]) => {
-      const value = entity[key]; if (value == null || value === "" || (Array.isArray(value) && !value.length)) return;
-      const term = document.createElement("dt"); term.textContent = label; const detail = document.createElement("dd"); detail.textContent = Array.isArray(value) ? value.join(", ") : String(value); science.append(term, detail);
+    const num = value => Number(value).toLocaleString("fr-FR", { maximumFractionDigits: 3 });
+    const span = (min, max) => min == null ? null : max != null && Number(max) !== Number(min) ? `${num(min)} à ${num(max)}` : num(min);
+    const rows = [
+      ["Famille chimique", entity.chemical_class], ["Système cristallin", entity.crystal_system],
+      ["Dureté (Mohs)", span(entity.hardness, entity.hardness_max)], ["Densité", span(entity.density, entity.density_max)],
+      ["Couleurs", (entity.colors || []).join(", ")], ["Trait", entity.streak], ["Éclat", entity.luster], ["Transparence", entity.transparency],
+      ["Clivage", entity.cleavage], ["Cassure", entity.fracture], ["Habitus", entity.habit], ["Fluorescence", entity.fluorescence],
+      ["Formation et gisements", entity.formation], ["Variétés", entity.varieties], ["Confusions possibles", entity.confusions], ["Étymologie", entity.etymology]
+    ];
+    rows.forEach(([label, value]) => {
+      if (value == null || value === "") return;
+      const term = document.createElement("dt"); term.textContent = label; const detail = document.createElement("dd"); detail.textContent = String(value); science.append(term, detail);
     });
+    const photos = (entity.media || []).filter(item => item.bucket_id === "site-media-public" && item.storage_path).sort((a, b) => a.position - b.position);
+    const gallery = document.querySelector("#fiche-photos");
+    gallery.replaceChildren(...photos.map(item => { const image = document.createElement("img"); image.src = publicUrl(item); image.alt = item.alt_text || entity.name; image.loading = "lazy"; return image; }));
+    gallery.hidden = !photos.length;
+    const back = document.querySelector("#fiche-back");
+    back.href = "apprendre.html#mineraux"; back.textContent = "← Retour aux fiches minéraux";
+    const learn = document.querySelector('.nav a[href="apprendre.html"]'); if (learn) learn.setAttribute("aria-current", "page");
   }
   sectionsBox.replaceChildren();
 
