@@ -28,15 +28,13 @@ a.card{display:block;color:inherit}.summary{display:-webkit-box;-webkit-line-cla
 
 /* ===== Design minéral : noir dominant, pierre poussiéreuse, violet & pourpre, tout centré ===== */
 :root{
-  --bg:#030106;--panel:#0a0510;--stone:#0d0716;--text:#ece3fb;--muted:#a48bc9;
+  --bg:#020104;--panel:#0a0510;--stone:#0d0716;--text:#ece3fb;--muted:#a48bc9;
   --violet:#8a4de0;--violet2:#c4a6f5;--purple:#4c1d95;--line:#2a1546;--max:1180px;
   --serif:"Cormorant Garamond","Cormorant",Georgia,"Times New Roman",serif;
-  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .6 0 0 0 0 .32 0 0 0 0 .95 0 0 0 .4 -.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E");
-  --strata:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000'%3E%3Cfilter id='s' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .02' numOctaves='5' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .38 0 0 0 0 .1 0 0 0 0 .66 0 0 0 .3 -.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23s%29'/%3E%3C/svg%3E");
-  --veins:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1400' height='1400'%3E%3Cfilter id='v' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0028 .0055' numOctaves='4' seed='23'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .62 0 0 0 0 .36 0 0 0 0 .95 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .02 .12 .02 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23v%29'/%3E%3C/svg%3E");
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .6 0 0 0 0 .32 0 0 0 0 .95 0 0 0 .22 -.09'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E");
 }
-body{background-color:var(--bg);background-image:var(--grain),radial-gradient(120% 70% at 50% 0,#10051f 0,rgba(3,1,6,0) 70%);color:var(--text);text-align:center;letter-spacing:.01em}
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--veins) center/cover no-repeat,var(--strata) center/cover no-repeat}
+body{background-color:var(--bg);background-image:var(--grain);color:var(--text);text-align:center;letter-spacing:.01em}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(90% 55% at 50% -8%,rgba(92,38,160,.30),rgba(92,38,160,0) 70%),radial-gradient(60% 45% at 12% 38%,rgba(70,24,122,.16),rgba(70,24,122,0) 72%),radial-gradient(55% 40% at 88% 62%,rgba(84,30,140,.13),rgba(84,30,140,0) 72%),radial-gradient(80% 50% at 50% 108%,rgba(58,18,104,.22),rgba(58,18,104,0) 70%),radial-gradient(140% 100% at 50% 50%,rgba(3,1,6,0) 55%,rgba(0,0,0,.65) 100%)}
 h1,h2,h3,h4{text-align:center}
 main{max-width:var(--max)}
 
