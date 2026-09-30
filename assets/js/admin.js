@@ -85,7 +85,14 @@ if (!client) {
   document.querySelector("#cancel-edit").addEventListener("click", () => resetEditor(false));
   document.querySelector("#delete-specimen").addEventListener("click", deleteSpecimen);
   [mineralInput, document.querySelector("#region"), document.querySelector("#department"), document.querySelector("#locality"), document.querySelector("#provenance")]
-    .forEach(input => input.addEventListener("input", () => dirtyReferenceFields.add(input.id)));
+    .forEach(select => {
+      select.addEventListener("change", () => {
+        dirtyReferenceFields.add(select.id);
+        const otherInput = document.querySelector(`#${select.id}-other`);
+        if (otherInput) otherInput.hidden = select.value !== "OTHER";
+        if (select.value === "OTHER" && otherInput) otherInput.focus();
+      });
+    });
   photoInput.addEventListener("change", renderSelectedPhotoPreviews);
   siteTypeSelect.addEventListener("change", syncSiteTypeOther);
   setSiteType("");
@@ -214,14 +221,21 @@ function fillDatalist(id, values) {
 }
 async function loadSuggestions() {
   try {
-    const names = async (table, column = "name") => { const { data, error } = await client.from(table).select(column); if (error) throw error; return (data || []).map(row => row[column]); };
-    const [minerals, mines, localities, regions, departments, specimenRows] = await Promise.all([
-      names("minerals"), names("mines"), names("localities"), names("regions"), names("departments"),
+    const getAll = async (table, column = "name") => { const { data, error } = await client.from(table).select("*"); if (error) throw error; return data || []; };
+    const getNames = async (table, column = "name") => { const { data, error } = await client.from(table).select(column); if (error) throw error; return (data || []).map(row => row[column]); };
+    const [mineralData, mineData, localityData, regionData, departmentData, specimenRows] = await Promise.all([
+      getAll("minerals"), getAll("mines"), getAll("localities"), getAll("regions"), getAll("departments"),
       client.from("specimens").select("country,site_type").then(({ data, error }) => { if (error) throw error; return data || []; })
     ]);
-    fillDatalist("#dl-minerals", minerals); fillDatalist("#dl-mines", mines); fillDatalist("#dl-localities", localities);
-    fillDatalist("#dl-regions", regions); fillDatalist("#dl-departments", departments);
-    fillDatalist("#dl-countries", ["France", ...specimenRows.map(row => row.country)]);
+
+    // Populate select elements
+    populateSelect("#mineral-name", mineralData, "name", "id");
+    populateSelect("#region", regionData, "name", "id");
+    populateSelect("#department", departmentData, "name", "code");
+    populateSelect("#locality", localityData, "name", "id");
+    populateSelect("#provenance", mineData, "name", "id");
+
+    fillDatalist("#dl-countries", ["France", ...specimenRows.map(row => row.country).filter(Boolean)]);
     const baseKeys = SITE_TYPES.map(([key]) => key);
     knownCustomSiteTypes = specimenRows.map(row => row.site_type).filter(value => value && !baseKeys.includes(value));
     const current = getSiteType();
@@ -229,6 +243,56 @@ async function loadSuggestions() {
   } catch (error) {
     console.error("Chargement des suggestions de saisie :", error);
   }
+}
+
+function populateSelect(selector, data, displayField, valueField) {
+  const select = document.querySelector(selector);
+  if (!select) return;
+  select.replaceChildren();
+  const blank = document.createElement("option");
+  blank.value = "";
+  blank.textContent = "— Aucun —";
+  select.append(blank);
+  data.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item[valueField];
+    option.textContent = item[displayField];
+    select.append(option);
+  });
+  const other = document.createElement("option");
+  other.value = "OTHER";
+  other.textContent = "Autre (ajouter une nouvelle valeur)…";
+  select.append(other);
+}
+
+function setSelectValue(selector, id, fallbackName) {
+  const select = document.querySelector(selector);
+  const otherInput = document.querySelector(`${selector}-other`);
+  if (!select) return;
+  if (id) {
+    select.value = id;
+    if (otherInput) otherInput.hidden = true;
+  } else if (fallbackName && fallbackName.trim()) {
+    // Custom value not in list
+    select.value = "OTHER";
+    if (otherInput) {
+      otherInput.hidden = false;
+      otherInput.value = fallbackName;
+    }
+  } else {
+    select.value = "";
+    if (otherInput) otherInput.hidden = true;
+  }
+}
+
+function getSelectValue(selector) {
+  const select = document.querySelector(selector);
+  if (!select) return { id: null, text: "" };
+  if (select.value === "OTHER") {
+    const otherInput = document.querySelector(`${selector}-other`);
+    return { id: null, text: otherInput?.value || "" };
+  }
+  return { id: select.value || null, text: select.options[select.selectedIndex]?.text || "" };
 }
 
 function resetEditor(open = false) {
@@ -241,6 +305,12 @@ function resetEditor(open = false) {
   document.querySelector("#editor-title").textContent = "Nouveau spécimen";
   document.querySelector("#delete-specimen").hidden = true;
   setSiteType("");
+  // Reset selects
+  document.querySelectorAll("#mineral-name, #region, #department, #locality, #provenance").forEach(select => {
+    select.value = "";
+    const otherInput = document.querySelector(`#${select.id}-other`);
+    if (otherInput) otherInput.hidden = true;
+  });
   editingSpecimen = null;
   if (editorStatus) {
     editorStatus.textContent = "";
@@ -265,13 +335,14 @@ async function editSpecimen(id) {
     editingSpecimen = data;
     document.querySelector("#specimen-id").value = data.id;
     document.querySelector("#specimen-slug").value = data.slug;
-    mineralInput.value = data.mineral_name ?? "";
+    // Set select values by ID when available, fallback to custom text
+    setSelectValue("#mineral-name", data.mineral_id, data.mineral_name);
     mineralAssociationInput.value = data.mineral_association ?? "";
     document.querySelector("#country").value = data.country ?? "";
-    document.querySelector("#region").value = data.region_name ?? "";
-    document.querySelector("#department").value = data.department_name ?? "";
-    document.querySelector("#provenance").value = data.provenance || "";
-    document.querySelector("#locality").value = data.locality_name ?? "";
+    setSelectValue("#region", data.region_id, data.region_name);
+    setSelectValue("#department", data.department_code, data.department_name);
+    setSelectValue("#locality", data.locality_id, data.locality_name);
+    setSelectValue("#provenance", data.mine_id, data.provenance);
     setSiteType(data.site_type);
     document.querySelector("#dimensions").value = data.dimensions || "";
     document.querySelector("#weight").value = data.weight_text ?? data.weight_grams ?? "";
@@ -580,14 +651,25 @@ async function saveSpecimen(event) {
     message("Enregistrement…");
     id = document.querySelector("#specimen-id").value;
     slug = document.querySelector("#specimen-slug").value.trim();
+    const mineralValue = getSelectValue("#mineral-name");
+    const regionValue = getSelectValue("#region");
+    const departmentValue = getSelectValue("#department");
+    const localityValue = getSelectValue("#locality");
+    const provenanceValue = getSelectValue("#provenance");
+
     const values = {
-      mineral: mineralInput.value,
+      mineral: mineralValue.text,
+      mineralId: mineralValue.id,
       mineralAssociation: mineralAssociationInput.value,
       country: document.querySelector("#country").value,
-      region: document.querySelector("#region").value,
-      department: document.querySelector("#department").value,
-      locality: document.querySelector("#locality").value,
-      provenance: document.querySelector("#provenance").value,
+      region: regionValue.text,
+      regionId: regionValue.id,
+      department: departmentValue.text,
+      departmentCode: departmentValue.id,
+      locality: localityValue.text,
+      localityId: localityValue.id,
+      provenance: provenanceValue.text,
+      mineId: provenanceValue.id,
       siteType: getSiteType(),
       dimensions: document.querySelector("#dimensions").value,
       weight: document.querySelector("#weight").value,
@@ -616,15 +698,16 @@ async function saveSpecimen(event) {
       slug,
       mineral_name: values.mineral || null,
       mineral_association: values.mineralAssociation || null,
-      mineral_id: unchangedReference("mineral-name", values.mineral, old.mineral_name, relationLabels.mineral, old.mineral_id),
+      mineral_id: values.mineralId || unchangedReference("mineral-name", values.mineral, old.mineral_name, relationLabels.mineral, old.mineral_id),
       country: values.country || null,
       region_name: values.region || null,
-      region_id: unchangedReference("region", values.region, old.region_name, relationLabels.region, old.region_id),
+      region_id: values.regionId || unchangedReference("region", values.region, old.region_name, relationLabels.region, old.region_id),
       department_name: values.department || null,
-      department_code: unchangedReference("department", values.department, old.department_name, relationLabels.department, old.department_code),
+      department_code: values.departmentCode || unchangedReference("department", values.department, old.department_name, relationLabels.department, old.department_code),
       locality_name: values.locality || null,
-      locality_id: unchangedReference("locality", values.locality, old.locality_name, relationLabels.locality, old.locality_id),
+      locality_id: values.localityId || unchangedReference("locality", values.locality, old.locality_name, relationLabels.locality, old.locality_id),
       provenance: values.provenance,
+      mine_id: values.mineId || null,
       site_type: values.siteType || null,
       dimensions: values.dimensions,
       weight_text: values.weight || null,
@@ -643,14 +726,14 @@ async function saveSpecimen(event) {
     record.locality_id = record.locality_id ?? resolved.localityId;
     if (resolved.department) { record.department_code = resolved.department.code; record.department_name = resolved.department.name; }
     else if (values.department.trim() && !record.department_code) unresolvedDepartment = true;
-    // Chaque nom saisi devient une fiche de référentiel (créée si elle n'existe pas) : minéral, commune, gisement.
+    // Créer les nouvelles références si nécessaire (valeurs "Autre" non enregistrées)
     const track = result => { if (result?.created) created.push(result.name); return result; };
     if (!record.mineral_id && values.mineral.trim()) record.mineral_id = track(await ensureNamed(client, "minerals", values.mineral))?.id ?? null;
+    if (!record.region_id && values.region.trim()) record.region_id = track(await ensureNamed(client, "regions", values.region))?.id ?? null;
     if (!record.locality_id && values.locality.trim()) record.locality_id = track(await ensureNamed(client, "localities", values.locality, { department_code: record.department_code || null }))?.id ?? null;
     const gisement = values.provenance.trim();
     if (!gisement) record.mine_id = null;
-    else if (isUpdate && old.mine_id && !dirtyReferenceFields.has("provenance")) record.mine_id = old.mine_id;
-    else record.mine_id = track(await ensureNamed(client, "mines", gisement, { locality_id: record.locality_id || null }))?.id ?? null;
+    else if (!record.mine_id) record.mine_id = track(await ensureNamed(client, "mines", gisement, { locality_id: record.locality_id || null }))?.id ?? null;
     if (isUpdate) {
       const result = await client.from("specimens").update(record).eq("id", id).select("id").single();
       if (result.error) throw result.error;
