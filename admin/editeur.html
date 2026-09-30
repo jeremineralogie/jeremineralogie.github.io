@@ -8,7 +8,7 @@
 <style>
 :root{--bg:#070609;--panel:#100c13;--text:#f4f1f5;--muted:#aaa3ad;--violet:#8e5cff;--line:#2b2033}
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;overflow:hidden}
+html,body{height:100%;margin:0;overscroll-behavior:none;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;overflow:hidden}
 body{display:flex;flex-direction:column}
 .bar{display:flex;gap:8px;align-items:center;padding:8px 10px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .bar.bottom{border-bottom:0;border-top:1px solid var(--line);padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
@@ -19,6 +19,7 @@ button:disabled{opacity:.4}
 .spacer{flex:1}
 .stage{flex:1;min-height:0;overflow:auto;display:flex;justify-content:center;background:#0b090e}
 iframe{border:0;background:var(--bg);height:100%;width:100%;max-width:100%}
+.tools{display:none;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:#0c0910;border-top:1px solid var(--line)}.tools.show{display:flex}.tools input[type=color]{width:44px;height:38px;padding:2px;background:#0e0b10;border:1px solid var(--line);border-radius:8px}.tools label{font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:6px}.danger{border-color:#7c3544;color:#ffc3cc}
 .hint{font-size:.8rem;color:var(--muted);padding:0 4px;flex-basis:100%}
 #css-box{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;z-index:10;padding:16px}
 #css-box.show{display:flex;flex-direction:column;gap:10px}
@@ -42,12 +43,29 @@ iframe{border:0;background:var(--bg);height:100%;width:100%;max-width:100%}
   <button data-w="820px">Tablette</button>
   <button data-w="1240px">PC</button>
   <span class="spacer"></span>
+  <button id="fs" title="Plein écran">⤢ Plein écran</button>
   <button id="mode" class="primary">Mode édition</button>
   <button id="savebtn">Enregistrer</button>
   <button id="export">CSS</button>
   <div class="hint" id="hint">Touchez un élément pour le sélectionner, puis glissez-le. Poignée violette en bas à droite : redimensionner.</div>
 </div>
 <div class="stage"><iframe id="frame" title="Page du site"></iframe></div>
+<div class="tools" id="tools">
+  <select id="font"><option value="">Police…</option>
+    <option value="Georgia,'Times New Roman',serif">Georgia</option>
+    <option value="Inter,system-ui,-apple-system,'Segoe UI',sans-serif">Inter (défaut)</option>
+    <option value="'Playfair Display',serif">Playfair Display</option>
+    <option value="'Cormorant Garamond',serif">Cormorant Garamond</option>
+    <option value="Lora,serif">Lora</option>
+    <option value="Montserrat,sans-serif">Montserrat</option>
+    <option value="Arial,Helvetica,sans-serif">Arial</option>
+    <option value="'Courier New',monospace">Courier</option>
+  </select>
+  <label>Texte <input type="color" id="tcolor" value="#f4f1f5"></label>
+  <label>Fond <input type="color" id="bcolor" value="#100c13"></label>
+  <button id="rewrite">✎ Réécrire</button>
+  <button id="del" class="danger">🗑 Supprimer</button>
+</div>
 <div class="bar bottom">
   <button id="parent" disabled>⬆ Parent</button>
   <button id="fminus" disabled>A−</button>
@@ -65,6 +83,8 @@ iframe{border:0;background:var(--bg);height:100%;width:100%;max-width:100%}
 import { getSupabase } from "../assets/js/supabase-client.js";
 const $=id=>document.getElementById(id);
 const frame=$('frame');
+const origText=new WeakMap();
+const FONT_LINK='https://fonts.googleapis.com/css2?family=Playfair+Display&family=Cormorant+Garamond&family=Lora&family=Montserrat&display=swap';
 let doc=null,page='',sel=null,editing=true,changes={},history=[],handle=null,box=null,all={pages:{}},dirty=false,ready=false;
 const sb=getSupabase();
 const setDirty=v=>{dirty=v;$('savebtn').textContent=v?'Enregistrer ●':'Enregistrer';$('savebtn').classList.toggle('primary',v)};
@@ -100,12 +120,22 @@ function cssPath(el){
   }
   return 'body > '+parts.join(' > ');
 }
+function setProp(el,k,v){
+  if(k==='__text'){if(!origText.has(el))origText.set(el,el.textContent);el.textContent=v}
+  else if(k==='display'&&v==='none')el.classList.add('ed-del');
+  else el.style.setProperty(k,v);
+}
+function clearProp(el,k){
+  if(k==='__text'){if(origText.has(el)){el.textContent=origText.get(el);origText.delete(el)}}
+  else if(k==='display')el.classList.remove('ed-del');
+  else el.style.removeProperty(k);
+}
 function applyAll(){
   if(!doc)return;
   for(const [s,c] of Object.entries(changes)){
     let el;try{el=doc.querySelector(s)}catch(e){continue}
     if(!el)continue;
-    for(const [k,v] of Object.entries(c))el.style.setProperty(k,v);
+    for(const [k,v] of Object.entries(c))setProp(el,k,v);
   }
   place();
 }
@@ -113,22 +143,25 @@ function record(el,props){
   const s=cssPath(el);
   history.push({s,prev:JSON.parse(JSON.stringify(changes[s]||null))});
   changes[s]=Object.assign(changes[s]||{},props);
-  for(const [k,v] of Object.entries(props))el.style.setProperty(k,v);
+  for(const [k,v] of Object.entries(props))setProp(el,k,v);
   save();updateButtons();place();
 }
 function undo(){
   const h=history.pop();if(!h)return;
   const el=doc.querySelector(h.s);
-  if(el){for(const k of Object.keys(changes[h.s]||{}))el.style.removeProperty(k)}
-  if(h.prev){changes[h.s]=h.prev;if(el)for(const [k,v] of Object.entries(h.prev))el.style.setProperty(k,v)}else delete changes[h.s];
+  if(el){for(const k of Object.keys(changes[h.s]||{}))clearProp(el,k)}
+  if(h.prev){changes[h.s]=h.prev;if(el)for(const [k,v] of Object.entries(h.prev))setProp(el,k,v)}else delete changes[h.s];
   save();updateButtons();place();
 }
 function updateButtons(){
   const has=!!sel;
   ['parent','fminus','fplus'].forEach(i=>$(i).disabled=!has);
+  $('tools').classList.toggle('show',has);
+  if(has&&doc){const cs=doc.defaultView.getComputedStyle(sel);$('tcolor').value=hex(cs.color);$('bcolor').value=hex(cs.backgroundColor)}
   $('reset').disabled=!(has&&changes[cssPath(sel)]);
   $('undo').disabled=!history.length;
 }
+function hex(c){const m=(c||'').match(/[\d.]+/g);if(!m||m.length<3)return '#000000';return '#'+m.slice(0,3).map(x=>Math.round(+x).toString(16).padStart(2,'0')).join('')}
 function place(){
   if(!doc||!box)return;
   if(!sel||!editing||!doc.contains(sel)){box.style.display='none';handle.style.display='none';return}
@@ -137,6 +170,7 @@ function place(){
   Object.assign(handle.style,{display:'block',left:r.right+sx-14+'px',top:r.bottom+sy-14+'px'});
 }
 function select(el){
+  stopRewrite();
   if(sel)sel.classList.remove('ed-sel');
   sel=el;
   if(sel)sel.classList.add('ed-sel');
@@ -153,7 +187,7 @@ function setup(){
   if(!doc||!doc.body)return;
   const st=doc.createElement('style');st.setAttribute('data-ed','');
   st.textContent='.ed-sel{outline:2px dashed #8e5cff!important;outline-offset:2px;touch-action:none!important}'+
-  'body.ed-on *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none}'+
+  'html,body{overscroll-behavior:none}body.ed-on *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none}body.ed-on .ed-editing{-webkit-user-select:text!important;user-select:text!important;outline:2px solid #4ade80!important;touch-action:auto!important}.ed-del{opacity:.25!important;outline:2px dashed #ff6b81!important}'+
   '#ed-handle{position:absolute;width:28px;height:28px;background:#8e5cff;border:3px solid #fff;border-radius:8px;z-index:2147483647;touch-action:none;cursor:nwse-resize}'+
   '#ed-box{position:absolute;pointer-events:none;z-index:2147483646;background:rgba(142,92,255,.12)}';
   doc.head.appendChild(st);
@@ -187,6 +221,7 @@ function bind(){
       drag={mode:'size',x:e.clientX,y:e.clientY,w:r.width,h:r.height,pid:e.pointerId};return;
     }
     const el=target(e);if(!el)return;
+    if(sel&&sel.isContentEditable&&(el===sel||sel.contains(el)))return;
     if(sel&&(el===sel||sel.contains(el))){
       e.preventDefault();
       const [tx,ty]=translateOf(sel);
@@ -232,12 +267,36 @@ function bind(){
   doc.addEventListener('pointercancel',e=>{tap=null;end(e)},true);
 }
 
+function loadFonts(){if(doc&&!doc.getElementById('ed-fonts')){const l=doc.createElement('link');l.id='ed-fonts';l.rel='stylesheet';l.href=FONT_LINK;l.setAttribute('data-ed','');doc.head.appendChild(l)}}
+function stopRewrite(){
+  if(!sel||!sel.isContentEditable)return;
+  sel.contentEditable='false';sel.classList.remove('ed-editing');
+  const t=sel.textContent,before=sel.__before;delete sel.__before;
+  $('rewrite').textContent='✎ Réécrire';
+  if(before!==undefined&&t!==before){sel.textContent=before;record(sel,{__text:t})}
+}
+$('rewrite').addEventListener('click',()=>{
+  if(!sel)return;
+  if(sel.isContentEditable){stopRewrite();return}
+  if(sel.children.length){$('hint').textContent='Cet élément contient d’autres éléments : touchez directement le texte à réécrire (ou ⬆ Parent pour changer).';return}
+  sel.__before=sel.textContent;sel.contentEditable='true';sel.classList.add('ed-editing');sel.focus();
+  $('rewrite').textContent='✔ Terminer';
+});
+$('font').addEventListener('change',e=>{if(sel&&e.target.value){loadFonts();record(sel,{'font-family':e.target.value})}e.target.value=''});
+$('tcolor').addEventListener('change',e=>{if(sel)record(sel,{color:e.target.value})});
+$('bcolor').addEventListener('change',e=>{if(sel)record(sel,{'background-color':e.target.value})});
+$('del').addEventListener('click',()=>{if(sel)record(sel,{display:'none'})});
+$('fs').addEventListener('click',()=>{
+  if(window.parent!==window){window.parent.postMessage({ed:'fs'},location.origin);return}
+  const d=document.documentElement;
+  if(document.fullscreenElement)document.exitFullscreen();else if(d.requestFullscreen)d.requestFullscreen().catch(()=>{});
+});
 async function load_page(url){
   if(!ready){await fetchAll();ready=true}
   const name=url.split('/').pop();
   page=name;frame.setAttribute('data-page',name);frame.src=url+'?ed=1';sel=null;
 }
-frame.addEventListener('load',()=>{try{setup()}catch(e){$('hint').textContent='Erreur : '+e.message}});
+frame.addEventListener('load',()=>{try{setup();if(JSON.stringify(changes).includes('font-family'))loadFonts()}catch(e){$('hint').textContent='Erreur : '+e.message}});
 $('page').addEventListener('change',e=>{if(dirty&&!confirm('Modifications non enregistrées. Changer de page quand même ?')){e.target.value='../'+page;return}load_page(e.target.value)});
 document.querySelectorAll('[data-w]').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('[data-w]').forEach(x=>x.classList.remove('on'));b.classList.add('on');
@@ -260,17 +319,17 @@ $('undo').addEventListener('click',undo);
 $('savebtn').addEventListener('click',saveRemote);
 $('reset').addEventListener('click',()=>{
   if(!sel)return;const s=cssPath(sel);
-  if(changes[s]){for(const k of Object.keys(changes[s]))sel.style.removeProperty(k);delete changes[s];save();updateButtons();place()}
+  if(changes[s]){for(const k of Object.keys(changes[s]))clearProp(sel,k);delete changes[s];save();updateButtons();place()}
 });
 $('resetall').addEventListener('click',()=>{
   if(!Object.keys(changes).length||!confirm('Remettre toute la page comme sur le site ?'))return;
-  for(const s of Object.keys(changes)){const el=doc.querySelector(s);if(el)for(const k of Object.keys(changes[s]))el.style.removeProperty(k)}
+  for(const s of Object.keys(changes)){const el=doc.querySelector(s);if(el)for(const k of Object.keys(changes[s]))clearProp(el,k)}
   for(const k of Object.keys(changes))delete changes[k];history=[];setDirty(true);updateButtons();place();
 });
 $('export').addEventListener('click',()=>{
   let out='/* Modifications — '+page.replace('../','')+' */\n';
   for(const [s,c] of Object.entries(changes)){
-    out+=s+'{'+Object.entries(c).map(([k,v])=>k+':'+v).join(';')+'}\n';
+    out+=s+'{'+Object.entries(c).filter(([k])=>!k.startsWith('__')).map(([k,v])=>k+':'+v).join(';')+'}\n';
   }
   if(!Object.keys(changes).length)out+='/* aucune modification */\n';
   $('css-out').value=out;$('css-box').classList.add('show');
