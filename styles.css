@@ -196,3 +196,7 @@ body{background:#030106}
 html,body{max-width:100%;overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none}
 body{touch-action:pan-y pinch-zoom}
 .card .card-body h3{display:block;white-space:nowrap;text-overflow:ellipsis;text-align:center;line-height:1.5}
+.card .card-body .meta{font-size:3.7cqw;font-style:italic;font-family:var(--serif)}
+.card .card-body .price{font-size:4.4cqw;letter-spacing:.04em}
+.card .card-body h3{top:56.7%;height:4.9%}
+.card .card-body .meta{top:61.5%}
