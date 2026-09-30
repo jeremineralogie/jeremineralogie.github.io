@@ -1,4 +1,4 @@
-import { ensureNamed, OTHER } from "./reference-resolver.js";
+import { ensureNamed, normalizeName, OTHER } from "./reference-resolver.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -58,7 +58,7 @@ let openToken = 0;
 let pendingLinkExtras = {};
 let createdNames = [];
 // Listes dont la valeur « Autre » crée une nouvelle fiche (ou une nouvelle catégorie) enregistrée pour les saisies suivantes.
-const CREATABLE_REFS = ["minerals", "mines", "localities", "regions"];
+const CREATABLE_REFS = ["minerals", "mines", "localities", "regions", "departments"];
 const allowsOther = field => (field.ref && CREATABLE_REFS.includes(field.ref)) || Boolean(field.customOptions);
 
 // Navigation : chaque groupe = une section principale ; chaque vue = un sous-onglet.
@@ -175,7 +175,7 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : "id,name";
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code" : "id,name";
     const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
@@ -232,6 +232,7 @@ function buildEditorPanel() {
   title.textContent = selectedRecord ? "Modifier" : (viewMode === "add" ? (currentView()?.label || "Nouveau contenu") : "Nouveau contenu"); editorPanel.append(title);
   const form = document.createElement("form"); form.noValidate = true;
   activeSection.fields.forEach(field => form.append(createField(field, selectedRecord?.[field.key])));
+  wireGeoAutofill(form);
   if (activeSection.mediaTable || activeSection.singleFile) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
@@ -258,12 +259,14 @@ function createField(field, value) {
     input = document.createElement("select");
     if (field.multi) input.multiple = true;
     if (!field.multi) { const blank = document.createElement("option"); blank.value = ""; blank.textContent = "— Aucun —"; input.append(blank); }
+    if (allowsOther(field) && !field.multi) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "➕ Autre (saisir une valeur)…"; input.append(other); }
     for (const optionData of refs[field.ref] || []) {
       const option = document.createElement("option"); option.value = optionData[field.value || "id"];
       option.textContent = optionData[field.display] || option.value; option.selected = field.multi && (selectedRecord?._links?.[field.key] || []).includes(option.value); input.append(option);
     }
   } else if (field.options) {
     input = document.createElement("select");
+    if (allowsOther(field)) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "➕ Autre (saisir une valeur)…"; input.append(other); }
     const known = new Set(field.options.map(([key]) => key));
     field.options.forEach(([key, labelText]) => { const option = document.createElement("option"); option.value = key; option.textContent = labelText; input.append(option); });
     if (field.customOptions) {
@@ -281,7 +284,6 @@ function createField(field, value) {
   if (field.type === "checkbox") input.checked = Boolean(value);
   else if (value != null && value !== "") input.value = field.body ? bodyToText(value) : field.key === "value" ? JSON.stringify(value, null, 2) : field.euros ? (Number(value) / 100).toFixed(2) : field.array && Array.isArray(value) ? value.join(", ") : String(value);
   label.htmlFor = `content-${field.key}`; input.id = label.htmlFor; input.name = field.key;
-  if (allowsOther(field) && !field.multi) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "Autre (saisir une valeur)…"; input.append(other); }
   wrapper.append(input);
   if (allowsOther(field)) {
     const box = document.createElement("input"); box.type = "text"; box.name = `${field.key}__other`; box.id = `content-${field.key}__other`;
@@ -441,7 +443,31 @@ async function saveRecord(form) {
   }
 }
 
+// Remplissage automatique : gisement → localité → département.
+function wireGeoAutofill(form) {
+  const field = name => form.elements.namedItem(name);
+  const setValue = (name, value) => {
+    const select = field(name);
+    if (!select || select.tagName !== "SELECT" || value == null || value === "" || ![...select.options].some(option => option.value === String(value))) return false;
+    select.value = String(value);
+    const other = form.elements.namedItem(`${name}__other`); if (other && other.type === "text") other.hidden = true;
+    return true;
+  };
+  const fromLocality = id => { const locality = (refs.localities || []).find(item => String(item.id) === String(id)); if (locality?.department_code) setValue("department_code", locality.department_code); };
+  field("mine_id")?.addEventListener?.("change", event => {
+    const mine = (refs.mines || []).find(item => String(item.id) === String(event.target.value));
+    if (mine?.locality_id && setValue("locality_id", mine.locality_id)) fromLocality(mine.locality_id);
+  });
+  field("locality_id")?.addEventListener?.("change", event => fromLocality(event.target.value));
+}
+
 async function ensureRef(table, name) {
+  if (table === "departments") {
+    const wanted = normalizeName(name);
+    const found = (refs.departments || []).find(item => normalizeName(item.name) === wanted || normalizeName(item.code) === wanted);
+    if (!found) throw new Error(`Département « ${name} » inconnu : choisissez-le dans la liste ou saisissez son nom exact ou son numéro (ex. « Creuse » ou « 23 »).`);
+    return found.code;
+  }
   const result = await ensureNamed(client, table, name);
   if (result.created) createdNames.push(result.name);
   return result.id;

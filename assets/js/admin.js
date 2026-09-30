@@ -42,6 +42,34 @@ let knownCustomSiteTypes = [];
 let contentModule = null;
 let activeMain = "collection";
 const dirtyReferenceFields = new Set();
+let geo = { mines: [], localities: [], departments: [] };
+
+// Remplissage automatique : gisement → commune → département → région + pays.
+function setGeoSelect(id, value) {
+  const select = document.querySelector(`#${id}`);
+  if (!select || value == null || value === "" || ![...select.options].some(option => option.value === String(value))) return false;
+  if (select.value === String(value)) return true;
+  select.value = String(value);
+  dirtyReferenceFields.add(id);
+  const otherInput = document.querySelector(`#${id}-other`);
+  if (otherInput) otherInput.hidden = true;
+  return true;
+}
+function autofillFromDepartment(code) {
+  const department = geo.departments.find(item => String(item.code) === String(code));
+  if (!department) return;
+  if (department.region_id) setGeoSelect("region", department.region_id);
+  const country = document.querySelector("#country");
+  if (country && country.value.trim().toLowerCase() !== "france") country.value = "France";
+}
+function autofillFromLocality(localityId) {
+  const locality = geo.localities.find(item => String(item.id) === String(localityId));
+  if (locality?.department_code && setGeoSelect("department", locality.department_code)) autofillFromDepartment(locality.department_code);
+}
+function autofillFromMine(mineId) {
+  const mine = geo.mines.find(item => String(item.id) === String(mineId));
+  if (mine?.locality_id && setGeoSelect("locality", mine.locality_id)) autofillFromLocality(mine.locality_id);
+}
 
 let statusTimer = null;
 function message(text, isError = false) {
@@ -114,6 +142,11 @@ if (!client) {
         const otherInput = document.querySelector(`#${select.id}-other`);
         if (otherInput) otherInput.hidden = select.value !== "OTHER";
         if (select.value === "OTHER" && otherInput) otherInput.focus();
+        if (select.value && select.value !== "OTHER") {
+          if (select.id === "department") autofillFromDepartment(select.value);
+          if (select.id === "locality") autofillFromLocality(select.value);
+          if (select.id === "provenance") autofillFromMine(select.value);
+        }
       });
     });
   mineralAssociationSelect.addEventListener("change", () => {
@@ -252,11 +285,11 @@ function renderSiteTypeOptions(selected) {
   siteTypeSelect.replaceChildren();
   const add = (value, label) => { const option = document.createElement("option"); option.value = value; option.textContent = label; siteTypeSelect.append(option); };
   add("", "— Non renseigné —");
+  add(OTHER, "➕ Autre (saisir une valeur)…");
   SITE_TYPES.forEach(([value, label]) => add(value, label));
   const extras = new Set(knownCustomSiteTypes);
   if (selected && !SITE_TYPES.some(([value]) => value === selected)) extras.add(selected);
   [...extras].sort((a, b) => a.localeCompare(b, "fr")).forEach(value => add(value, value));
-  add(OTHER, "Autre (saisir une valeur)…");
 }
 function setSiteType(value) {
   const clean = (value ?? "").trim();
@@ -287,7 +320,7 @@ async function loadSuggestions() {
       client.from("specimens").select("country,site_type").then(({ data, error }) => { if (error) throw error; return data || []; })
     ]);
 
-    // Populate select elements
+    geo = { mines: mineData, localities: localityData, departments: departmentData };
     populateSelect("#mineral-name", mineralData, "name", "id");
     populateSelect("#mineral-association-select", mineralData, "name", "id");
     populateSelect("#region", regionData, "name", "id");
@@ -313,16 +346,16 @@ function populateSelect(selector, data, displayField, valueField) {
   blank.value = "";
   blank.textContent = "— Aucun —";
   select.append(blank);
-  data.forEach(item => {
+  const other = document.createElement("option");
+  other.value = "OTHER";
+  other.textContent = "➕ Autre (ajouter une nouvelle valeur)…";
+  select.append(other);
+  [...data].sort((a, b) => String(a[displayField] ?? "").localeCompare(String(b[displayField] ?? ""), "fr")).forEach(item => {
     const option = document.createElement("option");
     option.value = item[valueField];
     option.textContent = item[displayField];
     select.append(option);
   });
-  const other = document.createElement("option");
-  other.value = "OTHER";
-  other.textContent = "Autre (ajouter une nouvelle valeur)…";
-  select.append(other);
 }
 
 function populateSelectMultiple(selector, data, displayField, valueField) {
