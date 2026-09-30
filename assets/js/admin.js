@@ -42,6 +42,34 @@ let knownCustomSiteTypes = [];
 let contentModule = null;
 let activeMain = "collection";
 const dirtyReferenceFields = new Set();
+let geo = { mines: [], localities: [], departments: [] };
+
+// Remplissage automatique : gisement → commune → département → région + pays.
+function setGeoSelect(id, value) {
+  const select = document.querySelector(`#${id}`);
+  if (!select || value == null || value === "" || ![...select.options].some(option => option.value === String(value))) return false;
+  if (select.value === String(value)) return true;
+  select.value = String(value);
+  dirtyReferenceFields.add(id);
+  const otherInput = document.querySelector(`#${id}-other`);
+  if (otherInput) otherInput.hidden = true;
+  return true;
+}
+function autofillFromDepartment(code) {
+  const department = geo.departments.find(item => String(item.code) === String(code));
+  if (!department) return;
+  if (department.region_id) setGeoSelect("region", department.region_id);
+  const country = document.querySelector("#country");
+  if (country && country.value.trim().toLowerCase() !== "france") country.value = "France";
+}
+function autofillFromLocality(localityId) {
+  const locality = geo.localities.find(item => String(item.id) === String(localityId));
+  if (locality?.department_code && setGeoSelect("department", locality.department_code)) autofillFromDepartment(locality.department_code);
+}
+function autofillFromMine(mineId) {
+  const mine = geo.mines.find(item => String(item.id) === String(mineId));
+  if (mine?.locality_id && setGeoSelect("locality", mine.locality_id)) autofillFromLocality(mine.locality_id);
+}
 
 let statusTimer = null;
 function message(text, isError = false) {
@@ -114,6 +142,11 @@ if (!client) {
         const otherInput = document.querySelector(`#${select.id}-other`);
         if (otherInput) otherInput.hidden = select.value !== "OTHER";
         if (select.value === "OTHER" && otherInput) otherInput.focus();
+        if (select.value && select.value !== "OTHER") {
+          if (select.id === "department") autofillFromDepartment(select.value);
+          if (select.id === "locality") autofillFromLocality(select.value);
+          if (select.id === "provenance") autofillFromMine(select.value);
+        }
       });
     });
   mineralAssociationSelect.addEventListener("change", () => {
@@ -252,11 +285,11 @@ function renderSiteTypeOptions(selected) {
   siteTypeSelect.replaceChildren();
   const add = (value, label) => { const option = document.createElement("option"); option.value = value; option.textContent = label; siteTypeSelect.append(option); };
   add("", "— Non renseigné —");
+  add(OTHER, "➕ Autre (saisir une valeur)…");
   SITE_TYPES.forEach(([value, label]) => add(value, label));
   const extras = new Set(knownCustomSiteTypes);
   if (selected && !SITE_TYPES.some(([value]) => value === selected)) extras.add(selected);
   [...extras].sort((a, b) => a.localeCompare(b, "fr")).forEach(value => add(value, value));
-  add(OTHER, "Autre (saisir une valeur)…");
 }
 function setSiteType(value) {
   const clean = (value ?? "").trim();
@@ -287,7 +320,7 @@ async function loadSuggestions() {
       client.from("specimens").select("country,site_type").then(({ data, error }) => { if (error) throw error; return data || []; })
     ]);
 
-    // Populate select elements
+    geo = { mines: mineData, localities: localityData, departments: departmentData };
     populateSelect("#mineral-name", mineralData, "name", "id");
     populateSelect("#mineral-association-select", mineralData, "name", "id");
     populateSelect("#region", regionData, "name", "id");
@@ -313,16 +346,16 @@ function populateSelect(selector, data, displayField, valueField) {
   blank.value = "";
   blank.textContent = "— Aucun —";
   select.append(blank);
-  data.forEach(item => {
+  const other = document.createElement("option");
+  other.value = "OTHER";
+  other.textContent = "➕ Autre (ajouter une nouvelle valeur)…";
+  select.append(other);
+  [...data].sort((a, b) => String(a[displayField] ?? "").localeCompare(String(b[displayField] ?? ""), "fr")).forEach(item => {
     const option = document.createElement("option");
     option.value = item[valueField];
     option.textContent = item[displayField];
     select.append(option);
   });
-  const other = document.createElement("option");
-  other.value = "OTHER";
-  other.textContent = "Autre (ajouter une nouvelle valeur)…";
-  select.append(other);
 }
 
 function populateSelectMultiple(selector, data, displayField, valueField) {
@@ -335,6 +368,22 @@ function populateSelectMultiple(selector, data, displayField, valueField) {
     option.textContent = item[displayField];
     select.append(option);
   });
+}
+
+async function saveMineralAssociations(specimenId, mainMineralId) {
+  const wanted = new Set();
+  for (const item of mineralAssociationItems) {
+    let mineralId = item.id;
+    if (!mineralId && item.name.trim()) mineralId = (await ensureNamed(client, "minerals", item.name.trim()))?.id;
+    if (mineralId && mineralId !== mainMineralId) wanted.add(String(mineralId));
+  }
+  const { data: current, error: readError } = await client.from("specimen_associations").select("mineral_id").eq("specimen_id", specimenId);
+  if (readError) throw readError;
+  const currentIds = (current || []).map(row => String(row.mineral_id));
+  const toAdd = [...wanted].filter(mineralId => !currentIds.includes(mineralId));
+  const toRemove = currentIds.filter(mineralId => !wanted.has(mineralId));
+  if (toAdd.length) { const { error } = await client.from("specimen_associations").insert(toAdd.map(mineralId => ({ specimen_id: specimenId, mineral_id: mineralId }))); if (error) throw error; }
+  if (toRemove.length) { const { error } = await client.from("specimen_associations").delete().eq("specimen_id", specimenId).in("mineral_id", toRemove); if (error) throw error; }
 }
 
 function addMineralAssociation() {
@@ -465,18 +514,10 @@ async function editSpecimen(id) {
     setSelectValue("#mineral-name", data.mineral_id, data.mineral_name);
     // Load associated minerals
     mineralAssociationItems = [];
-    const associatedIds = data.mineral_association_ids ? (typeof data.mineral_association_ids === "string" ? JSON.parse(data.mineral_association_ids) : data.mineral_association_ids) : [];
-    if (Array.isArray(associatedIds) && associatedIds.length > 0) {
-      // Find mineral names for the IDs
-      const mineralOptions = mineralAssociationSelect.options;
-      associatedIds.forEach(id => {
-        const option = Array.from(mineralOptions).find(opt => opt.value === id);
-        if (option) {
-          mineralAssociationItems.push({ id, name: option.text });
-        }
-      });
-      renderMineralAssociationList();
-    }
+    const { data: associationRows, error: associationError } = await client.from("specimen_associations").select("mineral_id,mineral:minerals(name)").eq("specimen_id", data.id);
+    if (associationError) console.error("Chargement des minéraux associés :", associationError);
+    (associationRows || []).forEach(row => { if (row.mineral_id) mineralAssociationItems.push({ id: row.mineral_id, name: row.mineral?.name || "" }); });
+    renderMineralAssociationList();
     document.querySelector("#country").value = data.country ?? "";
     setSelectValue("#region", data.region_id, data.region_name);
     setSelectValue("#department", data.department_code, data.department_name);
@@ -784,6 +825,7 @@ async function saveSpecimen(event) {
   let id = "";
   let slug = "";
   let saved;
+  let savedMineralId = null;
   let unresolvedDepartment = false;
   const created = [];
   try {
@@ -839,7 +881,6 @@ async function saveSpecimen(event) {
     const record = {
       slug,
       mineral_name: values.mineral || null,
-      mineral_association_ids: values.mineralAssociationIds.length > 0 ? JSON.stringify(values.mineralAssociationIds) : null,
       mineral_id: values.mineralId || unchangedReference("mineral-name", values.mineral, old.mineral_name, relationLabels.mineral, old.mineral_id),
       country: values.country || null,
       region_name: values.region || null,
@@ -877,10 +918,12 @@ async function saveSpecimen(event) {
     if (!gisement) record.mine_id = null;
     else if (!record.mine_id) record.mine_id = track(await ensureNamed(client, "mines", gisement, { locality_id: record.locality_id || null }))?.id ?? null;
     if (isUpdate) {
+      savedMineralId = record.mineral_id;
       const result = await client.from("specimens").update(record).eq("id", id).select("id").single();
       if (result.error) throw result.error;
       saved = result.data;
     } else {
+      savedMineralId = record.mineral_id;
       const result = await client.from("specimens").insert({ id: newSpecimenId, ...record }).select("id").single();
       if (result.error) throw result.error;
       saved = result.data;
@@ -897,8 +940,14 @@ async function saveSpecimen(event) {
     return;
   }
 
-  message("Spécimen enregistré en base.");
+  message("Spécimen enregistré.");
   const secondaryErrors = [];
+  try {
+    await saveMineralAssociations(saved.id, savedMineralId);
+  } catch (error) {
+    console.error("Échec de l’enregistrement des minéraux associés :", error);
+    secondaryErrors.push(`La fiche est enregistrée, mais les minéraux associés n’ont pas pu l’être : ${describeError(error)}`);
+  }
   if (unresolvedDepartment) secondaryErrors.push("Département non reconnu dans le référentiel : la fiche est enregistrée, mais sans lien vers la page département (saisissez le nom exact ou le code, ex. « Puy-de-Dôme » ou « 63 »).");
   if (id && editingSpecimen?.publication_status !== document.querySelector("#publication-status").value) {
     try {

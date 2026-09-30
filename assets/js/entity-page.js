@@ -1,3 +1,4 @@
+import { shopItemName } from "./content-repository.js";
 import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
@@ -78,7 +79,7 @@ async function load() {
       if (e) throw e; return data || [];
     }, []),
     safely("boutique", async () => {
-      const { data, error: e } = await client.from("shop_items").select("reference,title,price_cents,currency,media:shop_item_media(bucket_id,storage_path,position)")
+      const { data, error: e } = await client.from("shop_items").select("slug,reference,title,mineral_name,price_cents,currency,mineral:minerals!shop_items_mineral_id_fkey(name),media:shop_item_media(bucket_id,storage_path,position)")
         .eq(kind.fk, entity.id).eq("publication_status", "published").eq("sale_status", "available");
       if (e) throw e; return data || [];
     }, []),
@@ -98,7 +99,7 @@ async function load() {
 
   const label = row => row.mineral_name ?? row.mineral?.name ?? "Spécimen";
   if (specimens.length) section("Dans ma collection", cards(specimens.map(row => ({ title: label(row), meta: [row.provenance, row.locality_name].filter(Boolean).join(" · "), href: `specimen.html?id=${encodeURIComponent(row.slug)}`, photo: firstPhoto(row.media) }))));
-  if (shop.length) section("Disponible en boutique", cards(shop.map(row => ({ title: row.title, meta: new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.currency || "EUR" }).format((row.price_cents ?? 0) / 100), href: pieceUrl(row), photo: firstPhoto(row.media) }))));
+  if (shop.length) section("Disponible en boutique", cards(shop.map(row => ({ title: shopItemName(row), meta: new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.currency || "EUR" }).format((row.price_cents ?? 0) / 100), href: pieceUrl(row), photo: firstPhoto(row.media) }))));
   if (kind === KINDS.locality && mines.length) section("Gisements de cette commune", linkList(mines.map(row => ({ title: row.name, href: ficheUrl("mine", row.slug) }))));
   if (kind === KINDS.mineral) { const list = unique(specimens.map(row => row.mine).filter(Boolean), "slug"); if (list.length) section("Gisements dans ma collection", linkList(list.map(row => ({ title: row.name, href: ficheUrl("mine", row.slug) })))); }
   if (kind === KINDS.mine) { const list = unique(specimens.map(row => row.mineral).filter(Boolean), "slug"); if (list.length) section("Minéraux de ce gisement dans ma collection", linkList(list.map(row => ({ title: row.name, href: ficheUrl("mineral", row.slug) })))); }

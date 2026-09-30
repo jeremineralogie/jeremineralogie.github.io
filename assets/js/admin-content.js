@@ -1,4 +1,4 @@
-import { ensureNamed, OTHER } from "./reference-resolver.js";
+import { ensureNamed, normalizeName, OTHER } from "./reference-resolver.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -8,9 +8,9 @@ const slugify = value => text(value).normalize("NFD").replace(/[\u0300-\u036f]/g
   .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 const sections = [
-  { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", fields: [
+  { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", fields: [
     { key: "reference", label: "Référence", required: true }, { key: "title", label: "Titre", required: true },
-    { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "mineral_association_ids", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true, required: true },
+    { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "link_associations", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true },
     { key: "provenance", label: "Provenance", notNull: true }, { key: "mine_id", label: "Gisement", ref: "mines", display: "name" },
     { key: "locality_id", label: "Localité", ref: "localities", display: "name" }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" },
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_grams", label: "Poids (g)", type: "number", step: "0.001" },
@@ -58,7 +58,7 @@ let openToken = 0;
 let pendingLinkExtras = {};
 let createdNames = [];
 // Listes dont la valeur « Autre » crée une nouvelle fiche (ou une nouvelle catégorie) enregistrée pour les saisies suivantes.
-const CREATABLE_REFS = ["minerals", "mines", "localities", "regions"];
+const CREATABLE_REFS = ["minerals", "mines", "localities", "regions", "departments"];
 const allowsOther = field => (field.ref && CREATABLE_REFS.includes(field.ref)) || Boolean(field.customOptions);
 
 // Navigation : chaque groupe = une section principale ; chaque vue = un sous-onglet.
@@ -175,7 +175,7 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : "id,name";
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code" : "id,name";
     const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
@@ -232,6 +232,7 @@ function buildEditorPanel() {
   title.textContent = selectedRecord ? "Modifier" : (viewMode === "add" ? (currentView()?.label || "Nouveau contenu") : "Nouveau contenu"); editorPanel.append(title);
   const form = document.createElement("form"); form.noValidate = true;
   activeSection.fields.forEach(field => form.append(createField(field, selectedRecord?.[field.key])));
+  wireGeoAutofill(form);
   if (activeSection.mediaTable || activeSection.singleFile) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
@@ -258,12 +259,14 @@ function createField(field, value) {
     input = document.createElement("select");
     if (field.multi) input.multiple = true;
     if (!field.multi) { const blank = document.createElement("option"); blank.value = ""; blank.textContent = "— Aucun —"; input.append(blank); }
+    if (allowsOther(field) && !field.multi) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "➕ Autre (saisir une valeur)…"; input.append(other); }
     for (const optionData of refs[field.ref] || []) {
       const option = document.createElement("option"); option.value = optionData[field.value || "id"];
       option.textContent = optionData[field.display] || option.value; option.selected = field.multi && (selectedRecord?._links?.[field.key] || []).includes(option.value); input.append(option);
     }
   } else if (field.options) {
     input = document.createElement("select");
+    if (allowsOther(field)) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "➕ Autre (saisir une valeur)…"; input.append(other); }
     const known = new Set(field.options.map(([key]) => key));
     field.options.forEach(([key, labelText]) => { const option = document.createElement("option"); option.value = key; option.textContent = labelText; input.append(option); });
     if (field.customOptions) {
@@ -281,7 +284,6 @@ function createField(field, value) {
   if (field.type === "checkbox") input.checked = Boolean(value);
   else if (value != null && value !== "") input.value = field.body ? bodyToText(value) : field.key === "value" ? JSON.stringify(value, null, 2) : field.euros ? (Number(value) / 100).toFixed(2) : field.array && Array.isArray(value) ? value.join(", ") : String(value);
   label.htmlFor = `content-${field.key}`; input.id = label.htmlFor; input.name = field.key;
-  if (allowsOther(field) && !field.multi) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "Autre (saisir une valeur)…"; input.append(other); }
   wrapper.append(input);
   if (allowsOther(field)) {
     const box = document.createElement("input"); box.type = "text"; box.name = `${field.key}__other`; box.id = `content-${field.key}__other`;
@@ -360,9 +362,9 @@ async function selectRecord(record) {
     if (activeSection.links) {
       selectedRecord._links = {};
       for (const [table, column] of activeSection.links) {
-        const { data, error } = await client.from(table).select(column).eq(activeSection.id === "articles" ? "article_id" : "archive_id", record.id);
+        const { data, error } = await client.from(table).select(column).eq(linkOwner(activeSection), record.id);
         if (error) throw error;
-        const fieldKey = `link_${table.replace(activeSection.id === "articles" ? "article_" : "archive_", "")}`;
+        const fieldKey = `link_${table.replace(linkPrefix(activeSection), "")}`;
         selectedRecord._links[fieldKey] = (data || []).map(row => String(row[column]));
       }
     }
@@ -441,17 +443,43 @@ async function saveRecord(form) {
   }
 }
 
+// Remplissage automatique : gisement → localité → département.
+function wireGeoAutofill(form) {
+  const field = name => form.elements.namedItem(name);
+  const setValue = (name, value) => {
+    const select = field(name);
+    if (!select || select.tagName !== "SELECT" || value == null || value === "" || ![...select.options].some(option => option.value === String(value))) return false;
+    select.value = String(value);
+    const other = form.elements.namedItem(`${name}__other`); if (other && other.type === "text") other.hidden = true;
+    return true;
+  };
+  const fromLocality = id => { const locality = (refs.localities || []).find(item => String(item.id) === String(id)); if (locality?.department_code) setValue("department_code", locality.department_code); };
+  field("mine_id")?.addEventListener?.("change", event => {
+    const mine = (refs.mines || []).find(item => String(item.id) === String(event.target.value));
+    if (mine?.locality_id && setValue("locality_id", mine.locality_id)) fromLocality(mine.locality_id);
+  });
+  field("locality_id")?.addEventListener?.("change", event => fromLocality(event.target.value));
+}
+
 async function ensureRef(table, name) {
+  if (table === "departments") {
+    const wanted = normalizeName(name);
+    const found = (refs.departments || []).find(item => normalizeName(item.name) === wanted || normalizeName(item.code) === wanted);
+    if (!found) throw new Error(`Département « ${name} » inconnu : choisissez-le dans la liste ou saisissez son nom exact ou son numéro (ex. « Creuse » ou « 23 »).`);
+    return found.code;
+  }
   const result = await ensureNamed(client, table, name);
   if (result.created) createdNames.push(result.name);
   return result.id;
 }
 
+function linkOwner(section) { return section.linkOwner || (section.id === "articles" ? "article_id" : "archive_id"); }
+function linkPrefix(section) { return section.linkPrefix || (section.id === "articles" ? "article_" : "archive_"); }
+
 async function saveLinks(parent, form) {
-  const isArticle = activeSection.id === "articles";
   for (const [table, column] of activeSection.links) {
-    const ownerColumn = isArticle ? "article_id" : "archive_id";
-    const fieldKey = `link_${table.replace(isArticle ? "article_" : "archive_", "")}`;
+    const ownerColumn = linkOwner(activeSection);
+    const fieldKey = `link_${table.replace(linkPrefix(activeSection), "")}`;
     const linkField = form.elements.namedItem(fieldKey);
     if (!linkField) throw new Error(`Le champ de relations « ${fieldKey} » est introuvable.`);
     const desired = [...new Set([...[...linkField.selectedOptions].map(option => option.value), ...(pendingLinkExtras[fieldKey] || [])])];
