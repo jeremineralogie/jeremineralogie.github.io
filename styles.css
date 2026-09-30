@@ -271,3 +271,9 @@ form[data-message-form]{max-width:640px;margin:0 auto}
 .legal-doc li::marker{color:#a57ee8}
 .legal-kv{padding:10px 14px;border-left:2px solid #8a4de0;background:rgba(40,16,70,.35)}
 .legal-top{text-align:center;margin:10px 0 0}
+/* Article ouvert : même voile sombre que les informations légales */
+.article-full{max-width:760px;margin:24px auto 28px;padding:clamp(16px,4vw,32px);background:rgba(6,2,12,.86);border:1px solid #3a1d63;border-radius:4px;overflow-wrap:anywhere}
+.article-full .page-title{margin-top:8px}
+.article-full p{color:#ddd0ee;line-height:1.75;font-size:.98rem;text-shadow:none;text-align:left}
+.article-full h2{text-align:left;color:#d8c2fa;margin:28px 0 10px}
+.article-full img{border-color:#3a1d63}
