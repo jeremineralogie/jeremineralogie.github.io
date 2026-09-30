@@ -277,3 +277,8 @@ form[data-message-form]{max-width:640px;margin:0 auto}
 .article-full p{color:#ddd0ee;line-height:1.75;font-size:.98rem;text-shadow:none;text-align:left}
 .article-full h2{text-align:left;color:#d8c2fa;margin:28px 0 10px}
 .article-full img{border-color:#3a1d63}
+/* Document d'archive ouvert : même panneau que les articles */
+.doc-full{max-width:760px;margin:24px auto 28px;padding:clamp(16px,4vw,32px);background:rgba(6,2,12,.86);border:1px solid #3a1d63;border-radius:4px;overflow-wrap:anywhere}
+.doc-full .page-title{margin-top:8px}
+.doc-full p{color:#ddd0ee;line-height:1.75;font-size:.98rem;text-shadow:none;text-align:left}
+.doc-full .doc-image,.doc-full .viewer{border-color:#3a1d63}
