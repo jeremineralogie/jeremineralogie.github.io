@@ -38,7 +38,7 @@ function renderCollection() {
   grid.replaceChildren();
   visible.forEach(specimen => {
     const card = document.createElement("a");
-    card.className = "card";
+    card.className = "card card-specimen";
     card.href = "specimen.html?id=" + encodeURIComponent(specimen.id);
     if (specimen.photos.length) {
       const image = document.createElement("img"); image.src = specimen.photos[0]; image.alt = specimen.mineral || "Spécimen"; card.append(image);
@@ -48,9 +48,9 @@ function renderCollection() {
     }
     const body = document.createElement("div"); body.className = "card-body";
     const title = document.createElement("h3"); title.textContent = specimen.mineral || specimen.provenance || "Spécimen";
-    const meta = document.createElement("div"); meta.className = "meta";
-    meta.textContent = [specimen.locality, specimen.department, specimen.country].filter(Boolean).join(" · ");
-    body.append(title, meta); card.append(body); grid.append(card);
+    const place = document.createElement("div"); place.className = "place";
+    place.textContent = [specimen.provenance || specimen.locality, specimen.department].map(value => (value || "").trim()).filter(Boolean).join(" · ");
+    body.append(title, place); card.append(body); grid.append(card);
   });
   count.textContent = `${visible.length} spécimen${visible.length === 1 ? "" : "s"}`;
   empty.hidden = visible.length > 0;

@@ -196,3 +196,18 @@ body{background:#030106}
 html,body{max-width:100%;overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none}
 body{touch-action:pan-y pinch-zoom}
 .card .card-body h3{display:block;white-space:nowrap;text-overflow:ellipsis;text-align:center;line-height:1.5}
+.card .card-body .meta{font-size:3.7cqw;font-style:italic;font-family:var(--serif)}
+.card .card-body .price{font-size:4.4cqw;letter-spacing:.04em}
+.card .card-body h3{top:56.7%;height:4.9%}
+.card .card-body .meta{top:61.5%}
+.card .card-body .price{top:68.1%;height:3.9%;display:flex;align-items:center;justify-content:center;line-height:1;font-size:4.2cqw}
+.card .card-body .place{position:absolute;left:22%;right:22%;top:68.1%;height:3.9%;margin:0;display:flex;align-items:center;justify-content:center;line-height:1;font-size:3.7cqw;color:#e3ccff;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Zones libres mesurées dans le cadre : 58,3 %–64,2 % (nom + gisement) et 68,1 %–72,0 % (prix / lieu) */
+.card .card-body h3{top:58.4%;height:auto;font-size:4.4cqw;line-height:1.15;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.card .card-body .meta{top:61.8%;height:auto;font-size:3.1cqw;line-height:1.15}
+.card .card-body .price{top:68.2%;height:3.7%;font-size:4cqw}
+.card .card-body .place{top:68.2%;height:3.7%;font-size:3.5cqw}
+.card .card-body h3{top:58.5%;font-size:4.2cqw}
+.card .card-body .meta{top:61.9%;font-size:2.9cqw}
+.card .card-body .place{display:block;top:68.38%;height:auto;font-size:4cqw;line-height:1.25;text-align:center}
+.card-specimen .card-body h3{top:58.8%;font-size:6cqw;line-height:1.25}
