@@ -2,6 +2,7 @@ import { getSupabase } from "./supabase-client.js";
 import { resolveReferences, ensureNamed, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
 import { enhanceCombobox } from "./combobox.js";
 import { backfillLocalities } from "./geo-communes.js";
+import { createPointTool, pointKey, savePendingPoints } from "./point-picker.js";
 
 const status = document.querySelector("#admin-status");
 const editorStatus = document.querySelector("#specimen-status");
@@ -45,6 +46,16 @@ let contentModule = null;
 let activeMain = "collection";
 const dirtyReferenceFields = new Set();
 let geo = { mines: [], localities: [], departments: [] };
+// Position de la commune sur la carte, posable à la main sous le champ « Commune ».
+function localityTargets() {
+  const { id, text } = getSelectValue("#locality");
+  const name = text.trim();
+  if (!name) return [];
+  const known = id ? geo.localities.find(item => String(item.id) === String(id)) : null;
+  const department = document.querySelector("#department").value;
+  return [{ key: pointKey(id, name), id, name: known?.name || name, department: department && department !== "OTHER" ? department : known?.department_code, latitude: known?.latitude, longitude: known?.longitude }];
+}
+const pointTool = createPointTool(localityTargets);
 
 // Remplissage automatique : gisement → commune → département → région + pays.
 // Place automatiquement sur la carte les communes encore sans coordonnées.
@@ -191,6 +202,9 @@ if (!client) {
   siteTypeSelect.addEventListener("change", syncSiteTypeOther);
   setSiteType("");
   form.addEventListener("submit", saveSpecimen);
+  document.querySelector("#locality-other").after(pointTool.element);
+  form.addEventListener("change", () => pointTool.refresh());
+  pointTool.refresh();
   void client.auth.getSession().then(({ data }) => showSession(data.session));
 }
 
@@ -353,6 +367,7 @@ async function loadSuggestions() {
     localityData.forEach(item => { const key = normalizeName(item.name); sameName.set(key, (sameName.get(key) || 0) + 1); });
     populateSelect("#locality", localityData.map(item => ({ ...item, label: sameName.get(normalizeName(item.name)) > 1 ? `${item.name} (${item.postal_code || item.department_code || "?"})` : item.name })), "label", "id", "name");
     populateSelect("#provenance", mineData, "name", "id");
+    pointTool.refresh();
 
     fillDatalist("#dl-countries", ["France", ...specimenRows.map(row => row.country).filter(Boolean)]);
     const baseKeys = SITE_TYPES.map(([key]) => key);
@@ -515,6 +530,7 @@ function resetEditor(open = false) {
   mineralAssociationOther.value = "";
   mineralAssociationOther.hidden = true;
   renderMineralAssociationList();
+  pointTool.clear();
   editingSpecimen = null;
   if (editorStatus) {
     editorStatus.textContent = "";
@@ -603,6 +619,7 @@ async function editSpecimen(id) {
     if (data.region_name == null) document.querySelector("#region").value = relationLabels.region || "";
     if (data.department_name == null) document.querySelector("#department").value = relationLabels.department || data.department_code || "";
     if (data.locality_name == null) document.querySelector("#locality").value = relationLabels.locality || "";
+    pointTool.refresh();
     if (loadVersion !== editorLoadVersion) return;
 
     try {
@@ -855,6 +872,8 @@ async function saveSpecimen(event) {
   let slug = "";
   let saved;
   let savedMineralId = null;
+  let savedLocalityId = null;
+  const pointTargets = localityTargets();
   let unresolvedDepartment = false;
   const created = [];
   try {
@@ -946,6 +965,7 @@ async function saveSpecimen(event) {
     const gisement = values.provenance.trim();
     if (!gisement) record.mine_id = null;
     else if (!record.mine_id) record.mine_id = track(await ensureNamed(client, "mines", gisement, { locality_id: record.locality_id || null }))?.id ?? null;
+    savedLocalityId = record.locality_id;
     if (isUpdate) {
       savedMineralId = record.mineral_id;
       const result = await client.from("specimens").update(record).eq("id", id).select("id").single();
@@ -976,6 +996,12 @@ async function saveSpecimen(event) {
   } catch (error) {
     console.error("Échec de l’enregistrement des minéraux associés :", error);
     secondaryErrors.push(`La fiche est enregistrée, mais les minéraux associés n’ont pas pu l’être : ${describeError(error)}`);
+  }
+  try {
+    await savePendingPoints(client, pointTool, pointTargets, () => savedLocalityId);
+  } catch (error) {
+    console.error("Échec de l’enregistrement du point sur la carte :", error);
+    secondaryErrors.push(`La fiche est enregistrée, mais le point posé sur la carte ne l’a pas été : ${describeError(error)}`);
   }
   if (unresolvedDepartment) secondaryErrors.push("Département non reconnu dans le référentiel : la fiche est enregistrée, mais sans lien vers la page département (saisissez le nom exact ou le code, ex. « Puy-de-Dôme » ou « 63 »).");
   if (id && editingSpecimen?.publication_status !== document.querySelector("#publication-status").value) {
