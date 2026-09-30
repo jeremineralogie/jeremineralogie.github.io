@@ -8,11 +8,9 @@
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="admin.css">
 </head>
-<body>
-  <header class="site-header"><div class="header-inner"><div class="brand-row"><a class="brand" href="../index.html">Jeremineralogie</a><a class="link" href="../index.html">Retour au site</a></div></div></header>
+<body class="admin-page">
+  <header class="admin-topbar"><a class="admin-brand" href="../index.html">Jeremineralogie<span>Admin</span></a><div class="admin-settings" id="admin-settings" hidden><button type="button" class="settings-btn" id="settings-toggle" aria-haspopup="true" aria-expanded="false" aria-controls="settings-menu" aria-label="Paramètres"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span id="settings-badge" class="admin-badge settings-badge" hidden></span></button><div class="settings-menu" id="settings-menu" role="menu" hidden><button type="button" role="menuitem" data-main="messages">Messages <span id="messages-badge" class="admin-badge" hidden></span></button><button type="button" role="menuitem" data-main="referentiels">Référentiels &amp; réglages</button><button type="button" role="menuitem" data-main="appearance">Apparence du site</button><hr><a role="menuitem" href="../index.html">Voir le site</a><button type="button" role="menuitem" id="logout">Se déconnecter</button></div></div></header>
   <main class="admin-main">
-    <h1 class="page-title">Administration</h1>
-    <p class="lead">Espace privé de gestion du contenu.</p>
     <p class="notice" id="admin-status" role="status" aria-live="polite">Vérification de la configuration…</p>
     <section class="admin-panel" id="login-panel" hidden>
       <h2>Connexion</h2>
@@ -23,18 +21,12 @@
       </form>
     </section>
     <section id="cms-panel" hidden>
-      <div class="admin-toolbar admin-mainbar">
-        <nav class="admin-nav" id="admin-main-nav" aria-label="Sections de l’administration">
-          <button type="button" class="admin-tab is-active" data-main="collection" aria-current="page">Ma collection</button>
-          <button type="button" class="admin-tab" data-main="shop">Boutique</button>
-          <button type="button" class="admin-tab" data-main="articles">Articles</button>
-          <button type="button" class="admin-tab" data-main="archives">Archives &amp; Documentation</button>
-          <button type="button" class="admin-tab" data-main="referentiels">Référentiels &amp; réglages</button>
-          <button type="button" class="admin-tab" data-main="appearance">Apparence du site</button>
-          <button type="button" class="admin-tab" data-main="messages">Messages <span id="messages-badge" class="admin-badge" hidden></span></button>
-        </nav>
-        <button class="admin-secondary" id="logout" type="button">Se déconnecter</button>
-      </div>
+      <nav class="admin-nav" id="admin-main-nav" aria-label="Sections de l’administration">
+        <button type="button" class="admin-tab" data-main="shop">Boutique</button>
+        <button type="button" class="admin-tab" data-main="articles">Articles</button>
+        <button type="button" class="admin-tab" data-main="archives">Archives</button>
+        <button type="button" class="admin-tab is-active" data-main="collection" aria-current="page">Ma collection</button>
+      </nav>
       <section id="collection-panel" aria-label="Ma collection">
         <nav class="admin-tabs" id="collection-tabs" aria-label="Ma collection">
           <button type="button" class="admin-tab" data-collection-view="add">Ajouter un spécimen</button>
@@ -95,7 +87,7 @@
       </section>
       <section class="admin-panel" id="content-manager" aria-label="Boutique, articles, archives et référentiels" hidden>
         <nav class="admin-tabs" id="content-tabs" aria-label="Onglets de la section"></nav>
-        <p class="notice" id="content-status" role="status" aria-live="polite">Sélectionnez une section.</p>
+        <p class="notice" id="content-status" role="status" aria-live="polite" hidden></p>
         <div id="content-workspace"></div>
       </section>
     </section>

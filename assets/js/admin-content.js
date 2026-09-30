@@ -80,9 +80,13 @@ const groups = {
 const currentViews = () => groups[activeGroupId]?.views || [];
 const currentView = () => currentViews().find(view => view.id === activeViewId);
 
+let reportTimer = null;
 function report(message, error = false) {
   status.textContent = message;
   status.classList.toggle("admin-error", error);
+  status.hidden = !message;
+  clearTimeout(reportTimer);
+  if (message && !error && !message.endsWith("…")) reportTimer = setTimeout(() => { status.hidden = true; }, 3500);
 }
 
 function errorText(error) {
@@ -158,7 +162,7 @@ async function openSection(section) {
     await loadRecords();
     if (token !== openToken) return;
     renderWorkspace();
-    report(`${section.title} chargés depuis Supabase.`);
+    report("");
   } catch (error) {
     if (token !== openToken) return;
     workspace.replaceChildren();
@@ -403,7 +407,7 @@ async function saveRecord(form) {
       const payload = { key: record.key, value: record.value, is_public: record.is_public };
       const { error } = await client.from(section.table).upsert(payload, { onConflict: "key" }).select("key").single(); if (error) throw error;
       databaseSaved = true;
-      report("Paramètre enregistré dans Supabase.");
+      report("Paramètre enregistré.");
     } else {
       const current = selectedRecord;
       if (["regions", "localities", "mines", "minerals"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.name, section.table);
@@ -422,7 +426,7 @@ async function saveRecord(form) {
       }
       selectedRecord = saved;
       databaseSaved = true;
-      report("Fiche enregistrée dans Supabase. Traitement des médias…");
+      report("Fiche enregistrée. Traitement des médias…");
       if (section.links) await saveLinks(saved, form);
       if (section.mediaTable) await uploadMedia(saved);
       if (section.singleFile) await saveArchiveFile(saved, current);
