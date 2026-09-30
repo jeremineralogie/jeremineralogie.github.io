@@ -49,7 +49,7 @@ function renderCollection() {
     const body = document.createElement("div"); body.className = "card-body";
     const title = document.createElement("h3"); title.textContent = specimen.mineral || specimen.provenance || "Spécimen";
     const meta = document.createElement("div"); meta.className = "meta";
-    meta.textContent = [specimen.locality, specimen.department, specimen.country, "Voir la fiche"].filter(Boolean).join(" · ");
+    meta.textContent = [specimen.locality, specimen.department, specimen.country].filter(Boolean).join(" · ");
     body.append(title, meta); card.append(body); grid.append(card);
   });
   count.textContent = `${visible.length} spécimen${visible.length === 1 ? "" : "s"}`;
