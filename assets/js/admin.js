@@ -15,6 +15,7 @@ const collectionAddView = document.querySelector("#collection-add-view");
 const collectionListView = document.querySelector("#collection-list-view");
 const contentManager = document.querySelector("#content-manager");
 const mineralInput = document.querySelector("#mineral-name");
+const mineralAssociationInput = document.querySelector("#mineral-association");
 const siteTypeSelect = document.querySelector("#site-type");
 const siteTypeOther = document.querySelector("#site-type-other");
 const photoInput = document.querySelector("#photos");
@@ -265,6 +266,7 @@ async function editSpecimen(id) {
     document.querySelector("#specimen-id").value = data.id;
     document.querySelector("#specimen-slug").value = data.slug;
     mineralInput.value = data.mineral_name ?? "";
+    mineralAssociationInput.value = data.mineral_association ?? "";
     document.querySelector("#country").value = data.country ?? "";
     document.querySelector("#region").value = data.region_name ?? "";
     document.querySelector("#department").value = data.department_name ?? "";
@@ -580,6 +582,7 @@ async function saveSpecimen(event) {
     slug = document.querySelector("#specimen-slug").value.trim();
     const values = {
       mineral: mineralInput.value,
+      mineralAssociation: mineralAssociationInput.value,
       country: document.querySelector("#country").value,
       region: document.querySelector("#region").value,
       department: document.querySelector("#department").value,
@@ -612,6 +615,7 @@ async function saveSpecimen(event) {
     const record = {
       slug,
       mineral_name: values.mineral || null,
+      mineral_association: values.mineralAssociation || null,
       mineral_id: unchangedReference("mineral-name", values.mineral, old.mineral_name, relationLabels.mineral, old.mineral_id),
       country: values.country || null,
       region_name: values.region || null,
