@@ -14,6 +14,7 @@ const collectionTabs = document.querySelector("#collection-tabs");
 const collectionAddView = document.querySelector("#collection-add-view");
 const collectionListView = document.querySelector("#collection-list-view");
 const contentManager = document.querySelector("#content-manager");
+const appearancePanel = document.querySelector("#appearance-panel");
 const mineralInput = document.querySelector("#mineral-name");
 const mineralAssociationSelect = document.querySelector("#mineral-association-select");
 const mineralAssociationOther = document.querySelector("#mineral-association-other");
@@ -164,8 +165,15 @@ async function showMainSection(id) {
     if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
   });
   const isCollection = id === "collection";
+  const isAppearance = id === "appearance";
   collectionPanel.hidden = !isCollection;
-  contentManager.hidden = isCollection;
+  contentManager.hidden = isCollection || isAppearance;
+  appearancePanel.hidden = !isAppearance;
+  if (isAppearance) {
+    const frame = appearancePanel.querySelector("iframe");
+    if (!frame.src) frame.src = frame.dataset.src;
+    return;
+  }
   if (isCollection) return;
   if (!contentModule) {
     message("Chargement de la section…");

@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="admin.css">
 </head>
 <body>
-  <header class="site-header"><div class="header-inner"><div class="brand-row"><a class="brand" href="../index.html">Jeremineralogie</a><a class="link" href="editeur.html">Éditeur visuel</a><a class="link" href="../index.html">Retour au site</a></div></div></header>
+  <header class="site-header"><div class="header-inner"><div class="brand-row"><a class="brand" href="../index.html">Jeremineralogie</a><a class="link" href="../index.html">Retour au site</a></div></div></header>
   <main class="admin-main">
     <h1 class="page-title">Administration</h1>
     <p class="lead">Espace privé de gestion du contenu.</p>
@@ -30,6 +30,7 @@
           <button type="button" class="admin-tab" data-main="articles">Articles</button>
           <button type="button" class="admin-tab" data-main="archives">Archives &amp; Documentation</button>
           <button type="button" class="admin-tab" data-main="referentiels">Référentiels &amp; réglages</button>
+          <button type="button" class="admin-tab" data-main="appearance">Apparence du site</button>
         </nav>
         <button class="admin-secondary" id="logout" type="button">Se déconnecter</button>
       </div>
@@ -79,6 +80,9 @@
           </form>
         </section>
         </div>
+      </section>
+      <section id="appearance-panel" aria-label="Apparence du site" hidden>
+        <iframe id="appearance-frame" title="Éditeur visuel" data-src="editeur.html" style="width:100%;height:calc(100vh - 190px);min-height:520px;border:1px solid var(--line);margin-top:14px;background:var(--bg)"></iframe>
       </section>
       <section class="admin-panel" id="content-manager" aria-label="Boutique, articles, archives et référentiels" hidden>
         <nav class="admin-tabs" id="content-tabs" aria-label="Onglets de la section"></nav>

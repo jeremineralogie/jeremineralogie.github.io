@@ -43,6 +43,7 @@ iframe{border:0;background:var(--bg);height:100%;width:100%;max-width:100%}
   <button data-w="1240px">PC</button>
   <span class="spacer"></span>
   <button id="mode" class="primary">Mode édition</button>
+  <button id="savebtn">Enregistrer</button>
   <button id="export">CSS</button>
   <div class="hint" id="hint">Touchez un élément pour le sélectionner, puis glissez-le. Poignée violette en bas à droite : redimensionner.</div>
 </div>
@@ -59,14 +60,35 @@ iframe{border:0;background:var(--bg);height:100%;width:100%;max-width:100%}
   <textarea id="css-out" readonly></textarea>
   <div style="display:flex;gap:8px"><button class="primary" id="css-copy">Copier</button><button id="css-close">Fermer</button></div>
 </div>
-<script>
+<script src="../assets/js/supabase-config.js"></script>
+<script type="module">
+import { getSupabase } from "../assets/js/supabase-client.js";
 const $=id=>document.getElementById(id);
 const frame=$('frame');
-let doc=null,page='',sel=null,editing=true,changes={},history=[],handle=null,box=null;
-const key=()=>'ed:'+page;
+let doc=null,page='',sel=null,editing=true,changes={},history=[],handle=null,box=null,all={pages:{}},dirty=false,ready=false;
+const sb=getSupabase();
+const setDirty=v=>{dirty=v;$('savebtn').textContent=v?'Enregistrer ●':'Enregistrer';$('savebtn').classList.toggle('primary',v)};
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
 
-function save(){try{localStorage.setItem(key(),JSON.stringify(changes))}catch(e){}}
-function load(){try{changes=JSON.parse(localStorage.getItem(key())||'{}')}catch(e){changes={}}}
+function save(){all.pages[page]=changes;setDirty(true)}
+function load(){changes=all.pages[page]||{};all.pages[page]=changes}
+async function fetchAll(){
+  if(!sb){$('hint').textContent='Configuration Supabase absente.';return}
+  const {data:s}=await sb.auth.getSession();
+  if(!s.session){$('hint').textContent='Connectez-vous d’abord dans l’administration pour enregistrer.'}
+  const {data,error}=await sb.from('site_settings').select('value').eq('key','layout_overrides').maybeSingle();
+  if(error){$('hint').textContent='Lecture impossible : '+error.message;return}
+  all=(data&&data.value&&data.value.pages)?data.value:{pages:{}};
+}
+async function saveRemote(){
+  if(!sb)return;
+  for(const k of Object.keys(all.pages))if(!Object.keys(all.pages[k]).length)delete all.pages[k];
+  $('savebtn').disabled=true;
+  const {error}=await sb.from('site_settings').upsert({key:'layout_overrides',value:all,is_public:true},{onConflict:'key'});
+  $('savebtn').disabled=false;
+  if(error){$('hint').textContent='Enregistrement refusé : '+error.message+' (êtes-vous connecté en administrateur ?)';return}
+  setDirty(false);load();$('hint').textContent='Enregistré : les visiteurs voient maintenant ces changements.';
+}
 
 function cssPath(el){
   if(el.id&&!el.id.startsWith('ed-'))return '#'+CSS.escape(el.id);
@@ -210,11 +232,13 @@ function bind(){
   doc.addEventListener('pointercancel',e=>{tap=null;end(e)},true);
 }
 
-function load_page(url){
-  page=url;frame.setAttribute('data-page',url);frame.src=url;sel=null;
+async function load_page(url){
+  if(!ready){await fetchAll();ready=true}
+  const name=url.split('/').pop();
+  page=name;frame.setAttribute('data-page',name);frame.src=url+'?ed=1';sel=null;
 }
 frame.addEventListener('load',()=>{try{setup()}catch(e){$('hint').textContent='Erreur : '+e.message}});
-$('page').addEventListener('change',e=>load_page(e.target.value));
+$('page').addEventListener('change',e=>{if(dirty&&!confirm('Modifications non enregistrées. Changer de page quand même ?')){e.target.value='../'+page;return}load_page(e.target.value)});
 document.querySelectorAll('[data-w]').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('[data-w]').forEach(x=>x.classList.remove('on'));b.classList.add('on');
   frame.style.width=b.dataset.w;setTimeout(place,100);
@@ -233,6 +257,7 @@ function fsize(f){
 $('fplus').addEventListener('click',()=>fsize(1.1));
 $('fminus').addEventListener('click',()=>fsize(1/1.1));
 $('undo').addEventListener('click',undo);
+$('savebtn').addEventListener('click',saveRemote);
 $('reset').addEventListener('click',()=>{
   if(!sel)return;const s=cssPath(sel);
   if(changes[s]){for(const k of Object.keys(changes[s]))sel.style.removeProperty(k);delete changes[s];save();updateButtons();place()}
@@ -240,7 +265,7 @@ $('reset').addEventListener('click',()=>{
 $('resetall').addEventListener('click',()=>{
   if(!Object.keys(changes).length||!confirm('Remettre toute la page comme sur le site ?'))return;
   for(const s of Object.keys(changes)){const el=doc.querySelector(s);if(el)for(const k of Object.keys(changes[s]))el.style.removeProperty(k)}
-  changes={};history=[];save();updateButtons();place();
+  for(const k of Object.keys(changes))delete changes[k];history=[];setDirty(true);updateButtons();place();
 });
 $('export').addEventListener('click',()=>{
   let out='/* Modifications — '+page.replace('../','')+' */\n';
