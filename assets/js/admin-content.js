@@ -1,5 +1,6 @@
 import { ensureNamed, normalizeName, OTHER } from "./reference-resolver.js";
 import { enhanceCombobox } from "./combobox.js";
+import { backfillLocalities, communeLabel, communeUpdate, findCommune, searchCommunes } from "./geo-communes.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -33,7 +34,7 @@ const sections = [
   ] },
   { id: "regions", label: "Régions", table: "regions", title: "Régions", fields: [{ key: "name", label: "Nom", required: true }] },
   { id: "departments", label: "Départements", table: "departments", title: "Départements", fields: [{ key: "code", label: "Code (identifiant)", required: true }, { key: "name", label: "Nom", required: true }, { key: "region_id", label: "Région", ref: "regions", display: "name" }] },
-  { id: "localities", label: "Localités", table: "localities", title: "Localités", fields: [{ key: "name", label: "Nom", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "notes", label: "Notes", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
+  { id: "localities", label: "Localités", table: "localities", title: "Localités", fields: [{ key: "name", label: "Nom", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "postal_code", label: "Code postal" }, { key: "insee_code", label: "Code INSEE" }, { key: "latitude", label: "Latitude", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude", type: "number", step: "0.000001" }, { key: "notes", label: "Notes", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
   { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Localité", ref: "localities", display: "name" }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
   { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral", fields: [{ key: "name", label: "Nom", required: true }, { key: "formula", label: "Formule" }, { key: "crystal_system", label: "Système cristallin" }, { key: "hardness", label: "Dureté", type: "number", step: "0.01" }, { key: "density", label: "Densité", type: "number", step: "0.001" }, { key: "colors", label: "Couleurs (séparées par des virgules)", array: true }, { key: "luster", label: "Éclat" }, { key: "cleavage", label: "Clivage" }, { key: "habit", label: "Habitus" }, { key: "formation", label: "Formation", type: "textarea" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
   { id: "occurrences", label: "Occurrences minérales", table: "mineral_occurrences", title: "Occurrences minérales", fields: [{ key: "mineral_id", label: "Minéral", ref: "minerals", display: "name", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code", required: true }, { key: "locality_id", label: "Localité (facultative)", ref: "localities", display: "name" }, { key: "source_note", label: "Source / note", type: "textarea", notNull: true }] },
@@ -176,10 +177,15 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code" : "id,name";
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code,postal_code" : "id,name";
     const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
+    if (table === "localities") {
+      const count = new Map();
+      refs.localities.forEach(item => { const key = normalizeName(item.name); count.set(key, (count.get(key) || 0) + 1); });
+      refs.localities.forEach(item => { if (count.get(normalizeName(item.name)) > 1) item.name = `${item.name} (${item.postal_code || item.department_code || "?"})`; });
+    }
   }
 }
 
@@ -234,6 +240,7 @@ function buildEditorPanel() {
   const form = document.createElement("form"); form.noValidate = true;
   activeSection.fields.forEach(field => form.append(createField(field, selectedRecord?.[field.key])));
   wireGeoAutofill(form);
+  if (activeSection.id === "localities") addLocateTool(form);
   if (activeSection.mediaTable || activeSection.singleFile) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
@@ -439,10 +446,45 @@ async function saveRecord(form) {
     }
     await loadReferences(section); await loadRecords(); selectedRecord = null; clearNewMediaSelection(); setListMode(); renderWorkspace();
     report(`Enregistrement terminé. La liste est à jour.${createdNames.length ? ` Nouvelles valeurs ajoutées aux listes : ${createdNames.join(", ")}.` : ""}`);
+    void backfillLocalities(client).catch(problem => console.error("Localisation automatique des communes :", problem));
   } catch (error) {
     console.error(`Échec enregistrement CMS ${section.id}:`, error);
     report(`${databaseSaved ? "Le contenu principal est enregistré en base, mais une opération secondaire a échoué" : "Enregistrement impossible"} : ${errorText(error)}`, true);
   }
+}
+
+// Localités : recherche des coordonnées officielles, avec choix quand plusieurs communes portent le même nom.
+function addLocateTool(form) {
+  const box = document.createElement("div"); box.className = "locate-tool";
+  const button = document.createElement("button"); button.type = "button"; button.className = "admin-secondary"; button.textContent = "📍 Localiser la commune";
+  const results = document.createElement("div"); results.className = "locate-results";
+  box.append(button, results);
+  const anchor = form.elements.namedItem("latitude")?.closest("div");
+  (anchor || form.lastElementChild)?.before(box);
+  button.addEventListener("click", async () => {
+    const name = form.elements.namedItem("name").value.trim();
+    const departmentSelect = form.elements.namedItem("department_code");
+    const department = departmentSelect?.value && departmentSelect.value !== OTHER ? departmentSelect.value : "";
+    if (!name) { results.textContent = "Indiquez d’abord le nom de la commune."; return; }
+    results.textContent = "Recherche…";
+    try {
+      let matches = await findCommune(name, department);
+      if (!matches.length) matches = await searchCommunes(name, department);
+      if (!matches.length) { results.textContent = "Aucune commune trouvée. Vérifiez l’orthographe, ou saisissez la latitude et la longitude à la main."; return; }
+      const fill = match => {
+        const values = communeUpdate(match, department);
+        ["latitude", "longitude", "insee_code", "postal_code"].forEach(key => { const input = form.elements.namedItem(key); if (input) input.value = values[key] ?? ""; });
+        if (!department && departmentSelect) departmentSelect.value = match.department;
+        results.textContent = `Commune retenue : ${communeLabel(match)}. Pensez à enregistrer.`;
+      };
+      if (matches.length === 1) { fill(matches[0]); return; }
+      results.replaceChildren(document.createTextNode("Plusieurs communes correspondent, choisissez la bonne :"));
+      matches.slice(0, 10).forEach(match => {
+        const choice = document.createElement("button"); choice.type = "button"; choice.className = "admin-secondary"; choice.textContent = communeLabel(match);
+        choice.addEventListener("click", () => fill(match)); results.append(choice);
+      });
+    } catch (error) { results.textContent = `Recherche impossible : ${error.message}`; }
+  });
 }
 
 // Remplissage automatique : gisement → localité → département.

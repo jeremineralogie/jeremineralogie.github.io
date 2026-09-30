@@ -1,6 +1,7 @@
 import { getSupabase } from "./supabase-client.js";
 import { resolveReferences, ensureNamed, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
 import { enhanceCombobox } from "./combobox.js";
+import { backfillLocalities } from "./geo-communes.js";
 
 const status = document.querySelector("#admin-status");
 const editorStatus = document.querySelector("#specimen-status");
@@ -46,6 +47,23 @@ const dirtyReferenceFields = new Set();
 let geo = { mines: [], localities: [], departments: [] };
 
 // Remplissage automatique : gisement → commune → département → région + pays.
+// Place automatiquement sur la carte les communes encore sans coordonnées.
+let locating = false;
+export async function locateCommunes() {
+  if (locating || !client) return;
+  locating = true;
+  try {
+    const { located, ambiguous, notFound } = await backfillLocalities(client);
+    const notes = [];
+    if (located.length) notes.push(`Placées sur la carte : ${located.join(", ")}.`);
+    if (ambiguous.length) notes.push(`Plusieurs communes portent le nom ${ambiguous.map(name => `« ${name} »`).join(", ")} : choisissez la bonne dans Paramètres → Référentiels → Localités (bouton « Localiser »).`);
+    if (notFound.length) notes.push(`Commune introuvable pour ${notFound.map(name => `« ${name} »`).join(", ")} : vérifiez l’orthographe ou localisez-la dans Référentiels → Localités.`);
+    if (notes.length) message(notes.join(" "), ambiguous.length + notFound.length > 0);
+  } catch (error) {
+    console.error("Localisation automatique des communes :", error);
+  } finally { locating = false; }
+}
+
 function setGeoSelect(id, value) {
   const select = document.querySelector(`#${id}`);
   if (!select || value == null || value === "" || ![...select.options].some(option => option.value === String(value))) return false;
@@ -200,6 +218,7 @@ async function showSession(session) {
   resetEditor(false);
   await showMainSection(activeMain);
   await loadDashboard();
+  void locateCommunes();
   void import("./admin-messages.js").then(module => { messagesModule = module; return module.refreshBadge(client); }).catch(error => console.error("Compteur de messages indisponible :", error));
   if (!contentAdminInitialized) {
     try {
@@ -330,7 +349,9 @@ async function loadSuggestions() {
     populateSelect("#mineral-association-select", mineralData, "name", "id");
     populateSelect("#region", regionData, "name", "id");
     populateSelect("#department", departmentData, "name", "code");
-    populateSelect("#locality", localityData, "name", "id");
+    const sameName = new Map();
+    localityData.forEach(item => { const key = normalizeName(item.name); sameName.set(key, (sameName.get(key) || 0) + 1); });
+    populateSelect("#locality", localityData.map(item => ({ ...item, label: sameName.get(normalizeName(item.name)) > 1 ? `${item.name} (${item.postal_code || item.department_code || "?"})` : item.name })), "label", "id", "name");
     populateSelect("#provenance", mineData, "name", "id");
 
     fillDatalist("#dl-countries", ["France", ...specimenRows.map(row => row.country).filter(Boolean)]);
@@ -343,7 +364,7 @@ async function loadSuggestions() {
   }
 }
 
-function populateSelect(selector, data, displayField, valueField) {
+function populateSelect(selector, data, displayField, valueField, plainField) {
   const select = document.querySelector(selector);
   if (!select) return;
   select.replaceChildren();
@@ -359,6 +380,7 @@ function populateSelect(selector, data, displayField, valueField) {
     const option = document.createElement("option");
     option.value = item[valueField];
     option.textContent = item[displayField];
+    if (plainField) option.dataset.plain = item[plainField];
     select.append(option);
   });
 }
@@ -467,7 +489,8 @@ function getSelectValue(selector) {
     return { id: null, text: otherInput?.value || "" };
   }
   if (!select.value) return { id: null, text: "" };
-  return { id: select.value, text: select.options[select.selectedIndex]?.text || "" };
+  const option = select.options[select.selectedIndex];
+  return { id: select.value, text: option?.dataset.plain || option?.text || "" };
 }
 
 function resetEditor(open = false) {
@@ -989,6 +1012,7 @@ async function saveSpecimen(event) {
   resetEditor(false);
   if (secondaryErrors.length) message(secondaryErrors.join(" "), true);
   else message(`Spécimen enregistré en base et liste actualisée.${created.length ? ` Nouvelles fiches créées dans les référentiels : ${created.join(", ")}.` : ""}`);
+  void locateCommunes();
   status.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
