@@ -461,3 +461,6 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .ident-miss{font-size:.76rem;color:#ff9db3}
 .ident-note{max-width:760px;margin-left:auto;margin-right:auto;text-align:center}
 @media(max-width:620px){.ident-form,.ident-results{grid-template-columns:1fr}}
+/* Page introuvable */
+.notfound{padding-top:60px}
+.notfound-links{margin-top:22px;line-height:2;text-shadow:0 1px 3px #000}

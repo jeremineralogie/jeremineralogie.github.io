@@ -3,8 +3,9 @@ import { appendLinked, buildLinker, loadArticleLinks, loadLinkEntities } from ".
 import { categoryLabel } from "./reference-resolver.js";
 import { articleUrl, renderNeighbours } from "./detail-nav.js";
 import { applyGlossary } from "./glossary-links.js";
+import { articleTitle } from "./seo-titles.js";
 
-const slug = new URLSearchParams(location.search).get("slug");
+const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("slug");
 const status = document.querySelector("#detail-status");
 const root = document.querySelector("#detail");
 
@@ -39,7 +40,8 @@ function readMore(articles) {
 }
 
 function render(client, article, { linker, chosen }, all = []) {
-  document.title = `${article.title} — Articles — Jeremineralogie`;
+  document.title = articleTitle(article.title);
+  document.querySelector("[data-seo]")?.remove();
   const used = new Set();
   const images = (article.media || []).filter(item => item.bucket_id === "site-media-public").sort((a, b) => a.position - b.position);
   const page = document.createElement("article"); page.className = "article-full";

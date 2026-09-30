@@ -3,10 +3,11 @@ import { getPublishedSpecimen, listPublishedSpecimens } from "./collection-repos
 import { renderNeighbours, specimenUrl } from "./detail-nav.js";
 import { siteTypeLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
+import { specimenTitle } from "./seo-titles.js";
 import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 
-const slug = new URLSearchParams(location.search).get("id");
+const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("id");
 const client = getSupabase();
 let sequence = 0;
 let loading = false;
@@ -75,7 +76,8 @@ function renderSpecimen(specimen) {
   document.querySelector("#specimen-load-error").hidden = true;
   root.hidden = false;
   content.hidden = false;
-  document.title = `${specimen.mineral || "Spécimen"} — Ma collection — Jeremineralogie`;
+  document.title = specimenTitle(specimen.mineral, specimen.provenance || specimen.locality);
+  document.querySelector("[data-seo]")?.remove();
   root.querySelectorAll("[data-mineral]").forEach(element => { element.textContent = specimen.mineral || "Spécimen"; });
   const put = (selector, value) => { const element = root.querySelector(selector); element.textContent = value || "Non renseigné"; };
   put("[data-location-summary]", [specimen.locality, specimen.department, specimen.region, specimen.country].filter(Boolean).join(" · ") || "Localisation à compléter");

@@ -2,13 +2,15 @@ import { loadPublishedContent, showLoadError } from "./content-repository.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { documentUrl, renderNeighbours } from "./detail-nav.js";
 import { applyGlossary } from "./glossary-links.js";
+import { documentTitle } from "./seo-titles.js";
 
-const slug = new URLSearchParams(location.search).get("slug");
+const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("slug");
 const status = document.querySelector("#detail-status");
 const root = document.querySelector("#detail");
 
 function render(client, row) {
-  document.title = `${row.title} — Archives & Documentation — Jeremineralogie`;
+  document.title = documentTitle(row.title);
+  document.querySelector("[data-seo]")?.remove();
   const page = document.createElement("article"); page.className = "content doc-full";
   const category = document.createElement("div"); category.className = "kicker"; category.textContent = categoryLabel(row.category);
   const title = document.createElement("h1"); title.className = "page-title"; title.textContent = row.title;
