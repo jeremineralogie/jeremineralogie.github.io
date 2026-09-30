@@ -61,6 +61,7 @@ let openToken = 0;
 let pendingLinkExtras = {};
 let createdNames = [];
 let pointTool = null;
+let prefill = null;
 const resolvedLocalities = new Map();
 // Listes dont la valeur « Autre » crée une nouvelle fiche (ou une nouvelle catégorie) enregistrée pour les saisies suivantes.
 const CREATABLE_REFS = ["minerals", "mines", "localities", "regions", "departments"];
@@ -240,8 +241,11 @@ function buildEditorPanel() {
   const editorPanel = document.createElement("section"); editorPanel.className = "admin-panel";
   const title = document.createElement("h3");
   title.textContent = selectedRecord ? "Modifier" : (viewMode === "add" ? (currentView()?.label || "Nouveau contenu") : "Nouveau contenu"); editorPanel.append(title);
+  const copy = selectedRecord ? null : prefill; prefill = null;
+  if (copy) title.textContent = "Nouveau produit (copie)";
   const form = document.createElement("form"); form.noValidate = true;
-  activeSection.fields.forEach(field => form.append(createField(field, selectedRecord?.[field.key])));
+  activeSection.fields.forEach(field => form.append(createField(field, (selectedRecord || copy?.values)?.[field.key])));
+  if (copy?.referenceHint) { const reference = form.elements.namedItem("reference"); if (reference) reference.placeholder = `ex. ${copy.referenceHint} (première référence libre)`; }
   wireGeoAutofill(form);
   if (activeSection.id === "localities") addLocateTool(form);
   else addPointTool(form);
@@ -252,6 +256,10 @@ function buildEditorPanel() {
     const cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "admin-secondary"; cancel.textContent = "Annuler";
     cancel.addEventListener("click", () => { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; setListMode(); renderWorkspace(); report("Modification annulée."); });
     actions.append(cancel);
+  }
+  if (selectedRecord && activeSection.id === "shop") {
+    const duplicate = document.createElement("button"); duplicate.type = "button"; duplicate.className = "admin-secondary"; duplicate.textContent = "Dupliquer";
+    duplicate.addEventListener("click", () => duplicateShopItem(selectedRecord)); actions.append(duplicate);
   }
   if (selectedRecord) {
     const remove = document.createElement("button"); remove.type = "button"; remove.className = "admin-danger"; remove.textContent = "Supprimer";
@@ -457,6 +465,26 @@ async function saveRecord(form) {
     console.error(`Échec enregistrement CMS ${section.id}:`, error);
     report(`${databaseSaved ? "Le contenu principal est enregistré en base, mais une opération secondaire a échoué" : "Enregistrement impossible"} : ${errorText(error)}`, true);
   }
+}
+
+// Boutique : nouvelle fiche reprenant uniquement le minéral principal et la localisation.
+// Ni titre, référence, prix, dimensions, poids, description, minéraux associés ni photos ne sont copiés.
+const COPIED_SHOP_FIELDS = ["mineral_id", "provenance", "mine_id", "locality_id", "department_code"];
+function nextReference(reference) {
+  const match = /^(.*?)(\d+)$/.exec(text(reference));
+  if (!match) return "";
+  const used = new Set(records.map(record => text(record.reference).toUpperCase()));
+  let number = Number(match[2]);
+  let candidate;
+  do { number += 1; candidate = `${match[1]}${String(number).padStart(match[2].length, "0")}`; } while (used.has(candidate.toUpperCase()));
+  return candidate;
+}
+function duplicateShopItem(source) {
+  prefill = { values: Object.fromEntries(COPIED_SHOP_FIELDS.map(key => [key, source[key]])), referenceHint: nextReference(source.reference) };
+  clearNewMediaSelection(); selectedRecord = null; currentMedia = [];
+  setFormMode(); renderWorkspace();
+  workspace.querySelector("form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  report("Copie prête : minéral principal et localisation repris. Complétez le reste puis enregistrez.");
 }
 
 // Localités : recherche des coordonnées officielles, avec choix quand plusieurs communes portent le même nom.
