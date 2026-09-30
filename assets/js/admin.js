@@ -1,5 +1,6 @@
 import { getSupabase } from "./supabase-client.js";
 import { resolveReferences, ensureNamed, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
+import { enhanceCombobox } from "./combobox.js";
 
 const status = document.querySelector("#admin-status");
 const editorStatus = document.querySelector("#specimen-status");
@@ -158,6 +159,10 @@ if (!client) {
     }
   });
   mineralAssociationAddBtn.addEventListener("click", addMineralAssociation);
+  [["#mineral-name", "Minéral principal…"], ["#region", "Région…"], ["#department", "Département…"], ["#locality", "Commune…"], ["#provenance", "Gisement…"]]
+    .forEach(([selector, placeholder]) => enhanceCombobox(document.querySelector(selector), { otherValue: "OTHER", otherInput: document.querySelector(`${selector}-other`), placeholder }));
+  enhanceCombobox(mineralAssociationSelect, { otherValue: "OTHER", otherInput: mineralAssociationOther, placeholder: "Minéral associé…", onPick: addMineralAssociation });
+  enhanceCombobox(siteTypeSelect, { otherValue: OTHER, otherInput: siteTypeOther, placeholder: "Type de site…" });
   mineralAssociationSelect.addEventListener("keypress", (e) => {
     if (e.key === "Enter") { e.preventDefault(); addMineralAssociation(); }
   });
@@ -461,7 +466,8 @@ function getSelectValue(selector) {
     const otherInput = document.querySelector(`${selector}-other`);
     return { id: null, text: otherInput?.value || "" };
   }
-  return { id: select.value || null, text: select.options[select.selectedIndex]?.text || "" };
+  if (!select.value) return { id: null, text: "" };
+  return { id: select.value, text: select.options[select.selectedIndex]?.text || "" };
 }
 
 function resetEditor(open = false) {
