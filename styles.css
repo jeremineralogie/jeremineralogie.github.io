@@ -33,7 +33,7 @@ a.card{display:block;color:inherit}.summary{display:-webkit-box;-webkit-line-cla
   --serif:"Cormorant Garamond","Cormorant",Georgia,"Times New Roman",serif;
 }
 body{background-color:var(--bg);color:var(--text);text-align:center;letter-spacing:.01em}
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(90% 55% at 50% -8%,rgba(92,38,160,.30),rgba(92,38,160,0) 70%),radial-gradient(60% 45% at 12% 38%,rgba(70,24,122,.16),rgba(70,24,122,0) 72%),radial-gradient(55% 40% at 88% 62%,rgba(84,30,140,.13),rgba(84,30,140,0) 72%),radial-gradient(80% 50% at 50% 108%,rgba(58,18,104,.22),rgba(58,18,104,0) 70%),radial-gradient(140% 100% at 50% 50%,rgba(3,1,6,0) 55%,rgba(0,0,0,.65) 100%)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(rgba(3,1,6,.4),rgba(3,1,6,.4)),url("assets/decor/fond.webp") center/cover no-repeat #030106}
 h1,h2,h3,h4{text-align:center}
 main{max-width:var(--max)}
 
@@ -148,20 +148,45 @@ main{padding:0 clamp(12px,4vw,22px) 70px}
 input,textarea,select{background-color:#05020a;color:#ece3fb}
 ::selection{background:#6d2fd0;color:#fff}
 
-/* Boutons à double filet : liseré dégradé violet + filet intérieur + coins marqués */
-.nav a,.btn,.filter{position:relative;isolation:isolate;border:1px solid transparent!important;border-radius:2px!important;
-  background:linear-gradient(180deg,#120822,#07030d) padding-box,linear-gradient(135deg,#a57ee8 0%,#5b2aa8 30%,#2a1050 50%,#5b2aa8 70%,#a57ee8 100%) border-box!important;
-  box-shadow:0 10px 24px -16px #000!important;color:#e6d9fb;transition:background .25s,color .25s,box-shadow .25s}
-.nav a::before,.btn::before,.filter::before{content:"";position:absolute;inset:3px;border:1px solid rgba(138,77,224,.42);border-radius:1px;pointer-events:none;z-index:-1}
-.nav a::after,.btn::after{content:"";position:absolute;inset:-1px;pointer-events:none;
-  background:linear-gradient(#b48cf2,#b48cf2) left top/7px 1px,linear-gradient(#b48cf2,#b48cf2) left top/1px 7px,
-  linear-gradient(#b48cf2,#b48cf2) right top/7px 1px,linear-gradient(#b48cf2,#b48cf2) right top/1px 7px,
-  linear-gradient(#b48cf2,#b48cf2) left bottom/7px 1px,linear-gradient(#b48cf2,#b48cf2) left bottom/1px 7px,
-  linear-gradient(#b48cf2,#b48cf2) right bottom/7px 1px,linear-gradient(#b48cf2,#b48cf2) right bottom/1px 7px;background-repeat:no-repeat;opacity:.9}
-.nav a:hover,.nav a[aria-current],.nav a.active,.btn:hover,.filter:hover{
-  background:linear-gradient(180deg,#3a1570,#1c0838) padding-box,linear-gradient(135deg,#f0e4ff 0%,#9a62f0 30%,#4a1f8a 50%,#9a62f0 70%,#f0e4ff 100%) border-box!important;
-  color:#fff;box-shadow:0 0 22px -8px rgba(138,77,224,.75),0 10px 24px -16px #000!important}
-.nav a:hover::before,.btn:hover::before{border-color:rgba(180,140,242,.55)}
-.btn{background:linear-gradient(180deg,#4a1c8f,#26094d) padding-box,linear-gradient(135deg,#a57ee8 0%,#5b2aa8 30%,#2a1050 50%,#5b2aa8 70%,#a57ee8 100%) border-box!important;color:#f4ecff}
-.search{border:1px solid transparent;border-radius:2px;background:linear-gradient(#040108,#040108) padding-box,linear-gradient(90deg,#2d1156,#8a4de0 50%,#2d1156) border-box}
-.search:focus-within{background:linear-gradient(#040108,#040108) padding-box,linear-gradient(90deg,#4a1f8a,#d2b8ff 50%,#4a1f8a) border-box}
+/* ===== Décor fourni : fond damassé fixe, cartouches, cadres de fiches ===== */
+body{background:#030106}
+.site-header,.footer{background:transparent!important;border:0!important;box-shadow:none!important}
+
+/* Onglets du haut et liens du bas : cartouche */
+.nav a,.footer-links a{position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:2.7/1;height:auto;
+  padding:0 4.6%!important;border:0!important;border-radius:0!important;background:url("assets/decor/onglet.webp") center/100% 100% no-repeat!important;
+  box-shadow:none!important;color:#eadcff!important;text-shadow:0 0 8px rgba(0,0,0,.9);line-height:1.1;transition:filter .2s;min-width:0;min-height:0;overflow:hidden}
+.nav a:hover,.nav a[aria-current],.nav a.active,.footer-links a:hover{filter:brightness(1.3) drop-shadow(0 0 10px rgba(170,100,255,.45));color:#fff!important}
+.nav{gap:8px}
+.footer-links{gap:8px;margin-bottom:22px}
+.footer-links a{flex:0 0 calc(33.333% - 6px)!important;font-size:clamp(.56rem,2.5vw,.72rem)!important;text-transform:uppercase}
+
+/* Barre de recherche : cartouche avec loupe */
+.search{font-size:0;width:min(520px,100%);aspect-ratio:3/1;padding:0 11% 1% 24%!important;border:0!important;border-radius:0!important;
+  background:url("assets/decor/recherche.webp") center/100% 100% no-repeat!important;box-shadow:none!important}
+.search:focus-within{filter:brightness(1.15);box-shadow:none!important}
+.search input{font-size:clamp(.78rem,3.2vw,1rem);color:#f1e8ff;text-align:center;background:transparent}
+.search input::placeholder{color:#b99be6}
+
+/* Cartes (boutique, collection, articles, archives, recherche) : cadre de fiche */
+.grid>.card{position:relative;display:block;aspect-ratio:820/1247;container-type:inline-size;overflow:visible;
+  background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.card::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:url("assets/decor/carte.webp") center/100% 100% no-repeat}
+.card:hover{transform:translateY(-3px);filter:brightness(1.12) drop-shadow(0 0 14px rgba(170,100,255,.35))}
+.card>img,.card>.card-photo-placeholder{position:absolute;z-index:1;left:21.6%;top:9.3%;width:56.8%;height:42.2%;margin:0;aspect-ratio:auto;
+  object-fit:contain;background:#000;border:0;min-height:0}
+.card>.card-photo-placeholder{display:flex;align-items:center;justify-content:center;font-size:4.2cqw;color:#9d7fcf;padding:0 4%}
+.card .card-body{position:absolute;inset:0;z-index:3;padding:0;pointer-events:none}
+.card .card-body h3{position:absolute;left:24%;right:24%;top:57.3%;height:7.6%;margin:0;display:flex;align-items:center;justify-content:center;
+  font-size:5.6cqw;line-height:1.1;color:#f3eaff;overflow:hidden;text-shadow:0 0 10px rgba(0,0,0,.9)}
+.card .card-body .meta,.card .card-body .price{position:absolute;left:22%;right:22%;margin:0;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.card .card-body .meta{top:66.7%;font-size:3.4cqw;color:#cdb6f2}
+.card .card-body .price{top:69.3%;font-size:3.8cqw;color:#e3ccff}
+.card .card-body .kicker{position:absolute;left:21.6%;right:21.6%;top:9.3%;height:42.2%;margin:0;display:none;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:5.2cqw;letter-spacing:.12em;color:#c9a9f5;text-transform:uppercase}
+.card:not(:has(>img)):not(:has(>.card-photo-placeholder)) .kicker{display:flex}
+.card:not(:has(>img)):not(:has(>.card-photo-placeholder))::before{content:"";position:absolute;z-index:1;left:21.6%;top:9.3%;width:56.8%;height:42.2%;background:#000}
+.card .card-body .summary,.card .card-body .more,.card .card-body .btn{display:none}
+.lead,.tagline,.page-title,.brand,.hero h1,.footer-inner>div:last-child,.notice{text-shadow:0 1px 3px #000,0 0 18px rgba(0,0,0,.95)}
+.lead{color:#d6c4f3}
+@media(max-width:480px){.nav a,.footer-links a{letter-spacing:.03em!important;padding:0 3.4%!important;font-size:clamp(.5rem,2.35vw,.62rem)!important}}
