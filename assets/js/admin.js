@@ -1094,3 +1094,10 @@ async function deleteSpecimen() {
     ? `Spécimen supprimé, mais le nettoyage est incomplet : ${cleanupErrors.join(" ; ")}`
     : refreshed ? "Spécimen supprimé et liste actualisée." : "Spécimen supprimé ; la liste n’a pas pu être actualisée.", !refreshed || cleanupErrors.length > 0);
 }
+
+window.addEventListener("message", event => {
+  if (event.origin !== location.origin || !event.data || event.data.ed !== "fs") return;
+  const frame = document.querySelector("#appearance-frame");
+  const on = frame.classList.toggle("is-fullscreen");
+  document.body.style.overflow = on ? "hidden" : "";
+});
