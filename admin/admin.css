@@ -80,3 +80,4 @@ body.admin-page .admin-tabs .admin-tab{flex:none;white-space:nowrap}
 .combo-list li.is-active,.combo-list li:hover{background:#24143a;color:#fff}
 .combo-list li.combo-create{color:#c4a6f5;border-top:1px solid #2a1846;margin-top:2px}
 .combo-list li.combo-empty{color:#8f7bb0;cursor:default}
+.locate-tool{display:grid;gap:8px;margin:14px 0}.locate-results{display:flex;flex-direction:column;gap:6px;color:#cbb8e6;font-size:.9rem}.locate-results .admin-secondary{text-align:left;border-radius:8px}
