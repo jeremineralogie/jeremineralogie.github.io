@@ -16,11 +16,24 @@ export async function searchCommunes(name, departmentCode) {
   }));
 }
 
+// Variantes d'écriture : apostrophe typographique, espaces au lieu de tirets, « St » pour « Saint »…
+function spellings(name) {
+  const base = String(name || "").trim().replace(/[’‘`´]/g, "'").replace(/\s+/g, " ");
+  const hyphen = base.replace(/\s*-\s*/g, "-").replace(/ /g, "-");
+  const saint = hyphen.replace(/^St(e?)[-.]/i, (match, e) => e ? "Sainte-" : "Saint-");
+  return [...new Set([base, hyphen, saint, saint.replace(/'/g, " ")])];
+}
+
 export async function findCommune(name, departmentCode) {
   const wanted = foldCommune(name);
-  let results = (await searchCommunes(name, departmentCode)).filter(row => foldCommune(row.name) === wanted);
-  if (!results.length && departmentCode) results = (await searchCommunes(name)).filter(row => foldCommune(row.name) === wanted);
-  return results;
+  const seen = new Map();
+  for (const department of departmentCode ? [departmentCode, ""] : [""]) {
+    for (const spelling of spellings(name)) {
+      (await searchCommunes(spelling, department)).filter(row => foldCommune(row.name) === wanted).forEach(row => seen.set(row.insee, row));
+      if (seen.size) return [...seen.values()];
+    }
+  }
+  return [];
 }
 
 export const communeLabel = row => `${row.name} — ${row.postalCodes[0] || row.insee} (${row.department})`;

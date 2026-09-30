@@ -1,6 +1,7 @@
 import { ensureNamed, normalizeName, OTHER } from "./reference-resolver.js";
 import { enhanceCombobox } from "./combobox.js";
 import { backfillLocalities, communeLabel, communeUpdate, findCommune, searchCommunes } from "./geo-communes.js";
+import { createPointTool, pickPoint, pointKey, savePendingPoints } from "./point-picker.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -59,6 +60,8 @@ let viewMode = "both";
 let openToken = 0;
 let pendingLinkExtras = {};
 let createdNames = [];
+let pointTool = null;
+const resolvedLocalities = new Map();
 // Listes dont la valeur « Autre » crée une nouvelle fiche (ou une nouvelle catégorie) enregistrée pour les saisies suivantes.
 const CREATABLE_REFS = ["minerals", "mines", "localities", "regions", "departments"];
 const allowsOther = field => (field.ref && CREATABLE_REFS.includes(field.ref)) || Boolean(field.customOptions);
@@ -177,7 +180,7 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code,postal_code" : "id,name";
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
     const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
@@ -241,6 +244,7 @@ function buildEditorPanel() {
   activeSection.fields.forEach(field => form.append(createField(field, selectedRecord?.[field.key])));
   wireGeoAutofill(form);
   if (activeSection.id === "localities") addLocateTool(form);
+  else addPointTool(form);
   if (activeSection.mediaTable || activeSection.singleFile) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
@@ -387,7 +391,8 @@ async function selectRecord(record) {
 async function saveRecord(form) {
   const section = activeSection;
   let databaseSaved = false;
-  pendingLinkExtras = {}; createdNames = [];
+  pendingLinkExtras = {}; createdNames = []; resolvedLocalities.clear();
+  const pointTargets = pointTool?.targets() || [];
   report("Enregistrement…");
   try {
     const record = {};
@@ -439,6 +444,7 @@ async function saveRecord(form) {
       databaseSaved = true;
       report("Fiche enregistrée. Traitement des médias…");
       if (section.links) await saveLinks(saved, form);
+      if (pointTargets.length) await savePendingPoints(client, pointTool, pointTargets, target => target.id || (saved.locality_id && !form.elements.namedItem("link_localities") ? saved.locality_id : resolvedLocalities.get(normalizeName(target.name))));
       if (section.mediaTable) await uploadMedia(saved);
       if (section.singleFile) await saveArchiveFile(saved, current);
       if (section.mediaTable && current && current.publication_status !== saved.publication_status) await syncMedia(saved);
@@ -458,7 +464,18 @@ function addLocateTool(form) {
   const box = document.createElement("div"); box.className = "locate-tool";
   const button = document.createElement("button"); button.type = "button"; button.className = "admin-secondary"; button.textContent = "📍 Localiser la commune";
   const results = document.createElement("div"); results.className = "locate-results";
-  box.append(button, results);
+  const manual = document.createElement("button"); manual.type = "button"; manual.className = "admin-secondary"; manual.textContent = "🖐 Poser le point à la main sur la carte";
+  box.append(button, manual, results);
+  manual.addEventListener("click", async () => {
+    const value = key => { const number = Number(form.elements.namedItem(key)?.value); return form.elements.namedItem(key)?.value !== "" && Number.isFinite(number) ? number : null; };
+    const departmentValue = form.elements.namedItem("department_code")?.value;
+    try {
+      const point = await pickPoint({ name: form.elements.namedItem("name").value.trim(), department: departmentValue && departmentValue !== OTHER ? departmentValue : "", latitude: value("latitude"), longitude: value("longitude") });
+      if (!point) return;
+      form.elements.namedItem("latitude").value = point.latitude; form.elements.namedItem("longitude").value = point.longitude;
+      results.textContent = "Point posé à la main. Pensez à enregistrer.";
+    } catch (error) { results.textContent = error.message; }
+  });
   const anchor = form.elements.namedItem("latitude")?.closest("div");
   (anchor || form.lastElementChild)?.before(box);
   button.addEventListener("click", async () => {
@@ -485,6 +502,32 @@ function addLocateTool(form) {
       });
     } catch (error) { results.textContent = `Recherche impossible : ${error.message}`; }
   });
+}
+
+// Fiches liées à une commune : position sur la carte posable à la main sous le champ « Localité ».
+function addPointTool(form) {
+  pointTool = null;
+  const single = form.elements.namedItem("locality_id");
+  const multi = form.elements.namedItem("link_localities");
+  const select = single || multi;
+  if (!select) return;
+  const department = () => { const value = form.elements.namedItem("department_code")?.value; return value && value !== OTHER ? value : ""; };
+  const fromRef = id => {
+    const known = (refs.localities || []).find(item => String(item.id) === String(id));
+    return known && { key: pointKey(known.id), id: known.id, name: known.name, department: department() || known.department_code, latitude: known.latitude, longitude: known.longitude };
+  };
+  const typed = name => ({ key: pointKey(null, name), id: null, name, department: department() });
+  const targets = () => {
+    const other = text(form.elements.namedItem(`${select.name}__other`)?.value);
+    if (single) return single.value === OTHER ? (other ? [typed(other)] : []) : [fromRef(single.value)].filter(Boolean);
+    return [...[...multi.selectedOptions].map(option => fromRef(option.value)).filter(Boolean), ...other.split(",").map(part => part.trim()).filter(Boolean).map(typed)];
+  };
+  const tool = createPointTool(targets);
+  tool.targets = targets;
+  pointTool = tool;
+  (select.closest("div") || select).after(tool.element);
+  form.addEventListener("change", () => tool.refresh());
+  tool.refresh();
 }
 
 // Remplissage automatique : gisement → localité → département.
@@ -514,6 +557,7 @@ async function ensureRef(table, name) {
   }
   const result = await ensureNamed(client, table, name);
   if (result.created) createdNames.push(result.name);
+  if (table === "localities") resolvedLocalities.set(normalizeName(name), result.id);
   return result.id;
 }
 

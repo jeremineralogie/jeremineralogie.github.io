@@ -81,3 +81,18 @@ body.admin-page .admin-tabs .admin-tab{flex:none;white-space:nowrap}
 .combo-list li.combo-create{color:#c4a6f5;border-top:1px solid #2a1846;margin-top:2px}
 .combo-list li.combo-empty{color:#8f7bb0;cursor:default}
 .locate-tool{display:grid;gap:8px;margin:14px 0}.locate-results{display:flex;flex-direction:column;gap:6px;color:#cbb8e6;font-size:.9rem}.locate-results .admin-secondary{text-align:left;border-radius:8px}
+
+/* Position de la commune sur la carte (pose manuelle) */
+.point-tool{display:grid;gap:8px;margin:8px 0 16px}
+.point-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border:1px solid #2a1846;border-radius:10px;background:#0f0918;text-align:left}
+.point-state{flex:1 1 220px;min-width:0;font-size:.88rem;color:#cbb8e6}
+.point-state.is-ok{color:#9fe0b8}.point-state.is-missing{color:#f0c987}.point-state.is-manual{color:#c9a8ff}
+.point-row .admin-secondary{border-radius:8px;padding:8px 12px}
+body.pick-open{overflow:hidden}
+.pick-overlay{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;background:#07040c;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.pick-head{display:grid;gap:4px;padding:12px 16px;text-align:center;border-bottom:1px solid #2a1846;color:#f4f1f5}
+.pick-head span{font-size:.85rem;color:#b9a5d8}
+.pick-map{flex:1;min-height:0;background:#1a1224}
+.pick-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-top:1px solid #2a1846}
+.pick-coords{flex:1 1 100%;text-align:center;font-variant-numeric:tabular-nums;font-size:.85rem;color:#cbb8e6}
+.pick-foot .btn:disabled{opacity:.45;cursor:not-allowed}

@@ -18,9 +18,9 @@ let map, cluster, places = new Map(), entries = [];
 function initMap() {
   map = L.map("map", { zoomControl: true, minZoom: 4, maxZoom: 16, worldCopyJump: false, tap: true }).fitBounds([[41.3, -5.2], [51.1, 9.6]]);
   map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    subdomains: "abcd", maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19, className: "map-tiles",
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
   }).addTo(map);
   cluster = L.markerClusterGroup({
     showCoverageOnHover: false, spiderfyOnMaxZoom: true, maxClusterRadius: 48,
