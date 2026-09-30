@@ -8,7 +8,7 @@ const root = document.querySelector("#detail");
 
 function render(client, row) {
   document.title = `${row.title} — Archives & Documentation — Jeremineralogie`;
-  const page = document.createElement("article"); page.className = "content";
+  const page = document.createElement("article"); page.className = "content doc-full";
   const category = document.createElement("div"); category.className = "kicker"; category.textContent = categoryLabel(row.category);
   const title = document.createElement("h1"); title.className = "page-title"; title.textContent = row.title;
   const meta = document.createElement("div"); meta.className = "meta";
