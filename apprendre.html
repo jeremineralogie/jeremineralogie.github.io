@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Apprendre — Jeremineralogie</title><link rel="stylesheet" href="styles.css"></head><body>
+<header class="site-header"><div class="header-inner"><div class="brand-row"><a class="brand" href="index.html">Jeremineralogie</a><div class="search">⌕ <input data-search placeholder="Minéral, localité, gisement…" aria-label="Rechercher un minéral, une localité ou un gisement"></div></div><nav class="nav"><a href="boutique.html">Boutique</a><a href="articles.html">Articles</a><a href="archives.html">Archives & Documentation</a><a href="collection.html">Ma collection</a><a href="carte.html">Carte</a><a href="apprendre.html" aria-current="page">Apprendre</a></nav></div></header>
+<main><h1 class="page-title">Apprendre</h1><p class="lead">Fiches minéraux et glossaire de minéralogie, de géologie et de cristallographie.</p>
+<nav class="learn-tabs" aria-label="Rubriques"><a href="#mineraux" data-tab="mineraux">Fiches minéraux</a><a href="#glossaire" data-tab="glossaire">Glossaire</a></nav>
+<p class="meta" id="learn-status" role="status" aria-live="polite">Chargement…</p>
+
+<section id="panel-mineraux" class="learn-panel" aria-label="Fiches minéraux" hidden>
+<details class="filter-panel"><summary>Filtre <span class="filter-count" hidden></span></summary><div class="filter-body"><section class="collection-filters" aria-label="Filtres des fiches minéraux">
+<div class="field"><label for="m-search">Nom ou formule</label><input id="m-search" type="search" autocomplete="off" placeholder="quartz, CaCO₃…" data-text></div>
+<div class="field"><label for="m-class">Famille chimique</label><select id="m-class" data-key="class"><option value="">Toutes</option></select></div>
+<div class="field"><label for="m-system">Système cristallin</label><select id="m-system" data-key="system"><option value="">Tous</option></select></div>
+<div class="field"><label for="m-hardness">Dureté (Mohs)</label><select id="m-hardness" data-key="hardness"><option value="">Toutes</option><option value="0-3">Tendre (moins de 3)</option><option value="3-5.5">Moyenne (3 à 5,5)</option><option value="5.5-7">Dure (5,5 à 7)</option><option value="7-99">Très dure (7 et plus)</option></select></div>
+<div class="field"><label for="m-color">Couleur</label><select id="m-color" data-key="color"><option value="">Toutes</option></select></div>
+<div class="field"><label for="m-presence">Sur le site</label><select id="m-presence" data-key="presence"><option value="">Tous les minéraux</option><option value="collection">Dans ma collection</option><option value="boutique">Disponible en boutique</option></select></div>
+</section><button type="button" class="filter-reset">Réinitialiser les filtres</button></div></details>
+<p class="meta learn-count" id="m-count" aria-live="polite"></p>
+<nav class="learn-az" id="m-az" aria-label="Index alphabétique des minéraux"></nav>
+<div class="learn-list" id="m-list"></div>
+<p class="notice" id="m-empty" hidden>Aucun minéral ne correspond à ces filtres.</p>
+</section>
+
+<section id="panel-glossaire" class="learn-panel" aria-label="Glossaire" hidden>
+<details class="filter-panel"><summary>Filtre <span class="filter-count" hidden></span></summary><div class="filter-body"><section class="collection-filters" aria-label="Filtres du glossaire">
+<div class="field"><label for="g-search">Mot recherché</label><input id="g-search" type="search" autocomplete="off" placeholder="macle, filon…" data-text></div>
+<div class="field"><label for="g-domain">Domaine</label><select id="g-domain" data-key="domain"><option value="">Tous</option><option value="mineralogie">Minéralogie</option><option value="geologie">Géologie</option><option value="cristallographie">Cristallographie</option></select></div>
+</section><button type="button" class="filter-reset">Réinitialiser les filtres</button></div></details>
+<p class="meta learn-count" id="g-count" aria-live="polite"></p>
+<nav class="learn-az" id="g-az" aria-label="Index alphabétique du glossaire"></nav>
+<div class="learn-glossary" id="g-list"></div>
+<p class="notice" id="g-empty" hidden>Aucun terme ne correspond à ces filtres.</p>
+</section>
+</main>
+<footer class="footer"><div class="footer-inner"><div class="footer-links"><a href="identification.html">Identification</a><a href="reseaux.html">Mes réseaux</a><a href="contact.html">Contact</a><a href="legal.html">Informations légales</a></div><div>© Jeremineralogie — Minéraux français, spécimens de collection et patrimoine minier.</div></div></footer>
+<script src="script.js"></script><script src="assets/js/supabase-config.js"></script><script src="assets/js/analytics.js" defer></script><script type="module" src="assets/js/apprendre-page.js"></script>
+</body></html>

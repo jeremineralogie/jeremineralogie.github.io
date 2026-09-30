@@ -19,6 +19,8 @@ const facet = (item, key) => clean({
   mine: item.mine?.name
 }[key]);
 const updatePanel = bindFilterPanel(panel, selects, render);
+const presets = new URLSearchParams(location.search);
+let presetsApplied = false;
 
 function render() {
   grid.replaceChildren();
@@ -45,7 +47,20 @@ function render() {
 
 async function refresh() {
   if (!rows.length) { status.textContent = "Chargement de la boutique…"; status.hidden = false; }
-  try { const result = await loadPublishedContent("shop"); client = result.client; rows = result.data; fillFilterOptions(selects, rows, (item, key) => [facet(item, key)]); updatePanel(); render(); }
+  try {
+    const result = await loadPublishedContent("shop"); client = result.client; rows = result.data;
+    fillFilterOptions(selects, rows, (item, key) => [facet(item, key)]);
+    // Liens entrants du type boutique.html?mineral=Fluorite (depuis l'onglet Apprendre).
+    if (!presetsApplied) {
+      presetsApplied = true;
+      selects.forEach(select => {
+        const wanted = clean(presets.get(select.dataset.filter)).toLocaleLowerCase("fr");
+        const option = wanted && [...select.options].find(item => item.value.toLocaleLowerCase("fr") === wanted);
+        if (option) select.value = option.value;
+      });
+    }
+    updatePanel(); render();
+  }
   catch (error) { rows = []; showLoadError(error, status, grid, "articles de la boutique"); }
 }
 await refresh();

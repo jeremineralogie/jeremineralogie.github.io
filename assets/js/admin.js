@@ -19,6 +19,8 @@ const collectionListView = document.querySelector("#collection-list-view");
 const contentManager = document.querySelector("#content-manager");
 const appearancePanel = document.querySelector("#appearance-panel");
 const messagesPanel = document.querySelector("#messages-panel");
+const statsPanel = document.querySelector("#stats-panel");
+let statsModule = null;
 let messagesModule = null;
 const mineralInput = document.querySelector("#mineral-name");
 const mineralAssociationSelect = document.querySelector("#mineral-association-select");
@@ -165,6 +167,7 @@ if (!client) {
   });
   document.querySelector("#cancel-edit").addEventListener("click", () => resetEditor(false));
   document.querySelector("#delete-specimen").addEventListener("click", deleteSpecimen);
+  document.querySelector("#duplicate-specimen").addEventListener("click", duplicateSpecimen);
   [mineralInput, document.querySelector("#region"), document.querySelector("#department"), document.querySelector("#locality"), document.querySelector("#provenance")]
     .forEach(select => {
       select.addEventListener("change", () => {
@@ -257,15 +260,27 @@ async function showMainSection(id) {
     if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
   });
   document.querySelectorAll("#settings-menu [data-main]").forEach(button => button.classList.toggle("is-active", button.dataset.main === id));
-  document.querySelector("#settings-toggle").classList.toggle("is-active", ["messages", "referentiels", "appearance"].includes(id));
+  document.querySelector("#settings-toggle").classList.toggle("is-active", ["messages", "stats", "referentiels", "appearance"].includes(id));
   const isCollection = id === "collection";
   const isAppearance = id === "appearance";
   const isMessages = id === "messages";
+  const isStats = id === "stats";
   collectionPanel.hidden = !isCollection;
-  contentManager.hidden = isCollection || isAppearance || isMessages;
+  contentManager.hidden = isCollection || isAppearance || isMessages || isStats;
+  statsPanel.hidden = !isStats;
   appearancePanel.hidden = !isAppearance;
   messagesPanel.hidden = !isMessages;
   if (isAppearance) return;
+  if (isStats) {
+    try {
+      statsModule ??= await import("./admin-stats.js");
+      await statsModule.openStats(client);
+    } catch (error) {
+      console.error("Impossible de charger les statistiques :", error);
+      message(`Les statistiques n’ont pas pu être chargées : ${describeError(error)}`, true);
+    }
+    return;
+  }
   if (isMessages) {
     try {
       messagesModule ??= await import("./admin-messages.js");
@@ -517,6 +532,7 @@ function resetEditor(open = false) {
   document.querySelector("#specimen-slug").value = "";
   document.querySelector("#editor-title").textContent = "Nouveau spécimen";
   document.querySelector("#delete-specimen").hidden = true;
+  document.querySelector("#duplicate-specimen").hidden = true;
   setSiteType("");
   // Reset selects
   document.querySelectorAll("#mineral-name, #region, #department, #locality, #provenance").forEach(select => {
@@ -540,6 +556,31 @@ function resetEditor(open = false) {
   editor.hidden = !open;
   setCollectionView(open ? "add" : "list");
   if (open) editor.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// Nouvelle fiche reprenant uniquement le minéral principal et la localisation (pays, région, département, commune, gisement, type de site).
+// Rien d'autre n'est copié : ni minéraux associés, ni dimensions, poids, description, mots-clés, date ou photos.
+function duplicateSpecimen() {
+  const fields = ["mineral-name", "region", "department", "locality", "provenance"].map(id => {
+    const select = document.querySelector(`#${id}`);
+    const other = document.querySelector(`#${id}-other`);
+    return { id, value: select.value, other: other?.value || "" };
+  });
+  const country = document.querySelector("#country").value;
+  const siteType = getSiteType();
+  resetEditor(true);
+  fields.forEach(({ id, value, other }) => {
+    if (!value) return;
+    const otherInput = document.querySelector(`#${id}-other`);
+    if (otherInput) { otherInput.value = value === "OTHER" ? other : ""; otherInput.hidden = value !== "OTHER"; }
+    document.querySelector(`#${id}`).value = value;
+    dirtyReferenceFields.add(id);
+  });
+  document.querySelector("#country").value = country;
+  setSiteType(siteType);
+  pointTool.refresh();
+  document.querySelector("#editor-title").textContent = "Nouveau spécimen (copie)";
+  message("Copie prête : minéral principal et localisation repris. Complétez le reste puis enregistrez.");
 }
 
 async function editSpecimen(id) {
@@ -578,6 +619,7 @@ async function editSpecimen(id) {
     media = [];
     document.querySelector("#editor-title").textContent = "Modifier le spécimen";
     document.querySelector("#delete-specimen").hidden = false;
+    document.querySelector("#duplicate-specimen").hidden = false;
     editor.hidden = false;
     setCollectionView("add");
     editor.scrollIntoView({ behavior: "smooth", block: "start" });
