@@ -1,6 +1,7 @@
 import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
+import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 
 // Fiche générique d'un minéral, d'un gisement ou d'une commune : fiche.html?type=mineral|mine|locality&id=<slug>.
 const KINDS = {
@@ -97,12 +98,12 @@ async function load() {
 
   const label = row => row.mineral_name ?? row.mineral?.name ?? "Spécimen";
   if (specimens.length) section("Dans ma collection", cards(specimens.map(row => ({ title: label(row), meta: [row.provenance, row.locality_name].filter(Boolean).join(" · "), href: `specimen.html?id=${encodeURIComponent(row.slug)}`, photo: firstPhoto(row.media) }))));
-  if (shop.length) section("Disponible en boutique", cards(shop.map(row => ({ title: row.title, meta: new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.currency || "EUR" }).format((row.price_cents ?? 0) / 100), href: `boutique.html#${encodeURIComponent(row.reference)}`, photo: firstPhoto(row.media) }))));
+  if (shop.length) section("Disponible en boutique", cards(shop.map(row => ({ title: row.title, meta: new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.currency || "EUR" }).format((row.price_cents ?? 0) / 100), href: pieceUrl(row), photo: firstPhoto(row.media) }))));
   if (kind === KINDS.locality && mines.length) section("Gisements de cette commune", linkList(mines.map(row => ({ title: row.name, href: ficheUrl("mine", row.slug) }))));
   if (kind === KINDS.mineral) { const list = unique(specimens.map(row => row.mine).filter(Boolean), "slug"); if (list.length) section("Gisements dans ma collection", linkList(list.map(row => ({ title: row.name, href: ficheUrl("mine", row.slug) })))); }
   if (kind === KINDS.mine) { const list = unique(specimens.map(row => row.mineral).filter(Boolean), "slug"); if (list.length) section("Minéraux de ce gisement dans ma collection", linkList(list.map(row => ({ title: row.name, href: ficheUrl("mineral", row.slug) })))); }
-  if (articles.length) section("Articles", linkList(articles.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: `articles.html#${encodeURIComponent(row.slug)}` }))));
-  if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: `archives.html#${encodeURIComponent(row.slug)}` }))));
+  if (articles.length) section("Articles", linkList(articles.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: articleUrl(row) }))));
+  if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: documentUrl(row) }))));
   if (!sectionsBox.children.length && !description && !science.children.length) { const empty = document.createElement("p"); empty.className = "meta"; empty.textContent = "Aucun contenu publié n’est encore lié à cette fiche."; sectionsBox.append(empty); }
   status.hidden = true; root.hidden = false;
 }

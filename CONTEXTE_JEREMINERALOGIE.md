@@ -189,3 +189,11 @@ Toute évolution doit préserver cette logique.
 - **Listes déroulantes** : type de site = Mine, Tranchée, Carrière, Alluvion, Affleurement, Travaux publics + « Autre » (valeur libre conservée et proposée ensuite). Catégories d'articles/archives, minéral/gisement/localité/région et liens d'articles/archives : option « Autre » créant la valeur. Pas d'« Autre » sur les états système (publication, disponibilité) ni sur le département (le code est un identifiant officiel). Les champs texte du formulaire spécimen proposent aussi des suggestions (`datalist`) tirées des référentiels.
 - **Articles** : les noms de minéraux, gisements et communes publiés sont reliés automatiquement dans le texte (`entity-links.js`, un lien par nom et par article, nom le plus long prioritaire, sans tenir compte des accents). Les liens choisis dans l'administration s'affichent aussi sous « Fiches liées ».
 - **Ancres** : `articles.html#<slug>`, `archives.html#<slug>`, `boutique.html#<référence>`.
+
+## 15. Listes en résumés et fiches détaillées (30 septembre 2026)
+
+- Principe commun à tous les onglets : la **liste** n'affiche que des cartes-résumés cliquables ; le contenu complet s'ouvre dans une **fiche générique** (jamais une page par élément).
+- **Boutique** → `piece.html?ref=<référence>` : grande fiche (photos, infos, prix, description, « Me contacter »). **Articles** → `article.html?slug=<slug>` : lecture intégrale (liens automatiques et « Fiches liées » conservés). **Archives** → `document.html?slug=<slug>` : description + lecteur PDF/image intégré + « Ouvrir dans un nouvel onglet ». **Ma collection** → `specimen.html?id=<slug>` (inchangé).
+- **Précédent / Suivant** sur les quatre fiches (`assets/js/detail-nav.js`, aussi source des adresses `pieceUrl`, `articleUrl`, `documentUrl`, `specimenUrl`) : même ordre que la liste, sans repasser par l'onglet.
+- Les anciens liens `boutique.html#REF`, `articles.html#slug`, `archives.html#slug` redirigent vers la fiche. Recherche, fiches gisement/minéral/commune et pages département pointent vers ces fiches.
+- Aucune modification Supabase pour ce changement. Résumé d'un article : son extrait ; à défaut, le début de son premier paragraphe.

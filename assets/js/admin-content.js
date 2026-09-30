@@ -10,7 +10,8 @@ const slugify = value => text(value).normalize("NFD").replace(/[\u0300-\u036f]/g
 const sections = [
   { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", fields: [
     { key: "reference", label: "Référence", required: true }, { key: "title", label: "Titre", required: true },
-    { key: "mineral_id", label: "Minéral", ref: "minerals", display: "name" }, { key: "provenance", label: "Provenance", notNull: true }, { key: "mine_id", label: "Gisement", ref: "mines", display: "name" },
+    { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "mineral_association_ids", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true, required: true },
+    { key: "provenance", label: "Provenance", notNull: true }, { key: "mine_id", label: "Gisement", ref: "mines", display: "name" },
     { key: "locality_id", label: "Localité", ref: "localities", display: "name" }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" },
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_grams", label: "Poids (g)", type: "number", step: "0.001" },
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "price_cents", label: "Prix (euros)", type: "number", step: "0.01", required: true, euros: true },
