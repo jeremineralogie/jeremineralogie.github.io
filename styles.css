@@ -191,3 +191,7 @@ body{background:#030106}
 .lead{color:#d6c4f3}
 @media(max-width:480px){.nav a,.footer-links a{letter-spacing:.03em!important;padding:0 3.4%!important;font-size:clamp(.5rem,2.35vw,.62rem)!important}}
 .site-header,.footer,main,.hero{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none}
+
+/* Largeur verrouillée sur l'écran : aucun glissement horizontal */
+html,body{max-width:100%;overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none}
+body{touch-action:pan-y pinch-zoom}
