@@ -54,7 +54,7 @@ function showLoadError() {
   document.querySelector("#specimen-content").hidden = true;
   document.querySelector("#specimen-not-found").hidden = true;
   const error = document.querySelector("#specimen-load-error");
-  error.textContent = "Impossible de charger ou d’actualiser cette fiche depuis Supabase. Vérifiez votre connexion puis réessayez.";
+  error.textContent = "Impossible de charger ou d’actualiser cette fiche. Vérifiez votre connexion puis réessayez.";
   error.hidden = false;
 }
 

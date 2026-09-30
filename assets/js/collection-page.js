@@ -1,5 +1,6 @@
 import { getSupabase } from "./supabase-client.js";
 import { listPublishedSpecimens } from "./collection-repository.js";
+import { bindFilterPanel } from "./filter-panel.js";
 
 const status = document.querySelector("#collection-source-status");
 const grid = document.querySelector("#collection-grid");
@@ -62,7 +63,7 @@ async function refreshCollection() {
     return;
   }
   refreshInProgress = true;
-  status.textContent = "Actualisation de la collection depuis Supabase…";
+  if (!specimens.length) { status.textContent = "Chargement de la collection…"; status.hidden = false; }
   try {
     specimens = await listPublishedSpecimens();
     renderFilters();
@@ -75,14 +76,15 @@ async function refreshCollection() {
       });
     }
     renderCollection();
-    status.textContent = "Collection synchronisée avec Supabase.";
+    updateFilterPanel();
+    status.textContent = ""; status.hidden = true;
   } catch (error) {
     specimens = [];
     renderFilters();
     grid.replaceChildren();
     count.textContent = "";
     empty.hidden = true;
-    status.textContent = "Impossible de charger la collection depuis Supabase. Vérifiez votre connexion puis réessayez.";
+    status.textContent = "Impossible de charger la collection. Vérifiez votre connexion puis réessayez."; status.hidden = false;
     console.error("Échec de chargement/actualisation des spécimens publiés :", error);
   } finally {
     refreshInProgress = false;
@@ -93,7 +95,7 @@ async function refreshCollection() {
   }
 }
 
-filters.forEach(filter => filter.addEventListener("change", renderCollection));
+const updateFilterPanel = bindFilterPanel(document.querySelector(".filter-panel"), filters, renderCollection);
 void refreshCollection();
 
 if (client) {
