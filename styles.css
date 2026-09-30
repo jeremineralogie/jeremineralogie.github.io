@@ -241,3 +241,6 @@ main img:not(.card img):not(.thumbs img){cursor:zoom-in}
 .lb button:focus-visible{outline:2px solid #b48cf2;outline-offset:2px}
 .lb button:focus:not(:focus-visible){outline:none}
 .content p,.article-full p{white-space:pre-line}
+.hp-field{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+form[data-message-form]{max-width:640px;margin:0 auto}
+.form-status.form-error{border-top-color:#bd5266;color:#ffc3cc}

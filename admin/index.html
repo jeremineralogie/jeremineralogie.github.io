@@ -31,6 +31,7 @@
           <button type="button" class="admin-tab" data-main="archives">Archives &amp; Documentation</button>
           <button type="button" class="admin-tab" data-main="referentiels">Référentiels &amp; réglages</button>
           <button type="button" class="admin-tab" data-main="appearance">Apparence du site</button>
+          <button type="button" class="admin-tab" data-main="messages">Messages <span id="messages-badge" class="admin-badge" hidden></span></button>
         </nav>
         <button class="admin-secondary" id="logout" type="button">Se déconnecter</button>
       </div>
@@ -80,6 +81,14 @@
           </form>
         </section>
         </div>
+      </section>
+      <section id="messages-panel" class="admin-panel" aria-label="Messages" hidden>
+        <div class="admin-toolbar"><h3 style="margin-right:auto">Messages reçus</h3>
+          <select id="messages-filter" aria-label="Afficher"><option value="nouveau">Nouveaux</option><option value="traite">Traités</option><option value="">Tous</option></select>
+          <button type="button" class="admin-secondary" id="messages-refresh">Actualiser</button></div>
+        <p class="admin-empty" id="messages-status" role="status" aria-live="polite"></p>
+        <div class="admin-list" id="messages-list"></div>
+        <div id="messages-detail" hidden></div>
       </section>
       <section id="appearance-panel" aria-label="Apparence du site" hidden>
         <div class="admin-panel"><h3>Éditeur visuel</h3><p>Modifiez la page telle qu’elle est affichée, en plein écran : déplacez, redimensionnez, changez les textes et les couleurs, puis publiez.</p><a class="btn" href="editeur.html">Ouvrir l’éditeur en plein écran</a></div>
