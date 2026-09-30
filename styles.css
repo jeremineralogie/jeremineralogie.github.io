@@ -240,3 +240,4 @@ main img:not(.card img):not(.thumbs img){cursor:zoom-in}
 .lb{background:#030106}
 .lb button:focus-visible{outline:2px solid #b48cf2;outline-offset:2px}
 .lb button:focus:not(:focus-visible){outline:none}
+.content p,.article-full p{white-space:pre-line}
