@@ -2,6 +2,7 @@ import { loadPublishedContent, publicMediaUrl, showLoadError } from "./content-r
 import { appendLinked, buildLinker, loadArticleLinks, loadLinkEntities } from "./entity-links.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { articleUrl, renderNeighbours } from "./detail-nav.js";
+import { applyGlossary } from "./glossary-links.js";
 
 const slug = new URLSearchParams(location.search).get("slug");
 const status = document.querySelector("#detail-status");
@@ -12,7 +13,32 @@ async function loadLinks(client) {
   catch (error) { console.error("Chargement des liens vers les fiches :", error); return { linker: null, chosen: new Map() }; }
 }
 
-function render(client, article, { linker, chosen }) {
+// « À lire aussi » : articles partageant des fiches liées ou la même catégorie, puis les plus récents.
+function relatedArticles(article, all, chosen) {
+  const keys = new Set((chosen.get(article.id) || []).map(item => item.href));
+  return all.filter(other => other.id !== article.id).map((other, order) => {
+    const shared = (chosen.get(other.id) || []).filter(item => keys.has(item.href)).length;
+    return { other, score: shared * 3 + (other.category === article.category ? 1 : 0), order };
+  }).sort((a, b) => b.score - a.score || a.order - b.order).slice(0, 3).map(entry => entry.other);
+}
+
+function readMore(articles) {
+  const box = document.createElement("section"); box.className = "read-more";
+  const heading = document.createElement("h2"); heading.textContent = "À lire aussi";
+  const list = document.createElement("div"); list.className = "read-more-list";
+  articles.forEach(item => {
+    const link = document.createElement("a"); link.className = "read-more-item"; link.href = articleUrl(item);
+    const kicker = document.createElement("span"); kicker.className = "read-more-kicker"; kicker.textContent = categoryLabel(item.category);
+    const title = document.createElement("strong"); title.textContent = item.title;
+    link.append(kicker, title);
+    if (item.published_on) { const date = document.createElement("span"); date.className = "read-more-date"; date.textContent = new Intl.DateTimeFormat("fr-FR").format(new Date(`${item.published_on}T00:00:00`)); link.append(date); }
+    list.append(link);
+  });
+  box.append(heading, list);
+  return box;
+}
+
+function render(client, article, { linker, chosen }, all = []) {
   document.title = `${article.title} — Articles — Jeremineralogie`;
   const used = new Set();
   const images = (article.media || []).filter(item => item.bucket_id === "site-media-public").sort((a, b) => a.position - b.position);
@@ -40,7 +66,10 @@ function render(client, article, { linker, chosen }) {
     related.forEach((item, index) => { if (index) line.append(" · "); appendLinked(line, [{ text: item.name, href: item.href }]); });
     page.append(line);
   }
+  const others = relatedArticles(article, all, chosen);
+  if (others.length) page.append(readMore(others));
   root.replaceChildren(page);
+  void applyGlossary([...page.querySelectorAll(":scope > p:not(.meta)")]);
 }
 
 try {
@@ -48,7 +77,7 @@ try {
   const index = data.findIndex(article => article.slug === slug);
   if (!slug || index < 0) { root.replaceChildren(); status.textContent = "Cet article est introuvable ou n’est plus publié."; }
   else {
-    status.hidden = true; render(client, data[index], await loadLinks(client));
+    status.hidden = true; render(client, data[index], await loadLinks(client), data);
     renderNeighbours(document.querySelectorAll("[data-nav]"), data, index, articleUrl, article => article.title);
   }
 } catch (error) { showLoadError(error, status, root, "articles"); }

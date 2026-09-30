@@ -139,6 +139,17 @@ export async function openGroup(groupId) {
   await openView(group.start);
 }
 
+// Ouverture directe d'une fiche (depuis le tableau de bord) : groupe, sous-onglet puis enregistrement.
+export async function openRecord(groupId, viewId, recordId) {
+  if (!groups[groupId]) throw new Error(`Section inconnue : ${groupId}`);
+  activeGroupId = groupId;
+  await openView(viewId);
+  const record = records.find(item => String(item.id) === String(recordId));
+  if (record) await selectRecord(record);
+  else report("Cette fiche est introuvable (supprimée entre-temps ?).", true);
+  workspace.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function renderSubnav() {
   tabs.replaceChildren();
   currentViews().forEach(view => {

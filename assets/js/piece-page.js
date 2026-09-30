@@ -1,5 +1,7 @@
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
+import { applyGlossary } from "./glossary-links.js";
+import { favoriteButton } from "./favorites.js";
 import { pieceUrl, renderNeighbours } from "./detail-nav.js";
 
 const key = new URLSearchParams(location.search).get("ref");
@@ -63,12 +65,15 @@ function render(client, item) {
   const price = document.createElement("div"); price.className = "price";
   price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100);
   const contact = document.createElement("a"); contact.className = "btn"; contact.href = `contact.html?reference=${encodeURIComponent(item.reference)}`; contact.textContent = "Me contacter";
-  details.append(kicker, title, list, price, contact);
+  const cover = photos[0] ? publicMediaUrl(client, photos[0]) : "";
+  const favorite = favoriteButton({ type: "piece", id: item.reference || item.slug, name: shopItemName(item), href: pieceUrl(item), meta: [clean(item.mine?.name), clean(item.reference)].filter(Boolean).join(" · "), image: cover });
+  details.append(kicker, title, list, price, contact, favorite);
   wrap.append(left, details); root.replaceChildren(wrap);
   if (item.description) {
     const section = document.createElement("div"); section.className = "content";
     const heading = document.createElement("h2"); heading.textContent = "Description";
     const text = document.createElement("p"); text.textContent = item.description; section.append(heading, text); root.append(section);
+    void applyGlossary(text);
   }
   const labels = { formula: "Formule", crystal_system: "Système cristallin", hardness: "Dureté", density: "Densité", colors: "Couleurs", luster: "Éclat", cleavage: "Clivage", habit: "Habitus", formation: "Formation" };
   const science = document.createElement("dl"); science.className = "scientific-details";

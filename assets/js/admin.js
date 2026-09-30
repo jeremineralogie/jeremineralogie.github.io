@@ -20,6 +20,8 @@ const contentManager = document.querySelector("#content-manager");
 const appearancePanel = document.querySelector("#appearance-panel");
 const messagesPanel = document.querySelector("#messages-panel");
 const statsPanel = document.querySelector("#stats-panel");
+const homePanel = document.querySelector("#home-panel");
+let homeModule = null;
 let statsModule = null;
 let messagesModule = null;
 const mineralInput = document.querySelector("#mineral-name");
@@ -45,7 +47,7 @@ let editingSpecimen = null;
 let contentAdminInitialized = false;
 let knownCustomSiteTypes = [];
 let contentModule = null;
-let activeMain = "collection";
+let activeMain = "accueil";
 const dirtyReferenceFields = new Set();
 let geo = { mines: [], localities: [], departments: [] };
 // Position de la commune sur la carte, posable à la main sous le champ « Commune ».
@@ -218,7 +220,7 @@ async function showSession(session) {
   document.querySelector("#settings-menu").hidden = true;
   if (!session) {
     loginPanel.hidden = false;
-    activeMain = "collection";
+    activeMain = "accueil";
     message("Connectez-vous avec le compte administrateur.");
     return;
   }
@@ -260,14 +262,33 @@ async function showMainSection(id) {
     if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
   });
   document.querySelectorAll("#settings-menu [data-main]").forEach(button => button.classList.toggle("is-active", button.dataset.main === id));
-  document.querySelector("#settings-toggle").classList.toggle("is-active", ["messages", "stats", "referentiels", "appearance"].includes(id));
+  document.querySelector("#settings-toggle").classList.toggle("is-active", ["accueil", "messages", "stats", "referentiels", "appearance"].includes(id));
   const isCollection = id === "collection";
   const isAppearance = id === "appearance";
   const isMessages = id === "messages";
   const isStats = id === "stats";
+  const isHome = id === "accueil";
   collectionPanel.hidden = !isCollection;
-  contentManager.hidden = isCollection || isAppearance || isMessages || isStats;
+  contentManager.hidden = isCollection || isAppearance || isMessages || isStats || isHome;
   statsPanel.hidden = !isStats;
+  homePanel.hidden = !isHome;
+  if (isHome) {
+    try {
+      homeModule ??= await import("./admin-home.js");
+      await homeModule.openHome(client, {
+        openSpecimen: async specimenId => { await showMainSection("collection"); await editSpecimen(specimenId); },
+        openRecord: async (group, view, recordId) => {
+          if (!contentModule) { message("Chargement des sections en cours, réessayez dans un instant.", true); return; }
+          await showMainSection(group); await contentModule.openRecord(group, view, recordId);
+        },
+        openMain: mainId => showMainSection(mainId)
+      });
+    } catch (error) {
+      console.error("Impossible de charger le tableau de bord :", error);
+      message(`Le tableau de bord n’a pas pu être chargé : ${describeError(error)}`, true);
+    }
+    return;
+  }
   appearancePanel.hidden = !isAppearance;
   messagesPanel.hidden = !isMessages;
   if (isAppearance) return;
