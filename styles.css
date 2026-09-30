@@ -177,11 +177,11 @@ body{background:#030106}
   object-fit:contain;background:#000;border:0;min-height:0}
 .card>.card-photo-placeholder{display:flex;align-items:center;justify-content:center;font-size:4.2cqw;color:#9d7fcf;padding:0 4%}
 .card .card-body{position:absolute;inset:0;z-index:3;padding:0;pointer-events:none}
-.card .card-body h3{position:absolute;left:24%;right:24%;top:57.3%;height:7.6%;margin:0;display:flex;align-items:center;justify-content:center;
-  font-size:5.6cqw;line-height:1.1;color:#f3eaff;overflow:hidden;text-shadow:0 0 10px rgba(0,0,0,.9)}
+.card .card-body h3{position:absolute;left:24%;right:24%;top:56.9%;height:5.4%;margin:0;display:flex;align-items:center;justify-content:center;
+  font-size:5.4cqw;line-height:1.05;color:#f3eaff;overflow:hidden;text-shadow:0 0 10px rgba(0,0,0,.9)}
 .card .card-body .meta,.card .card-body .price{position:absolute;left:22%;right:22%;margin:0;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.card .card-body .meta{top:66.7%;font-size:3.4cqw;color:#cdb6f2}
-.card .card-body .price{top:69.3%;font-size:3.8cqw;color:#e3ccff}
+.card .card-body .meta{top:62.1%;font-size:3.4cqw;line-height:1.2;color:#cdb6f2}
+.card .card-body .price{top:67.4%;font-size:4cqw;line-height:1.2;color:#e3ccff}
 .card .card-body .kicker{position:absolute;left:21.6%;right:21.6%;top:9.3%;height:42.2%;margin:0;display:none;align-items:center;justify-content:center;
   font-family:var(--serif);font-size:5.2cqw;letter-spacing:.12em;color:#c9a9f5;text-transform:uppercase}
 .card:not(:has(>img)):not(:has(>.card-photo-placeholder)) .kicker{display:flex}
@@ -191,3 +191,8 @@ body{background:#030106}
 .lead{color:#d6c4f3}
 @media(max-width:480px){.nav a,.footer-links a{letter-spacing:.03em!important;padding:0 3.4%!important;font-size:clamp(.5rem,2.35vw,.62rem)!important}}
 .site-header,.footer,main,.hero{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none}
+
+/* Largeur verrouillée sur l'écran : aucun glissement horizontal */
+html,body{max-width:100%;overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none}
+body{touch-action:pan-y pinch-zoom}
+.card .card-body h3{display:block;white-space:nowrap;text-overflow:ellipsis;text-align:center;line-height:1.5}
