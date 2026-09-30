@@ -15,7 +15,7 @@ const collectionAddView = document.querySelector("#collection-add-view");
 const collectionListView = document.querySelector("#collection-list-view");
 const contentManager = document.querySelector("#content-manager");
 const mineralInput = document.querySelector("#mineral-name");
-const mineralAssociationInput = document.querySelector("#mineral-association");
+const mineralAssociationSelect = document.querySelector("#mineral-association");
 const siteTypeSelect = document.querySelector("#site-type");
 const siteTypeOther = document.querySelector("#site-type-other");
 const photoInput = document.querySelector("#photos");
@@ -230,6 +230,7 @@ async function loadSuggestions() {
 
     // Populate select elements
     populateSelect("#mineral-name", mineralData, "name", "id");
+    populateSelectMultiple("#mineral-association", mineralData, "name", "id");
     populateSelect("#region", regionData, "name", "id");
     populateSelect("#department", departmentData, "name", "code");
     populateSelect("#locality", localityData, "name", "id");
@@ -263,6 +264,18 @@ function populateSelect(selector, data, displayField, valueField) {
   other.value = "OTHER";
   other.textContent = "Autre (ajouter une nouvelle valeur)…";
   select.append(other);
+}
+
+function populateSelectMultiple(selector, data, displayField, valueField) {
+  const select = document.querySelector(selector);
+  if (!select) return;
+  select.replaceChildren();
+  data.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item[valueField];
+    option.textContent = item[displayField];
+    select.append(option);
+  });
 }
 
 function setSelectValue(selector, id, fallbackName) {
@@ -311,6 +324,8 @@ function resetEditor(open = false) {
     const otherInput = document.querySelector(`#${select.id}-other`);
     if (otherInput) otherInput.hidden = true;
   });
+  // Reset multiple select
+  mineralAssociationSelect.value = [];
   editingSpecimen = null;
   if (editorStatus) {
     editorStatus.textContent = "";
@@ -337,7 +352,12 @@ async function editSpecimen(id) {
     document.querySelector("#specimen-slug").value = data.slug;
     // Set select values by ID when available, fallback to custom text
     setSelectValue("#mineral-name", data.mineral_id, data.mineral_name);
-    mineralAssociationInput.value = data.mineral_association ?? "";
+    // Set multiple select for associated minerals
+    const associatedIds = data.mineral_association_ids ? (typeof data.mineral_association_ids === "string" ? JSON.parse(data.mineral_association_ids) : data.mineral_association_ids) : [];
+    mineralAssociationSelect.value = [];
+    [...mineralAssociationSelect.options].forEach(option => {
+      option.selected = associatedIds.includes(option.value);
+    });
     document.querySelector("#country").value = data.country ?? "";
     setSelectValue("#region", data.region_id, data.region_name);
     setSelectValue("#department", data.department_code, data.department_name);
@@ -657,10 +677,12 @@ async function saveSpecimen(event) {
     const localityValue = getSelectValue("#locality");
     const provenanceValue = getSelectValue("#provenance");
 
+    const associatedMineralIds = [...mineralAssociationSelect.selectedOptions].map(option => option.value);
+
     const values = {
       mineral: mineralValue.text,
       mineralId: mineralValue.id,
-      mineralAssociation: mineralAssociationInput.value,
+      mineralAssociationIds: associatedMineralIds,
       country: document.querySelector("#country").value,
       region: regionValue.text,
       regionId: regionValue.id,
@@ -697,7 +719,7 @@ async function saveSpecimen(event) {
     const record = {
       slug,
       mineral_name: values.mineral || null,
-      mineral_association: values.mineralAssociation || null,
+      mineral_association_ids: values.mineralAssociationIds.length > 0 ? JSON.stringify(values.mineralAssociationIds) : null,
       mineral_id: values.mineralId || unchangedReference("mineral-name", values.mineral, old.mineral_name, relationLabels.mineral, old.mineral_id),
       country: values.country || null,
       region_name: values.region || null,
