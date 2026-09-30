@@ -42,9 +42,9 @@ main{max-width:var(--max)}
 
 /* En-tête : nom, recherche et onglets centrés */
 .site-header{background:rgba(3,1,6,.92);background-image:var(--grain);border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(138,77,224,.22),0 18px 40px -28px #000}
-.header-inner{padding:22px 22px 18px}
+.header-inner{padding:22px clamp(12px,4vw,22px) 18px}
 .brand-row{flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.brand{font-family:var(--serif);font-weight:500;text-transform:uppercase;letter-spacing:.26em;font-size:clamp(1.5rem,6vw,2.3rem);padding-left:.26em;text-align:center}
+.brand{font-family:var(--serif);font-weight:500;text-transform:uppercase;letter-spacing:.16em;font-size:clamp(1.15rem,5.2vw,2.1rem);padding-left:.16em;text-align:center}
 .search{width:min(560px,100%);min-width:0;border:1px solid rgba(138,77,224,.6);border-radius:6px;background:#05020a;padding:10px 16px;justify-content:center;box-shadow:inset 0 1px 6px rgba(0,0,0,.6)}
 .search input{text-align:center;letter-spacing:.02em}.search input::placeholder{color:#8c72b3}
 .search:focus-within{border-color:var(--violet2);box-shadow:0 0 0 3px rgba(138,77,224,.2),inset 0 1px 6px rgba(0,0,0,.6)}
@@ -55,12 +55,12 @@ main{max-width:var(--max)}
 /* Accueil */
 .hero{padding:34px 0 60px}
 .hero-image{border:1px solid #3a1d63;background:#020005;box-shadow:0 40px 70px -40px #000,inset 0 0 0 1px rgba(255,255,255,.02)}
-.hero h1{font-family:var(--serif);font-weight:500;text-transform:uppercase;letter-spacing:.2em;padding-left:.2em;font-size:clamp(2.3rem,8vw,4.8rem);margin:38px 0 10px}
+.hero h1{font-family:var(--serif);font-weight:500;text-transform:uppercase;letter-spacing:.08em;padding-left:.08em;font-size:clamp(1.3rem,6.2vw,3.4rem);margin:38px 0 10px}
 .tagline{font-family:var(--serif);font-size:clamp(1.15rem,3.6vw,1.45rem);color:#cbb3f0;max-width:640px;margin:0 auto}
 .violet-line{width:min(280px,60%);height:1px;background:linear-gradient(90deg,transparent,var(--violet),transparent);margin:34px auto}
 
 /* Titres et textes centrés */
-.page-title{font-family:var(--serif);font-weight:500;text-transform:uppercase;letter-spacing:.14em;text-align:center;font-size:clamp(2rem,6vw,3.4rem);margin:40px 0 12px}
+.page-title{font-family:var(--serif);font-weight:500;text-transform:uppercase;letter-spacing:.1em;text-align:center;font-size:clamp(1.35rem,6vw,3rem);margin:40px 0 12px;overflow-wrap:anywhere}
 .page-title::after{content:"";display:block;width:90px;height:1px;margin:18px auto 0;background:linear-gradient(90deg,transparent,var(--violet),transparent)}
 .lead{margin-left:auto;margin-right:auto;text-align:center;color:#b49bd9}
 .kicker{text-align:center;color:var(--violet2);letter-spacing:.2em}
@@ -115,26 +115,30 @@ input,textarea,select{border-radius:4px;border-color:#33174f}
 .footer-links a{text-transform:uppercase;letter-spacing:.14em;font-size:.74rem;color:#a98fd2}
 .footer a:hover{color:var(--violet2)}
 
-@media(max-width:850px){
-  .grid>.card{flex-basis:calc((100% - 22px)/2)}
-  .department-region{flex-basis:100%}
-  .collection-filters .field{flex-basis:calc((100% - 28px)/3)}
-}
-@media(max-width:620px){
-  .header-inner{padding:18px 14px 14px}
-  .brand-row{gap:14px}
-  .brand{letter-spacing:.2em}
-  .nav{gap:8px;font-size:.66rem;padding-top:14px}
-  .nav a{flex:0 0 calc(33.333% - 6px);padding:10px 3px;letter-spacing:.08em}
-  .hero h1{font-size:7vw;letter-spacing:.1em;padding-left:.1em}
-  .page-title{letter-spacing:.08em}
-  .search{padding:9px 10px}.search input{font-size:.86rem}
-  .footer-inner>div:last-child{font-size:.78rem}
-  .grid>.card{flex-basis:100%}
-  .collection-filters .field{flex-basis:100%}
-  .footer-links{gap:10px 18px}
-  .footer-links a{font-size:.68rem}
-}
+/* Structure identique sur tous les écrans : une colonne centrée, mêmes rangées partout */
+main,.header-inner,.footer-inner{max-width:760px;margin-left:auto;margin-right:auto}
+main{padding:0 clamp(12px,4vw,22px) 70px}
+.map{height:380px}
+.site-header{position:static}
+.header-inner{padding:22px clamp(12px,4vw,22px) 18px}
+.brand-row{gap:16px}
+.nav{gap:8px;padding-top:18px}
+.nav a{flex:0 0 calc(33.333% - 6px);padding:12px 4px;font-size:clamp(.56rem,2.5vw,.72rem);letter-spacing:.08em}
+.footer-links{gap:14px 8px;padding:0}
+.footer-links a{flex:0 0 calc(33.333% - 6px);font-size:clamp(.56rem,2.4vw,.74rem);letter-spacing:.1em;text-align:center}
+.footer-inner>div:last-child{font-size:.82rem}
+.grid>.card{flex:0 1 calc(50% - 11px)}
+.collection-filters .field{flex:0 1 calc(50% - 7px);min-width:0}
+.department-regions{display:flex}
+.department-region{flex:0 1 100%}
+.department-list{grid-template-columns:repeat(2,1fr)}
+.specimen{grid-template-columns:1fr}
+.hero-image{max-height:none}
+.search{padding:10px 14px}.search input{font-size:.92rem}
+.card-photo-placeholder{min-height:0;width:100%}
+.footer{padding-left:clamp(12px,4vw,22px);padding-right:clamp(12px,4vw,22px)}
+@media(max-width:400px){.nav a,.footer-links a{letter-spacing:.05em}}
+@media(max-width:340px){.nav a{font-size:.52rem;letter-spacing:.02em;padding-left:2px;padding-right:2px}.footer-links a{letter-spacing:.03em}}
 
 /* Luxe : lueurs pourpres, filets fins, tout en noir et violet */
 .brand,.hero h1,.page-title{color:#f1e8ff;text-shadow:0 0 32px rgba(138,77,224,.45)}
