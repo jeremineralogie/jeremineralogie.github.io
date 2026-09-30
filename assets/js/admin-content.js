@@ -1,3 +1,5 @@
+import { ensureNamed, OTHER } from "./reference-resolver.js";
+
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
 const $ = (root, selector) => root.querySelector(selector);
@@ -8,7 +10,7 @@ const slugify = value => text(value).normalize("NFD").replace(/[\u0300-\u036f]/g
 const sections = [
   { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", fields: [
     { key: "reference", label: "Référence", required: true }, { key: "title", label: "Titre", required: true },
-    { key: "mineral_id", label: "Minéral", ref: "minerals", display: "name" }, { key: "provenance", label: "Provenance", notNull: true },
+    { key: "mineral_id", label: "Minéral", ref: "minerals", display: "name" }, { key: "provenance", label: "Provenance", notNull: true }, { key: "mine_id", label: "Gisement", ref: "mines", display: "name" },
     { key: "locality_id", label: "Localité", ref: "localities", display: "name" }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" },
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_grams", label: "Poids (g)", type: "number", step: "0.001" },
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "price_cents", label: "Prix (euros)", type: "number", step: "0.01", required: true, euros: true },
@@ -16,13 +18,13 @@ const sections = [
     { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }
   ] },
   { id: "articles", label: "Articles", table: "articles", title: "Articles", mediaTable: "article_media", foreignKey: "article_id", path: "articles", links: [["article_specimens", "specimen_id", "specimens"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_minerals", "mineral_id", "minerals"]], fields: [
-    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", options: [["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"], ["mines-histoire", "Mines & histoire"], ["decouvertes", "Découvertes"], ["identification", "Identification"], ["collection", "Collection"], ["pedagogie", "Pédagogie"]] },
+    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"], ["mines-histoire", "Mines & histoire"], ["decouvertes", "Découvertes"], ["identification", "Identification"], ["collection", "Collection"], ["pedagogie", "Pédagogie"]] },
     { key: "excerpt", label: "Résumé", type: "textarea", notNull: true }, { key: "body", label: "Contenu (un paragraphe par ligne vide)", type: "textarea", body: true, notNull: true },
     { key: "published_on", label: "Date de publication", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] },
     { key: "link_specimens", label: "Spécimens liés", ref: "specimens", display: "slug", multi: true }, { key: "link_mines", label: "Mines liées", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Localités liées", ref: "localities", display: "name", multi: true }, { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }
   ] },
   { id: "archives", label: "Archives & Documentation", table: "archive_documents", title: "Archives & Documentation", singleFile: true, path: "archives", links: [["archive_specimens", "specimen_id", "specimens"], ["archive_articles", "article_id", "articles"], ["archive_mines", "mine_id", "mines"], ["archive_localities", "locality_id", "localities"], ["archive_minerals", "mineral_id", "minerals"]], fields: [
-    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", options: [["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
+    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "document_date", label: "Date du document", type: "date" },
     { key: "rights_note", label: "Droits / crédit", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] },
     { key: "link_specimens", label: "Spécimens liés", ref: "specimens", display: "slug", multi: true }, { key: "link_articles", label: "Articles liés", ref: "articles", display: "title", multi: true }, { key: "link_mines", label: "Mines liées", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Localités liées", ref: "localities", display: "name", multi: true }, { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }
@@ -36,36 +38,8 @@ const sections = [
   { id: "settings", label: "Paramètres du site", table: "site_settings", title: "Paramètres du site", fields: [{ key: "key", label: "Clé", required: true }, { key: "value", label: "Valeur JSON", type: "textarea" }, { key: "is_public", label: "Visible publiquement", type: "checkbox" }] }
 ];
 
-// Onglets principaux de l’administration : chaque groupe n’affiche que ses propres sous-sections.
-const groups = {
-  shop: { section: "shop", views: [
-    { id: "add", label: "Ajouter un produit", heading: "Ajouter un produit" },
-    { id: "list", label: "Produits dans la boutique", heading: "Produits dans la boutique" }
-  ] },
-  articles: { section: "articles", views: [
-    { id: "add", label: "Créer un article", heading: "Créer un article" },
-    { id: "list", label: "Articles en ligne", heading: "Articles en ligne" }
-  ] },
-  archives: { section: "archives", views: [
-    { id: "add", label: "Ajouter une archive", heading: "Ajouter une archive" },
-    { id: "list", label: "Archives en ligne", heading: "Archives en ligne" }
-  ] },
-  references: { sections: ["regions", "departments", "localities", "mines", "minerals", "occurrences", "settings"] }
-};
-
 let client;
 let tabs;
-let activeGroupId = null;
-let activeView = "both";
-let loadVersion = 0;
-const groupState = {};
-let pendingOperation = Promise.resolve();
-
-// Les enregistrements et suppressions s’appuient sur la section active : la navigation attend leur fin.
-function trackOperation(run) {
-  pendingOperation = run.catch(() => {});
-  return run;
-}
 let workspace;
 let status;
 let activeSection;
@@ -76,6 +50,34 @@ let currentMedia = [];
 let uploadInput;
 const uploadedFileKeys = new Set();
 let previewUrls = [];
+let activeGroupId = null;
+let activeViewId = null;
+let viewMode = "both";
+let openToken = 0;
+let pendingLinkExtras = {};
+let createdNames = [];
+// Listes dont la valeur « Autre » crée une nouvelle fiche (ou une nouvelle catégorie) enregistrée pour les saisies suivantes.
+const CREATABLE_REFS = ["minerals", "mines", "localities", "regions"];
+const allowsOther = field => (field.ref && CREATABLE_REFS.includes(field.ref)) || Boolean(field.customOptions);
+
+// Navigation : chaque groupe = une section principale ; chaque vue = un sous-onglet.
+// mode « add » = formulaire seul, « list » = liste seule, « both » = liste + formulaire (référentiels).
+const referentialViews = ["regions", "departments", "localities", "mines", "minerals", "occurrences", "settings"]
+  .map(id => ({ id, label: sections.find(section => section.id === id).label, section: id, mode: "both" }));
+const groups = {
+  shop: { start: "list", views: [
+    { id: "add", label: "Ajouter un produit", section: "shop", mode: "add" },
+    { id: "list", label: "Produits dans la boutique", section: "shop", mode: "list" }] },
+  articles: { start: "list", views: [
+    { id: "add", label: "Créer un article", section: "articles", mode: "add" },
+    { id: "list", label: "Articles en ligne", section: "articles", mode: "list" }] },
+  archives: { start: "list", views: [
+    { id: "add", label: "Ajouter une archive", section: "archives", mode: "add" },
+    { id: "list", label: "Archives en ligne", section: "archives", mode: "list" }] },
+  referentiels: { start: "regions", views: referentialViews }
+};
+const currentViews = () => groups[activeGroupId]?.views || [];
+const currentView = () => currentViews().find(view => view.id === activeViewId);
 
 function report(message, error = false) {
   status.textContent = message;
@@ -88,62 +90,63 @@ function errorText(error) {
 
 export async function initContentAdmin(supabase) {
   client = supabase;
-  tabs = document.querySelector("#content-subtabs");
+  tabs = document.querySelector("#content-tabs");
   workspace = document.querySelector("#content-workspace");
   status = document.querySelector("#content-status");
+  tabs.addEventListener("click", event => {
+    const button = event.target.closest("[data-view]");
+    if (button) void openView(button.dataset.view);
+  });
 }
 
-const sectionById = id => sections.find(section => section.id === id);
-
-function groupSubTabs(group) {
-  if (group.views) return group.views.map(view => ({ key: view.id, label: view.label, section: group.section, view: view.id }));
-  return group.sections.map(id => ({ key: id, label: sectionById(id).label, section: id, view: "both" }));
-}
-
-export async function showContentGroup(groupId) {
+export async function openGroup(groupId) {
   const group = groups[groupId];
-  if (!group) throw new Error(`Section d’administration inconnue : ${groupId}`);
+  if (!group) throw new Error(`Section inconnue : ${groupId}`);
   activeGroupId = groupId;
-  const subTabs = groupSubTabs(group);
-  const remembered = subTabs.find(item => item.key === groupState[groupId]);
-  const initial = remembered || (group.views ? subTabs.find(item => item.view === "list") : subTabs[0]);
-  await openSubTab(initial, groupId);
+  await openView(group.start);
 }
 
-function renderSubTabs(currentKey) {
+function renderSubnav() {
   tabs.replaceChildren();
-  for (const item of groupSubTabs(groups[activeGroupId])) {
+  currentViews().forEach(view => {
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = item.label;
-    button.dataset.subTab = item.key;
-    button.setAttribute("aria-pressed", String(item.key === currentKey));
-    button.addEventListener("click", () => void openSubTab(item, activeGroupId));
+    button.className = "admin-tab";
+    button.dataset.view = view.id;
+    button.textContent = view.label;
+    const active = view.id === activeViewId;
+    button.classList.toggle("is-active", active);
+    if (active) button.setAttribute("aria-current", "page");
     tabs.append(button);
-  }
+  });
 }
 
-async function openSubTab(item, groupId) {
-  report("Opération en cours, veuillez patienter…");
-  await pendingOperation;
-  if (groupId !== activeGroupId) return;
-  groupState[activeGroupId] = item.key;
-  renderSubTabs(item.key);
-  const section = sectionById(item.section);
-  if (activeSection === section && workspace.childElementCount && item.view !== "both") {
-    // Même table (ajout ↔ liste) : pas de rechargement, on bascule simplement l’affichage.
-    if (activeView !== item.view) { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; }
-    activeView = item.view;
-    renderWorkspace();
-    report(item.view === "add" ? `Nouveau contenu — ${section.title.toLocaleLowerCase("fr")}.` : `${section.title} chargés depuis Supabase.`);
-    return;
-  }
-  activeView = item.view;
-  await openSection(section);
+async function openView(viewId) {
+  const view = currentViews().find(item => item.id === viewId);
+  if (!view) return;
+  activeViewId = view.id;
+  viewMode = view.mode;
+  renderSubnav();
+  await openSection(sections.find(section => section.id === view.section));
+}
+
+// Après enregistrement / suppression / annulation : retour à la liste (sections avec onglets séparés).
+function setListMode() {
+  if (viewMode !== "add") return;
+  const view = currentViews().find(item => item.section === activeSection.id && item.mode === "list");
+  if (!view) return;
+  viewMode = "list"; activeViewId = view.id; renderSubnav();
+}
+// Clic sur un élément de la liste : bascule sur le formulaire (onglet « Ajouter… » en mode modification).
+function setFormMode() {
+  if (viewMode !== "list") return;
+  const view = currentViews().find(item => item.section === activeSection.id && item.mode === "add");
+  if (!view) return;
+  viewMode = "add"; activeViewId = view.id; renderSubnav();
 }
 
 async function openSection(section) {
-  const version = ++loadVersion;
+  const token = ++openToken;
   clearNewMediaSelection();
   activeSection = section;
   selectedRecord = null;
@@ -151,21 +154,16 @@ async function openSection(section) {
   report(`Chargement de ${section.title.toLocaleLowerCase("fr")}…`);
   try {
     await loadReferences(section);
-    if (version !== loadVersion) return;
     await loadRecords();
-    if (version !== loadVersion) return;
+    if (token !== openToken) return;
     renderWorkspace();
-    report(activeView === "add" ? `Nouveau contenu — ${section.title.toLocaleLowerCase("fr")}.` : `${section.title} chargés depuis Supabase.`);
+    report(`${section.title} chargés depuis Supabase.`);
   } catch (error) {
-    if (version !== loadVersion) return;
+    if (token !== openToken) return;
     workspace.replaceChildren();
     report(`Impossible de charger ${section.title.toLocaleLowerCase("fr")} : ${errorText(error)}`, true);
     console.error(`Chargement CMS ${section.id}:`, error);
   }
-}
-
-function viewHeading(viewId) {
-  return groups[activeGroupId]?.views?.find(view => view.id === viewId)?.heading;
 }
 
 async function loadReferences(section) {
@@ -181,7 +179,7 @@ async function loadReferences(section) {
 
 async function loadRecords() {
   const ordering = activeSection.table === "departments" ? "code" : activeSection.table === "site_settings" ? "key" : "updated_at";
-  let query = client.from(activeSection.table).select("*").order(ordering, { ascending: activeSection.table !== "site_settings" && activeSection.table !== "updated_at" });
+  let query = client.from(activeSection.table).select("*").order(ordering, { ascending: ordering !== "updated_at" });
   if (activeSection.table === "minerals" || activeSection.table === "localities" || activeSection.table === "mines") query = query.order("name");
   const { data, error } = await query;
   if (error) throw error;
@@ -191,20 +189,25 @@ async function loadRecords() {
 
 function renderWorkspace() {
   workspace.replaceChildren();
-  if (activeView === "add") selectedRecord = null;
-  const columns = document.createElement("div");
-  columns.className = "admin-columns";
+  const wrapper = document.createElement("div");
+  wrapper.className = viewMode === "both" ? "admin-columns" : "admin-single";
+  if (viewMode !== "add") wrapper.append(buildListPanel());
+  if (viewMode !== "list") wrapper.append(buildEditorPanel());
+  workspace.append(wrapper);
+}
+
+function buildListPanel() {
   const listPanel = document.createElement("section");
   listPanel.className = "admin-panel";
   const toolbar = document.createElement("div"); toolbar.className = "admin-toolbar";
-  const heading = document.createElement("h3"); heading.textContent = viewHeading("list") || activeSection.title;
-  const add = document.createElement("button"); add.type = "button"; add.className = "admin-secondary"; add.textContent = viewHeading("add") || "Nouveau";
-  add.addEventListener("click", () => {
-    const addTab = groups[activeGroupId]?.views && groupSubTabs(groups[activeGroupId]).find(item => item.view === "add");
-    if (addTab) { void openSubTab(addTab, activeGroupId); return; }
-    clearNewMediaSelection(); selectedRecord = null; currentMedia = []; renderWorkspace(); report(`Nouveau contenu — ${activeSection.title.toLocaleLowerCase("fr")}.`);
-  });
-  toolbar.append(heading, add); listPanel.append(toolbar);
+  const heading = document.createElement("h3"); heading.textContent = viewMode === "both" ? activeSection.title : (currentView()?.label || activeSection.title);
+  toolbar.append(heading);
+  if (viewMode === "both") {
+    const add = document.createElement("button"); add.type = "button"; add.className = "admin-secondary"; add.textContent = "Nouveau";
+    add.addEventListener("click", () => { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; renderWorkspace(); report(`Nouveau contenu — ${activeSection.title.toLocaleLowerCase("fr")}.`); });
+    toolbar.append(add);
+  }
+  listPanel.append(toolbar);
   const list = document.createElement("div"); list.className = "admin-list";
   records.forEach(record => {
     const button = document.createElement("button"); button.type = "button";
@@ -213,30 +216,33 @@ function renderWorkspace() {
     button.textContent = `${label}${record.publication_status ? ` — ${record.publication_status === "published" ? "publié" : "brouillon"}` : ""}`;
     button.addEventListener("click", () => void selectRecord(record)); list.append(button);
   });
+  if (!records.length) { const empty = document.createElement("p"); empty.className = "admin-empty"; empty.textContent = "Aucun élément enregistré pour le moment."; list.append(empty); }
   listPanel.append(list);
+  return listPanel;
+}
+
+function buildEditorPanel() {
   const editorPanel = document.createElement("section"); editorPanel.className = "admin-panel";
-  const title = document.createElement("h3"); title.textContent = selectedRecord ? "Modifier" : viewHeading("add") || "Nouveau contenu"; editorPanel.append(title);
+  const title = document.createElement("h3");
+  title.textContent = selectedRecord ? "Modifier" : (viewMode === "add" ? (currentView()?.label || "Nouveau contenu") : "Nouveau contenu"); editorPanel.append(title);
   const form = document.createElement("form"); form.noValidate = true;
   activeSection.fields.forEach(field => form.append(createField(field, selectedRecord?.[field.key])));
   if (activeSection.mediaTable || activeSection.singleFile) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
+  if (viewMode === "add") {
+    const cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "admin-secondary"; cancel.textContent = "Annuler";
+    cancel.addEventListener("click", () => { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; setListMode(); renderWorkspace(); report("Modification annulée."); });
+    actions.append(cancel);
+  }
   if (selectedRecord) {
-    if (activeView === "list") {
-      const close = document.createElement("button"); close.type = "button"; close.className = "admin-secondary"; close.textContent = "Fermer";
-      close.addEventListener("click", () => { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; renderWorkspace(); }); actions.append(close);
-    }
     const remove = document.createElement("button"); remove.type = "button"; remove.className = "admin-danger"; remove.textContent = "Supprimer";
     remove.addEventListener("click", () => void deleteRecord()); actions.append(remove);
   }
   form.append(actions);
   form.addEventListener("submit", event => { event.preventDefault(); void saveRecord(form); });
   editorPanel.append(form);
-  // « Ajouter » : formulaire seul ; « Liste » : liste seule, puis liste + fiche quand un élément est ouvert.
-  if (activeView === "add") { columns.classList.add("admin-single"); columns.append(editorPanel); }
-  else if (activeView === "list" && !selectedRecord) { columns.classList.add("admin-single"); columns.append(listPanel); }
-  else columns.append(listPanel, editorPanel);
-  workspace.append(columns);
+  return editorPanel;
 }
 
 function createField(field, value) {
@@ -253,7 +259,13 @@ function createField(field, value) {
     }
   } else if (field.options) {
     input = document.createElement("select");
+    const known = new Set(field.options.map(([key]) => key));
     field.options.forEach(([key, labelText]) => { const option = document.createElement("option"); option.value = key; option.textContent = labelText; input.append(option); });
+    if (field.customOptions) {
+      const custom = new Set(records.map(record => record[field.key]).filter(item => item && !known.has(item)));
+      if (value && !known.has(value)) custom.add(value);
+      [...custom].sort((x, y) => x.localeCompare(y, "fr")).forEach(item => { const option = document.createElement("option"); option.value = item; option.textContent = item; input.append(option); });
+    }
   } else if (field.type === "textarea") input = document.createElement("textarea");
   else if (field.type === "checkbox") input = document.createElement("input");
   else input = document.createElement("input");
@@ -264,7 +276,14 @@ function createField(field, value) {
   if (field.type === "checkbox") input.checked = Boolean(value);
   else if (value != null && value !== "") input.value = field.body ? bodyToText(value) : field.key === "value" ? JSON.stringify(value, null, 2) : field.euros ? (Number(value) / 100).toFixed(2) : field.array && Array.isArray(value) ? value.join(", ") : String(value);
   label.htmlFor = `content-${field.key}`; input.id = label.htmlFor; input.name = field.key;
+  if (allowsOther(field) && !field.multi) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "Autre (saisir une valeur)…"; input.append(other); }
   wrapper.append(input);
+  if (allowsOther(field)) {
+    const box = document.createElement("input"); box.type = "text"; box.name = `${field.key}__other`; box.id = `content-${field.key}__other`;
+    if (field.multi) { box.placeholder = "Autres, séparés par des virgules (créés automatiquement)"; }
+    else { box.hidden = true; box.placeholder = "Saisir la nouvelle valeur"; input.addEventListener("change", () => { box.hidden = input.value !== OTHER; if (!box.hidden) box.focus(); }); }
+    wrapper.append(box);
+  }
   return wrapper;
 }
 
@@ -331,8 +350,6 @@ async function setMediaLink(link, bucket, path) { try { link.href = await resolv
 
 async function selectRecord(record) {
   clearNewMediaSelection();
-  const section = activeSection;
-  const version = loadVersion;
   selectedRecord = { ...record };
   try {
     if (activeSection.links) {
@@ -346,16 +363,15 @@ async function selectRecord(record) {
     }
     if (activeSection.mediaTable) { const { data, error } = await client.from(activeSection.mediaTable).select("*").eq(activeSection.foreignKey, record.id).order("position"); if (error) throw error; currentMedia = data || []; }
     else currentMedia = [];
-    if (section !== activeSection || version !== loadVersion) return;
+    setFormMode();
     renderWorkspace();
   } catch (error) { report(`Impossible de charger les médias : ${errorText(error)}`, true); console.error(error); }
 }
 
-function saveRecord(form) { return trackOperation(saveRecordNow(form)); }
-
-async function saveRecordNow(form) {
+async function saveRecord(form) {
   const section = activeSection;
   let databaseSaved = false;
+  pendingLinkExtras = {}; createdNames = [];
   report("Enregistrement…");
   try {
     const record = {};
@@ -363,13 +379,23 @@ async function saveRecordNow(form) {
       const input = form.elements.namedItem(field.key);
       if (!input) throw new Error(`Le champ « ${field.label} » est introuvable dans le formulaire.`);
       let value = field.type === "checkbox" ? input.checked : field.multi ? [...input.selectedOptions].map(option => option.value) : text(input.value);
+      if (!field.multi && value === OTHER) {
+        const typed = text(form.elements.namedItem(`${field.key}__other`)?.value);
+        if (field.ref) value = typed ? String(await ensureRef(field.ref, typed)) : "";
+        else value = typed;
+      }
       if (field.required && !value && value !== 0 && value !== false) throw new Error(`Le champ « ${field.label} » est requis par le schéma actuel.`);
       if (field.euros && value !== "") { const amount = Number(value); if (!Number.isFinite(amount) || amount < 0) throw new Error("Le prix doit être un nombre positif ou nul."); value = Math.round(amount * 100); }
       else if (field.type === "number" && value !== "") { value = Number(value); if (!Number.isFinite(value)) throw new Error(`Valeur numérique invalide pour « ${field.label} ».`); }
       if (field.body) value = value ? value.split(/\n\s*\n/).map(paragraph => ({ type: "paragraph", text: paragraph.trim() })).filter(block => block.text) : [];
       if (field.array) value = value ? value.split(",").map(part => part.trim()).filter(Boolean) : [];
       if (field.key === "value") { try { value = value ? JSON.parse(value) : {}; } catch { throw new Error("La valeur du paramètre doit être du JSON valide."); } }
-      if (field.multi) continue;
+      if (field.multi) {
+        const typedList = text(form.elements.namedItem(`${field.key}__other`)?.value).split(",").map(part => part.trim()).filter(Boolean);
+        pendingLinkExtras[field.key] = [];
+        for (const typed of typedList) pendingLinkExtras[field.key].push(String(await ensureRef(field.ref, typed)));
+        continue;
+      }
       record[field.key] = value === "" ? (field.notNull ? "" : field.key === "value" ? {} : null) : value;
     }
     if (section.id === "settings") {
@@ -381,6 +407,10 @@ async function saveRecordNow(form) {
       const current = selectedRecord;
       if (["regions", "localities", "mines", "minerals"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.name, section.table);
       if (["shop", "articles", "archives"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.title, section.table);
+      if (section.id === "shop" && !record.mine_id && record.provenance) {
+        const mine = await ensureNamed(client, "mines", record.provenance, { locality_id: record.locality_id || null });
+        if (mine) { record.mine_id = mine.id; if (mine.created) createdNames.push(mine.name); }
+      }
       if (section.id === "shop" && record.price_cents == null) throw new Error("Le schéma de la boutique exige un prix (0 est accepté).");
       let saved;
       if (current?.id || current?.code) {
@@ -398,12 +428,18 @@ async function saveRecordNow(form) {
       if (section.mediaTable && current && current.publication_status !== saved.publication_status) await syncMedia(saved);
       report("Contenu enregistré. Rechargement de la liste…");
     }
-    if (section !== activeSection) { report(`Enregistrement terminé (${section.title}).`); return; }
-    await loadRecords(); selectedRecord = null; clearNewMediaSelection(); renderWorkspace(); report("Enregistrement terminé. La liste est à jour.");
+    await loadReferences(section); await loadRecords(); selectedRecord = null; clearNewMediaSelection(); setListMode(); renderWorkspace();
+    report(`Enregistrement terminé. La liste est à jour.${createdNames.length ? ` Nouvelles valeurs ajoutées aux listes : ${createdNames.join(", ")}.` : ""}`);
   } catch (error) {
     console.error(`Échec enregistrement CMS ${section.id}:`, error);
     report(`${databaseSaved ? "Le contenu principal est enregistré en base, mais une opération secondaire a échoué" : "Enregistrement impossible"} : ${errorText(error)}`, true);
   }
+}
+
+async function ensureRef(table, name) {
+  const result = await ensureNamed(client, table, name);
+  if (result.created) createdNames.push(result.name);
+  return result.id;
 }
 
 async function saveLinks(parent, form) {
@@ -413,7 +449,7 @@ async function saveLinks(parent, form) {
     const fieldKey = `link_${table.replace(isArticle ? "article_" : "archive_", "")}`;
     const linkField = form.elements.namedItem(fieldKey);
     if (!linkField) throw new Error(`Le champ de relations « ${fieldKey} » est introuvable.`);
-    const desired = [...linkField.selectedOptions].map(option => option.value);
+    const desired = [...new Set([...[...linkField.selectedOptions].map(option => option.value), ...(pendingLinkExtras[fieldKey] || [])])];
     const { data: current, error: readError } = await client.from(table).select(column).eq(ownerColumn, parent.id);
     if (readError) throw readError;
     const currentIds = (current || []).map(row => String(row[column]));
@@ -533,9 +569,7 @@ async function saveArchiveFile(parent, previous) {
   if (oldPath && (oldPath !== path || previous.bucket_id !== bucket)) await removeStorageIfUnreferenced(previous.bucket_id, oldPath);
 }
 
-function deleteRecord() { return trackOperation(deleteRecordNow()); }
-
-async function deleteRecordNow() {
+async function deleteRecord() {
   if (!selectedRecord || !confirm("Supprimer définitivement cet élément ?")) return;
   const section = activeSection;
   let mediaToClean = [];
@@ -554,8 +588,7 @@ async function deleteRecordNow() {
       try { await removeStorageIfUnreferenced(item.bucket_id, item.storage_path); }
       catch (storageError) { storageErrors.push(`${item.storage_path} : ${errorText(storageError)}`); }
     }
-    if (section !== activeSection) { report(storageErrors.length ? `Élément supprimé de la base, mais certains fichiers Storage restent à nettoyer : ${storageErrors.join(" ; ")}` : `Élément supprimé (${section.title}).`, storageErrors.length > 0); return; }
-    await loadRecords(); selectedRecord = null; clearNewMediaSelection(); renderWorkspace(); report("Élément supprimé.");
+    await loadRecords(); selectedRecord = null; clearNewMediaSelection(); setListMode(); renderWorkspace(); report("Élément supprimé.");
     if (storageErrors.length) report(`Élément supprimé de la base, mais certains fichiers Storage restent à nettoyer : ${storageErrors.join(" ; ")}`, true);
   } catch (error) { console.error("Suppression CMS :", error); report(`Suppression incomplète : ${errorText(error)}`, true); }
 }

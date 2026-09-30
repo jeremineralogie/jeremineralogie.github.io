@@ -1,5 +1,7 @@
 import { getSupabase } from "./supabase-client.js";
 import { getPublishedSpecimen } from "./collection-repository.js";
+import { siteTypeLabel } from "./reference-resolver.js";
+import { ficheUrl } from "./entity-links.js";
 
 const slug = new URLSearchParams(location.search).get("id");
 const client = getSupabase();
@@ -64,10 +66,18 @@ function renderSpecimen(specimen) {
   put("[data-location-summary]", [specimen.locality, specimen.department, specimen.region, specimen.country].filter(Boolean).join(" · ") || "Localisation à compléter");
   put("[data-provenance]", specimen.provenance); put("[data-locality]", specimen.locality);
   put("[data-region]", specimen.region); put("[data-country]", specimen.country);
-  put("[data-site-type]", specimen.siteType); put("[data-keywords]", specimen.keywords);
+  put("[data-site-type]", siteTypeLabel(specimen.siteType)); put("[data-keywords]", specimen.keywords);
   put("[data-dimensions]", specimen.dimensions); put("[data-weight]", specimen.weight);
   put("[data-associations]", (specimen.associations || []).join(", ")); put("[data-discovery-date]", specimen.discoveryDate);
   content.querySelector("[data-description]").textContent = specimen.description || "Non renseigné";
+  const linkField = (selector, text, href) => {
+    const element = root.querySelector(selector);
+    if (!text || !href) return;
+    const link = document.createElement("a"); link.className = "link"; link.href = href; link.textContent = text; element.replaceChildren(link);
+  };
+  linkField("dd[data-mineral]", specimen.mineral, specimen.mineralSlug && ficheUrl("mineral", specimen.mineralSlug));
+  linkField("[data-provenance]", specimen.provenance, specimen.mineSlug && ficheUrl("mine", specimen.mineSlug));
+  linkField("[data-locality]", specimen.locality, specimen.localitySlug && ficheUrl("locality", specimen.localitySlug));
   const department = root.querySelector("[data-department]");
   department.textContent = specimen.department ? specimen.department + (specimen.departmentCode ? ` (${specimen.departmentCode})` : "") : "Non renseigné";
   if (specimen.departmentCode) department.href = "departement.html?dep=" + encodeURIComponent(specimen.departmentCode);

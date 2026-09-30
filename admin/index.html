@@ -23,56 +23,57 @@
       </form>
     </section>
     <section id="cms-panel" hidden>
-      <div class="admin-toolbar"><h2>Espace de gestion</h2><button class="admin-secondary" id="logout" type="button">Se déconnecter</button></div>
-      <nav class="admin-main-tabs" id="admin-main-tabs" role="tablist" aria-label="Sections de l’administration">
-        <button type="button" role="tab" id="tab-collection" data-main-tab="collection" aria-controls="panel-collection" aria-selected="true">Ma collection</button>
-        <button type="button" role="tab" id="tab-shop" data-main-tab="shop" aria-controls="panel-content" aria-selected="false" tabindex="-1">Boutique</button>
-        <button type="button" role="tab" id="tab-articles" data-main-tab="articles" aria-controls="panel-content" aria-selected="false" tabindex="-1">Articles</button>
-        <button type="button" role="tab" id="tab-archives" data-main-tab="archives" aria-controls="panel-content" aria-selected="false" tabindex="-1">Archives &amp; Documentation</button>
-        <button type="button" role="tab" id="tab-references" data-main-tab="references" aria-controls="panel-content" aria-selected="false" tabindex="-1">Référentiels &amp; paramètres</button>
-      </nav>
-
-      <section class="admin-tab-panel" id="panel-collection" role="tabpanel" aria-labelledby="tab-collection">
-        <nav class="admin-sub-tabs" id="collection-subtabs" aria-label="Ma collection">
-          <button type="button" data-collection-view="add" aria-pressed="false">Ajouter un spécimen</button>
-          <button type="button" data-collection-view="list" aria-pressed="true">Ma collection</button>
+      <div class="admin-toolbar admin-mainbar">
+        <nav class="admin-nav" id="admin-main-nav" aria-label="Sections de l’administration">
+          <button type="button" class="admin-tab is-active" data-main="collection" aria-current="page">Ma collection</button>
+          <button type="button" class="admin-tab" data-main="shop">Boutique</button>
+          <button type="button" class="admin-tab" data-main="articles">Articles</button>
+          <button type="button" class="admin-tab" data-main="archives">Archives &amp; Documentation</button>
+          <button type="button" class="admin-tab" data-main="referentiels">Référentiels &amp; réglages</button>
         </nav>
-        <div class="admin-columns" id="collection-columns">
-          <section class="admin-panel" id="specimen-list-panel"><h3>Spécimens enregistrés</h3><div id="specimen-list" class="admin-list"></div></section>
-          <section class="admin-panel" id="editor-panel" hidden>
-            <h3 id="editor-title">Nouveau spécimen</h3>
-            <form id="specimen-form" novalidate>
-              <input id="specimen-id" type="hidden">
-              <label for="mineral-name">Minéral</label><input id="mineral-name" type="text" autocomplete="off">
-              <label for="country">Pays</label><input id="country" type="text" autocomplete="country-name">
-              <label for="region">Région</label><input id="region" type="text" autocomplete="address-level1">
-              <label for="department">Département</label><input id="department" type="text" autocomplete="address-level2">
-              <label for="locality">Commune</label><input id="locality" type="text">
-              <label for="provenance">Nom du gisement</label><input id="provenance" type="text">
-              <label for="site-type">Type de site</label><input id="site-type" type="text">
-              <label for="dimensions">Dimensions</label><input id="dimensions">
-              <label for="weight">Poids</label><input id="weight" type="text" inputmode="decimal"><small>grammes</small>
-              <label for="description">Description</label><textarea id="description"></textarea>
-              <label for="keywords">Mots-clés</label><input id="keywords" type="text">
-              <label for="specimen-date">Date de découverte ou d'entrée en collection</label><input id="specimen-date" type="text" lang="fr" inputmode="numeric" placeholder="AAAA, MM/AAAA ou JJ/MM/AAAA" aria-describedby="specimen-date-help"><small id="specimen-date-help">Exemples : 2018, 09/2018 ou 29/09/2018.</small>
-              <label for="photos">Ajouter photo(s)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
-              <input id="specimen-slug" type="hidden">
-              <input id="publication-status" type="hidden" value="published">
-              <div id="existing-photo-group" hidden><small>Photos enregistrées sur ce spécimen</small><div id="existing-photos" class="admin-photos"></div></div>
-              <div id="selected-photo-group" hidden><small>Nouvelles photos sélectionnées</small><div id="selected-photos" class="admin-photos"></div></div>
-              <p class="notice" id="specimen-status" role="status" aria-live="polite" hidden></p>
-              <div class="admin-actions"><button class="btn" type="submit">Enregistrer</button><button class="admin-secondary" id="cancel-edit" type="button">Annuler</button><button class="admin-danger" id="delete-specimen" type="button" hidden>Supprimer</button></div>
-            </form>
-          </section>
+        <button class="admin-secondary" id="logout" type="button">Se déconnecter</button>
+      </div>
+      <section id="collection-panel" aria-label="Ma collection">
+        <nav class="admin-tabs" id="collection-tabs" aria-label="Ma collection">
+          <button type="button" class="admin-tab" data-collection-view="add">Ajouter un spécimen</button>
+          <button type="button" class="admin-tab is-active" data-collection-view="list" aria-current="page">Ma collection</button>
+        </nav>
+        <div id="collection-list-view">
+          <section class="admin-panel"><h3>Spécimens enregistrés</h3><div id="specimen-list" class="admin-list"></div></section>
+        </div>
+        <div id="collection-add-view" hidden>
+        <section class="admin-panel" id="editor-panel" hidden>
+          <h3 id="editor-title">Nouveau spécimen</h3>
+          <form id="specimen-form" novalidate>
+            <input id="specimen-id" type="hidden">
+            <label for="mineral-name">Minéral</label><input id="mineral-name" type="text" autocomplete="off" list="dl-minerals">
+            <label for="country">Pays</label><input id="country" type="text" autocomplete="country-name" list="dl-countries">
+            <label for="region">Région</label><input id="region" type="text" autocomplete="address-level1" list="dl-regions">
+            <label for="department">Département</label><input id="department" type="text" autocomplete="address-level2" list="dl-departments">
+            <label for="locality">Commune</label><input id="locality" type="text" list="dl-localities">
+            <label for="provenance">Nom du gisement</label><input id="provenance" type="text" list="dl-mines">
+            <label for="site-type">Type de site</label><select id="site-type"></select><input id="site-type-other" type="text" placeholder="Saisir un autre type de site" hidden>
+            <label for="dimensions">Dimensions</label><input id="dimensions">
+            <label for="weight">Poids</label><input id="weight" type="text" inputmode="decimal"><small>grammes</small>
+            <label for="description">Description</label><textarea id="description"></textarea>
+            <label for="keywords">Mots-clés</label><input id="keywords" type="text">
+            <label for="specimen-date">Date de découverte ou d'entrée en collection</label><input id="specimen-date" type="text" lang="fr" inputmode="numeric" placeholder="AAAA, MM/AAAA ou JJ/MM/AAAA" aria-describedby="specimen-date-help"><small id="specimen-date-help">Exemples : 2018, 09/2018 ou 29/09/2018.</small>
+            <label for="photos">Ajouter photo(s)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+            <input id="specimen-slug" type="hidden">
+            <input id="publication-status" type="hidden" value="published">
+            <div id="existing-photo-group" hidden><small>Photos enregistrées sur ce spécimen</small><div id="existing-photos" class="admin-photos"></div></div>
+            <div id="selected-photo-group" hidden><small>Nouvelles photos sélectionnées</small><div id="selected-photos" class="admin-photos"></div></div>
+            <datalist id="dl-minerals"></datalist><datalist id="dl-countries"></datalist><datalist id="dl-regions"></datalist><datalist id="dl-departments"></datalist><datalist id="dl-localities"></datalist><datalist id="dl-mines"></datalist>
+            <p class="notice" id="specimen-status" role="status" aria-live="polite" hidden></p>
+            <div class="admin-actions"><button class="btn" type="submit">Enregistrer</button><button class="admin-secondary" id="cancel-edit" type="button">Annuler</button><button class="admin-danger" id="delete-specimen" type="button" hidden>Supprimer</button></div>
+          </form>
+        </section>
         </div>
       </section>
-
-      <section class="admin-tab-panel" id="panel-content" role="tabpanel" aria-labelledby="tab-shop" hidden>
-        <section id="content-manager" aria-label="Gestion des contenus">
-          <nav class="admin-sub-tabs" id="content-subtabs" aria-label="Sous-sections"></nav>
-          <p class="notice" id="content-status" role="status" aria-live="polite">Sélectionnez une section.</p>
-          <div id="content-workspace"></div>
-        </section>
+      <section class="admin-panel" id="content-manager" aria-label="Boutique, articles, archives et référentiels" hidden>
+        <nav class="admin-tabs" id="content-tabs" aria-label="Onglets de la section"></nav>
+        <p class="notice" id="content-status" role="status" aria-live="polite">Sélectionnez une section.</p>
+        <div id="content-workspace"></div>
       </section>
     </section>
   </main>

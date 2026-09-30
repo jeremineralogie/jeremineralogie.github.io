@@ -5,10 +5,11 @@ const specimenSelect = [
   "description", "history", "discovered_on", "discovery_year", "discovery_month",
   "mineral_name", "country", "region_name", "department_name", "locality_name", "site_type",
   "weight_text", "keywords", "discovery_date_text",
-  "mineral:minerals!specimens_mineral_id_fkey(name)",
+  "mineral:minerals!specimens_mineral_id_fkey(name,slug,formula,crystal_system,hardness,density,colors,luster,cleavage,habit,formation)",
+  "mine:mines!specimens_mine_id_fkey(name,slug)",
   "specimenRegion:regions!specimens_region_id_fkey(name)",
   "department:departments!specimens_department_code_fkey(name,region:regions!departments_region_id_fkey(name))",
-  "locality:localities!specimens_locality_id_fkey(name)",
+  "locality:localities!specimens_locality_id_fkey(name,slug)",
   "associations:specimen_associations(mineral:minerals(name))",
   "media:specimen_media(bucket_id,storage_path,alt_text,role,position)"
 ].join(",");
@@ -20,6 +21,7 @@ function mapSpecimen(client, row) {
     .map(media => client.storage.from(media.bucket_id).getPublicUrl(media.storage_path).data.publicUrl);
   const mineral = row.mineral || {};
   return {
+    mineralSlug: mineral.slug || "", mineSlug: row.mine?.slug || "", localitySlug: row.locality?.slug || "",
     id: row.slug, mineral: row.mineral_name ?? mineral.name ?? "", country: row.country ?? "",
     provenance: row.provenance ?? "", locality: row.locality_name ?? row.locality?.name ?? "",
     department: row.department_name ?? row.department?.name ?? "", departmentCode: row.department_code || "",
