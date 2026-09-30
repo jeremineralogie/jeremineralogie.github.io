@@ -4,7 +4,7 @@ export async function loadPublishedContent(section) {
   const client = getSupabase();
   if (!client) throw new Error("La connexion à Supabase n’est pas configurée.");
   let query;
-  if (section === "shop") query = client.from("shop_items").select("*,mine:mines!shop_items_mine_id_fkey(name,slug),mineral:minerals!shop_items_mineral_id_fkey(name,slug,formula,crystal_system,hardness,density,colors,luster,cleavage,habit,formation),department:departments!shop_items_department_code_fkey(name,region:regions!departments_region_id_fkey(name)),locality:localities!shop_items_locality_id_fkey(name,slug),media:shop_item_media(id,bucket_id,storage_path,alt_text,position)")
+  if (section === "shop") query = client.from("shop_items").select("*,mine:mines!shop_items_mine_id_fkey(name,slug),mineral:minerals!shop_items_mineral_id_fkey(name,slug,formula,crystal_system,hardness,density,colors,luster,cleavage,habit,formation),department:departments!shop_items_department_code_fkey(name,region:regions!departments_region_id_fkey(name)),locality:localities!shop_items_locality_id_fkey(name,slug),associations:shop_item_associations(mineral:minerals(name,slug)),media:shop_item_media(id,bucket_id,storage_path,alt_text,position)")
     .eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });
   else if (section === "articles") query = client.from("articles").select("*,media:article_media(id,bucket_id,storage_path,alt_text,caption,position)")
     .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("updated_at", { ascending: false });

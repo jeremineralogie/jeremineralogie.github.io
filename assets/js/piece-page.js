@@ -46,6 +46,12 @@ function render(client, item) {
   const departmentName = clean(item.department_name || item.department?.name);
   row("Référence", clean(item.reference));
   row("Minéral", link(mineralName, item.mineral?.slug && ficheUrl("mineral", item.mineral.slug)));
+  const associated = (item.associations || []).map(entry => entry.mineral).filter(mineral => mineral?.name);
+  if (associated.length) {
+    const list = document.createElement("span");
+    associated.forEach((mineral, index) => { if (index) list.append(", "); list.append(link(mineral.name, mineral.slug && ficheUrl("mineral", mineral.slug))); });
+    row("Minéraux associés", list);
+  }
   row("Gisement", link(mineName, item.mine?.slug && ficheUrl("mine", item.mine.slug)));
   if (provenance && provenance !== mineName) row("Provenance", provenance);
   row("Localité", link(localityName, item.locality?.slug && ficheUrl("locality", item.locality.slug)));

@@ -8,9 +8,9 @@ const slugify = value => text(value).normalize("NFD").replace(/[\u0300-\u036f]/g
   .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 const sections = [
-  { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", fields: [
+  { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", fields: [
     { key: "reference", label: "Référence", required: true }, { key: "title", label: "Titre", required: true },
-    { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "mineral_association_ids", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true, required: true },
+    { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "link_associations", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true },
     { key: "provenance", label: "Provenance", notNull: true }, { key: "mine_id", label: "Gisement", ref: "mines", display: "name" },
     { key: "locality_id", label: "Localité", ref: "localities", display: "name" }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" },
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_grams", label: "Poids (g)", type: "number", step: "0.001" },
@@ -360,9 +360,9 @@ async function selectRecord(record) {
     if (activeSection.links) {
       selectedRecord._links = {};
       for (const [table, column] of activeSection.links) {
-        const { data, error } = await client.from(table).select(column).eq(activeSection.id === "articles" ? "article_id" : "archive_id", record.id);
+        const { data, error } = await client.from(table).select(column).eq(linkOwner(activeSection), record.id);
         if (error) throw error;
-        const fieldKey = `link_${table.replace(activeSection.id === "articles" ? "article_" : "archive_", "")}`;
+        const fieldKey = `link_${table.replace(linkPrefix(activeSection), "")}`;
         selectedRecord._links[fieldKey] = (data || []).map(row => String(row[column]));
       }
     }
@@ -447,11 +447,13 @@ async function ensureRef(table, name) {
   return result.id;
 }
 
+function linkOwner(section) { return section.linkOwner || (section.id === "articles" ? "article_id" : "archive_id"); }
+function linkPrefix(section) { return section.linkPrefix || (section.id === "articles" ? "article_" : "archive_"); }
+
 async function saveLinks(parent, form) {
-  const isArticle = activeSection.id === "articles";
   for (const [table, column] of activeSection.links) {
-    const ownerColumn = isArticle ? "article_id" : "archive_id";
-    const fieldKey = `link_${table.replace(isArticle ? "article_" : "archive_", "")}`;
+    const ownerColumn = linkOwner(activeSection);
+    const fieldKey = `link_${table.replace(linkPrefix(activeSection), "")}`;
     const linkField = form.elements.namedItem(fieldKey);
     if (!linkField) throw new Error(`Le champ de relations « ${fieldKey} » est introuvable.`);
     const desired = [...new Set([...[...linkField.selectedOptions].map(option => option.value), ...(pendingLinkExtras[fieldKey] || [])])];
