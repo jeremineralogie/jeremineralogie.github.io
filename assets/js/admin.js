@@ -15,6 +15,8 @@ const collectionAddView = document.querySelector("#collection-add-view");
 const collectionListView = document.querySelector("#collection-list-view");
 const contentManager = document.querySelector("#content-manager");
 const appearancePanel = document.querySelector("#appearance-panel");
+const messagesPanel = document.querySelector("#messages-panel");
+let messagesModule = null;
 const mineralInput = document.querySelector("#mineral-name");
 const mineralAssociationSelect = document.querySelector("#mineral-association-select");
 const mineralAssociationOther = document.querySelector("#mineral-association-other");
@@ -142,6 +144,7 @@ async function showSession(session) {
   resetEditor(false);
   await showMainSection(activeMain);
   await loadDashboard();
+  void import("./admin-messages.js").then(module => { messagesModule = module; return module.refreshBadge(client); }).catch(error => console.error("Compteur de messages indisponible :", error));
   if (!contentAdminInitialized) {
     try {
       const module = await import("./admin-content.js");
@@ -166,10 +169,22 @@ async function showMainSection(id) {
   });
   const isCollection = id === "collection";
   const isAppearance = id === "appearance";
+  const isMessages = id === "messages";
   collectionPanel.hidden = !isCollection;
-  contentManager.hidden = isCollection || isAppearance;
+  contentManager.hidden = isCollection || isAppearance || isMessages;
   appearancePanel.hidden = !isAppearance;
+  messagesPanel.hidden = !isMessages;
   if (isAppearance) return;
+  if (isMessages) {
+    try {
+      messagesModule ??= await import("./admin-messages.js");
+      await messagesModule.openMessages(client);
+    } catch (error) {
+      console.error("Impossible de charger les messages :", error);
+      message(`Les messages n’ont pas pu être chargés : ${describeError(error)}`, true);
+    }
+    return;
+  }
   if (isCollection) return;
   if (!contentModule) {
     message("Chargement de la section…");

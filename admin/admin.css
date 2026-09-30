@@ -9,3 +9,17 @@
 .admin-mainbar .admin-tab{font-weight:600}.admin-empty{color:var(--muted);margin:8px 0}
 @media(max-width:760px){.admin-nav{width:100%}.admin-mainbar .admin-secondary{margin-left:auto}}
 html{overscroll-behavior:none}
+
+.admin-badge{display:inline-block;min-width:20px;padding:1px 6px;margin-left:4px;border-radius:999px;background:#8e5cff;color:#fff;font-size:.75rem;line-height:1.4;text-align:center}
+.message-row{display:grid!important;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center}
+.message-row .message-kind{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--violet2)}
+.message-row .message-date{font-size:.8rem;color:var(--muted);text-align:right}
+.message-row.is-new{border-left:3px solid var(--violet)}
+.message-row .message-summary{grid-column:1/-1;color:var(--muted);font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.message-detail{margin-top:16px;padding:18px;border:1px solid var(--line);background:#0e0b10}
+.message-detail dl{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:8px 16px;margin:12px 0}
+.message-detail dt{color:var(--muted)}.message-detail dd{margin:0;white-space:pre-line;word-break:break-word}
+.message-body{white-space:pre-line;margin:12px 0;padding:12px;border-left:2px solid var(--violet);background:#130f19}
+.message-photos{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.message-photos a img{width:160px;height:160px;object-fit:contain;background:#000;border:1px solid var(--line)}
+@media(max-width:620px){.message-detail dl{grid-template-columns:1fr}.message-photos a img{width:130px;height:130px}}
