@@ -43,10 +43,13 @@ let contentModule = null;
 let activeMain = "collection";
 const dirtyReferenceFields = new Set();
 
+let statusTimer = null;
 function message(text, isError = false) {
   status.textContent = text;
   status.classList.toggle("admin-error", isError);
   status.hidden = false;
+  clearTimeout(statusTimer);
+  if (!isError && !text.endsWith("…")) statusTimer = setTimeout(() => { status.hidden = true; }, 3500);
   if (!editor.hidden && editorStatus) {
     editorStatus.textContent = text;
     editorStatus.classList.toggle("admin-error", isError);
@@ -84,6 +87,18 @@ if (!client) {
     const button = event.target.closest("[data-main]");
     if (button) void showMainSection(button.dataset.main);
   });
+  const settingsToggle = document.querySelector("#settings-toggle");
+  const settingsMenu = document.querySelector("#settings-menu");
+  const setMenu = open => { settingsMenu.hidden = !open; settingsToggle.setAttribute("aria-expanded", String(open)); };
+  settingsToggle.addEventListener("click", event => { event.stopPropagation(); setMenu(settingsMenu.hidden); });
+  settingsMenu.addEventListener("click", event => {
+    const button = event.target.closest("[data-main]");
+    if (!button) return;
+    setMenu(false);
+    void showMainSection(button.dataset.main);
+  });
+  document.addEventListener("click", event => { if (!settingsMenu.hidden && !event.target.closest("#admin-settings")) setMenu(false); });
+  document.addEventListener("keydown", event => { if (event.key === "Escape" && !settingsMenu.hidden) { setMenu(false); settingsToggle.focus(); } });
   collectionTabs.addEventListener("click", event => {
     const button = event.target.closest("[data-collection-view]");
     if (!button) return;
@@ -126,6 +141,8 @@ if (!client) {
 async function showSession(session) {
   loginPanel.hidden = true;
   cmsPanel.hidden = true;
+  document.querySelector("#admin-settings").hidden = true;
+  document.querySelector("#settings-menu").hidden = true;
   if (!session) {
     loginPanel.hidden = false;
     activeMain = "collection";
@@ -140,7 +157,8 @@ async function showSession(session) {
     return;
   }
   cmsPanel.hidden = false;
-  message("Connecté à l’espace privé.");
+  document.querySelector("#admin-settings").hidden = false;
+  status.hidden = true;
   resetEditor(false);
   await showMainSection(activeMain);
   await loadDashboard();
@@ -167,6 +185,8 @@ async function showMainSection(id) {
     button.classList.toggle("is-active", active);
     if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
   });
+  document.querySelectorAll("#settings-menu [data-main]").forEach(button => button.classList.toggle("is-active", button.dataset.main === id));
+  document.querySelector("#settings-toggle").classList.toggle("is-active", ["messages", "referentiels", "appearance"].includes(id));
   const isCollection = id === "collection";
   const isAppearance = id === "appearance";
   const isMessages = id === "messages";

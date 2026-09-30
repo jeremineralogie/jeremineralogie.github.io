@@ -23,3 +23,47 @@ html{overscroll-behavior:none}
 .message-photos{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
 .message-photos a img{width:160px;height:160px;object-fit:contain;background:#000;border:1px solid var(--line)}
 @media(max-width:620px){.message-detail dl{grid-template-columns:1fr}.message-photos a img{width:130px;height:130px}}
+
+/* ===== Admin épuré ===== */
+body.admin-page{background:#07050b}
+body.admin-page::before{background:radial-gradient(120% 60% at 50% -10%,#1a0d2e 0,rgba(7,5,11,0) 60%),#07050b!important}
+body.admin-page .footer{display:none}
+.admin-topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px clamp(14px,4vw,28px);padding-top:calc(10px + env(safe-area-inset-top,0px));background:rgba(9,5,15,.94);border-bottom:1px solid #26143f}
+.admin-brand{font-family:var(--serif);text-transform:uppercase;letter-spacing:.22em;font-size:clamp(.85rem,3.4vw,1.05rem);color:#f1e8ff;white-space:nowrap}
+.admin-brand span{margin-left:.6em;padding:2px 8px;border:1px solid #4a2a7a;border-radius:999px;font-family:Inter,system-ui,sans-serif;font-size:.62em;letter-spacing:.14em;color:#c4a6f5}
+.admin-settings{position:relative}
+.settings-btn{position:relative;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1px solid #3a2160;background:#120a1d;color:#dccbf7;cursor:pointer;transition:border-color .2s,background .2s}
+.settings-btn svg{width:21px;height:21px}
+.settings-btn:hover,.settings-btn[aria-expanded="true"],.settings-btn.is-active{border-color:#8e5cff;background:#1c1030;color:#fff}
+.settings-badge{position:absolute;top:-5px;right:-6px;min-width:19px;height:19px;padding:0 5px;margin:0;border-radius:999px;background:#e0355e;color:#fff;
+  font:600 .7rem/19px Inter,system-ui,sans-serif;text-align:center;box-shadow:0 0 0 2px #09050f}
+.settings-menu{position:absolute;right:0;top:calc(100% + 10px);min-width:250px;padding:6px;background:#120a1d;border:1px solid #3a2160;border-radius:12px;
+  box-shadow:0 18px 40px -12px rgba(0,0,0,.8);text-align:left;z-index:50}
+.settings-menu button,.settings-menu a{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 12px;border:0;border-radius:8px;
+  background:none;color:#e6dcf5;font:inherit;font-size:.92rem;text-align:left;cursor:pointer;text-decoration:none}
+.settings-menu button:hover,.settings-menu a:hover,.settings-menu .is-active{background:#1f1233;color:#fff}
+.settings-menu hr{border:0;border-top:1px solid #2a1846;margin:6px 4px}
+.settings-menu #logout{color:#ffb3c2}
+.settings-menu .admin-badge{background:#e0355e}
+body.admin-page .admin-main{max-width:980px;padding:0 clamp(12px,4vw,24px) 60px;text-align:left}
+body.admin-page .admin-main h2,body.admin-page .admin-main h3,body.admin-page .admin-main h4{text-align:left}
+#admin-status{margin:14px 0;padding:10px 14px;font-size:.9rem;text-align:left;border:1px solid #2a1846;border-left:3px solid #8e5cff;background:#0f0918}
+#admin-status.admin-error{border-left-color:#e0355e}
+.admin-nav#admin-main-nav{display:flex;justify-content:center;gap:0;margin:0 0 18px;border-bottom:1px solid #26143f;flex-wrap:nowrap}
+#admin-main-nav .admin-tab{flex:1 1 0;max-width:190px;border:0;border-radius:0;background:none;box-shadow:none;padding:16px 6px 13px;
+  color:#a996c6;font-weight:500;font-size:clamp(.8rem,3.2vw,.95rem);letter-spacing:.02em;border-bottom:2px solid transparent;margin-bottom:-1px}
+#admin-main-nav .admin-tab:hover{color:#fff}
+#admin-main-nav .admin-tab.is-active{color:#fff;border-bottom-color:#8e5cff;background:none;box-shadow:none}
+body.admin-page .admin-tabs{justify-content:flex-start;gap:6px;margin:0 0 16px}
+body.admin-page .admin-tabs .admin-tab{padding:7px 14px;font-size:.85rem;border-color:#2e1a4a;font-weight:400}
+body.admin-page .admin-panel{border-radius:10px;border-color:#24143a;background:#0d0914;padding:clamp(14px,3vw,24px);margin:0 0 18px}
+body.admin-page #login-panel{max-width:420px;margin:40px auto}
+body.admin-page #login-panel h2{text-align:center}
+body.admin-page #content-manager{background:none;border:0;padding:0;margin:0}
+body.admin-page .admin-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+body.admin-page .admin-tabs::-webkit-scrollbar{display:none}
+body.admin-page .admin-tabs .admin-tab{flex:none;white-space:nowrap}
+#content-status,#specimen-status{margin:0 0 14px;padding:10px 14px;font-size:.9rem;text-align:left;border:1px solid #2a1846;border-left:3px solid #8e5cff;background:#0f0918}
+#content-status.admin-error{border-left-color:#e0355e;color:#ffc3cc}
+#admin-main-nav .admin-tab{white-space:nowrap;letter-spacing:0;font-size:clamp(.76rem,3.3vw,.95rem)}

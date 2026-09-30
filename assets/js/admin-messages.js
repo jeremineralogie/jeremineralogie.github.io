@@ -11,10 +11,14 @@ const element = (tag, className, text) => { const node = document.createElement(
 export async function refreshBadge(supabase) {
   client = supabase;
   const { count, error } = await client.from("messages").select("id", { count: "exact", head: true }).eq("status", "nouveau");
-  const badge = $("#messages-badge");
-  if (error || !count) { badge.hidden = true; return; }
-  badge.textContent = String(count);
-  badge.hidden = false;
+  ["#messages-badge", "#settings-badge"].forEach(selector => {
+    const badge = $(selector);
+    if (!badge) return;
+    badge.hidden = Boolean(error) || !count;
+    badge.textContent = count > 99 ? "99+" : String(count || "");
+  });
+  const toggle = $("#settings-toggle");
+  if (toggle) toggle.setAttribute("aria-label", count ? `Paramètres — ${count} nouveau${count > 1 ? "x" : ""} message${count > 1 ? "s" : ""}` : "Paramètres");
 }
 
 export async function openMessages(supabase) {
