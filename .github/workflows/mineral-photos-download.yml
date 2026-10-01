@@ -3,10 +3,7 @@
 name: Photos libres des fiches minéraux (téléchargement)
 
 on:
-  workflow_dispatch:
-  push:
-    branches: ["claude/**"]
-    paths: ["tools/images/download-mineral-photos.mjs", ".github/workflows/mineral-photos-download.yml"]
+  workflow_dispatch:   # lancement manuel uniquement (onglet Actions de GitHub)
 
 permissions:
   contents: write

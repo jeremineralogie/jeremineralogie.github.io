@@ -116,7 +116,7 @@ function renderMinerals() {
       const a = link(ficheUrl("mineral", item.slug), "", "learn-mineral");
       // Vignette : photo libre de la fiche (crédit complet sur la fiche et dans les informations légales).
       const photo = commonsPhoto(photoCredits, item.slug);
-      if (photo) { const thumb = element("img", "learn-thumb"); thumb.src = photo.src; thumb.alt = ""; thumb.loading = "lazy"; thumb.title = creditText(photo); a.append(thumb); a.classList.add("has-thumb"); }
+      if (photo) { const thumb = element("img", "learn-thumb"); thumb.src = photo.thumbSrc; thumb.alt = ""; thumb.loading = "lazy"; thumb.title = creditText(photo); a.append(thumb); a.classList.add("has-thumb"); }
       const head = element("span", "learn-mineral-head");
       head.append(element("strong", "learn-mineral-name", item.name));
       if (item.formula) head.append(element("span", "learn-formula", item.formula));

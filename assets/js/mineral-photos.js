@@ -8,7 +8,7 @@ export function loadMineralPhotos() {
   loading ||= fetch(`${BASE}credits.json`).then(response => response.ok ? response.json() : {}).catch(() => ({}));
   return loading;
 }
-export const commonsPhoto = (credits, slug) => credits?.[slug] ? { ...credits[slug], src: `${BASE}${credits[slug].photo}` } : null;
+export const commonsPhoto = (credits, slug) => credits?.[slug] ? { ...credits[slug], src: `${BASE}${credits[slug].photo}`, thumbSrc: `${BASE}${credits[slug].thumb || credits[slug].photo}` } : null;
 export const creditText = photo => `Photo : ${photo.author} — ${photo.license}, via Wikimedia Commons`;
 
 // Ligne de crédit : auteur, licence (lien) et page d'origine sur Wikimedia Commons.

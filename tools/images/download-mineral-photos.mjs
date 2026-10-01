@@ -1,5 +1,7 @@
 // Téléchargement des photos libres validées (tools/images/proposition.json) dans assets/mineraux-photos/,
 // en 640 px de large au plus, avec un fichier de crédits (auteur, licence, page d'origine) affiché sous chaque photo.
+// Les photos ont ensuite été converties en WebP (640 px) avec une vignette « -mini » (160 px) ; relancer ce script
+// remplacerait ces fichiers optimisés par des JPEG : à refaire seulement pour une nouvelle sélection.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

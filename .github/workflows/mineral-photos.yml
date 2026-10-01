@@ -4,10 +4,7 @@
 name: Photos libres des fiches minéraux (proposition)
 
 on:
-  workflow_dispatch:
-  push:
-    branches: ["claude/**"]
-    paths: ["tools/images/find-mineral-photos.mjs", ".github/workflows/mineral-photos.yml"]
+  workflow_dispatch:   # lancement manuel uniquement (onglet Actions de GitHub)
 
 permissions:
   contents: write
