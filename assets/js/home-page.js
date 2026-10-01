@@ -40,12 +40,14 @@ function specimenCard(row) {
   card.append(body); return card;
 }
 function readCard(row, kind) {
-  const card = el("a", "card"); card.href = kind === "article" ? articleUrl(row) : documentUrl(row);
+  const card = el("a", "card card-wide"); card.href = kind === "article" ? articleUrl(row) : documentUrl(row);
   const photo = kind === "article" ? firstPhoto(row.media) : row.cover_path ? { bucket_id: row.cover_bucket || "site-media-public", storage_path: row.cover_path } : null;
   if (photo) { const image = el("img"); image.src = publicMediaUrl(client, photo); image.alt = row.title; image.loading = "lazy"; card.append(image); }
   const body = el("div", "card-body");
   body.append(el("div", "kicker", kind === "article" ? "Article" : "Archive"), el("h3", "", row.title),
     el("div", "meta", [categoryLabel(row.category), dateFr(kind === "article" ? row.published_on : row.document_date)].filter(Boolean).join(" · ")));
+  const summary = kind === "article" ? row.excerpt : row.summary;
+  if (summary) body.append(el("p", "summary", summary));
   card.append(body); return card;
 }
 function fillGroup(id, cards) {
@@ -187,9 +189,9 @@ async function load() {
       .eq("publication_status", "published").eq("sale_status", "available").order("created_at", { ascending: false }).limit(4)), []),
     safe("collection", () => rows(client.from("specimens").select("slug,mineral_name,provenance,locality_name,department_name,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").order("created_at", { ascending: false }).limit(4)), []),
-    safe("articles", () => rows(client.from("articles").select("slug,title,category,published_on,media:article_media(bucket_id,storage_path,position)")
+    safe("articles", () => rows(client.from("articles").select("slug,title,category,published_on,excerpt,media:article_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false }).limit(1)), []),
-    safe("archives", () => rows(client.from("archive_documents").select("slug,title,category,document_date,cover_bucket,cover_path")
+    safe("archives", () => rows(client.from("archive_documents").select("slug,title,category,document_date,summary,cover_bucket,cover_path")
       .eq("publication_status", "published").order("created_at", { ascending: false }).limit(1)), []),
     safe("minéraux", () => rows(client.from("minerals").select("id,name,slug,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,streak,luster,transparency,colors,description,media:mineral_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").order("slug")), []),

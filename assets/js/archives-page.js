@@ -24,13 +24,13 @@ function render() {
   if (!visible.length) { status.textContent = rows.length ? "Aucun document ne correspond à cette catégorie." : "Aucun document publié pour le moment."; status.hidden = false; return; }
   status.hidden = true;
   for (const documentRow of visible) {
-    const card = document.createElement("a"); card.className = "card"; card.href = documentUrl(documentRow);
+    const card = document.createElement("a"); card.className = "card card-wide"; card.href = documentUrl(documentRow);
     if (documentRow.cover_path) { const cover = document.createElement("img"); cover.src = client.storage.from(documentRow.cover_bucket || "site-media-public").getPublicUrl(documentRow.cover_path).data.publicUrl; cover.alt = documentRow.title; cover.loading = "lazy"; card.append(cover); }
     const body = document.createElement("div"); body.className = "card-body";
     const category = document.createElement("div"); category.className = "kicker"; category.textContent = categoryLabel(documentRow.category); body.append(category);
     const title = document.createElement("h3"); title.textContent = documentRow.title; body.append(title);
     const meta = document.createElement("div"); meta.className = "meta"; meta.textContent = [documentRow.document_date && new Intl.DateTimeFormat("fr-FR").format(new Date(`${documentRow.document_date}T00:00:00`)), documentRow.rights_note].filter(Boolean).join(" · "); body.append(meta);
-    if (documentRow.summary || documentRow.description) { const description = document.createElement("p"); description.className = "summary"; description.textContent = documentRow.summary || documentRow.description; body.append(description); }
+    if (documentRow.summary) { const description = document.createElement("p"); description.className = "summary"; description.textContent = documentRow.summary; body.append(description); }
     const more = document.createElement("div"); more.className = "more"; more.textContent = "Consulter le document"; body.append(more);
     card.append(body); grid.append(card);
   }
