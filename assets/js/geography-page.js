@@ -47,9 +47,9 @@ async function loadDirectory() {
   const extra = (departments || []).filter(department => !known.has(department.code));
   if (extra.length) {
     const group = document.createElement("section"); group.id = "supabase-department-index"; group.className = "department-region";
-    const heading = document.createElement("h2"); heading.textContent = "Départements du référentiel"; group.append(heading);
+    const heading = document.createElement("h2"); heading.textContent = "Autres départements et provinces"; group.append(heading);
     const list = document.createElement("div"); list.className = "department-list";
-    extra.forEach(department => { const link = document.createElement("a"); link.href = `departement.html?dep=${encodeURIComponent(department.code)}`; link.dataset.department = department.code; link.textContent = `${department.name} (${department.code})${regionById.get(department.region_id) ? ` · ${regionById.get(department.region_id)}` : ""}`; list.append(link); });
+    extra.forEach(department => { const link = document.createElement("a"); link.href = `departement.html?dep=${encodeURIComponent(department.code)}`; link.dataset.department = department.code; link.textContent = `${department.name}${/^(2[AB]|\d{2,3})$/i.test(department.code) ? ` (${department.code})` : ""}${regionById.get(department.region_id) ? ` · ${regionById.get(department.region_id)}` : ""}`; list.append(link); });
     document.querySelector(".department-regions").prepend(group); group.append(list);
   }
   if (code) {

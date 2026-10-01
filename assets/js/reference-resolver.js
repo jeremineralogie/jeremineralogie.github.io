@@ -79,6 +79,24 @@ const CREATE_DEFAULTS = {
 
 // Retrouve une fiche par son nom (sans tenir compte de la casse, des accents ni des tirets) ou la crée.
 // Renvoie { id, name, created } ou null si le nom est vide. Ne crée jamais de département.
+// Département : retrouvé par nom ou numéro ; sinon créé (provinces et départements étrangers) avec un code tiré du nom.
+export const isFrenchDepartmentCode = code => /^(2[AB]|\d{2,3})$/i.test(String(code ?? "").trim());
+export async function ensureDepartment(client, name, regionId = null) {
+  const clean = String(name ?? "").replace(/\s+/g, " ").trim();
+  if (!clean) return null;
+  const { data, error } = await client.from("departments").select("code,name,region_id");
+  if (error) throw error;
+  const found = matchDepartment(data || [], clean) || (data || []).find(row => normalizeName(row.code) === normalizeName(clean));
+  if (found) return { code: found.code, name: found.name, created: false };
+  const codes = new Set((data || []).map(row => row.code));
+  const base = slugify(clean) || `departement-${crypto.randomUUID().slice(0, 8)}`;
+  let code = base; let suffix = 2;
+  while (codes.has(code)) code = `${base}-${suffix++}`;
+  const { data: row, error: insertError } = await client.from("departments").insert({ code, name: clean, region_id: regionId || null }).select("code,name").single();
+  if (insertError) throw insertError;
+  return { code: row.code, name: row.name, created: true };
+}
+
 export async function ensureNamed(client, table, name, extra = {}) {
   const clean = String(name ?? "").replace(/\s+/g, " ").trim();
   if (!clean || !(table in CREATE_DEFAULTS)) return null;

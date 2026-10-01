@@ -1,5 +1,5 @@
 import { getSupabase } from "./supabase-client.js";
-import { resolveReferences, ensureNamed, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
+import { resolveReferences, ensureDepartment, ensureNamed, isFrenchDepartmentCode, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
 import { autoEnhanceSelects, enhanceCombobox } from "./combobox.js";
 import { backfillLocalities, departmentOfCommune } from "./geo-communes.js";
 import { createPointTool, pointKey, savePendingPoints } from "./point-picker.js";
@@ -94,7 +94,7 @@ function autofillFromDepartment(code) {
   if (!department) return;
   if (department.region_id) setGeoSelect("region", department.region_id);
   const country = document.querySelector("#country");
-  if (country && country.value.trim().toLowerCase() !== "france") country.value = "France";
+  if (country && !country.value.trim() && isFrenchDepartmentCode(department.code)) country.value = "France";
 }
 function autofillFromLocality(localityId) {
   const locality = geo.localities.find(item => String(item.id) === String(localityId));
@@ -1026,11 +1026,15 @@ async function saveSpecimen(event) {
     record.region_id = record.region_id ?? resolved.regionId;
     record.locality_id = record.locality_id ?? resolved.localityId;
     if (resolved.department) { record.department_code = resolved.department.code; record.department_name = resolved.department.name; }
-    else if (values.department.trim() && !record.department_code) unresolvedDepartment = true;
+    // Département absent du référentiel (province étrangère…) : créé plus bas, une fois la région connue.
     // Créer les nouvelles références si nécessaire (valeurs "Autre" non enregistrées)
     const track = result => { if (result?.created) created.push(result.name); return result; };
     if (!record.mineral_id && values.mineral.trim()) record.mineral_id = track(await ensureNamed(client, "minerals", values.mineral))?.id ?? null;
     if (!record.region_id && values.region.trim()) record.region_id = track(await ensureNamed(client, "regions", values.region))?.id ?? null;
+    if (!record.department_code && values.department.trim()) {
+      const department = track(await ensureDepartment(client, values.department, record.region_id));
+      if (department) { record.department_code = department.code; record.department_name = department.name; }
+    }
     if (!record.locality_id && values.locality.trim()) record.locality_id = track(await ensureNamed(client, "localities", values.locality, { department_code: record.department_code || null }))?.id ?? null;
     const gisement = values.provenance.trim();
     if (!gisement) record.mine_id = null;
