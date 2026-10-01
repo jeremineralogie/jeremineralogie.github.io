@@ -89,7 +89,7 @@ const sections = [
   { id: "departments", label: "Départements", table: "departments", title: "Départements", fields: [{ key: "code", label: "Code (identifiant)", required: true }, { key: "name", label: "Nom", required: true }, { key: "region_id", label: "Région", ref: "regions", display: "name" }] },
   { id: "localities", label: "Communes", table: "localities", title: "Communes", fields: [{ key: "name", label: "Nom", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "postal_code", label: "Code postal" }, { key: "insee_code", label: "Code INSEE" }, { key: "latitude", label: "Latitude", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude", type: "number", step: "0.000001" }, { key: "notes", label: "Notes", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
   { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
-  { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral (fiches Apprendre)", mediaTable: "mineral_media", foreignKey: "mineral_id", path: "minerals", fields: [
+  { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral (fiches Apprendre)", mediaTable: "mineral_media", foreignKey: "mineral_id", path: "minerals", mediaAfter: "etymology", fields: [
     { key: "name", label: "Nom", required: true }, { key: "formula", label: "Formule chimique (ex. CaCO₃)" },
     { key: "chemical_class", label: "Famille chimique", type: "select", customOptions: true, options: MINERAL_CLASSES.map(value => [value, value]) },
     { key: "crystal_system", label: "Système cristallin", type: "select", customOptions: true, options: CRYSTAL_SYSTEMS.map(value => [value, value]) },
@@ -99,6 +99,7 @@ const sections = [
     { key: "cleavage", label: "Clivage" }, { key: "fracture", label: "Cassure" }, { key: "habit", label: "Habitus", type: "textarea" }, { key: "fluorescence", label: "Fluorescence" },
     { key: "description", label: "Présentation", type: "textarea" }, { key: "formation", label: "Formation et gisements", type: "textarea" },
     { key: "varieties", label: "Variétés", type: "textarea" }, { key: "confusions", label: "Confusions possibles", type: "textarea" }, { key: "etymology", label: "Étymologie", type: "textarea" },
+    { key: "photo_credit", label: "Crédit / licence des photos", placeholder: "ex. Photo : Jean Dupont — CC BY-SA 4.0", help: "Affiché sous vos photos sur la fiche. À laisser vide pour vos propres photos." },
     { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
   { id: "glossary", label: "Glossaire", table: "glossary_terms", title: "Glossaire (onglet Apprendre)", fields: [
     { key: "term", label: "Terme", required: true },
