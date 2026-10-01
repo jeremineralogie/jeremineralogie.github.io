@@ -64,7 +64,7 @@ function render(client, article, { linker, chosen }, all = []) {
   page.append(category, title, date);
   if (images[0]) { const image = document.createElement("img"); image.src = publicMediaUrl(client, images[0]); image.alt = images[0].alt_text || article.title; page.append(image); }
   const blocks = renderBlocks(page, article.body, client);
-  if (linker) blocks.filter(node => node.classList.contains("art-text")).forEach(node => linkTextNodes(node, linker, used));
+  if (linker) blocks.filter(node => node.classList.contains("art-text") || node.classList.contains("art-rich")).forEach(node => linkTextNodes(node, linker, used));
   for (const media of images.slice(1)) {
     const image = document.createElement("img"); image.loading = "lazy"; image.src = publicMediaUrl(client, media); image.alt = media.alt_text || article.title; page.append(image);
     if (media.caption) { const caption = document.createElement("div"); caption.className = "meta"; caption.textContent = media.caption; page.append(caption); }
@@ -78,7 +78,7 @@ function render(client, article, { linker, chosen }, all = []) {
   const others = relatedArticles(article, all, chosen);
   if (others.length) page.append(readMore(others));
   root.replaceChildren(page);
-  void applyGlossary([...page.querySelectorAll("p.art-text")]);
+  void applyGlossary([...page.querySelectorAll("p.art-text, .art-rich p, .art-rich li")]);
 }
 
 try {

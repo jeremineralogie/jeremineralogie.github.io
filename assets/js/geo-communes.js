@@ -36,6 +36,16 @@ export async function findCommune(name, departmentCode) {
   return [];
 }
 
+// Département d'une commune saisie à la main (si le nom ne désigne qu'un seul département).
+export async function departmentOfCommune(name) {
+  if (!String(name || "").trim()) return null;
+  try {
+    const matches = await findCommune(name);
+    const codes = [...new Set(matches.map(row => row.department))];
+    return codes.length === 1 ? codes[0] : null;
+  } catch { return null; }
+}
+
 export const communeLabel = row => `${row.name} — ${row.postalCodes[0] || row.insee} (${row.department})`;
 
 export function communeUpdate(match, knownDepartment) {
