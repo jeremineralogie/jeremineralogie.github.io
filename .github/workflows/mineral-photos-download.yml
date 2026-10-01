@@ -1,0 +1,35 @@
+# Téléchargement des photos libres validées pour les fiches minéraux (avec leurs crédits) dans assets/mineraux-photos/.
+# Aucune clé secrète : seules les pages publiques de Wikimedia Commons sont lues.
+name: Photos libres des fiches minéraux (téléchargement)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["tools/images/download-mineral-photos.mjs", ".github/workflows/mineral-photos-download.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mineral-photos-download-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Télécharger les photos et les crédits
+        run: node tools/images/download-mineral-photos.mjs
+      - name: Enregistrer sur la branche
+        run: |
+          git add assets/mineraux-photos
+          if git diff --cached --quiet; then echo "Aucun changement."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Photos libres des fiches minéraux : téléchargement avec crédits"
+          git push origin HEAD:${{ github.ref_name }}
