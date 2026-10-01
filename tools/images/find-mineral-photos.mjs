@@ -10,16 +10,20 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const OUT = path.join(ROOT, "tools/images");
 const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.github.io; recherche de photos libres pour fiches minéraux)";
-const FREE = /^(cc0|public domain|pd\b|pd-|cc[- ]by(-sa)?[- ]?\d|cc[- ]by(-sa)?$|attribution|no restrictions)/i;
+const FREE = /^(cc0|public domain|pd\b|pd-|cc[- ]by(-sa)?[- ]?\d|cc[- ]by(-sa)?$|attribution|no restrictions|copyrighted free use)/i;
+const MIN_SIDE = 600; // en dessous, une photo plus grande est cherchée sur l'article Wikipédia
+// Noms ambigus : l'élément chimique ou un composé passerait avant le minéral natif.
+const SEARCH = { cuivre: ["native copper", "en"], bismuth: ["native bismuth", "en"], or: ["native gold", "en"], argent: ["native silver", "en"] };
+const fold = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const esc = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const stripHtml = value => String(value ?? "").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, "\"").replace(/&#0?39;/g, "'").replace(/\s+/g, " ").trim();
 
 async function json(url) {
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
     const response = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
     if (response.ok) return response.json();
-    if (response.status === 429 || response.status >= 500) { await sleep(2000 * attempt); continue; }
+    if (response.status === 429 || response.status >= 500) { await sleep(5000 * 2 ** attempt); continue; }
     throw new Error(`${response.status} ${url}`);
   }
   throw new Error(`Échec répété : ${url}`);
@@ -34,18 +38,21 @@ async function minerals() {
 }
 
 // Élément Wikidata d'un minéral : recherche du nom en français puis en anglais, en préférant les éléments décrits comme minéraux.
+// Le candidat dont le libellé (français ou anglais) est exactement le nom cherché passe en premier.
 async function wikidataItem(name) {
-  for (const language of ["fr", "en"]) {
-    const search = await json(`https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&type=item&limit=7&language=${language}&uselang=${language}&search=${encodeURIComponent(name)}`);
-    const candidates = (search.search || []).filter(item => /min[ée]ral|gem|gemme|variet|variété|cristal/i.test(item.description || ""));
+  const forced = SEARCH[fold(name)];
+  const searches = forced ? [forced] : [[name, "fr"], [name, "en"]];
+  for (const [term, language] of searches) {
+    const search = await json(`https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&type=item&limit=10&language=${language}&uselang=${language}&search=${encodeURIComponent(term)}`);
+    const candidates = (search.search || []).filter(item => /min[ée]ral|gem|gemme|variet|variété|cristal|native/i.test(item.description || ""));
     if (!candidates.length) continue;
     const ids = candidates.map(item => item.id).join("|");
     const entities = await json(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=claims|labels|sitelinks&languages=fr|en&ids=${ids}`);
-    for (const candidate of candidates) {
-      const entity = entities.entities?.[candidate.id];
-      const image = entity?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
-      return { id: candidate.id, label: entity?.labels?.fr?.value || entity?.labels?.en?.value || candidate.label, description: candidate.description, image: image || null, frwiki: entity?.sitelinks?.frwiki?.title || null };
-    }
+    const exact = candidate => { const entity = entities.entities?.[candidate.id]; return [entity?.labels?.fr?.value, entity?.labels?.en?.value, candidate.label].some(label => fold(label) === fold(term)); };
+    const candidate = forced ? candidates[0] : candidates.find(exact) || candidates[0];
+    const entity = entities.entities?.[candidate.id];
+    const image = entity?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+    return { id: candidate.id, label: entity?.labels?.fr?.value || entity?.labels?.en?.value || candidate.label, description: candidate.description, image: image || null, frwiki: entity?.sitelinks?.frwiki?.title || null, exact: forced || exact(candidate) };
   }
   return null;
 }
@@ -79,18 +86,27 @@ for (const [index, mineral] of rows.entries()) {
   try {
     const item = await wikidataItem(mineral.name);
     if (item) entry.wikidata = { id: item.id, label: item.label, description: item.description };
-    let file = item?.image || null, origin = "wikidata";
-    if (!file) { file = await frWikipediaImage(item?.frwiki || mineral.name); origin = "wikipedia-fr"; }
-    if (file) {
+    if (item && !item.exact) entry.note = `Correspondance approchée : « ${item.label} ». `;
+    // Image Wikidata, puis image de l'article Wikipédia si elle manque, n'est pas libre ou est trop petite.
+    const options = [];
+    if (item?.image) options.push([item.image, "wikidata"]);
+    const wikiImage = await frWikipediaImage(item?.frwiki || mineral.name).catch(() => null);
+    if (wikiImage && wikiImage !== item?.image) options.push([wikiImage, "wikipedia-fr"]);
+    let chosen = null, rejected = null;
+    for (const [file, origin] of options) {
       const info = await commonsInfo(file);
-      if (!info) entry.note = `Fichier ${file} absent de Commons.`;
-      else if (!info.free) { entry.status = "licence-non-libre"; entry.note = `Licence « ${info.license} » écartée.`; entry.image = { ...info, origin }; }
-      else { entry.status = "trouvee"; entry.image = { ...info, origin }; }
-    } else entry.note = item ? "Pas d'image de référence." : "Espèce non trouvée sur Wikidata.";
+      if (!info) continue;
+      if (!info.free) { rejected ||= { ...info, origin }; continue; }
+      const side = Math.min(info.width || 0, info.height || 0);
+      if (!chosen || (Math.min(chosen.width || 0, chosen.height || 0) < MIN_SIDE && side > Math.min(chosen.width || 0, chosen.height || 0))) chosen = { ...info, origin };
+    }
+    if (chosen) { entry.status = "trouvee"; entry.image = chosen; if (Math.min(chosen.width, chosen.height) < MIN_SIDE) entry.note += "Photo de petite taille."; }
+    else if (rejected) { entry.status = "licence-non-libre"; entry.image = rejected; entry.note += `Licence « ${rejected.license} » écartée.`; }
+    else entry.note += item ? "Pas d'image libre trouvée." : "Espèce non trouvée sur Wikidata.";
   } catch (error) { entry.status = "erreur"; entry.note = error.message; }
   results.push(entry);
   console.log(`${index + 1}/${rows.length} ${mineral.name} → ${entry.status}${entry.image ? ` (${entry.image.file})` : ""}`);
-  await sleep(250);
+  await sleep(400);
 }
 
 await writeFile(path.join(OUT, "proposition.json"), `${JSON.stringify({ generated: new Date().toISOString(), results }, null, 2)}\n`);
