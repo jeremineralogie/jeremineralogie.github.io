@@ -208,3 +208,7 @@ h2.le-edit{font-family:var(--serif,Georgia,serif);font-weight:500;letter-spacing
 @media(max-width:620px){.le-finish{margin-left:0;width:100%;justify-content:flex-end}.le-font{max-width:150px}}
 /* Les blocs voisins d'une image alignée se placent à côté d'elle : poignées jamais superposées. */
 .le-block:not(.le-align-left):not(.le-align-right){display:flow-root}
+/* Image de fiche (archives) */
+.cover-field{display:grid;gap:8px;justify-items:start;margin:6px 0 12px}
+.cover-preview{max-width:220px;max-height:160px;object-fit:contain;background:#000;border:1px solid #3a2160}
+.cover-remove{display:flex;align-items:center;gap:6px;font-size:.86rem;color:#ffc3cc;margin:0!important}

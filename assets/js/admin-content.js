@@ -30,21 +30,29 @@ const sections = [
     { key: "keywords", label: "Mots-clés" }, { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA" }
   ] },
   { id: "articles", label: "Articles", table: "articles", title: "Articles", mediaTable: "article_media", foreignKey: "article_id", path: "articles", mediaAfter: "body", singleCover: true,
-    links: [["article_minerals", "mineral_id", "minerals"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_departments", "department_code", "departments"], ["article_regions", "region_id", "regions"]], fields: [
+    links: [["article_minerals", "mineral_id", "minerals"], ["archive_articles", "archive_id", "archive_documents"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_departments", "department_code", "departments"], ["article_regions", "region_id", "regions"]], fields: [
     { key: "title", label: "Titre", required: true },
     { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["autre", "Autre"], ["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"], ["mines-histoire", "Mines & histoire"], ["decouvertes", "Découvertes"], ["identification", "Identification"], ["collection", "Collection"], ["pedagogie", "Pédagogie"]] },
     { key: "body", label: "Contenu", richBody: true, notNull: true },
-    { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }, { key: "link_mines", label: "Gisements liés", ref: "mines", display: "name", multi: true },
+    { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }, { key: "link_archive_articles", label: "Archives liées", ref: "archive_documents", display: "title", multi: true },
+    { key: "link_mines", label: "Gisements liés", ref: "mines", display: "name", multi: true },
     { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true },
     { key: "link_departments", label: "Départements liés", ref: "departments", display: "name", value: "code", multi: true }, { key: "link_regions", label: "Régions liées", ref: "regions", display: "name", multi: true },
     { key: "excerpt", label: "Résumé", type: "textarea", notNull: true },
     { key: "published_on", label: "Date de publication", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }
   ] },
-  { id: "archives", label: "Archives & Documentation", table: "archive_documents", title: "Archives & Documentation", singleFile: true, path: "archives", links: [["archive_specimens", "specimen_id", "specimens"], ["archive_articles", "article_id", "articles"], ["archive_mines", "mine_id", "mines"], ["archive_localities", "locality_id", "localities"], ["archive_minerals", "mineral_id", "minerals"]], fields: [
-    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
-    { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "document_date", label: "Date du document", type: "date" },
-    { key: "rights_note", label: "Droits / crédit", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] },
-    { key: "link_specimens", label: "Spécimens liés", ref: "specimens", display: "slug", multi: true }, { key: "link_articles", label: "Articles liés", ref: "articles", display: "title", multi: true }, { key: "link_mines", label: "Mines liées", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true }, { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }
+  { id: "archives", label: "Archives & Documentation", table: "archive_documents", title: "Archives & Documentation", singleFile: true, path: "archives", mediaAfter: "cover_path",
+    links: [["archive_minerals", "mineral_id", "minerals"], ["archive_articles", "article_id", "articles"], ["archive_mines", "mine_id", "mines"], ["archive_localities", "locality_id", "localities"], ["archive_departments", "department_code", "departments"], ["archive_regions", "region_id", "regions"]], fields: [
+    { key: "title", label: "Titre", required: true },
+    { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["autre", "Autre"], ["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
+    { key: "cover_path", label: "Image de fiche (illustration de la carte côté public)", cover: true },
+    { key: "description", label: "Description", type: "textarea", notNull: true },
+    { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }, { key: "link_articles", label: "Articles liés", ref: "articles", display: "title", multi: true },
+    { key: "link_mines", label: "Gisements liés", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true },
+    { key: "link_departments", label: "Départements liés", ref: "departments", display: "name", value: "code", multi: true }, { key: "link_regions", label: "Régions liées", ref: "regions", display: "name", multi: true },
+    { key: "summary", label: "Résumé", type: "textarea", notNull: true }, { key: "rights_note", label: "Droits et crédits", type: "textarea", notNull: true },
+    { key: "links", label: "Liens (un par ligne : « Texte | https://… » ou simplement l’adresse)", type: "textarea", lines: true },
+    { key: "document_date", label: "Date du document", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }
   ] },
   { id: "regions", label: "Régions", table: "regions", title: "Régions", fields: [{ key: "name", label: "Nom", required: true }] },
   { id: "departments", label: "Départements", table: "departments", title: "Départements", fields: [{ key: "code", label: "Code (identifiant)", required: true }, { key: "name", label: "Nom", required: true }, { key: "region_id", label: "Région", ref: "regions", display: "name" }] },
@@ -223,8 +231,8 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
-    const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" ? "title" : "name");
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
+    const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" || table === "archive_documents" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
     if (table === "localities") {
@@ -334,6 +342,22 @@ function buildEditorPanel() {
 function createField(field, value) {
   const wrapper = document.createElement("div");
   const label = document.createElement("label"); label.textContent = field.label; wrapper.append(label);
+  if (field.cover) {
+    const hidden = document.createElement("input"); hidden.type = "hidden"; hidden.name = field.key; hidden.value = value || "";
+    const box = document.createElement("div"); box.className = "cover-field";
+    if (value) {
+      const preview = document.createElement("img"); preview.className = "cover-preview"; preview.alt = "Image de fiche actuelle";
+      preview.src = client.storage.from(selectedRecord?.cover_bucket || PUBLIC_BUCKET).getPublicUrl(value).data.publicUrl;
+      const remove = document.createElement("label"); remove.className = "cover-remove";
+      const check = document.createElement("input"); check.type = "checkbox"; check.name = `${field.key}__remove`;
+      remove.append(check, " Retirer cette image");
+      box.append(preview, remove);
+    }
+    const file = document.createElement("input"); file.type = "file"; file.accept = "image/jpeg,image/png,image/webp"; file.name = `${field.key}__file`;
+    label.htmlFor = file.id = `content-${field.key}`;
+    box.append(file); wrapper.append(hidden, box);
+    return wrapper;
+  }
   if (field.richBody) {
     const hidden = document.createElement("input"); hidden.type = "hidden"; hidden.name = field.key; hidden.value = JSON.stringify(value || []);
     contentEditor = createContentEditor({ client, initial: value || [], onChange: blocks => { hidden.value = JSON.stringify(blocks); } });
@@ -369,6 +393,7 @@ function createField(field, value) {
   if (field.placeholder) input.placeholder = field.placeholder;
   if (field.required) { input.required = true; label.textContent += " *"; }
   if (field.type === "checkbox") input.checked = Boolean(value);
+  else if (field.lines && Array.isArray(value)) input.value = value.join("\n");
   else if (value != null && value !== "") input.value = field.body ? bodyToText(value) : field.key === "value" ? JSON.stringify(value, null, 2) : field.euros ? (Number(value) / 100).toFixed(2) : field.array && Array.isArray(value) ? value.join(", ") : String(value);
   label.htmlFor = `content-${field.key}`; input.id = label.htmlFor; input.name = field.key;
   wrapper.append(input);
@@ -389,7 +414,7 @@ function bodyToText(body) {
 }
 
 function appendMediaControls(panel) {
-  const title = document.createElement("h4"); title.textContent = activeSection.singleFile ? "Document" : activeSection.singleCover ? "Image de fiche (illustration de l’article côté public)" : "Photos"; panel.append(title);
+  const title = document.createElement("h4"); title.textContent = activeSection.singleFile ? "Fichier (texte, PDF ou photo)" : activeSection.singleCover ? "Image de fiche (illustration de l’article côté public)" : "Photos"; panel.append(title);
   const container = document.createElement("div"); container.className = "admin-content-media"; container.dataset.mediaContainer = ""; panel.append(container);
   if (activeSection.singleFile && selectedRecord?.storage_path) {
     const link = document.createElement("a"); link.textContent = `Document actuel (${selectedRecord.bucket_id})`;
@@ -409,7 +434,7 @@ function appendMediaControls(panel) {
     });
   }
   if (activeSection.mediaTable || activeSection.singleFile) {
-    uploadInput = document.createElement("input"); uploadInput.type = "file"; uploadInput.accept = activeSection.singleFile ? ".pdf,image/*" : "image/jpeg,image/png,image/webp";
+    uploadInput = document.createElement("input"); uploadInput.type = "file"; uploadInput.accept = activeSection.singleFile ? ".pdf,image/*,.txt,.rtf,.doc,.docx,.odt,text/plain" : "image/jpeg,image/png,image/webp";
     uploadInput.multiple = Boolean(activeSection.mediaTable) && !activeSection.singleCover; uploadInput.setAttribute("aria-label", "Ajouter un média");
     uploadInput.addEventListener("change", renderNewMediaPreview); container.append(uploadInput);
     const previews = document.createElement("div"); previews.className = "admin-content-media"; previews.dataset.newMediaPreview = ""; container.append(previews);
@@ -484,6 +509,17 @@ async function saveRecord(form) {
       if (field.euros && value !== "") { const amount = Number(value); if (!Number.isFinite(amount) || amount < 0) throw new Error("Le prix doit être un nombre positif ou nul."); value = Math.round(amount * 100); }
       else if (field.type === "number" && value !== "") { value = Number(value); if (!Number.isFinite(value)) throw new Error(`Valeur numérique invalide pour « ${field.label} ».`); }
       if (field.richBody) value = contentEditor ? contentEditor.getBlocks() : JSON.parse(input.value || "[]");
+      if (field.lines) value = String(input.value || "").split("\n").map(line => line.trim()).filter(Boolean);
+      if (field.cover) {
+        const chosen = form.elements.namedItem(`${field.key}__file`)?.files?.[0];
+        if (chosen) {
+          const name = chosen.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
+          const coverPath = `${section.path}/couvertures/${crypto.randomUUID()}-${name}`;
+          const { error: coverError } = await client.storage.from(PUBLIC_BUCKET).upload(coverPath, chosen, { upsert: false, contentType: chosen.type });
+          if (coverError) throw coverError;
+          value = coverPath; record.cover_bucket = PUBLIC_BUCKET;
+        } else if (form.elements.namedItem(`${field.key}__remove`)?.checked) value = "";
+      }
       if (field.array) value = value ? value.split(",").map(part => part.trim()).filter(Boolean) : [];
       if (field.key === "value") { try { value = value ? JSON.parse(value) : {}; } catch { throw new Error("La valeur du paramètre doit être du JSON valide."); } }
       if (field.multi) {

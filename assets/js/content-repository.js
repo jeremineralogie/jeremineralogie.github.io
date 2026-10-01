@@ -8,7 +8,7 @@ export async function loadPublishedContent(section) {
     .eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });
   else if (section === "articles") query = client.from("articles").select("*,media:article_media(id,bucket_id,storage_path,alt_text,caption,position)")
     .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("updated_at", { ascending: false });
-  else if (section === "archives") query = client.from("archive_documents").select("id,slug,title,category,description,document_date,rights_note,bucket_id,storage_path,publication_status,updated_at")
+  else if (section === "archives") query = client.from("archive_documents").select("id,slug,title,category,description,summary,links,cover_bucket,cover_path,document_date,rights_note,bucket_id,storage_path,publication_status,updated_at")
     .eq("publication_status", "published").eq("bucket_id", "site-media-public").order("document_date", { ascending: false, nullsFirst: false });
   else throw new Error(`Section publique inconnue : ${section}`);
   const { data, error } = await query;
