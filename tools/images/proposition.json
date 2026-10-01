@@ -1,0 +1,4175 @@
+{
+  "generated": "2026-10-01T18:55:15.178Z",
+  "results": [
+    {
+      "slug": "acanthite",
+      "name": "Acanthite",
+      "wikidata": {
+        "id": "Q413498",
+        "label": "acanthite",
+        "description": "minéral : sulfure d'argent"
+      },
+      "image": {
+        "file": "Acanthite - Imiter mine, Jbel Saghro, Tinghir, Drâa-Tafilalet, Morocco.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Acanthite_-_Imiter_mine,_Jbel_Saghro,_Tinghir,_Dr%C3%A2a-Tafilalet,_Morocco.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Acanthite_-_Imiter_mine%2C_Jbel_Saghro%2C_Tinghir%2C_Dr%C3%A2a-Tafilalet%2C_Morocco.jpg/500px-Acanthite_-_Imiter_mine%2C_Jbel_Saghro%2C_Tinghir%2C_Dr%C3%A2a-Tafilalet%2C_Morocco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/24/Acanthite_-_Imiter_mine%2C_Jbel_Saghro%2C_Tinghir%2C_Dr%C3%A2a-Tafilalet%2C_Morocco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5400,
+        "height": 4200,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "actinote",
+      "name": "Actinote",
+      "wikidata": {
+        "id": "Q104692",
+        "label": "actinote",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Actinolite Portugal.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Actinolite_Portugal.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Actinolite_Portugal.jpg/500px-Actinolite_Portugal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/91/Actinolite_Portugal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3179,
+        "height": 2889,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "adamite",
+      "name": "Adamite",
+      "wikidata": {
+        "id": "Q111200",
+        "label": "adamite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Adamitemexique1.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Adamitemexique1.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Adamitemexique1.jpg/500px-Adamitemexique1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Adamitemexique1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5700,
+        "height": 4783,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "aegyrine",
+      "name": "Aegyrine",
+      "wikidata": {
+        "id": "Q380674",
+        "label": "Aegirine",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Aegirine-Orthoclase-114177.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Aegirine-Orthoclase-114177.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Aegirine-Orthoclase-114177.jpg/500px-Aegirine-Orthoclase-114177.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Aegirine-Orthoclase-114177.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 730,
+        "height": 800,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "albite",
+      "name": "Albite",
+      "wikidata": {
+        "id": "Q182264",
+        "label": "albite",
+        "description": "minéral : feldspath sodique"
+      },
+      "image": {
+        "file": "Albite2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Albite2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/Albite2.jpg/500px-Albite2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/35/Albite2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4286,
+        "height": 3964,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "almandin",
+      "name": "Almandin",
+      "wikidata": {
+        "id": "Q273663",
+        "label": "almandin",
+        "description": "garnet, nesosilicate mineral"
+      },
+      "image": {
+        "file": "Almandine-131923.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Almandine-131923.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/44/Almandine-131923.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/44/Almandine-131923.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 366,
+        "height": 400,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "alunite",
+      "name": "Alunite",
+      "wikidata": {
+        "id": "Q3977905",
+        "label": "alunite supergroup",
+        "description": "minerals: isolated tetrahedral units"
+      },
+      "image": {
+        "file": "Alunit_Montcada,Barcelona,Spanien.JPG",
+        "page": "https://commons.wikimedia.org/wiki/File:Alunit_Montcada,Barcelona,Spanien.JPG",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Alunit_Montcada%2CBarcelona%2CSpanien.JPG/500px-Alunit_Montcada%2CBarcelona%2CSpanien.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/06/Alunit_Montcada%2CBarcelona%2CSpanien.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1113,
+        "height": 926,
+        "author": "Manfred Mader",
+        "license": "CC BY-SA 3.0 de",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "amethyste",
+      "name": "Améthyste",
+      "wikidata": {
+        "id": "Q79058",
+        "label": "améthyste",
+        "description": "variété violette du quartz, pierre semi-précieuse parmi les plus utilisées en bijouterie"
+      },
+      "image": {
+        "file": "Amethyst. Magaliesburg, South Africa.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Amethyst._Magaliesburg,_South_Africa.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e2/Amethyst._Magaliesburg%2C_South_Africa.jpg/500px-Amethyst._Magaliesburg%2C_South_Africa.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Amethyst._Magaliesburg%2C_South_Africa.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2016,
+        "height": 1344,
+        "author": "JJ Harrison (https://jjharrison.com.au/)",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "analcime",
+      "name": "Analcime",
+      "wikidata": {
+        "id": "Q239589",
+        "label": "analcime",
+        "description": "minéral de la famille des zéolites"
+      },
+      "image": {
+        "file": "Analcime - Kahwan Mountain, Semnan, Iran.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Analcime_-_Kahwan_Mountain,_Semnan,_Iran.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Analcime_-_Kahwan_Mountain%2C_Semnan%2C_Iran.jpg/500px-Analcime_-_Kahwan_Mountain%2C_Semnan%2C_Iran.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/37/Analcime_-_Kahwan_Mountain%2C_Semnan%2C_Iran.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6000,
+        "height": 5000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "anatase",
+      "name": "Anatase",
+      "wikidata": {
+        "id": "Q413357",
+        "label": "Anatase",
+        "description": "espèce minérale formée de dioxyde de titane"
+      },
+      "image": {
+        "file": "Anatase Oisans.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Anatase_Oisans.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Anatase_Oisans.jpg/500px-Anatase_Oisans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Anatase_Oisans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2990,
+        "height": 2773,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "andalousite",
+      "name": "Andalousite",
+      "wikidata": {
+        "id": "Q192637",
+        "label": "Andalousite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Andalusite - Malacheta, Minas Gerais, Brazil.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Andalusite_-_Malacheta,_Minas_Gerais,_Brazil.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Andalusite_-_Malacheta%2C_Minas_Gerais%2C_Brazil.jpg/500px-Andalusite_-_Malacheta%2C_Minas_Gerais%2C_Brazil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Andalusite_-_Malacheta%2C_Minas_Gerais%2C_Brazil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4000,
+        "height": 6000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "andradite",
+      "name": "Andradite",
+      "wikidata": {
+        "id": "Q280913",
+        "label": "andradite",
+        "description": "garnet, nesosilicate mineral"
+      },
+      "image": {
+        "file": "Andradit aus Wladiwostok.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Andradit_aus_Wladiwostok.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Andradit_aus_Wladiwostok.jpg/500px-Andradit_aus_Wladiwostok.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Andradit_aus_Wladiwostok.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5100,
+        "height": 3655,
+        "author": "Burkhard Mücke",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "anglesite",
+      "name": "Anglésite",
+      "wikidata": {
+        "id": "Q156526",
+        "label": "Anglésite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Anglésite-touizit Monocristal.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Angl%C3%A9site-touizit_Monocristal.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Angl%C3%A9site-touizit_Monocristal.jpg/500px-Angl%C3%A9site-touizit_Monocristal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/22/Angl%C3%A9site-touizit_Monocristal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4375,
+        "height": 2645,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "anhydrite",
+      "name": "Anhydrite",
+      "wikidata": {
+        "id": "Q105439",
+        "label": "Anhydrite",
+        "description": "espèce minérale correspondant au sulfate naturel de calcium anhydre"
+      },
+      "image": {
+        "file": "Anhydrite Arnave.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Anhydrite_Arnave.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Anhydrite_Arnave.jpg/500px-Anhydrite_Arnave.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/48/Anhydrite_Arnave.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4592,
+        "height": 3056,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "ankerite",
+      "name": "Ankérite",
+      "wikidata": {
+        "id": "Q120481",
+        "label": "Ankérite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Quartz; ankerite (48723944433).jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Quartz;_ankerite_(48723944433).jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Quartz%3B_ankerite_%2848723944433%29.jpg/500px-Quartz%3B_ankerite_%2848723944433%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Quartz%3B_ankerite_%2848723944433%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 8688,
+        "height": 5792,
+        "author": "Auckland Museum Collections from Auckland, Aotearoa New Zealand",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "anorthite",
+      "name": "Anorthite",
+      "wikidata": {
+        "id": "Q244994",
+        "label": "anorthite",
+        "description": "minéral: feldspath riche en calcium"
+      },
+      "image": {
+        "file": "Anorthite-rare08-38b.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Anorthite-rare08-38b.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Anorthite-rare08-38b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Anorthite-rare08-38b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 357,
+        "height": 400,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "apatite",
+      "name": "Apatite",
+      "wikidata": {
+        "id": "Q413478",
+        "label": "Hydroxyapatite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Hydroxylapatite-338779.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Hydroxylapatite-338779.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Hydroxylapatite-338779.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Hydroxylapatite-338779.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 460,
+        "height": 432,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "apophyllite",
+      "name": "Apophyllite",
+      "wikidata": {
+        "id": "Q261461",
+        "label": "Apophyllite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Apophyllite-54502.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Apophyllite-54502.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Apophyllite-54502.jpg/500px-Apophyllite-54502.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/27/Apophyllite-54502.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 600,
+        "height": 552,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "aragonite",
+      "name": "Aragonite",
+      "wikidata": {
+        "id": "Q23775",
+        "label": "aragonite",
+        "description": "carbonate mineral"
+      },
+      "image": {
+        "file": "Aragonite 2 Enguidanos.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Aragonite_2_Enguidanos.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Aragonite_2_Enguidanos.jpg/500px-Aragonite_2_Enguidanos.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Aragonite_2_Enguidanos.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5425,
+        "height": 5289,
+        "author": "Didier Descouens",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "argent",
+      "name": "Argent",
+      "wikidata": null,
+      "image": {
+        "file": "Silver_crystal.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Silver_crystal.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/Silver_crystal.jpg/500px-Silver_crystal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/55/Silver_crystal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4428,
+        "height": 3472,
+        "author": "Alchemist-hp (talk) (www.pse-mendelejew.de)",
+        "license": "CC BY-SA 3.0 de",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "arsenopyrite",
+      "name": "Arsénopyrite",
+      "wikidata": {
+        "id": "Q191939",
+        "label": "Arsénopyrite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Arsenopyrite Tomeik.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Arsenopyrite_Tomeik.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Arsenopyrite_Tomeik.jpg/500px-Arsenopyrite_Tomeik.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Arsenopyrite_Tomeik.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1920,
+        "height": 1279,
+        "author": "Henk Smeets – tomeikminerals.com",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "atacamite",
+      "name": "Atacamite",
+      "wikidata": {
+        "id": "Q409775",
+        "label": "atacamite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Atacamite on malachite - Mt Gunson mines, South Australia.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Atacamite_on_malachite_-_Mt_Gunson_mines,_South_Australia.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Atacamite_on_malachite_-_Mt_Gunson_mines%2C_South_Australia.jpg/500px-Atacamite_on_malachite_-_Mt_Gunson_mines%2C_South_Australia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Atacamite_on_malachite_-_Mt_Gunson_mines%2C_South_Australia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6880,
+        "height": 5504,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "augite",
+      "name": "Augite",
+      "wikidata": {
+        "id": "Q192141",
+        "label": "Augite",
+        "description": "pyroxene mineral"
+      },
+      "image": {
+        "file": "Augite Rwanda.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Augite_Rwanda.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Augite_Rwanda.jpg/500px-Augite_Rwanda.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Augite_Rwanda.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6048,
+        "height": 4032,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "aurichalcite",
+      "name": "Aurichalcite",
+      "wikidata": null,
+      "image": {
+        "file": "Aurichalciteescouloubre.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Aurichalciteescouloubre.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Aurichalciteescouloubre.jpg/500px-Aurichalciteescouloubre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/da/Aurichalciteescouloubre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3520,
+        "height": 2833,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "autunite",
+      "name": "Autunite",
+      "wikidata": {
+        "id": "Q407345",
+        "label": "autunite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Autunite carrière Les Oudots.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Autunite_carri%C3%A8re_Les_Oudots.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Autunite_carri%C3%A8re_Les_Oudots.jpg/500px-Autunite_carri%C3%A8re_Les_Oudots.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/25/Autunite_carri%C3%A8re_Les_Oudots.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4095,
+        "height": 5868,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "axinite",
+      "name": "Axinite",
+      "wikidata": {
+        "id": "Q664861",
+        "label": "Axinite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Axinite-Mn - Canta, Lima, Peru.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Axinite-Mn_-_Canta,_Lima,_Peru.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Axinite-Mn_-_Canta%2C_Lima%2C_Peru.jpg/500px-Axinite-Mn_-_Canta%2C_Lima%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Axinite-Mn_-_Canta%2C_Lima%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 8000,
+        "height": 6000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "azurite",
+      "name": "Azurite",
+      "wikidata": {
+        "id": "Q108212",
+        "label": "azurite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Azurite - New Nevada Lode, La Sal, Utah, USA.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Azurite_-_New_Nevada_Lode,_La_Sal,_Utah,_USA.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Azurite_-_New_Nevada_Lode%2C_La_Sal%2C_Utah%2C_USA.jpg/500px-Azurite_-_New_Nevada_Lode%2C_La_Sal%2C_Utah%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Azurite_-_New_Nevada_Lode%2C_La_Sal%2C_Utah%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 7338,
+        "height": 5504,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "baryte",
+      "name": "Baryte",
+      "wikidata": {
+        "id": "Q184196",
+        "label": "barytine",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Barite - Cerro Warihuyn, Miraflores, Huamalies, Huanuco, Peru.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Barite_-_Cerro_Warihuyn,_Miraflores,_Huamalies,_Huanuco,_Peru.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Barite_-_Cerro_Warihuyn%2C_Miraflores%2C_Huamalies%2C_Huanuco%2C_Peru.jpg/500px-Barite_-_Cerro_Warihuyn%2C_Miraflores%2C_Huamalies%2C_Huanuco%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Barite_-_Cerro_Warihuyn%2C_Miraflores%2C_Huamalies%2C_Huanuco%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4000,
+        "height": 6000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "beryl",
+      "name": "Béryl",
+      "wikidata": {
+        "id": "Q103480",
+        "label": "béryl",
+        "description": "minéral cyclosilicate de béryllium et d'aluminium, comprenant l'émeraude, l'aigue-marine et la morganite"
+      },
+      "image": {
+        "file": "Beryl-0128-01a.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Beryl-0128-01a.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Beryl-0128-01a.jpg/500px-Beryl-0128-01a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Beryl-0128-01a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 699,
+        "height": 800,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "biotite",
+      "name": "Biotite",
+      "wikidata": {
+        "id": "Q105794",
+        "label": "biotite",
+        "description": "minéral sombre de la famille des micas (phyllosilicates)"
+      },
+      "image": {
+        "file": "Biotite aggregate - Ochtendung, Eifel, Germany.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Biotite_aggregate_-_Ochtendung,_Eifel,_Germany.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Biotite_aggregate_-_Ochtendung%2C_Eifel%2C_Germany.jpg/500px-Biotite_aggregate_-_Ochtendung%2C_Eifel%2C_Germany.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Biotite_aggregate_-_Ochtendung%2C_Eifel%2C_Germany.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 921,
+        "height": 691,
+        "author": "Fred Kruijen",
+        "license": "CC BY-SA 3.0 nl",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "bismuth",
+      "name": "Bismuth",
+      "wikidata": {
+        "id": "Q419292",
+        "label": "Bismuthinite",
+        "description": "minéral: sulfure de bismuth (III)"
+      },
+      "image": {
+        "file": "Bismuthinite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Bismuthinite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Bismuthinite.jpg/500px-Bismuthinite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/40/Bismuthinite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2422,
+        "height": 2032,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "bornite",
+      "name": "Bornite",
+      "wikidata": {
+        "id": "Q108694",
+        "label": "bornite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Bornite-105006.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Bornite-105006.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Bornite-105006.jpg/500px-Bornite-105006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Bornite-105006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 758,
+        "height": 561,
+        "author": "Leon Hupperichs",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "boulangerite",
+      "name": "Boulangérite",
+      "wikidata": {
+        "id": "Q250618",
+        "label": "Boulangérite",
+        "description": "minéral: sulfure de plomb et d'antimoine"
+      },
+      "image": {
+        "file": "Boulangerite-uri-41a.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Boulangerite-uri-41a.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Boulangerite-uri-41a.jpg/500px-Boulangerite-uri-41a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/24/Boulangerite-uri-41a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 800,
+        "height": 486,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "bournonite",
+      "name": "Bournonite",
+      "wikidata": {
+        "id": "Q413314",
+        "label": "Bournonite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "2522M-bournonite1.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:2522M-bournonite1.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/2522M-bournonite1.jpg/500px-2522M-bournonite1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/69/2522M-bournonite1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3116,
+        "height": 2893,
+        "author": "CarlesMillan",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "brochantite",
+      "name": "Brochantite",
+      "wikidata": {
+        "id": "Q411036",
+        "label": "Brochantite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Brochantite from Goulmima, Errachidia Province, Morocco.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Brochantite_from_Goulmima,_Errachidia_Province,_Morocco.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Brochantite_from_Goulmima%2C_Errachidia_Province%2C_Morocco.jpg/500px-Brochantite_from_Goulmima%2C_Errachidia_Province%2C_Morocco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/07/Brochantite_from_Goulmima%2C_Errachidia_Province%2C_Morocco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3860,
+        "height": 2895,
+        "author": "Zbynek Burival",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "brucite",
+      "name": "Brucite",
+      "wikidata": {
+        "id": "Q419250",
+        "label": "Brucite",
+        "description": "minéral: hydroxide de magnésium"
+      },
+      "image": {
+        "file": "Brucite-215491.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Brucite-215491.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Brucite-215491.jpg/500px-Brucite-215491.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/1/10/Brucite-215491.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 600,
+        "height": 532,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "calcedoine",
+      "name": "Calcédoine",
+      "wikidata": {
+        "id": "Q170448",
+        "label": "calcédoine",
+        "description": "variété minérale amorphe ou très peu cristallisée de la silice"
+      },
+      "image": {
+        "file": "Mineraly.sk - chalcedon.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Mineraly.sk_-_chalcedon.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Mineraly.sk_-_chalcedon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Mineraly.sk_-_chalcedon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 340,
+        "height": 200,
+        "author": "Auteur inconnu",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "calcite",
+      "name": "Calcite",
+      "wikidata": {
+        "id": "Q171917",
+        "label": "calcite",
+        "description": "carbonate mineral"
+      },
+      "image": {
+        "file": "Calcite (Mexique) .jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Calcite_(Mexique)_.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Calcite_%28Mexique%29_.jpg/500px-Calcite_%28Mexique%29_.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Calcite_%28Mexique%29_.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2848,
+        "height": 4288,
+        "author": "Géry PARENT",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "cassiterite",
+      "name": "Cassitérite",
+      "wikidata": {
+        "id": "Q191222",
+        "label": "cassitérite",
+        "description": "minéral d'étain"
+      },
+      "image": {
+        "file": "CassiteriteUSGOV.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:CassiteriteUSGOV.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/2/2e/CassiteriteUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/2e/CassiteriteUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 360,
+        "height": 272,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "celestine",
+      "name": "Célestine",
+      "wikidata": {
+        "id": "Q407221",
+        "label": "célestine",
+        "description": "minéral : sulfate de strontium"
+      },
+      "image": {
+        "file": "Celestine - Sakoany deposit, Katsepy, Mitsinjo, Boeny, Madagascar.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Celestine_-_Sakoany_deposit,_Katsepy,_Mitsinjo,_Boeny,_Madagascar.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Celestine_-_Sakoany_deposit%2C_Katsepy%2C_Mitsinjo%2C_Boeny%2C_Madagascar.jpg/500px-Celestine_-_Sakoany_deposit%2C_Katsepy%2C_Mitsinjo%2C_Boeny%2C_Madagascar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Celestine_-_Sakoany_deposit%2C_Katsepy%2C_Mitsinjo%2C_Boeny%2C_Madagascar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5400,
+        "height": 4000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "cerusite",
+      "name": "Cérusite",
+      "wikidata": {
+        "id": "Q409122",
+        "label": "Cérusite",
+        "description": "lead carbonate mineral"
+      },
+      "image": {
+        "file": "Cerussite - Nakhlak mine, Anarak, Esfahan, Iran.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Cerussite_-_Nakhlak_mine,_Anarak,_Esfahan,_Iran.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Cerussite_-_Nakhlak_mine%2C_Anarak%2C_Esfahan%2C_Iran.jpg/500px-Cerussite_-_Nakhlak_mine%2C_Anarak%2C_Esfahan%2C_Iran.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/28/Cerussite_-_Nakhlak_mine%2C_Anarak%2C_Esfahan%2C_Iran.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6000,
+        "height": 5000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "chabazite",
+      "name": "Chabazite",
+      "wikidata": {
+        "id": "Q727306",
+        "label": "Chabazite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Chabazite Tchéquie.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Chabazite_Tch%C3%A9quie.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/Chabazite_Tch%C3%A9quie.jpg/500px-Chabazite_Tch%C3%A9quie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Chabazite_Tch%C3%A9quie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6143,
+        "height": 5000,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "chalcanthite",
+      "name": "Chalcanthite",
+      "wikidata": {
+        "id": "Q407861",
+        "label": "Chalcantite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Chalcanthite - streak color.JPG",
+        "page": "https://commons.wikimedia.org/wiki/File:Chalcanthite_-_streak_color.JPG",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Chalcanthite_-_streak_color.JPG/500px-Chalcanthite_-_streak_color.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/63/Chalcanthite_-_streak_color.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3242,
+        "height": 2624,
+        "author": "Ra'ike",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "chalcocite",
+      "name": "Chalcocite",
+      "wikidata": {
+        "id": "Q278106",
+        "label": "chalcocite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Calcite-Chalcocite-mf36c.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Calcite-Chalcocite-mf36c.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Calcite-Chalcocite-mf36c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Calcite-Chalcocite-mf36c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 347,
+        "height": 400,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "chalcopyrite",
+      "name": "Chalcopyrite",
+      "wikidata": {
+        "id": "Q111044",
+        "label": "chalcopyrite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Chalkopyrite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Chalkopyrite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Chalkopyrite.jpg/500px-Chalkopyrite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Chalkopyrite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 777,
+        "height": 505,
+        "author": "VikSl Exhibit from my own collection ( V.Slyotov, http://mindraw.web.ru/ )",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "chromite",
+      "name": "Chromite",
+      "wikidata": null,
+      "image": {
+        "file": "Chromite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Chromite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Chromite.jpg/500px-Chromite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chromite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1004,
+        "height": 724,
+        "author": "Weinrich Minerals, Inc.",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "chrysoberyl",
+      "name": "Chrysobéryl",
+      "wikidata": {
+        "id": "Q422179",
+        "label": "chrysobéryl",
+        "description": "minéral oxyde de béryllium et d'aluminium, englobant alexandrite et cymophane"
+      },
+      "image": {
+        "file": "Chrysoberyl.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Chrysoberyl.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/54/Chrysoberyl.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/54/Chrysoberyl.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 231,
+        "height": 202,
+        "author": "Auteur inconnu",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "chrysocolle",
+      "name": "Chrysocolle",
+      "wikidata": {
+        "id": "Q407485",
+        "label": "chrysocolle",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Mineraly.sk - chryzokol.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Mineraly.sk_-_chryzokol.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Mineraly.sk_-_chryzokol.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Mineraly.sk_-_chryzokol.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 340,
+        "height": 200,
+        "author": "Auteur inconnu",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "cinabre",
+      "name": "Cinabre",
+      "wikidata": {
+        "id": "Q104614",
+        "label": "cinabre",
+        "description": "mercury sulfide mineral"
+      },
+      "image": {
+        "file": "Cinnabar.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Cinnabar.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Cinnabar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Cinnabar.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 360,
+        "height": 298,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "clinochlore",
+      "name": "Clinochlore",
+      "wikidata": {
+        "id": "Q421357",
+        "label": "Clinochlore",
+        "description": "phyllosilicate mineral"
+      },
+      "image": {
+        "file": "Clinochlore-usa12c.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Clinochlore-usa12c.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Clinochlore-usa12c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Clinochlore-usa12c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 350,
+        "height": 400,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "cobaltite",
+      "name": "Cobaltite",
+      "wikidata": {
+        "id": "Q410396",
+        "label": "cobaltite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Koboltglans.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Koboltglans.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Koboltglans.jpg/500px-Koboltglans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/75/Koboltglans.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 919,
+        "height": 794,
+        "author": "User Tor Svensson",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "cordierite",
+      "name": "Cordiérite",
+      "wikidata": {
+        "id": "Q410336",
+        "label": "Cordiérite",
+        "description": "minéral : tectosilicate"
+      },
+      "image": {
+        "file": "Cordierite Italie.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Cordierite_Italie.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Cordierite_Italie.jpg/500px-Cordierite_Italie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/45/Cordierite_Italie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2340,
+        "height": 2761,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "corindon",
+      "name": "Corindon",
+      "wikidata": {
+        "id": "Q131777",
+        "label": "corindon",
+        "description": "espèce minérale composée d'alumine anhydre cristallisée"
+      },
+      "image": {
+        "file": "Corundum.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Corundum.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Corundum.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/a/a0/Corundum.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 360,
+        "height": 323,
+        "author": "http://resourcescommittee.house.gov/subcommittees/emr/usgsweb/photogallery/images/",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "covellite",
+      "name": "Covellite",
+      "wikidata": {
+        "id": "Q325345",
+        "label": "covellite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Covellite-USA.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Covellite-USA.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Covellite-USA.jpg/500px-Covellite-USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Covellite-USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3676,
+        "height": 2580,
+        "author": "Didier Descouens",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "crocoite",
+      "name": "Crocoïte",
+      "wikidata": {
+        "id": "Q422903",
+        "label": "Crocoïte",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Crocoïte Dundas2p.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Croco%C3%AFte_Dundas2p.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/Croco%C3%AFte_Dundas2p.jpg/500px-Croco%C3%AFte_Dundas2p.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/79/Croco%C3%AFte_Dundas2p.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4397,
+        "height": 2888,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "cryolite",
+      "name": "Cryolite",
+      "wikidata": {
+        "id": "Q47007283",
+        "label": "cryolite mineral group",
+        "description": "aluminohexafluorate mineral group, stoichiometric perovskites"
+      },
+      "image": {
+        "file": "816-_Ivigtut_-_cryolite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:816-_Ivigtut_-_cryolite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/816-_Ivigtut_-_cryolite.jpg/500px-816-_Ivigtut_-_cryolite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/7e/816-_Ivigtut_-_cryolite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4824,
+        "height": 4032,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "cuivre",
+      "name": "Cuivre",
+      "wikidata": {
+        "id": "Q164411",
+        "label": "malachite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Malachit, Kupferspat.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Malachit,_Kupferspat.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Malachit%2C_Kupferspat.jpg/500px-Malachit%2C_Kupferspat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Malachit%2C_Kupferspat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5100,
+        "height": 3567,
+        "author": "Burkhard Mücke",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "cuprite",
+      "name": "Cuprite",
+      "wikidata": {
+        "id": "Q407335",
+        "label": "cuprite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Cuprite Crystals.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Cuprite_Crystals.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Cuprite_Crystals.jpg/500px-Cuprite_Crystals.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/49/Cuprite_Crystals.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3724,
+        "height": 3724,
+        "author": "Masha Milshina",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "danburite",
+      "name": "Danburite",
+      "wikidata": {
+        "id": "Q424270",
+        "label": "Danburite",
+        "description": "espèce minérale du groupe des silicates sous-groupe des tectosilicates"
+      },
+      "image": {
+        "file": "DanburiteMexique.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:DanburiteMexique.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/DanburiteMexique.jpg/500px-DanburiteMexique.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/1/14/DanburiteMexique.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2842,
+        "height": 2878,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "datolite",
+      "name": "Datolite",
+      "wikidata": {
+        "id": "Q415059",
+        "label": "datolite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Datolite-1116-02f.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Datolite-1116-02f.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/24/Datolite-1116-02f.jpg/500px-Datolite-1116-02f.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/24/Datolite-1116-02f.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1732,
+        "height": 1782,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "diamant",
+      "name": "Diamant",
+      "wikidata": {
+        "id": "Q5283",
+        "label": "diamant",
+        "description": "forme cristalline précieuse de carbone"
+      },
+      "image": {
+        "file": "Rough Diamond.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Rough_Diamond.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Rough_Diamond.jpg/500px-Rough_Diamond.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Rough_Diamond.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 960,
+        "height": 891,
+        "author": "DGPC/ADF Luísa Oliveira",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "diopside",
+      "name": "Diopside",
+      "wikidata": {
+        "id": "Q316671",
+        "label": "diopside",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Diopside Aoste.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Diopside_Aoste.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Diopside_Aoste.jpg/500px-Diopside_Aoste.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/95/Diopside_Aoste.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3372,
+        "height": 2726,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "dioptase",
+      "name": "Dioptase",
+      "wikidata": {
+        "id": "Q413369",
+        "label": "dioptase",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Dioptasecongo2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Dioptasecongo2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Dioptasecongo2.jpg/500px-Dioptasecongo2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Dioptasecongo2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2593,
+        "height": 2713,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "disthene",
+      "name": "Disthène",
+      "wikidata": {
+        "id": "Q193450",
+        "label": "Disthène",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "KyaniteUSGOV.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:KyaniteUSGOV.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/KyaniteUSGOV.jpg/500px-KyaniteUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/8/80/KyaniteUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 750,
+        "height": 541,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "dolomite",
+      "name": "Dolomite",
+      "wikidata": {
+        "id": "Q167741",
+        "label": "dolomite",
+        "description": "carbonate mineral – CaMg(CO₃)₂"
+      },
+      "image": {
+        "file": "Dolomite-Magnésite- Navarre.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Dolomite-Magn%C3%A9site-_Navarre.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/Dolomite-Magn%C3%A9site-_Navarre.jpg/500px-Dolomite-Magn%C3%A9site-_Navarre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/09/Dolomite-Magn%C3%A9site-_Navarre.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3628,
+        "height": 2821,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "dravite",
+      "name": "Dravite",
+      "wikidata": {
+        "id": "Q2482759",
+        "label": "Dravite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Dravite cristal.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Dravite_cristal.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3d/Dravite_cristal.jpg/500px-Dravite_cristal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Dravite_cristal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 685,
+        "height": 787,
+        "author": "Vassil",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "elbaite",
+      "name": "Elbaïte",
+      "wikidata": {
+        "id": "Q1920794",
+        "label": "elbaïte",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Elbaite with albite - São José da Safira, Minas Gerais, Brazil.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Elbaite_with_albite_-_S%C3%A3o_Jos%C3%A9_da_Safira,_Minas_Gerais,_Brazil.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Elbaite_with_albite_-_S%C3%A3o_Jos%C3%A9_da_Safira%2C_Minas_Gerais%2C_Brazil.jpg/500px-Elbaite_with_albite_-_S%C3%A3o_Jos%C3%A9_da_Safira%2C_Minas_Gerais%2C_Brazil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/08/Elbaite_with_albite_-_S%C3%A3o_Jos%C3%A9_da_Safira%2C_Minas_Gerais%2C_Brazil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4400,
+        "height": 5600,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "epidote",
+      "name": "Épidote",
+      "wikidata": {
+        "id": "Q272844",
+        "label": "épidote",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Epidote - Canta, Lima, Peru.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Epidote_-_Canta,_Lima,_Peru.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Epidote_-_Canta%2C_Lima%2C_Peru.jpg/500px-Epidote_-_Canta%2C_Lima%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Epidote_-_Canta%2C_Lima%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 8000,
+        "height": 6000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "erythrite",
+      "name": "Érythrite",
+      "wikidata": {
+        "id": "Q247914",
+        "label": "érythrite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Erythritemaroc1.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Erythritemaroc1.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Erythritemaroc1.jpg/500px-Erythritemaroc1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/34/Erythritemaroc1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2795,
+        "height": 3150,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "fluorite",
+      "name": "Fluorite",
+      "wikidata": {
+        "id": "Q102151",
+        "label": "fluorine",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Fluorine MHNT.MIN.2010.16.1.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Fluorine_MHNT.MIN.2010.16.1.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Fluorine_MHNT.MIN.2010.16.1.jpg/500px-Fluorine_MHNT.MIN.2010.16.1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Fluorine_MHNT.MIN.2010.16.1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6143,
+        "height": 4095,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "galene",
+      "name": "Galène",
+      "wikidata": {
+        "id": "Q37559",
+        "label": "galène",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Galena - Huallanca, Bologesi, Ancash, Peru.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Galena_-_Huallanca,_Bologesi,_Ancash,_Peru.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Galena_-_Huallanca%2C_Bologesi%2C_Ancash%2C_Peru.jpg/500px-Galena_-_Huallanca%2C_Bologesi%2C_Ancash%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/8/81/Galena_-_Huallanca%2C_Bologesi%2C_Ancash%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6000,
+        "height": 5000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "gibbsite",
+      "name": "Gibbsite",
+      "wikidata": {
+        "id": "Q408516",
+        "label": "Gibbsite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Gibbsite-fiu09b.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Gibbsite-fiu09b.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Gibbsite-fiu09b.jpg/500px-Gibbsite-fiu09b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Gibbsite-fiu09b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 800,
+        "height": 739,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "glaucophane",
+      "name": "Glaucophane",
+      "wikidata": {
+        "id": "Q413272",
+        "label": "Glaucophane",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Glaucophane bleu de Groix.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Glaucophane_bleu_de_Groix.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Glaucophane_bleu_de_Groix.jpg/500px-Glaucophane_bleu_de_Groix.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Glaucophane_bleu_de_Groix.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5940,
+        "height": 3832,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "goethite",
+      "name": "Goethite",
+      "wikidata": {
+        "id": "Q189703",
+        "label": "goethite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Goethit-1597.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Goethit-1597.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Goethit-1597.jpg/500px-Goethit-1597.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/94/Goethit-1597.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4261,
+        "height": 2397,
+        "author": "Raimond Spekking",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "graphite",
+      "name": "Graphite",
+      "wikidata": {
+        "id": "Q5309",
+        "label": "graphite",
+        "description": "espèce minérale"
+      },
+      "image": {
+        "file": "GraphiteUSGOV.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:GraphiteUSGOV.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/f/f3/GraphiteUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/f3/GraphiteUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 360,
+        "height": 353,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "grossulaire",
+      "name": "Grossulaire",
+      "wikidata": {
+        "id": "Q220373",
+        "label": "grossulaire",
+        "description": "garnet, nesosilicate mineral"
+      },
+      "image": {
+        "file": "Grossular-57594.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Grossular-57594.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Grossular-57594.jpg/500px-Grossular-57594.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/77/Grossular-57594.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 630,
+        "height": 540,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "gypse",
+      "name": "Gypse",
+      "wikidata": {
+        "id": "Q82658",
+        "label": "gypse",
+        "description": "minéral composé de sulfate dihydraté de calcium"
+      },
+      "image": {
+        "file": "Gypse Caresse.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Gypse_Caresse.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Gypse_Caresse.jpg/500px-Gypse_Caresse.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Gypse_Caresse.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3497,
+        "height": 3139,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "halite",
+      "name": "Halite",
+      "wikidata": {
+        "id": "Q5314",
+        "label": "halite",
+        "description": "forme minérale du chlorure de sodium"
+      },
+      "image": {
+        "file": "SaltCrystaUSGOV.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:SaltCrystaUSGOV.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/SaltCrystaUSGOV.jpg/500px-SaltCrystaUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/9f/SaltCrystaUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 556,
+        "height": 450,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "hematite",
+      "name": "Hématite",
+      "wikidata": {
+        "id": "Q103223",
+        "label": "hématite",
+        "description": "minéral composée d’oxyde ferrique"
+      },
+      "image": {
+        "file": "Hematite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Hematite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ae/Hematite.jpg/500px-Hematite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Hematite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1641,
+        "height": 1581,
+        "author": "DanielCD~commonswiki",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "hemimorphite",
+      "name": "Hémimorphite",
+      "wikidata": {
+        "id": "Q408008",
+        "label": "hémimorphite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Hemimorphite - Mapimi, Durango, Mexico.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Hemimorphite_-_Mapimi,_Durango,_Mexico.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Hemimorphite_-_Mapimi%2C_Durango%2C_Mexico.jpg/500px-Hemimorphite_-_Mapimi%2C_Durango%2C_Mexico.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Hemimorphite_-_Mapimi%2C_Durango%2C_Mexico.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6000,
+        "height": 6000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "heulandite",
+      "name": "Heulandite",
+      "wikidata": {
+        "id": "Q1466985",
+        "label": "Heulandite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Heulandite-Ca-240277.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Heulandite-Ca-240277.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Heulandite-Ca-240277.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Heulandite-Ca-240277.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 500,
+        "height": 446,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "hornblende",
+      "name": "Hornblende",
+      "wikidata": {
+        "id": "Q1057300",
+        "label": "Hornblende",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Amphibole.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Amphibole.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Amphibole.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Amphibole.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 360,
+        "height": 283,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "hydrozincite",
+      "name": "Hydrozincite",
+      "wikidata": null,
+      "image": null,
+      "status": "erreur",
+      "note": "Échec répété : https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&type=item&limit=7&language=fr&uselang=fr&search=Hydrozincite"
+    },
+    {
+      "slug": "ilmenite",
+      "name": "Ilménite",
+      "wikidata": null,
+      "image": null,
+      "status": "erreur",
+      "note": "Échec répété : https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&type=item&limit=7&language=fr&uselang=fr&search=Ilm%C3%A9nite"
+    },
+    {
+      "slug": "jadeite",
+      "name": "Jadéite",
+      "wikidata": {
+        "id": "Q422173",
+        "label": "jadéite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Ubehandlet grønn jade.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Ubehandlet_gr%C3%B8nn_jade.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Ubehandlet_gr%C3%B8nn_jade.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Ubehandlet_gr%C3%B8nn_jade.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 400,
+        "height": 400,
+        "author": "Thomas Nordengen",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "jarosite",
+      "name": "Jarosite",
+      "wikidata": {
+        "id": "Q411168",
+        "label": "Jarosite",
+        "description": "alunite supergroup, sulfate mineral"
+      },
+      "image": {
+        "file": "Jarosite-114913.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Jarosite-114913.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Jarosite-114913.jpg/500px-Jarosite-114913.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Jarosite-114913.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1000,
+        "height": 963,
+        "author": "Christian Rewitzer",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "kaolinite",
+      "name": "Kaolinite",
+      "wikidata": {
+        "id": "Q3777523",
+        "label": "kaolinite-serpentine mineral group",
+        "description": "mineral group"
+      },
+      "image": {
+        "file": "Kaolinite_from_Twiggs_County_in_Georgia_in_USA.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Kaolinite_from_Twiggs_County_in_Georgia_in_USA.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Kaolinite_from_Twiggs_County_in_Georgia_in_USA.jpg/500px-Kaolinite_from_Twiggs_County_in_Georgia_in_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/40/Kaolinite_from_Twiggs_County_in_Georgia_in_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1355,
+        "height": 944,
+        "author": "James St. John https://www.flickr.com/people/jsjgeology?rb=1",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "labradorite",
+      "name": "Labradorite",
+      "wikidata": {
+        "id": "Q430062",
+        "label": "labradorite",
+        "description": "mineral: intermediate member of a solid solution series (50 to 70 % anorthite and albite)"
+      },
+      "image": {
+        "file": "Labradorite detail.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Labradorite_detail.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Labradorite_detail.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Labradorite_detail.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 300,
+        "height": 296,
+        "author": "Gregory Phillips",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "lazulite",
+      "name": "Lazulite",
+      "wikidata": {
+        "id": "Q412651",
+        "label": "Lazulite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Lazulite-tmix07-166a.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Lazulite-tmix07-166a.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Lazulite-tmix07-166a.jpg/500px-Lazulite-tmix07-166a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/8/80/Lazulite-tmix07-166a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 800,
+        "height": 753,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "lazurite",
+      "name": "Lazurite",
+      "wikidata": {
+        "id": "Q130343119",
+        "label": "Azure spar",
+        "description": "Set index articles (minerals with the same trivial name)"
+      },
+      "image": {
+        "file": "Lazurite-195604.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Lazurite-195604.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Lazurite-195604.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Lazurite-195604.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 400,
+        "height": 376,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "lepidolite",
+      "name": "Lépidolite",
+      "wikidata": {
+        "id": "Q429926",
+        "label": "Lépidolite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Lepidolita.jpeg",
+        "page": "https://commons.wikimedia.org/wiki/File:Lepidolita.jpeg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Lepidolita.jpeg/500px-Lepidolita.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Lepidolita.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1113,
+        "height": 894,
+        "author": "Auteur inconnu",
+        "license": "CC BY-SA 2.0 br",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/br/deed.en",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "leucite",
+      "name": "Leucite",
+      "wikidata": {
+        "id": "Q419201",
+        "label": "leucite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "PseudoleucitaEZ.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:PseudoleucitaEZ.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/PseudoleucitaEZ.jpg/500px-PseudoleucitaEZ.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/ef/PseudoleucitaEZ.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 650,
+        "height": 542,
+        "author": "Eurico Zimbres (FGEL/UERJ)",
+        "license": "CC BY-SA 2.5",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "libethenite",
+      "name": "Libéthénite",
+      "wikidata": {
+        "id": "Q420481",
+        "label": "Libéthénite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Libethenite-245668.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Libethenite-245668.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Libethenite-245668.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Libethenite-245668.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 429,
+        "height": 360,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "linarite",
+      "name": "Linarite",
+      "wikidata": {
+        "id": "Q417269",
+        "label": "Linarite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Linarite-269083.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Linarite-269083.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Linarite-269083.jpg/500px-Linarite-269083.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/50/Linarite-269083.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1000,
+        "height": 868,
+        "author": "Christian Rewitzer",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "lussatite",
+      "name": "Lussatite",
+      "wikidata": {
+        "id": "Q3267820",
+        "label": "lussatite",
+        "description": "opal-CT variety"
+      },
+      "image": {
+        "file": "Opal-CT Lussat MNHN Minéralogie.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Opal-CT_Lussat_MNHN_Min%C3%A9ralogie.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e3/Opal-CT_Lussat_MNHN_Min%C3%A9ralogie.jpg/500px-Opal-CT_Lussat_MNHN_Min%C3%A9ralogie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Opal-CT_Lussat_MNHN_Min%C3%A9ralogie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5000,
+        "height": 3750,
+        "author": "Marie-Lan Taÿ Pamart",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "magnesite",
+      "name": "Magnésite",
+      "wikidata": {
+        "id": "Q425450",
+        "label": "magnésite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Magnesite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Magnesite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/Magnesite.jpg/500px-Magnesite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Magnesite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3056,
+        "height": 2592,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "magnetite",
+      "name": "Magnétite",
+      "wikidata": {
+        "id": "Q181395",
+        "label": "magnétite",
+        "description": "minéral de minerai de fer"
+      },
+      "image": {
+        "file": "Magnetite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Magnetite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1d/Magnetite.jpg/500px-Magnetite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Magnetite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5977,
+        "height": 3953,
+        "author": "Archaeodontosaurus",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "malachite",
+      "name": "Malachite",
+      "wikidata": {
+        "id": "Q164411",
+        "label": "malachite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Malachit, Kupferspat.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Malachit,_Kupferspat.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Malachit%2C_Kupferspat.jpg/500px-Malachit%2C_Kupferspat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Malachit%2C_Kupferspat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5100,
+        "height": 3567,
+        "author": "Burkhard Mücke",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "manganite",
+      "name": "Manganite",
+      "wikidata": {
+        "id": "Q401047",
+        "label": "manganite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Manganit - Ilfeld, Harz2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Manganit_-_Ilfeld,_Harz2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Manganit_-_Ilfeld%2C_Harz2.jpg/500px-Manganit_-_Ilfeld%2C_Harz2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/74/Manganit_-_Ilfeld%2C_Harz2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2600,
+        "height": 1850,
+        "author": "Ra'ike (see also: de:Benutzer:Ra'ike)",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "marcassite",
+      "name": "Marcassite",
+      "wikidata": {
+        "id": "Q409087",
+        "label": "marcassite",
+        "description": "minéral : disulfure de fer(II)"
+      },
+      "image": {
+        "file": "MarcassiteII.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:MarcassiteII.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/MarcassiteII.jpg/500px-MarcassiteII.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d8/MarcassiteII.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4592,
+        "height": 3056,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "microcline",
+      "name": "Microcline",
+      "wikidata": {
+        "id": "Q421841",
+        "label": "microcline",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Microcline-fel1c.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Microcline-fel1c.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/96/Microcline-fel1c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/96/Microcline-fel1c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 388,
+        "height": 400,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "millerite",
+      "name": "Millérite",
+      "wikidata": {
+        "id": "Q411068",
+        "label": "millérite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Millerite1 - Poudrette quarry, Mont Saint-Hilaire, Quebec, Canada.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Millerite1_-_Poudrette_quarry,_Mont_Saint-Hilaire,_Quebec,_Canada.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Millerite1_-_Poudrette_quarry%2C_Mont_Saint-Hilaire%2C_Quebec%2C_Canada.jpg/500px-Millerite1_-_Poudrette_quarry%2C_Mont_Saint-Hilaire%2C_Quebec%2C_Canada.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Millerite1_-_Poudrette_quarry%2C_Mont_Saint-Hilaire%2C_Quebec%2C_Canada.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 723,
+        "height": 800,
+        "author": "Modris Baum",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "mimetite",
+      "name": "Mimétite",
+      "wikidata": {
+        "id": "Q424328",
+        "label": "mimétite",
+        "description": "minéral composé d'arséniate de plomb et de chlorure"
+      },
+      "image": {
+        "file": "Mimetite - Congreso-León mines, San Pedro Corralitos, Chihuahua, Mexico.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Mimetite_-_Congreso-Le%C3%B3n_mines,_San_Pedro_Corralitos,_Chihuahua,_Mexico.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Mimetite_-_Congreso-Le%C3%B3n_mines%2C_San_Pedro_Corralitos%2C_Chihuahua%2C_Mexico.jpg/500px-Mimetite_-_Congreso-Le%C3%B3n_mines%2C_San_Pedro_Corralitos%2C_Chihuahua%2C_Mexico.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/8/88/Mimetite_-_Congreso-Le%C3%B3n_mines%2C_San_Pedro_Corralitos%2C_Chihuahua%2C_Mexico.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 8256,
+        "height": 5504,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "molybdenite",
+      "name": "Molybdénite",
+      "wikidata": {
+        "id": "Q382994",
+        "label": "molybdénite",
+        "description": "minéral: sulfure de molybdène"
+      },
+      "image": {
+        "file": "Molybdenite quebec2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Molybdenite_quebec2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Molybdenite_quebec2.jpg/500px-Molybdenite_quebec2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/04/Molybdenite_quebec2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3462,
+        "height": 2430,
+        "author": "Didier Descouens",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "monazite",
+      "name": "Monazite",
+      "wikidata": {
+        "id": "Q3860580",
+        "label": "monazite-(Ce)",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Monazite-(Ce)-Quartz-242332.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Monazite-(Ce)-Quartz-242332.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Monazite-%28Ce%29-Quartz-242332.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Monazite-%28Ce%29-Quartz-242332.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 415,
+        "height": 360,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "muscovite",
+      "name": "Muscovite",
+      "wikidata": {
+        "id": "Q106532",
+        "label": "Muscovite",
+        "description": "minéral de la famille des micas"
+      },
+      "image": {
+        "file": "Mineraly.sk - muskovit.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Mineraly.sk_-_muskovit.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/69/Mineraly.sk_-_muskovit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/69/Mineraly.sk_-_muskovit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 340,
+        "height": 200,
+        "author": "Auteur inconnu",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "natrolite",
+      "name": "Natrolite",
+      "wikidata": {
+        "id": "Q13405109",
+        "label": "natrolite framework (NAT)",
+        "description": "tectosilicate: zeolite minerals"
+      },
+      "image": {
+        "file": "Natroliteinde1.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Natroliteinde1.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Natroliteinde1.jpg/500px-Natroliteinde1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Natroliteinde1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3391,
+        "height": 2644,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "nepheline",
+      "name": "Néphéline",
+      "wikidata": {
+        "id": "Q407339",
+        "label": "néphéline",
+        "description": "minéral de la famille des tectosilicates"
+      },
+      "image": {
+        "file": "Nepheline-Schorlomite-250211.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Nepheline-Schorlomite-250211.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Nepheline-Schorlomite-250211.jpg/500px-Nepheline-Schorlomite-250211.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/41/Nepheline-Schorlomite-250211.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 675,
+        "height": 496,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "nickeline",
+      "name": "Nickeline",
+      "wikidata": {
+        "id": "Q419197",
+        "label": "nickéline",
+        "description": "espèce minérale composée d'arséniure de nickel de formule NiAs"
+      },
+      "image": {
+        "file": "Nickeline.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Nickeline.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Nickeline.jpg/500px-Nickeline.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/03/Nickeline.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2452,
+        "height": 1789,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "olivenite",
+      "name": "Olivénite",
+      "wikidata": {
+        "id": "Q415831",
+        "label": "olivénite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Olivenite-89337.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Olivenite-89337.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Olivenite-89337.jpg/500px-Olivenite-89337.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Olivenite-89337.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1000,
+        "height": 903,
+        "author": "Christian Rewitzer",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "olivine",
+      "name": "Olivine",
+      "wikidata": {
+        "id": "Q22693",
+        "label": "olivine",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Peridot2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Peridot2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Peridot2.jpg/500px-Peridot2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Peridot2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1190,
+        "height": 1312,
+        "author": "No machine-readable author provided. S kitahashi assumed (based on copyright claims).",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "opale",
+      "name": "Opale",
+      "wikidata": {
+        "id": "Q171058",
+        "label": "opale",
+        "description": "minéral de silice amorphe hydraté, pierre précieuse aux jeux de couleurs irisées caractéristiques"
+      },
+      "image": {
+        "file": "Opal banded.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Opal_banded.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Opal_banded.jpg/500px-Opal_banded.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/30/Opal_banded.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 985,
+        "height": 623,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "or",
+      "name": "Or",
+      "wikidata": null,
+      "image": {
+        "file": "Gold_nugget_(placer_gold)_1_(17001285916).jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Gold_nugget_(placer_gold)_1_(17001285916).jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a4/Gold_nugget_%28placer_gold%29_1_%2817001285916%29.jpg/500px-Gold_nugget_%28placer_gold%29_1_%2817001285916%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Gold_nugget_%28placer_gold%29_1_%2817001285916%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1165,
+        "height": 920,
+        "author": "James St. John",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "orpiment",
+      "name": "Orpiment",
+      "wikidata": {
+        "id": "Q419183",
+        "label": "orpiment",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Mineraly.sk - auripigment.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Mineraly.sk_-_auripigment.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/50/Mineraly.sk_-_auripigment.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/50/Mineraly.sk_-_auripigment.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 340,
+        "height": 200,
+        "author": "Auteur inconnu",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "orthose",
+      "name": "Orthose",
+      "wikidata": {
+        "id": "Q21813710",
+        "label": "Orthose",
+        "description": "minéral - feldspaths potassiques"
+      },
+      "image": {
+        "file": "OrthoclaseBresil.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:OrthoclaseBresil.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/OrthoclaseBresil.jpg/500px-OrthoclaseBresil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/31/OrthoclaseBresil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4592,
+        "height": 3056,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "pentlandite",
+      "name": "Pentlandite",
+      "wikidata": {
+        "id": "Q410101",
+        "label": "Pentlandite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "PentlanditeUSGOV.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:PentlanditeUSGOV.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/96/PentlanditeUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/96/PentlanditeUSGOV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 360,
+        "height": 270,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "phlogopite",
+      "name": "Phlogopite",
+      "wikidata": {
+        "id": "Q422977",
+        "label": "phlogopite",
+        "description": "true mica, phyllosilicate mineral"
+      },
+      "image": {
+        "file": "PhlogopiteMonteSommaIII.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:PhlogopiteMonteSommaIII.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/PhlogopiteMonteSommaIII.jpg/500px-PhlogopiteMonteSommaIII.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/f0/PhlogopiteMonteSommaIII.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3151,
+        "height": 2239,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "prehnite",
+      "name": "Prehnite",
+      "wikidata": {
+        "id": "Q422128",
+        "label": "Prehnite",
+        "description": "transitional ino-phyllosilicate mineral"
+      },
+      "image": {
+        "file": "Prehnite - Southbury, Connecticut, USA.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Prehnite_-_Southbury,_Connecticut,_USA.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Prehnite_-_Southbury%2C_Connecticut%2C_USA.jpg/500px-Prehnite_-_Southbury%2C_Connecticut%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/45/Prehnite_-_Southbury%2C_Connecticut%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4000,
+        "height": 5333,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "proustite",
+      "name": "Proustite",
+      "wikidata": {
+        "id": "Q411817",
+        "label": "Proustite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Calcite-Proustite-mf16b.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Calcite-Proustite-mf16b.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Calcite-Proustite-mf16b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Calcite-Proustite-mf16b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 400,
+        "height": 329,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "pyrargyrite",
+      "name": "Pyrargyrite",
+      "wikidata": {
+        "id": "Q118134",
+        "label": "pyrargyrite",
+        "description": "minéral, sulfure mixte d'argent et d'antimoine"
+      },
+      "image": {
+        "file": "Pyrargyrite-119630.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Pyrargyrite-119630.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/0/09/Pyrargyrite-119630.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/09/Pyrargyrite-119630.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 400,
+        "height": 369,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "pyrite",
+      "name": "Pyrite",
+      "wikidata": {
+        "id": "Q50769",
+        "label": "pyrite",
+        "description": "minéral, disulfure de fer (II)"
+      },
+      "image": {
+        "file": "Pyrite - Huanzala mine, Huallanca, Bolognesi, Ancash, Peru.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Pyrite_-_Huanzala_mine,_Huallanca,_Bolognesi,_Ancash,_Peru.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Pyrite_-_Huanzala_mine%2C_Huallanca%2C_Bolognesi%2C_Ancash%2C_Peru.jpg/500px-Pyrite_-_Huanzala_mine%2C_Huallanca%2C_Bolognesi%2C_Ancash%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/91/Pyrite_-_Huanzala_mine%2C_Huallanca%2C_Bolognesi%2C_Ancash%2C_Peru.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5500,
+        "height": 7000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "pyrolusite",
+      "name": "Pyrolusite",
+      "wikidata": {
+        "id": "Q413293",
+        "label": "pyrolusite",
+        "description": "minéral : dioxyde de manganèse"
+      },
+      "image": {
+        "file": "Pyrolusite botryoidal.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Pyrolusite_botryoidal.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fe/Pyrolusite_botryoidal.jpg/500px-Pyrolusite_botryoidal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Pyrolusite_botryoidal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 848,
+        "height": 553,
+        "author": "Aram Dulyan (User:Aramgutang)",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "pyromorphite",
+      "name": "Pyromorphite",
+      "wikidata": {
+        "id": "Q413309",
+        "label": "pyromorphite",
+        "description": "lead chloro-phosphate mineral"
+      },
+      "image": {
+        "file": "Pyromorphiteussel1.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Pyromorphiteussel1.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Pyromorphiteussel1.jpg/500px-Pyromorphiteussel1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Pyromorphiteussel1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3440,
+        "height": 3440,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "pyrope",
+      "name": "Pyrope",
+      "wikidata": {
+        "id": "Q421814",
+        "label": "pyrope",
+        "description": "mineral, nesosilicate garnet"
+      },
+      "image": {
+        "file": "Grenat pyrope 1.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Grenat_pyrope_1.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Grenat_pyrope_1.jpg/500px-Grenat_pyrope_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Grenat_pyrope_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2805,
+        "height": 2365,
+        "author": "Géry PARENT",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "pyrophyllite",
+      "name": "Pyrophyllite",
+      "wikidata": {
+        "id": "Q409470",
+        "label": "Pyrophyllite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Pyrophyllite-386094.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Pyrophyllite-386094.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/36/Pyrophyllite-386094.jpg/500px-Pyrophyllite-386094.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/36/Pyrophyllite-386094.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2400,
+        "height": 1800,
+        "author": "John Krygier",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "pyrrhotite",
+      "name": "Pyrrhotite",
+      "wikidata": {
+        "id": "Q421944",
+        "label": "Pyrrhotite",
+        "description": "magnetic iron sulfide mineral deficient in Fe(II)"
+      },
+      "image": {
+        "file": "Muséum de Nantes - 023 - Pyrrhotite (Russie).jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Mus%C3%A9um_de_Nantes_-_023_-_Pyrrhotite_(Russie).jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Mus%C3%A9um_de_Nantes_-_023_-_Pyrrhotite_%28Russie%29.jpg/500px-Mus%C3%A9um_de_Nantes_-_023_-_Pyrrhotite_%28Russie%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Mus%C3%A9um_de_Nantes_-_023_-_Pyrrhotite_%28Russie%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2388,
+        "height": 2092,
+        "author": "Koreller",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "quartz",
+      "name": "Quartz",
+      "wikidata": {
+        "id": "Q43010",
+        "label": "quartz",
+        "description": "minéral cristallin à base de silice"
+      },
+      "image": {
+        "file": "Quartz Brésil.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Quartz_Br%C3%A9sil.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Quartz_Br%C3%A9sil.jpg/500px-Quartz_Br%C3%A9sil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Quartz_Br%C3%A9sil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3529,
+        "height": 3006,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "realgar",
+      "name": "Réalgar",
+      "wikidata": {
+        "id": "Q109746",
+        "label": "réalgar",
+        "description": "minéral: sulfure d'arsenic"
+      },
+      "image": {
+        "file": "Realgar-Calcite-37467.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Realgar-Calcite-37467.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/Realgar-Calcite-37467.jpg/500px-Realgar-Calcite-37467.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Realgar-Calcite-37467.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 506,
+        "height": 600,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "rhodochrosite",
+      "name": "Rhodochrosite",
+      "wikidata": {
+        "id": "Q409793",
+        "label": "rhodochrosite",
+        "description": "minéral: carbonate de manganèse"
+      },
+      "image": {
+        "file": "Rhodocrosite 6(Pérou).jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Rhodocrosite_6(P%C3%A9rou).jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Rhodocrosite_6%28P%C3%A9rou%29.jpg/500px-Rhodocrosite_6%28P%C3%A9rou%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/8/88/Rhodocrosite_6%28P%C3%A9rou%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 800,
+        "height": 531,
+        "author": "Géry Parent",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "rhodonite",
+      "name": "Rhodonite",
+      "wikidata": {
+        "id": "Q409071",
+        "label": "Rhodonite",
+        "description": "single chain inosilicate mineral"
+      },
+      "image": {
+        "file": "8224M-rhodonite3.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:8224M-rhodonite3.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/8224M-rhodonite3.jpg/500px-8224M-rhodonite3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/3b/8224M-rhodonite3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2504,
+        "height": 2306,
+        "author": "CarlesMillan",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "rosasite",
+      "name": "Rosasite",
+      "wikidata": {
+        "id": "Q422096",
+        "label": "Rosasite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Rosasite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Rosasite.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Rosasite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Rosasite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 462,
+        "height": 362,
+        "author": "Aram Dulyan (User:Aramgutang)",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "rutile",
+      "name": "Rutile",
+      "wikidata": {
+        "id": "Q320603",
+        "label": "rutile",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Rutilo.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Rutilo.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Rutilo.jpg/500px-Rutilo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/8/89/Rutilo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1181,
+        "height": 887,
+        "author": "Bergminer",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "sanidine",
+      "name": "Sanidine",
+      "wikidata": {
+        "id": "Q426723",
+        "label": "Sanidine",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Sanidine-477065.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Sanidine-477065.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/Sanidine-477065.jpg/500px-Sanidine-477065.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Sanidine-477065.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 729,
+        "height": 944,
+        "author": "Val Collins",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "scheelite",
+      "name": "Scheelite",
+      "wikidata": {
+        "id": "Q409096",
+        "label": "Scheelite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Scheelite MHNT.MIN.2004.0.88 (p).jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Scheelite_MHNT.MIN.2004.0.88_(p).jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Scheelite_MHNT.MIN.2004.0.88_%28p%29.jpg/500px-Scheelite_MHNT.MIN.2004.0.88_%28p%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Scheelite_MHNT.MIN.2004.0.88_%28p%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3357,
+        "height": 2911,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "schorl",
+      "name": "Schorl",
+      "wikidata": {
+        "id": "Q2411340",
+        "label": "Schorl",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Schorl - Galiléia, Minas Gerais, Brazil.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Schorl_-_Galil%C3%A9ia,_Minas_Gerais,_Brazil.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Schorl_-_Galil%C3%A9ia%2C_Minas_Gerais%2C_Brazil.jpg/500px-Schorl_-_Galil%C3%A9ia%2C_Minas_Gerais%2C_Brazil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Schorl_-_Galil%C3%A9ia%2C_Minas_Gerais%2C_Brazil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4600,
+        "height": 5600,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "scolecite",
+      "name": "Scolécite",
+      "wikidata": {
+        "id": "Q422100",
+        "label": "scolécite",
+        "description": "zeolite mineral"
+      },
+      "image": {
+        "file": "Scolécite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Scol%C3%A9cite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Scol%C3%A9cite.jpg/500px-Scol%C3%A9cite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/01/Scol%C3%A9cite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4592,
+        "height": 3056,
+        "author": "Didier Descouens",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "serpentine",
+      "name": "Serpentine",
+      "wikidata": null,
+      "image": null,
+      "status": "introuvable",
+      "note": "Espèce non trouvée sur Wikidata."
+    },
+    {
+      "slug": "siderite",
+      "name": "Sidérite",
+      "wikidata": {
+        "id": "Q192669",
+        "label": "Sidérite",
+        "description": "minéral : carbonate de fer"
+      },
+      "image": {
+        "file": "Baryt-siderit lauterberg hg.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Baryt-siderit_lauterberg_hg.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Baryt-siderit_lauterberg_hg.jpg/500px-Baryt-siderit_lauterberg_hg.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/1/18/Baryt-siderit_lauterberg_hg.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4256,
+        "height": 2832,
+        "author": "Hannes Grobe",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "sillimanite",
+      "name": "Sillimanite",
+      "wikidata": {
+        "id": "Q119632",
+        "label": "sillimanite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "SillimaniteUSGS.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:SillimaniteUSGS.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/0/08/SillimaniteUSGS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/08/SillimaniteUSGS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 480,
+        "height": 296,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "smithsonite",
+      "name": "Smithsonite",
+      "wikidata": {
+        "id": "Q152400",
+        "label": "smithsonite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Smithsonite - USGS Mineral Specimens 016.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Smithsonite_-_USGS_Mineral_Specimens_016.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Smithsonite_-_USGS_Mineral_Specimens_016.jpg/500px-Smithsonite_-_USGS_Mineral_Specimens_016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/96/Smithsonite_-_USGS_Mineral_Specimens_016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2628,
+        "height": 1168,
+        "author": "Bureau of Mines",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "sodalite",
+      "name": "Sodalite",
+      "wikidata": {
+        "id": "Q410759",
+        "label": "Sodalite",
+        "description": "minéral : tectosilicate de couleur bleue"
+      },
+      "image": {
+        "file": "Sodalith - Rohstein.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Sodalith_-_Rohstein.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/ff/Sodalith_-_Rohstein.jpg/500px-Sodalith_-_Rohstein.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Sodalith_-_Rohstein.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 2300,
+        "height": 1800,
+        "author": "Ra'ike (see also: de:Benutzer:Ra'ike)",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "soufre",
+      "name": "Soufre",
+      "wikidata": {
+        "id": "Q1157552",
+        "label": "soufre natif",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Soufresicile2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Soufresicile2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Soufresicile2.jpg/500px-Soufresicile2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Soufresicile2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3497,
+        "height": 2869,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "spessartine",
+      "name": "Spessartine",
+      "wikidata": {
+        "id": "Q20653385",
+        "label": "spessartine",
+        "description": "garnet, nesosilicate mineral"
+      },
+      "image": {
+        "file": "Spessartien brown.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Spessartien_brown.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Spessartien_brown.jpg/500px-Spessartien_brown.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Spessartien_brown.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1600,
+        "height": 1200,
+        "author": "Quatrostein",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "sphalerite",
+      "name": "Sphalérite",
+      "wikidata": {
+        "id": "Q105006",
+        "label": "sphalérite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Sphalerite - Iron Cap mine, Graham, Arizona, USA.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Sphalerite_-_Iron_Cap_mine,_Graham,_Arizona,_USA.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Sphalerite_-_Iron_Cap_mine%2C_Graham%2C_Arizona%2C_USA.jpg/500px-Sphalerite_-_Iron_Cap_mine%2C_Graham%2C_Arizona%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Sphalerite_-_Iron_Cap_mine%2C_Graham%2C_Arizona%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6000,
+        "height": 5143,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "spinelle",
+      "name": "Spinelle",
+      "wikidata": {
+        "id": "Q191310",
+        "label": "spinelle",
+        "description": "minéral oxyde de magnésium et d'aluminium, pierre précieuse aux couleurs vives et variées"
+      },
+      "image": {
+        "file": "Spinel2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Spinel2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/09/Spinel2.jpg/500px-Spinel2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/09/Spinel2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1420,
+        "height": 864,
+        "author": "No machine-readable author provided. S kitahashi assumed (based on copyright claims).",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "spodumene",
+      "name": "Spodumène",
+      "wikidata": {
+        "id": "Q29730037",
+        "label": "Spodumene-AMGL 68977",
+        "description": "facetted kunzite spodumene gemstone found at Minas Gerais, Brazil"
+      },
+      "image": {
+        "file": "Spudomene varietà kunzite, da minas geiras, brasile.JPG",
+        "page": "https://commons.wikimedia.org/wiki/File:Spudomene_variet%C3%A0_kunzite,_da_minas_geiras,_brasile.JPG",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Spudomene_variet%C3%A0_kunzite%2C_da_minas_geiras%2C_brasile.JPG/500px-Spudomene_variet%C3%A0_kunzite%2C_da_minas_geiras%2C_brasile.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Spudomene_variet%C3%A0_kunzite%2C_da_minas_geiras%2C_brasile.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1584,
+        "height": 1332,
+        "author": "Sailko",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "staurotide",
+      "name": "Staurotide",
+      "wikidata": null,
+      "image": null,
+      "status": "erreur",
+      "note": "Échec répété : https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=claims|labels|sitelinks&languages=fr|en&ids=Q413380"
+    },
+    {
+      "slug": "stibine",
+      "name": "Stibine",
+      "wikidata": null,
+      "image": null,
+      "status": "erreur",
+      "note": "Échec répété : https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&type=item&limit=7&language=fr&uselang=fr&search=Stibine"
+    },
+    {
+      "slug": "stilbite",
+      "name": "Stilbite",
+      "wikidata": {
+        "id": "Q423014",
+        "label": "stilbite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Stilbite-Ca-pb34a.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Stilbite-Ca-pb34a.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Stilbite-Ca-pb34a.jpg/500px-Stilbite-Ca-pb34a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Stilbite-Ca-pb34a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 600,
+        "height": 373,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "strontianite",
+      "name": "Strontianite",
+      "wikidata": {
+        "id": "Q422827",
+        "label": "Strontianite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Mineraly.sk - stroncianit.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Mineraly.sk_-_stroncianit.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/61/Mineraly.sk_-_stroncianit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/61/Mineraly.sk_-_stroncianit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 340,
+        "height": 200,
+        "author": "Auteur inconnu",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "sylvite",
+      "name": "Sylvite",
+      "wikidata": {
+        "id": "Q409091",
+        "label": "Sylvine",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Mineral Silvina GDFL105.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Mineral_Silvina_GDFL105.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Mineral_Silvina_GDFL105.jpg/500px-Mineral_Silvina_GDFL105.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Mineral_Silvina_GDFL105.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 900,
+        "height": 675,
+        "author": "Luis Miguel Bugallo Sánchez (Lmbuga Commons)(Lmbuga Galipedia) Publicada por/Publish by: Luis Miguel Bugallo Sánchez",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "talc",
+      "name": "Talc",
+      "wikidata": {
+        "id": "Q134583",
+        "label": "talc",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Talc.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Talc.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Talc.jpg/500px-Talc.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/74/Talc.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5744,
+        "height": 3063,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "tetraedrite",
+      "name": "Tétraédrite",
+      "wikidata": {
+        "id": "Q424282",
+        "label": "tétraédrite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Tetrahedrite - Black Pine mine, Granite Co., Montana, USA.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Tetrahedrite_-_Black_Pine_mine,_Granite_Co.,_Montana,_USA.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Tetrahedrite_-_Black_Pine_mine%2C_Granite_Co.%2C_Montana%2C_USA.jpg/500px-Tetrahedrite_-_Black_Pine_mine%2C_Granite_Co.%2C_Montana%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Tetrahedrite_-_Black_Pine_mine%2C_Granite_Co.%2C_Montana%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 7000,
+        "height": 5250,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "titanite",
+      "name": "Titanite",
+      "wikidata": {
+        "id": "Q377280",
+        "label": "Titanite",
+        "description": "nesosilicate mineral"
+      },
+      "image": {
+        "file": "Titanite crystals on Amphibole - Ochtendung, Eifel, Germany.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Titanite_crystals_on_Amphibole_-_Ochtendung,_Eifel,_Germany.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/Titanite_crystals_on_Amphibole_-_Ochtendung%2C_Eifel%2C_Germany.jpg/500px-Titanite_crystals_on_Amphibole_-_Ochtendung%2C_Eifel%2C_Germany.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/00/Titanite_crystals_on_Amphibole_-_Ochtendung%2C_Eifel%2C_Germany.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 727,
+        "height": 545,
+        "author": "Fred Kruijen",
+        "license": "CC BY-SA 3.0 nl",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "topaze",
+      "name": "Topaze",
+      "wikidata": {
+        "id": "Q134985",
+        "label": "topaze",
+        "description": "minéral silicaté fluoré, pierre précieuse aux couleurs variées dont le bleu, jaune et rose impérial"
+      },
+      "image": {
+        "file": "Topaze Brésil.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Topaze_Br%C3%A9sil.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Topaze_Br%C3%A9sil.jpg/500px-Topaze_Br%C3%A9sil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Topaze_Br%C3%A9sil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4216,
+        "height": 3734,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "torbernite",
+      "name": "Torbernite",
+      "wikidata": {
+        "id": "Q409918",
+        "label": "torbernite",
+        "description": "mineral de phosphate d'uranyle et de cuivre"
+      },
+      "image": {
+        "file": "Wulfenite-Kasolite-Torbernite-214957.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Wulfenite-Kasolite-Torbernite-214957.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Wulfenite-Kasolite-Torbernite-214957.jpg/500px-Wulfenite-Kasolite-Torbernite-214957.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Wulfenite-Kasolite-Torbernite-214957.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 800,
+        "height": 600,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "tremolite",
+      "name": "Trémolite",
+      "wikidata": {
+        "id": "Q423051",
+        "label": "Trémolite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Tremolite Campolungo.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Tremolite_Campolungo.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Tremolite_Campolungo.jpg/500px-Tremolite_Campolungo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Tremolite_Campolungo.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4438,
+        "height": 2746,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "turquoise",
+      "name": "Turquoise",
+      "wikidata": {
+        "id": "Q165254",
+        "label": "turquoise",
+        "description": "minéral composé de phosphate hydraté de cuivre et d'aluminium"
+      },
+      "image": {
+        "file": "Turquoise with quartz.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Turquoise_with_quartz.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Turquoise_with_quartz.jpg/500px-Turquoise_with_quartz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/d/d9/Turquoise_with_quartz.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 833,
+        "height": 503,
+        "author": "Auteur inconnu",
+        "license": "Public domain",
+        "licenseUrl": "",
+        "free": true,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "uraninite",
+      "name": "Uraninite",
+      "wikidata": {
+        "id": "Q206467",
+        "label": "Pechblende",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Pichblende.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Pichblende.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Pichblende.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Pichblende.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 320,
+        "height": 279,
+        "author": "Template:Farhan",
+        "license": "CC BY-SA 2.5",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "uvarovite",
+      "name": "Uvarovite",
+      "wikidata": {
+        "id": "Q409733",
+        "label": "ouvarovite",
+        "description": "garnet, nesosilicate mineral"
+      },
+      "image": {
+        "file": "Uvarovite-200516.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Uvarovite-200516.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/99/Uvarovite-200516.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/9/99/Uvarovite-200516.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 400,
+        "height": 309,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "vanadinite",
+      "name": "Vanadinite",
+      "wikidata": {
+        "id": "Q407251",
+        "label": "Vanadinite",
+        "description": "minéral : chlorovanadate de plomb"
+      },
+      "image": {
+        "file": "Vanadinite - ACF mine, Mibladen, Morocco.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Vanadinite_-_ACF_mine,_Mibladen,_Morocco.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Vanadinite_-_ACF_mine%2C_Mibladen%2C_Morocco.jpg/500px-Vanadinite_-_ACF_mine%2C_Mibladen%2C_Morocco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/2/21/Vanadinite_-_ACF_mine%2C_Mibladen%2C_Morocco.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 7167,
+        "height": 5000,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "variscite",
+      "name": "Variscite",
+      "wikidata": null,
+      "image": {
+        "file": "Variscite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Variscite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Variscite.jpg/500px-Variscite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/6/69/Variscite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 4037,
+        "height": 3056,
+        "author": "Didier Descouens",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikipedia-fr"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "vesuvianite",
+      "name": "Vésuvianite",
+      "wikidata": {
+        "id": "Q413399",
+        "label": "Vésuvianite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Vesuvianite-196065.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Vesuvianite-196065.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Vesuvianite-196065.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Vesuvianite-196065.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 371,
+        "height": 360,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "vivianite",
+      "name": "Vivianite",
+      "wikidata": {
+        "id": "Q413386",
+        "label": "Vivianite",
+        "description": "minéral : phosphate hydraté de Fe(II)"
+      },
+      "image": {
+        "file": "Vivianite-22431 (Henk Smeets, tomeikminerals).jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Vivianite-22431_(Henk_Smeets,_tomeikminerals).jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Vivianite-22431_%28Henk_Smeets%2C_tomeikminerals%29.jpg/500px-Vivianite-22431_%28Henk_Smeets%2C_tomeikminerals%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Vivianite-22431_%28Henk_Smeets%2C_tomeikminerals%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1920,
+        "height": 1280,
+        "author": "Henk Smeets – tomeikminerals.com",
+        "license": "CC BY 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "wavellite",
+      "name": "Wavellite",
+      "wikidata": {
+        "id": "Q420505",
+        "label": "wavellite",
+        "description": "aluminium phosphate basic hydrate mineral"
+      },
+      "image": {
+        "file": "Wavellit-Quarz-Limonit, Ansicht 2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Wavellit-Quarz-Limonit,_Ansicht_2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Wavellit-Quarz-Limonit%2C_Ansicht_2.jpg/500px-Wavellit-Quarz-Limonit%2C_Ansicht_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/59/Wavellit-Quarz-Limonit%2C_Ansicht_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 7932,
+        "height": 5282,
+        "author": "Lodewicus de Honsvels",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "witherite",
+      "name": "Witherite",
+      "wikidata": {
+        "id": "Q419260",
+        "label": "Withérite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Witherite-4aa2b.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Witherite-4aa2b.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Witherite-4aa2b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Witherite-4aa2b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 432,
+        "height": 400,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "wolframite",
+      "name": "Wolframite",
+      "wikidata": {
+        "id": "Q541128",
+        "label": "Wolframite",
+        "description": "minéral : tungstate de fer et de manganèse"
+      },
+      "image": {
+        "file": "Wolframiteportugal2.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Wolframiteportugal2.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Wolframiteportugal2.jpg/500px-Wolframiteportugal2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Wolframiteportugal2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 3832,
+        "height": 3000,
+        "author": "Didier Descouens",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "wollastonite",
+      "name": "Wollastonite",
+      "wikidata": {
+        "id": "Q7255712",
+        "label": "Pseudowollastonite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Pseudowollastonite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Pseudowollastonite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Pseudowollastonite.jpg/500px-Pseudowollastonite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/7/76/Pseudowollastonite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 1250,
+        "height": 975,
+        "author": "David Hospital",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "wulfenite",
+      "name": "Wulfénite",
+      "wikidata": {
+        "id": "Q421092",
+        "label": "wulfénite",
+        "description": "minéral"
+      },
+      "image": {
+        "file": "Wulfenite - Red Cloud mine, La Paz Co., Arizona, USA.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Wulfenite_-_Red_Cloud_mine,_La_Paz_Co.,_Arizona,_USA.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Wulfenite_-_Red_Cloud_mine%2C_La_Paz_Co.%2C_Arizona%2C_USA.jpg/500px-Wulfenite_-_Red_Cloud_mine%2C_La_Paz_Co.%2C_Arizona%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Wulfenite_-_Red_Cloud_mine%2C_La_Paz_Co.%2C_Arizona%2C_USA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 6880,
+        "height": 5504,
+        "author": "Ivar Leidus",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "zircon",
+      "name": "Zircon",
+      "wikidata": {
+        "id": "Q178928",
+        "label": "zircon",
+        "description": "minéral nésosilicate à fort indice de réfraction, pierre précieuse parfois confondue avec le diamant"
+      },
+      "image": {
+        "file": "Zircon-t09zirc-06c.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Zircon-t09zirc-06c.jpg",
+        "thumb": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Zircon-t09zirc-06c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Zircon-t09zirc-06c.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 400,
+        "height": 367,
+        "author": "Robert M. Lavinsky",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "free": true,
+        "attributionRequired": true,
+        "origin": "wikidata"
+      },
+      "status": "trouvee",
+      "note": ""
+    },
+    {
+      "slug": "zoisite",
+      "name": "Zoïsite",
+      "wikidata": {
+        "id": "Q213544",
+        "label": "zoïsite",
+        "description": "minéral : sorosilicate"
+      },
+      "image": {
+        "file": "Thulite.jpg",
+        "page": "https://commons.wikimedia.org/wiki/File:Thulite.jpg",
+        "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Thulite.jpg/500px-Thulite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Thulite.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 644,
+        "height": 515,
+        "author": "Dave Dyet - http://www.dyet.com",
+        "license": "Copyrighted free use",
+        "licenseUrl": "",
+        "free": false,
+        "attributionRequired": false,
+        "origin": "wikidata"
+      },
+      "status": "licence-non-libre",
+      "note": "Licence « Copyrighted free use » écartée."
+    }
+  ]
+}
