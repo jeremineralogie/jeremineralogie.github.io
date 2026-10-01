@@ -17,7 +17,7 @@ const CRYSTAL_SYSTEMS = ["Cubique", "Quadratique", "Hexagonal", "Trigonal", "Ort
 
 const sections = [
   { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", fields: [
-    { key: "reference", label: "Référence", required: true },
+    { key: "title", label: "Titre (visible seulement dans l’admin)" }, { key: "reference", label: "Référence", required: true },
     { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "link_associations", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true },
     { key: "mine_id", label: "Gisement", ref: "mines", display: "name" }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" },
     { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "region_id", label: "Région", ref: "regions", display: "name" },
@@ -474,7 +474,7 @@ async function saveRecord(form) {
     } else {
       const current = selectedRecord;
       if (["regions", "localities", "mines", "minerals"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.name, section.table);
-      if (section.id === "shop" && !current?.title) {
+      if (section.id === "shop" && !record.title) {
         const mineralName = (refs.minerals || []).find(item => String(item.id) === String(record.mineral_id))?.name || "";
         record.title = [mineralName, record.reference].filter(Boolean).join(" ") || record.reference;
       }

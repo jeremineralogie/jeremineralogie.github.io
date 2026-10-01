@@ -334,7 +334,7 @@ function setCollectionView(view) {
 
 async function loadDashboard() {
   const { data: specimens, error } = await client.from("specimens")
-    .select("id,slug,publication_status,mineral_name,mineral:minerals!specimens_mineral_id_fkey(name)")
+    .select("id,slug,title,publication_status,mineral_name,mineral:minerals!specimens_mineral_id_fkey(name)")
     .order("updated_at", { ascending: false });
   if (error) {
     list.replaceChildren();
@@ -346,7 +346,7 @@ async function loadDashboard() {
   (specimens || []).forEach(specimen => {
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = `${specimen.mineral_name ?? specimen.mineral?.name ?? "Spécimen"} — ${specimen.slug} (${specimen.publication_status === "published" ? "publié" : "brouillon"})`;
+    button.textContent = `${specimen.title || specimen.mineral_name || specimen.mineral?.name || "Spécimen"} — ${specimen.slug} (${specimen.publication_status === "published" ? "publié" : "brouillon"})`;
     button.addEventListener("click", () => void editSpecimen(specimen.id));
     list.append(button);
   });
@@ -634,6 +634,7 @@ async function editSpecimen(id) {
     document.querySelector("#dimensions").value = data.dimensions || "";
     document.querySelector("#weight").value = data.weight_text ?? data.weight_grams ?? "";
     document.querySelector("#keywords").value = data.keywords || "";
+    document.querySelector("#specimen-title").value = data.title || "";
     document.querySelector("#specimen-date").value = data.discovery_date_text ?? formatSpecimenDate(data.discovered_on, data.discovery_year, data.discovery_month);
     document.querySelector("#description").value = data.description || "";
     document.querySelector("#publication-status").value = data.publication_status;
@@ -970,6 +971,7 @@ async function saveSpecimen(event) {
       weight: document.querySelector("#weight").value,
       description: document.querySelector("#description").value,
       keywords: document.querySelector("#keywords").value,
+      title: document.querySelector("#specimen-title").value.trim(),
       discoveryDate: document.querySelector("#specimen-date").value
     };
     const old = editingSpecimen || {};
@@ -1011,6 +1013,7 @@ async function saveSpecimen(event) {
       discovery_year: parsedDate.discoveryYear,
       discovery_month: parsedDate.discoveryMonth,
       keywords: values.keywords || null,
+      title: values.title || null,
       description: values.description,
       publication_status: document.querySelector("#publication-status").value
     };
