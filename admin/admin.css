@@ -212,3 +212,12 @@ body.ce-open{overflow:hidden}
 .pick-result:hover{border-color:#8e5cff;color:#fff}
 /* Aperçu fidèle du texte justifié dans l'éditeur (même rendu que sur le site) */
 .ce-doc :is(p,h2,h3,div,li)[style*="justify"]{text-justify:inter-word;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 2;-webkit-hyphenate-limit-before:3;-webkit-hyphenate-limit-after:2;text-wrap:pretty;text-align-last:left}
+/* Communes : points supplémentaires sur la carte et gisements qu'ils regroupent */
+.commune-points{display:grid;gap:8px}
+.commune-points small{color:#b9a5d8}
+.commune-points-list{display:grid;gap:10px}
+.commune-point{display:grid;gap:6px;padding:10px;border:1px solid #3a2160;border-radius:8px;background:#0b0612}
+.commune-point .point-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.commune-point .point-row input[type=text]{flex:1 1 180px;min-width:0}
+.commune-point-mines{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.9rem;color:#d6c4f3}
+.commune-point-mines .check{display:inline-flex;align-items:center;gap:6px;margin:0;width:auto;white-space:nowrap}
