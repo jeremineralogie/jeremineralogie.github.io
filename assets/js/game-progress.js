@@ -108,9 +108,10 @@ function toast(badge) {
   setTimeout(() => { box.classList.remove("is-shown"); setTimeout(() => box.remove(), 400); }, 2400);
 }
 
-// Ligne de badges sous les jeux de l'accueil : séries en cours, badges gagnés en couleur, les autres grisés avec leur condition.
+// Badges de la section Jeux de l'accueil : séries en cours, badges gagnés en couleur, les autres grisés avec leur condition.
+// summary (facultatif) reçoit le décompte « n / 18 », affiché même quand la liste est repliée.
 const GROUPS = [["quiz", "Quiz du jour"], ["geo", "Devine le gisement"], ["both", "Les deux jeux"]];
-export function renderBadges(container) {
+export function renderBadges(container, summary = null) {
   const draw = () => {
     const state = read();
     const stats = statsOf(state);
@@ -134,7 +135,9 @@ export function renderBadges(container) {
       return group;
     }));
     const total = BADGES.filter(badge => state.earned[badge.id]).length;
-    container.prepend(Object.assign(document.createElement("p"), { className: "badge-count", textContent: `${total} badge${total > 1 ? "s" : ""} sur ${BADGES.length}` }));
+    const count = `${total} badge${total > 1 ? "s" : ""} sur ${BADGES.length}`;
+    if (summary) summary.textContent = count;
+    else container.prepend(Object.assign(document.createElement("p"), { className: "badge-count", textContent: count }));
   };
   draw();
   document.addEventListener("jm-progress", draw);

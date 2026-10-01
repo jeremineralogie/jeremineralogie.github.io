@@ -586,3 +586,18 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .tool-match-list li{display:grid;gap:1px;padding:6px 0;border-bottom:1px solid #1d1030;min-width:0}
 .tool-match-detail{font-size:.8rem;color:var(--muted)}
 @media(max-width:620px){.tools-kit{columns:1}.tool-calc,.tool-match-list{grid-template-columns:1fr}}
+/* Section Jeux de l'accueil : jeux toujours visibles, badges repliables */
+.home-games{display:grid;gap:18px}
+.home-games .home-title{margin-bottom:0}
+.home-game{display:grid;gap:12px;padding-top:16px;border-top:1px solid #2a1846}
+.home-game[hidden],.home-badges[hidden]{display:none}
+.home-game-title{margin:0;font-family:var(--serif);font-weight:500;font-size:clamp(1.05rem,4.2vw,1.35rem);letter-spacing:.1em;text-transform:uppercase;color:#f1e8ff}
+.home-badges{border-top:1px solid #2a1846;padding-top:14px}
+.home-badges>summary{list-style:none;display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:10px;padding:10px 14px;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.6);cursor:pointer;user-select:none}
+.home-badges>summary::-webkit-details-marker{display:none}
+.home-badges>summary::after{content:"▾";color:#c4a6f5}
+.home-badges[open]>summary::after{content:"▴"}
+.home-badges>summary:hover{border-color:var(--violet2)}
+.home-badges-label{min-width:0;font-family:var(--serif);font-size:clamp(.92rem,3.8vw,1.1rem);color:#f3eaff;letter-spacing:.06em}
+.home-badges-count{flex:0 0 auto;font-size:clamp(.72rem,3vw,.82rem);color:#f0d9a8}
+.home-badges .badges{margin-top:14px}

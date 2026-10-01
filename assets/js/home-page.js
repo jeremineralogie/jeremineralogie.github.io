@@ -253,7 +253,7 @@ async function load() {
     }
   }
   const badges = document.querySelector("#home-badges");
-  renderBadges(badges.querySelector("[data-body]")); badges.hidden = false;
+  renderBadges(badges.querySelector("[data-body]"), badges.querySelector("[data-count]")); badges.hidden = false;
   const [specimenCount, shopCount, termCount, articleCount, archiveCount] = counts;
   const plural = (count, one, many) => count > 1 ? many : one;
   renderStats([
