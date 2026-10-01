@@ -1,6 +1,7 @@
 import { getSupabase } from "./supabase-client.js";
 import { ficheUrl } from "./entity-links.js";
 import { mountGames } from "./games.js";
+import { commonsPhoto, creditText, loadMineralPhotos } from "./mineral-photos.js";
 
 // Onglet « Apprendre & jouer » : fiches minéraux (référentiel minerals) et glossaire (glossary_terms), avec filtres et index A–Z,
 // aide à l'identification, « Tests et outils » (densité, dureté, fluorescence) et « Jeux » (mêmes jeux et badges que l'accueil).
@@ -24,6 +25,7 @@ const element = (tag, className, text) => { const node = document.createElement(
 const link = (href, text, className = "link") => { const a = element("a", className, text); a.href = href; return a; };
 
 let minerals = [];
+let photoCredits = {};
 let client = null;
 let gamesMounted = false;
 let terms = [];
@@ -112,6 +114,9 @@ function renderMinerals() {
     items.forEach(item => {
       const li = element("li");
       const a = link(ficheUrl("mineral", item.slug), "", "learn-mineral");
+      // Vignette : photo libre de la fiche (crédit complet sur la fiche et dans les informations légales).
+      const photo = commonsPhoto(photoCredits, item.slug);
+      if (photo) { const thumb = element("img", "learn-thumb"); thumb.src = photo.thumbSrc; thumb.alt = ""; thumb.loading = "lazy"; thumb.title = creditText(photo); a.append(thumb); a.classList.add("has-thumb"); }
       const head = element("span", "learn-mineral-head");
       head.append(element("strong", "learn-mineral-name", item.name));
       if (item.formula) head.append(element("span", "learn-formula", item.formula));
@@ -348,6 +353,7 @@ async function load() {
     client.from("shop_items").select("mineral_id").eq("publication_status", "published").eq("sale_status", "available")
   ]);
   if (mineralResult.error || termResult.error) throw mineralResult.error || termResult.error;
+  photoCredits = await loadMineralPhotos();
   minerals = (mineralResult.data || []).sort((a, b) => a.name.localeCompare(b.name, "fr", { sensitivity: "base" }));
   terms = (termResult.data || []).sort((a, b) => a.term.localeCompare(b.term, "fr", { sensitivity: "base" }));
   (specimenResult.data || []).forEach(row => { if (!row.mineral_id) return; const entry = presence.get(row.mineral_id) || { collection: 0, boutique: 0 }; entry.collection += 1; presence.set(row.mineral_id, entry); });

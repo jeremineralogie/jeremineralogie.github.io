@@ -14,7 +14,7 @@ try{apply(JSON.parse(localStorage.getItem(K)))}catch(e){}
 if(!cfg||!cfg.url||String(cfg.url).includes('PLACEHOLDER'))return;
 fetch(cfg.url+'/rest/v1/site_settings?key=eq.layout_overrides&is_public=eq.true&select=value',{headers:{apikey:cfg.publishableKey},cache:'no-store'}).then(r=>r.ok?r.json():[]).then(rows=>{const v=rows[0]&&rows[0].value||{};apply(v);try{localStorage.setItem(K,JSON.stringify(v))}catch(e){}}).catch(()=>{})})();
 (()=>{
-const pick=img=>img&&img.tagName==='IMG'&&img.closest('main')&&!img.closest('a.card')&&!img.closest('.thumbs')&&!img.closest('.lb')&&!img.closest('.leaflet-container');
+const pick=img=>img&&img.tagName==='IMG'&&img.closest('main')&&!img.closest('a[href]')&&!img.closest('.thumbs')&&!img.closest('.lb')&&!img.closest('.leaflet-container');
 let box,imgEl,cnt,list=[],i=0,sx=null;
 const show=()=>{imgEl.src=list[i].src;imgEl.alt=list[i].alt||'';cnt.textContent=list.length>1?(i+1)+' / '+list.length:'';box.querySelectorAll('.lb-nav').forEach(b=>b.hidden=list.length<2)};
 const go=d=>{if(list.length<2)return;i=(i+d+list.length)%list.length;show()};

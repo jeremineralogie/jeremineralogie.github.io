@@ -96,10 +96,13 @@ async function main() {
   const pages = [];
   const add = (type, id, page) => { const folder = slugify(id); if (folder) pages.push({ type, folder, ...page, url: `${SITE}/${FOLDERS[type]}/${folder}/` }); };
 
+  // Photos libres des fiches minéraux (Wikimedia Commons) : image d'aperçu quand la fiche n'a pas de photo dans l'admin.
+  const commons = JSON.parse(await readFile(path.join(ROOT, "assets/mineraux-photos/credits.json"), "utf8").catch(() => "{}"));
+  const commonsUrl = slug => commons[slug] ? `${SITE}/assets/mineraux-photos/${commons[slug].photo}` : null;
   minerals.forEach(item => {
     const facts = [item.chemical_class, item.crystal_system && `système ${item.crystal_system.toLowerCase()}`, item.hardness != null && `dureté ${span(item.hardness, item.hardness_max)}`, item.density != null && `densité ${span(item.density, item.density_max)}`].filter(Boolean).join(", ");
     add("mineral", item.slug, {
-      template: "fiche", page: "fiche", params: `type=mineral&id=${item.slug}`, lastmod: day(item.updated_at), image: photoUrl(cfg, item.media),
+      template: "fiche", page: "fiche", params: `type=mineral&id=${item.slug}`, lastmod: day(item.updated_at), image: photoUrl(cfg, item.media) || commonsUrl(item.slug),
       title: mineralTitle(item), description: cut(`${item.name}${item.formula ? ` (${item.formula})` : ""} : ${facts}. ${item.description || ""}`),
       hidden: block(item.name, [item.formula, facts].filter(Boolean).join(" — "), item.description, item.formation)
     });
