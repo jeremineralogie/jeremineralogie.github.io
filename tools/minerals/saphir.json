@@ -1,0 +1,29 @@
+{
+ "formula": "Al₂O₃",
+ "crystal_system": "Trigonal",
+ "chemical_class": "Oxydes et hydroxydes",
+ "hardness": 9,
+ "hardness_max": 9,
+ "density": 3.95,
+ "density_max": 4.1,
+ "colors": [
+  "bleu",
+  "bleu roi",
+  "jaune",
+  "rose",
+  "vert",
+  "incolore"
+ ],
+ "luster": "adamantin à vitreux",
+ "cleavage": "aucun (plans de séparation)",
+ "streak": "blanc",
+ "transparency": "transparent à opaque",
+ "fracture": "conchoïdale à irrégulière",
+ "fluorescence": "Variable : souvent inerte (bleu), orangé à rouge pour les saphirs roses et orangés.",
+ "habit": "Cristaux en tonnelets et bipyramides hexagonales, souvent zonés de bandes de couleur.",
+ "formation": "Basaltes alcalins et leurs alluvions (Australie, Thaïlande ; Expailly et Riou Pézouliou en Haute-Loire), marbres et pegmatites (Cachemire, Sri Lanka, Madagascar).",
+ "etymology": "Du latin sapphirus, du grec sappheiros (pierre bleue).",
+ "varieties": "Saphir bleu, saphirs « de couleur » (jaune, rose, vert…), padparadscha (rose orangé), saphir étoilé (astérisme). Toutes les couleurs de corindon sauf le rouge (rubis).",
+ "confusions": "Spinelle bleu et iolite : plus tendres. Tanzanite : bien plus tendre. Verre : bulles, plus léger.",
+ "description": "Corindon de toutes les couleurs sauf le rouge, coloré en bleu par le fer et le titane ; deuxième minéral le plus dur après le diamant. Le Velay en a livré dans ses basaltes."
+}

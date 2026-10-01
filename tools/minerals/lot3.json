@@ -356,33 +356,6 @@
 "description": "Quartz parfaitement limpide, que les Anciens prenaient pour une glace devenue pierre."
 },
 {
-"name": "Prasiolite",
-"slug": "prasiolite",
-"formula": "SiO₂",
-"crystal_system": "Trigonal",
-"chemical_class": "Oxydes et hydroxydes",
-"hardness": 7,
-"hardness_max": 7,
-"density": 2.65,
-"density_max": 2.65,
-"colors": [
-"vert poireau",
-"vert pâle"
-],
-"luster": "vitreux",
-"cleavage": "aucun",
-"streak": "blanc",
-"transparency": "transparent à translucide",
-"fracture": "conchoïdale",
-"fluorescence": null,
-"habit": "Prismes hexagonaux terminés par des rhomboèdres, faces striées.",
-"formation": "Améthyste chauffée naturellement (Silésie, Arizona) ou artificiellement (Brésil).",
-"etymology": "Du grec prason (poireau) et lithos (pierre).",
-"varieties": "Variété verte du quartz.",
-"confusions": "Béryl vert : prismes à base plane. Péridot : plus dense.",
-"description": "Quartz vert issu d'améthyste chauffée, rare à l'état naturel."
-},
-{
 "name": "Aventurine",
 "slug": "aventurine",
 "formula": "SiO₂",
@@ -740,33 +713,6 @@
 "description": "Zoïsite bleu violet connue d'un seul gisement au monde, au pied du Kilimandjaro."
 },
 {
-"name": "Thulite",
-"slug": "thulite",
-"formula": "Ca₂Al₃(SiO₄)(Si₂O₇)O(OH)",
-"crystal_system": "Orthorhombique",
-"chemical_class": "Silicates (sorosilicates)",
-"hardness": 6,
-"hardness_max": 7,
-"density": 3.15,
-"density_max": 3.4,
-"colors": [
-"rose",
-"rouge rosé"
-],
-"luster": "vitreux",
-"cleavage": "parfait",
-"streak": "blanc",
-"transparency": "translucide à opaque",
-"fracture": "irrégulière à conchoïdale",
-"fluorescence": null,
-"habit": "Masses compactes et grenues.",
-"formation": "Roches métamorphiques (Norvège, Écosse).",
-"etymology": "De Thulé, nom antique de la Scandinavie.",
-"varieties": "Variété rose de la zoïsite, colorée par le manganèse.",
-"confusions": "Rhodonite : veines noires. Quartz rose : plus dur.",
-"description": "Zoïsite rose massive de Norvège, pierre ornementale."
-},
-{
 "name": "Péridot",
 "slug": "peridot",
 "formula": "(Mg,Fe)₂SiO₄",
@@ -933,33 +879,6 @@
 "description": "Microcline vert bleu des pegmatites, souvent associé au quartz fumé dans le Colorado."
 },
 {
-"name": "Pierre de lune",
-"slug": "pierre-de-lune",
-"formula": "KAlSi₃O₈",
-"crystal_system": "Monoclinique",
-"chemical_class": "Silicates (tectosilicates)",
-"hardness": 6,
-"hardness_max": 6.5,
-"density": 2.56,
-"density_max": 2.6,
-"colors": [
-"incolore",
-"blanc à reflets bleus"
-],
-"luster": "vitreux, reflet laiteux bleu",
-"cleavage": "parfait",
-"streak": "blanc",
-"transparency": "transparent à translucide",
-"fracture": "irrégulière",
-"fluorescence": null,
-"habit": "Cristaux et galets ; reflet bleu flottant (adularescence).",
-"formation": "Pegmatites et alluvions (Sri Lanka, Inde).",
-"etymology": "De son reflet lunaire.",
-"varieties": "Orthose ou adulaire à adularescence.",
-"confusions": "Labradorite : reflets multicolores. Calcédoine : sans clivage.",
-"description": "Feldspath potassique au reflet bleu flottant, dû à de très fines lamelles internes."
-},
-{
 "name": "Pierre de soleil",
 "slug": "pierre-de-soleil",
 "formula": "(Na,Ca)Al(Si,Al)Si₂O₈",
@@ -1043,34 +962,6 @@
 "description": "Plagioclase intermédiaire typique des andésites de la cordillère des Andes."
 },
 {
-"name": "Rubellite",
-"slug": "rubellite",
-"formula": "Na(Li,Al)₃Al₆(BO₃)₃Si₆O₁₈(OH)₄",
-"crystal_system": "Trigonal",
-"chemical_class": "Silicates (cyclosilicates)",
-"hardness": 7,
-"hardness_max": 7.5,
-"density": 3.0,
-"density_max": 3.1,
-"colors": [
-"rose",
-"rouge",
-"rouge violacé"
-],
-"luster": "vitreux",
-"cleavage": "aucun",
-"streak": "blanc",
-"transparency": "transparent à translucide",
-"fracture": "conchoïdale à irrégulière",
-"fluorescence": null,
-"habit": "Prismes striés en long, à section triangulaire bombée.",
-"formation": "Pegmatites à lithium (Brésil, Madagascar, Afghanistan, Californie).",
-"etymology": "Du latin rubellus (rougeâtre).",
-"varieties": "Tourmaline elbaïte rose à rouge, colorée par le manganèse.",
-"confusions": "Rubis : bien plus dur. Spinelle : cubique.",
-"description": "Tourmaline rouge à rose des pegmatites, dont la couleur ne change pas selon l'éclairage."
-},
-{
 "name": "Indicolite",
 "slug": "indicolite",
 "formula": "Na(Li,Al)₃Al₆(BO₃)₃Si₆O₁₈(OH)₄",
@@ -1150,32 +1041,6 @@
 "varieties": "Elbaïte zonée : cœur rose, écorce verte.",
 "confusions": "Aucune : la zonation est caractéristique.",
 "description": "Tourmaline zonée, rose au centre et verte en bordure, comme une tranche de pastèque."
-},
-{
-"name": "Achroïte",
-"slug": "achroite",
-"formula": "Na(Li,Al)₃Al₆(BO₃)₃Si₆O₁₈(OH)₄",
-"crystal_system": "Trigonal",
-"chemical_class": "Silicates (cyclosilicates)",
-"hardness": 7,
-"hardness_max": 7.5,
-"density": 3.0,
-"density_max": 3.1,
-"colors": [
-"incolore"
-],
-"luster": "vitreux",
-"cleavage": "aucun",
-"streak": "blanc",
-"transparency": "transparent à translucide",
-"fracture": "conchoïdale à irrégulière",
-"fluorescence": null,
-"habit": "Prismes striés en long, à section triangulaire bombée.",
-"formation": "Pegmatites à lithium (Brésil, Madagascar, Afghanistan, Californie).",
-"etymology": "Du grec achroos (sans couleur).",
-"varieties": "Tourmaline elbaïte incolore.",
-"confusions": "Quartz : sans stries, plus léger. Topaze : clivage parfait.",
-"description": "Tourmaline incolore, la plus rare des tourmalines de pegmatite."
 },
 {
 "name": "Liddicoatite",
@@ -2157,34 +2022,6 @@
 "description": "Apatite hydroxylée, matière minérale de nos os et de l'émail des dents."
 },
 {
-"name": "Chlorapatite",
-"slug": "chlorapatite",
-"formula": "Ca₅(PO₄)₃Cl",
-"crystal_system": "Hexagonal",
-"chemical_class": "Phosphates, arséniates et vanadates",
-"hardness": 5,
-"hardness_max": 5,
-"density": 3.1,
-"density_max": 3.2,
-"colors": [
-"blanc",
-"jaune",
-"vert"
-],
-"luster": "vitreux à résineux",
-"cleavage": "imparfait",
-"streak": "blanc",
-"transparency": "transparent à opaque",
-"fracture": "conchoïdale à irrégulière",
-"fluorescence": null,
-"habit": "Prismes hexagonaux, tablettes.",
-"formation": "Roches magmatiques basiques, skarns.",
-"etymology": "Du chlore et de l'apatite.",
-"varieties": null,
-"confusions": "Fluorapatite : analyse nécessaire.",
-"description": "Apatite chlorée, plus rare que la fluorapatite."
-},
-{
 "name": "Clinozoïsite",
 "slug": "clinozoisite",
 "formula": "Ca₂Al₃(SiO₄)(Si₂O₇)O(OH)",
@@ -2320,33 +2157,6 @@
 "varieties": "Bronzite (reflets bronze).",
 "confusions": "Diopside : monoclinique, plus vert.",
 "description": "Pyroxène magnésien des roches du manteau, présent dans les nodules de péridotite."
-},
-{
-"name": "Diopside chromifère",
-"slug": "diopside-chromifere",
-"formula": "Ca(Mg,Cr)Si₂O₆",
-"crystal_system": "Monoclinique",
-"chemical_class": "Silicates (inosilicates)",
-"hardness": 5.5,
-"hardness_max": 6.5,
-"density": 3.2,
-"density_max": 3.4,
-"colors": [
-"vert émeraude",
-"vert foncé"
-],
-"luster": "vitreux",
-"cleavage": "bon (à 90°)",
-"streak": "blanc à gris",
-"transparency": "transparent à translucide",
-"fracture": "irrégulière",
-"fluorescence": null,
-"habit": "Grains, prismes courts.",
-"formation": "Péridotites et kimberlites (Sibérie, Pakistan).",
-"etymology": "Du diopside et du chrome.",
-"varieties": "Variété verte du diopside, colorée par le chrome.",
-"confusions": "Émeraude : plus dure. Tsavorite : cubique.",
-"description": "Diopside vert émeraude coloré par le chrome, indicateur des gisements de diamant."
 },
 {
 "name": "Riébeckite",
@@ -2790,33 +2600,6 @@
 "description": "Spinelle zincifère vert bleu foncé des pegmatites."
 },
 {
-"name": "Pléonaste",
-"slug": "pleonaste",
-"formula": "(Mg,Fe)Al₂O₄",
-"crystal_system": "Cubique",
-"chemical_class": "Oxydes et hydroxydes",
-"hardness": 7.5,
-"hardness_max": 8,
-"density": 3.6,
-"density_max": 3.9,
-"colors": [
-"noir",
-"vert très foncé"
-],
-"luster": "vitreux",
-"cleavage": "aucun",
-"streak": "gris",
-"transparency": "translucide à opaque",
-"fracture": "conchoïdale",
-"fluorescence": null,
-"habit": "Octaèdres, souvent maclés (macle du spinelle).",
-"formation": "Roches métamorphiques, enclaves des laves (Eifel, Massif central).",
-"etymology": "Du grec pleonastos (abondant), pour ses nombreuses faces.",
-"varieties": "Spinelle ferrifère noir (ceylanite).",
-"confusions": "Magnétite : magnétique. Mélanite : dodécaèdres.",
-"description": "Spinelle ferrifère noir en petits octaèdres des enclaves volcaniques."
-},
-{
 "name": "Iolite",
 "slug": "iolite",
 "formula": "Mg₂Al₄Si₅O₁₈",
@@ -2843,32 +2626,5 @@
 "varieties": "Cordiérite de qualité gemme, fortement pléochroïque (« saphir d'eau »).",
 "confusions": "Tanzanite : plus dense. Saphir : bien plus dur.",
 "description": "Cordiérite gemme qui passe du bleu violet au jaune selon l'angle de vue ; les Vikings s'en seraient servi pour s'orienter."
-},
-{
-"name": "Hyacinthe",
-"slug": "hyacinthe",
-"formula": "ZrSiO₄",
-"crystal_system": "Quadratique",
-"chemical_class": "Silicates (nésosilicates)",
-"hardness": 7.5,
-"hardness_max": 7.5,
-"density": 4.6,
-"density_max": 4.7,
-"colors": [
-"rouge orangé",
-"brun rouge"
-],
-"luster": "adamantin",
-"cleavage": "faible",
-"streak": "blanc",
-"transparency": "transparent",
-"fracture": "conchoïdale",
-"fluorescence": "Parfois jaune.",
-"habit": "Prismes bipyramidés, grains roulés.",
-"formation": "Alluvions et basaltes (Sri Lanka, Cambodge) ; zircons du ruisseau d'Expailly au Puy-en-Velay.",
-"etymology": "Du grec hyakinthos, nom d'une fleur.",
-"varieties": "Variété rouge orangé du zircon.",
-"confusions": "Grenat hessonite : monoréfringent. Spinelle : plus léger.",
-"description": "Zircon rouge orangé ; le Velay est célèbre pour ses hyacinthes d'Expailly."
 }
 ]

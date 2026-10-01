@@ -2784,13 +2784,13 @@
  },
  "rubis": {
   "photo": "rubis.webp",
-  "author": "StrangerThanKindness",
+  "thumb": "rubis-mini.webp",
+  "author": "Parent Géry",
   "license": "CC BY-SA 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Ruby_-_Winza,_Tanzania.jpg",
-  "width": 602,
-  "height": 802,
-  "thumb": "rubis-mini.webp",
+  "page": "https://commons.wikimedia.org/wiki/File:Rubis,_calcite_12.jpg",
+  "width": 640,
+  "height": 467,
   "name": "Rubis"
  },
  "padparadscha": {
@@ -3837,5 +3837,16 @@
   "height": 755,
   "thumb": "iolite-mini.webp",
   "name": "Iolite"
+ },
+ "saphir": {
+  "photo": "saphir.webp",
+  "thumb": "saphir-mini.webp",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Sapphire_(corundum)_(26663158752).jpg",
+  "width": 640,
+  "height": 353,
+  "name": "Saphir"
  }
 }
