@@ -1,8 +1,8 @@
 import { ensureNamed, normalizeName, OTHER } from "./reference-resolver.js";
-import { enhanceCombobox } from "./combobox.js";
-import { backfillLocalities, communeLabel, communeUpdate, findCommune, searchCommunes } from "./geo-communes.js";
+import { enhanceCombobox, enhanceMulti } from "./combobox.js";
+import { backfillLocalities, communeLabel, communeUpdate, departmentOfCommune, findCommune, searchCommunes } from "./geo-communes.js";
 import { createPointTool, pickPoint, pointKey, savePendingPoints } from "./point-picker.js";
-import { createContentEditor, openLayoutEditor } from "./article-editor.js";
+import { createContentEditor } from "./article-editor.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -305,12 +305,8 @@ function buildEditorPanel() {
   if (activeSection.id === "articles") {
     const layout = document.createElement("div"); layout.className = "layout-tool";
     const open = document.createElement("button"); open.type = "button"; open.className = "admin-secondary layout-btn"; open.textContent = "🖌 Mise en page";
-    const note = document.createElement("small"); note.textContent = "Ouvre l’éditeur de mise en page du contenu : gras, italique, police, couleur, alignement, déplacement des blocs et taille des images.";
-    open.addEventListener("click", async () => {
-      if (!contentEditor) return;
-      const result = await openLayoutEditor({ client, blocks: contentEditor.getBlocks() });
-      if (result) { contentEditor.setBlocks(result); report("Mise en page appliquée. Pensez à enregistrer l’article."); }
-    });
+    const note = document.createElement("small"); note.textContent = "Ouvre le contenu en plein écran pour écrire et mettre en page confortablement (gras, italique, police, couleur, alignement, images, PDF et liens n’importe où dans le texte).";
+    open.addEventListener("click", () => contentEditor?.toggleFullscreen(true));
     layout.append(open, note); form.append(layout);
   }
   if (copy?.referenceHint) { const reference = form.elements.namedItem("reference"); if (reference) reference.placeholder = `ex. ${copy.referenceHint} (première référence libre)`; }
@@ -403,6 +399,7 @@ function createField(field, value) {
     else { box.hidden = true; box.placeholder = "Saisir la nouvelle valeur"; input.addEventListener("change", () => { box.hidden = input.value !== OTHER; if (!box.hidden) box.focus(); }); }
     wrapper.append(box);
     if (!field.multi) enhanceCombobox(input, { otherValue: OTHER, otherInput: box, placeholder: `${field.label}…` });
+    else enhanceMulti(input, { otherInput: box, placeholder: "Tapez pour ajouter…" });
   }
   return wrapper;
 }
@@ -689,7 +686,28 @@ function wireGeoAutofill(form) {
     const mine = (refs.mines || []).find(item => String(item.id) === String(event.target.value));
     if (mine?.locality_id && setValue("locality_id", mine.locality_id)) fromLocality(mine.locality_id);
   });
-  field("locality_id")?.addEventListener?.("change", event => fromLocality(event.target.value));
+  field("locality_id")?.addEventListener?.("change", async event => {
+    if (event.target.value !== OTHER) { fromLocality(event.target.value); return; }
+    // Nouvelle commune saisie : son département est cherché dans la base officielle des communes.
+    const code = await departmentOfCommune(field("locality_id__other")?.value);
+    if (code && setValue("department_code", code)) fromDepartment(code);
+  });
+  // Fiches liées (articles, archives) : chaque commune ajoutée ajoute son département et sa région.
+  const select = (name, value) => {
+    const list = field(name);
+    const option = list?.multiple && [...list.options].find(item => item.value === String(value));
+    if (!option || option.selected) return;
+    option.selected = true; list.dispatchEvent(new Event("change", { bubbles: true }));
+  };
+  const fromLinkedDepartment = code => { select("link_departments", code); const department = (refs.departments || []).find(item => String(item.code) === String(code)); if (department?.region_id) select("link_regions", department.region_id); };
+  field("link_localities")?.addEventListener?.("change", () => {
+    [...field("link_localities").selectedOptions].forEach(option => { const locality = (refs.localities || []).find(item => String(item.id) === option.value); if (locality?.department_code) fromLinkedDepartment(locality.department_code); });
+  });
+  const typedLocalities = field("link_localities__other");
+  typedLocalities?.addEventListener?.("change", async () => {
+    for (const name of typedLocalities.value.split(",").map(part => part.trim()).filter(Boolean)) { const code = await departmentOfCommune(name); if (code) fromLinkedDepartment(code); }
+  });
+  field("link_departments")?.addEventListener?.("change", () => { [...field("link_departments").selectedOptions].forEach(option => { const department = (refs.departments || []).find(item => String(item.code) === option.value); if (department?.region_id) select("link_regions", department.region_id); }); });
 }
 
 async function ensureRef(table, name) {

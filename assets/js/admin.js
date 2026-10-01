@@ -1,7 +1,7 @@
 import { getSupabase } from "./supabase-client.js";
 import { resolveReferences, ensureNamed, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
-import { enhanceCombobox } from "./combobox.js";
-import { backfillLocalities } from "./geo-communes.js";
+import { autoEnhanceSelects, enhanceCombobox } from "./combobox.js";
+import { backfillLocalities, departmentOfCommune } from "./geo-communes.js";
 import { createPointTool, pointKey, savePendingPoints } from "./point-picker.js";
 
 const status = document.querySelector("#admin-status");
@@ -182,6 +182,8 @@ if (!client) {
           if (select.id === "locality") autofillFromLocality(select.value);
           if (select.id === "provenance") autofillFromMine(select.value);
         }
+        // Nouvelle commune saisie : département (puis région et pays) trouvé dans la base officielle des communes.
+        if (select.id === "locality" && select.value === "OTHER") void departmentOfCommune(document.querySelector("#locality-other").value).then(code => { if (code && setGeoSelect("department", code)) autofillFromDepartment(code); });
       });
     });
   mineralAssociationSelect.addEventListener("change", () => {
@@ -197,6 +199,8 @@ if (!client) {
     .forEach(([selector, placeholder]) => enhanceCombobox(document.querySelector(selector), { otherValue: "OTHER", otherInput: document.querySelector(`${selector}-other`), placeholder }));
   enhanceCombobox(mineralAssociationSelect, { otherValue: "OTHER", otherInput: mineralAssociationOther, placeholder: "Minéral associé…", onPick: addMineralAssociation });
   enhanceCombobox(siteTypeSelect, { otherValue: OTHER, otherInput: siteTypeOther, placeholder: "Type de site…" });
+  // Toutes les autres listes déroulantes de l'admin : on peut aussi y écrire.
+  autoEnhanceSelects(document.body);
   mineralAssociationSelect.addEventListener("keypress", (e) => {
     if (e.key === "Enter") { e.preventDefault(); addMineralAssociation(); }
   });

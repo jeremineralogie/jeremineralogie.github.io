@@ -4,6 +4,7 @@
 //   { type: "image", bucket, path, width, align, caption } width : pourcentage de la largeur (15 à 100)
 //   { type: "pdf", bucket, path, name }
 //   { type: "link", url, label }
+//   { type: "rich", html }   texte libre : images, PDF et liens placés n'importe où dans le texte (format actuel de l'éditeur)
 // Les anciens blocs { type: "paragraph" | "heading", text } restent lisibles.
 export const FONTS = [
   ["", "Police par défaut"],
@@ -25,15 +26,35 @@ export function normalizeBlocks(body) {
     }
     if (block.type === "image" && block.path) return { type: "image", bucket: block.bucket || "site-media-public", path: block.path, width: Math.min(100, Math.max(15, Number(block.width) || 100)), align: ALIGNS.has(block.align) ? block.align : "center", caption: String(block.caption || "") };
     if (block.type === "pdf" && block.path) return { type: "pdf", bucket: block.bucket || "site-media-public", path: block.path, name: String(block.name || "Document PDF") };
+    if (block.type === "rich") return { type: "rich", html: String(block.html || "") };
     if (block.type === "link" && block.url) return { type: "link", url: String(block.url), label: String(block.label || block.url) };
     return null;
   }).filter(Boolean);
 }
 
 // Texte brut (résumés, référencement).
+const stripTags = html => html.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&#39;/g, "'").replace(/&amp;/g, "&");
 export function blocksToText(blocks) {
-  return normalizeBlocks(blocks).filter(block => block.type === "text" || block.type === "heading")
-    .map(block => block.html.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").trim()).filter(Boolean);
+  return normalizeBlocks(blocks).flatMap(block => {
+    if (block.type === "text" || block.type === "heading") return [stripTags(block.html).trim()];
+    if (block.type === "rich") return stripTags(block.html.replace(/<a\b[^>]*class="[^"]*art-file-inline[^>]*>[\s\S]*?<\/a>/gi, "").replace(/<\/(p|h2|h3|li|blockquote)>/gi, "\n")).split(/\n+/).map(line => line.trim());
+    return [];
+  }).filter(Boolean);
+}
+
+// Anciens blocs → texte libre (ouverture d'un ancien article dans l'éditeur).
+export function blocksToRichHtml(body) {
+  const attr = value => escapeHtml(value).replace(/"/g, "&quot;");
+  return normalizeBlocks(body).map(block => {
+    const align = block.align ? ` style="text-align:${block.align}"` : "";
+    if (block.type === "rich") return block.html;
+    if (block.type === "text") return `<p${align}>${block.html}</p>`;
+    if (block.type === "heading") return `<h2${align}>${block.html}</h2>`;
+    if (block.type === "image") return `<p style="text-align:center"><img class="art-img art-img-${block.align === "left" || block.align === "right" ? block.align : "center"}" data-bucket="${attr(block.bucket)}" data-path="${attr(block.path)}" style="width:${block.width}%" alt="${attr(block.caption)}"></p>${block.caption ? `<p style="text-align:center"><i>${escapeHtml(block.caption)}</i></p>` : ""}`;
+    if (block.type === "pdf") return `<p><a class="art-file-inline" data-bucket="${attr(block.bucket)}" data-path="${attr(block.path)}">📄 ${escapeHtml(block.name)}</a></p>`;
+    if (block.type === "link") return `<p><a href="${attr(block.url)}">${escapeHtml(block.label)}</a></p>`;
+    return "";
+  }).join("");
 }
 
 // Nettoyage du HTML saisi : seuls gras, italique, souligné, couleur, police, retours à la ligne et liens sont conservés.
@@ -79,6 +100,87 @@ export function sanitizeHtml(html) {
   return holder.innerHTML;
 }
 
+// Texte libre : paragraphes, intertitres, listes, mise en forme, liens, images et PDF placés dans le texte.
+// Les images et PDF ne sont acceptés que s'ils viennent du stockage du site (data-path).
+const BLOCKS = { p: "p", div: "p", h1: "h2", h2: "h2", h3: "h3", blockquote: "blockquote", ul: "ul", ol: "ol", li: "li" };
+const ROOT_BLOCKS = new Set(["P", "H2", "H3", "BLOCKQUOTE", "UL", "OL"]);
+export function sanitizeRich(html, client, { editing = false } = {}) {
+  const template = document.createElement("template");
+  template.innerHTML = String(html ?? "");
+  const media = (child, bucketDefault = "site-media-public") => ({ bucket: child.getAttribute("data-bucket") || bucketDefault, path: child.getAttribute("data-path") || "" });
+  const clean = node => {
+    const out = document.createDocumentFragment();
+    node.childNodes.forEach(child => {
+      if (child.nodeType === Node.TEXT_NODE) { out.append(child.nodeValue); return; }
+      if (child.nodeType !== Node.ELEMENT_NODE) return;
+      const tag = child.tagName.toLowerCase();
+      if (["script", "style", "iframe", "object", "embed", "noscript", "template", "svg", "math"].includes(tag)) return;
+      if (tag === "br") { out.append(document.createElement("br")); return; }
+      if (tag === "img") {
+        const file = media(child);
+        if (!file.path) return;
+        const image = document.createElement("img");
+        const position = (child.className.match(/art-img-(inline|left|center|right)/) || [])[1] || "inline";
+        image.className = `art-img art-img-${position}`;
+        image.dataset.bucket = file.bucket; image.dataset.path = file.path;
+        image.style.width = `${Math.min(100, Math.max(5, parseFloat(child.style.width) || 40))}%`;
+        image.alt = child.getAttribute("alt") || "";
+        image.src = mediaUrl(client, file);
+        if (!editing) image.loading = "lazy";
+        out.append(image); return;
+      }
+      if (tag === "a") {
+        if (child.hasAttribute("data-path")) {
+          const file = media(child);
+          const link = document.createElement("a"); link.className = "art-file-inline";
+          link.dataset.bucket = file.bucket; link.dataset.path = file.path; link.href = mediaUrl(client, file);
+          link.textContent = child.textContent.trim() || "📄 Document";
+          if (editing) link.contentEditable = "false"; else { link.target = "_blank"; link.rel = "noopener"; }
+          out.append(link); return;
+        }
+        const href = child.getAttribute("href") || "";
+        if (/^(https?:|mailto:)/i.test(href)) { const link = document.createElement("a"); link.href = href; if (!editing) { link.target = "_blank"; link.rel = "noopener"; } link.append(clean(child)); out.append(link); }
+        else out.append(clean(child));
+        return;
+      }
+      if (["b", "strong", "i", "em", "u"].includes(tag)) { const element = document.createElement(tag === "strong" ? "b" : tag === "em" ? "i" : tag); element.append(clean(child)); out.append(element); return; }
+      if (BLOCKS[tag]) {
+        const element = document.createElement(BLOCKS[tag]);
+        const align = child.style?.textAlign || child.getAttribute("align") || "";
+        if (ALIGNS.has(align)) element.style.textAlign = align;
+        element.append(clean(child)); out.append(element); return;
+      }
+      const color = SAFE_COLOR(child.style?.color || child.getAttribute("color") || "");
+      const font = SAFE_FONT((child.style?.fontFamily || child.getAttribute("face") || "").replace(/"/g, "'"));
+      const bold = /^(bold|[6-9]00)$/.test(child.style?.fontWeight || "");
+      const italic = child.style?.fontStyle === "italic";
+      if (color || font || bold || italic) {
+        const span = document.createElement("span");
+        if (color) span.style.color = color;
+        if (font) span.style.fontFamily = font;
+        if (bold) span.style.fontWeight = "700";
+        if (italic) span.style.fontStyle = "italic";
+        span.append(clean(child)); out.append(span);
+      } else out.append(clean(child));
+    });
+    return out;
+  };
+  const cleaned = clean(template.content);
+  // Tout contenu « en ligne » posé à la racine est regroupé dans des paragraphes.
+  const holder = document.createElement("div");
+  let paragraph = null;
+  [...cleaned.childNodes].forEach(node => {
+    if (node.nodeType === Node.ELEMENT_NODE && (ROOT_BLOCKS.has(node.tagName) || node.tagName === "LI")) {
+      paragraph = null;
+      if (node.tagName === "LI") { const p = document.createElement("p"); p.append(...node.childNodes); holder.append(p); } else holder.append(node);
+      return;
+    }
+    if (!paragraph) { if (node.nodeType === Node.TEXT_NODE && !node.nodeValue.trim()) return; paragraph = document.createElement("p"); holder.append(paragraph); }
+    paragraph.append(node);
+  });
+  return holder.innerHTML;
+}
+
 export function mediaUrl(client, block) {
   if (!client || !block?.path) return "";
   return client.storage.from(block.bucket || "site-media-public").getPublicUrl(block.path).data.publicUrl;
@@ -88,7 +190,11 @@ export function mediaUrl(client, block) {
 export function renderBlocks(container, body, client) {
   const nodes = [];
   normalizeBlocks(body).forEach(block => {
-    if (block.type === "text" || block.type === "heading") {
+    if (block.type === "rich") {
+      const element = document.createElement("div"); element.className = "art-rich";
+      element.innerHTML = sanitizeRich(block.html, client);
+      if (element.textContent.trim() || element.querySelector("img,a")) nodes.push(element);
+    } else if (block.type === "text" || block.type === "heading") {
       const element = document.createElement(block.type === "heading" ? "h2" : "p");
       element.className = "art-text";
       element.innerHTML = sanitizeHtml(block.html);
