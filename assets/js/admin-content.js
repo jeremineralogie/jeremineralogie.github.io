@@ -49,7 +49,7 @@ const sections = [
     links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", countryField: "provenance",
     duplicate: { title: "Nouveau produit (copie)", fields: ["mineral_id", "provenance", "mine_id", "locality_id", "department_code", "region_id"] }, autoReference: true, fields: [
     { key: "title", label: "Titre (visible seulement dans l’admin)" },
-    { key: "reference", label: "Référence (créée automatiquement)", required: true, help: "JM + 2 lettres du minéral + lettres du gisement + numéro, ex. JMFLLB1. Modifiable si besoin." },
+    { key: "reference", label: "Référence (créée automatiquement)", required: true, help: "JM + 2 lettres du minéral + lettres du gisement (à défaut : commune, département, région, pays) + numéro, ex. JMFLLB1. Modifiable si besoin." },
     { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "link_associations", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true },
     { key: "mine_id", label: "Gisement", ref: "mines", display: "name" }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" },
     { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "region_id", label: "Région", ref: "regions", display: "name" },
@@ -585,7 +585,8 @@ async function saveRecord(form) {
     if (typedMine) record.mine_id = String(await ensureRef("mines", typedMine, { locality_id: record.locality_id || null }));
     // Référence automatique : numéro recalculé sur les références enregistrées au moment même de l'enregistrement.
     if (section.autoReference && !selectedRecord && form.elements.namedItem("reference")?.dataset.auto === "1") {
-      const prefix = referencePrefix(refName("minerals", record.mineral_id), refName("mines", record.mine_id));
+      const prefix = referencePrefix(refName("minerals", record.mineral_id),
+        [refName("mines", record.mine_id), refName("localities", record.locality_id), refName("departments", record.department_code), refName("regions", record.region_id), record.provenance]);
       if (!prefix) throw new Error("Choisissez le minéral principal pour créer la référence (ou saisissez-la à la main).");
       const { data, error } = await client.from(section.table).select("reference").ilike("reference", `${prefix}%`);
       if (error) throw error;
@@ -651,7 +652,8 @@ function duplicateRecord(source) {
   report("Copie prête : minéral principal et localisation repris. Complétez le reste puis enregistrez.");
 }
 
-// Référence produit remplie en direct à partir du minéral principal et du gisement, tant qu'elle n'est pas modifiée à la main.
+// Référence produit remplie en direct à partir du minéral principal et du lieu (gisement, sinon commune, département, région, pays),
+// tant qu'elle n'est pas modifiée à la main.
 function wireAutoReference(form) {
   const input = form.elements.namedItem("reference");
   if (!input) return;
@@ -664,7 +666,8 @@ function wireAutoReference(form) {
   };
   const update = () => {
     if (input.dataset.auto !== "1") return;
-    input.value = nextReference(referencePrefix(nameOf("mineral_id", "minerals"), nameOf("mine_id", "mines")), records.map(record => record.reference));
+    const places = [nameOf("mine_id", "mines"), nameOf("locality_id", "localities"), nameOf("department_code", "departments"), nameOf("region_id", "regions"), text(form.elements.namedItem("provenance")?.value)];
+    input.value = nextReference(referencePrefix(nameOf("mineral_id", "minerals"), places), records.map(record => record.reference));
   };
   input.addEventListener("input", () => { input.dataset.auto = input.value.trim() ? "0" : "1"; if (input.dataset.auto === "1") update(); });
   form.addEventListener("change", event => { if (event.target !== input) update(); });

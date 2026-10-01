@@ -1,13 +1,17 @@
-// Référence automatique des produits de la boutique : JM + minéral principal + gisement + numéro.
+// Référence automatique des produits de la boutique : JM + minéral principal + lieu + numéro.
 //   minéral : ses deux premières lettres (Fluorite → FL) ;
-//   gisement : ses deux premières lettres s'il n'a qu'un mot (Crozant → CR), sinon la première lettre de chaque mot
-//   (La Barre → LB, Chavaniac Lafayette → CL) ; numéro : 1, 2, 3… à la suite des références existantes de même début.
+//   lieu : le gisement, à défaut la commune, puis le département, la région, le pays (premier renseigné) ;
+//     ses deux premières lettres s'il n'a qu'un mot (Crozant → CR), sinon la première lettre de chaque mot
+//     (La Barre → LB, Chavaniac Lafayette → CL) ;
+//   numéro : 1, 2, 3… à la suite des références existantes de même début.
 const letters = value => String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
 
-export function referencePrefix(mineral, mine) {
+// places : noms du gisement, de la commune, du département, de la région et du pays, dans cet ordre.
+export function referencePrefix(mineral, places = []) {
   const mineralPart = letters(mineral).replace(/[^A-Z]/g, "").slice(0, 2);
   if (!mineralPart) return "";
-  const words = letters(mine).split(/[^A-Z0-9]+/).filter(Boolean);
+  const place = places.map(value => String(value ?? "").trim()).find(Boolean) || "";
+  const words = letters(place).split(/[^A-Z0-9]+/).filter(Boolean);
   const minePart = words.length > 1 ? words.map(word => word[0]).join("") : (words[0] || "").slice(0, 2);
   return `JM${mineralPart}${minePart}`;
 }
