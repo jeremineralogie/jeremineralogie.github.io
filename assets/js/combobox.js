@@ -70,19 +70,24 @@ export function enhanceCombobox(select, { otherValue, otherInput, placeholder = 
     }
     if (onPick && value) { onPick(); input.value = currentLabel(); clear.hidden = !input.value; }
   };
-  const close = () => { list.hidden = true; input.setAttribute("aria-expanded", "false"); active = -1; };
+  let otherMode = false;
+  const close = () => { list.hidden = true; input.setAttribute("aria-expanded", "false"); active = -1; if (otherMode) { otherMode = false; input.placeholder = placeholder; } };
+  // « Autre » : on vide le champ pour saisir une nouvelle valeur.
+  const startOther = () => { otherMode = true; input.value = ""; input.placeholder = "Saisissez la nouvelle valeur puis Entrée"; input.focus(); render(); };
   const render = (showAll = false) => {
     const query = showAll ? "" : fold(input.value);
     const all = choices();
+    if (otherMode && !query) { const li = document.createElement("li"); li.className = "combo-empty"; li.textContent = "Tapez la nouvelle valeur, puis Entrée."; items = []; list.replaceChildren(li); list.hidden = false; input.setAttribute("aria-expanded", "true"); active = -1; return; }
     items = rank(all, query).slice(0, showAll ? 500 : 80);
     const exact = all.some(choice => fold(choice.label) === query);
     if (query && !exact && hasOther()) items.push({ value: otherValue, label: input.value.trim(), create: true });
+    if (!query && hasOther()) items.push({ ask: true });
     list.replaceChildren(...items.map((item, index) => {
       const li = document.createElement("li"); li.setAttribute("role", "option"); li.id = `${listId}-${index}`;
-      li.className = item.create ? "combo-create" : "";
-      li.textContent = item.create ? `➕ Ajouter « ${item.label} »` : item.label;
+      li.className = item.create || item.ask ? "combo-create" : "";
+      li.textContent = item.ask ? "➕ Autre (saisir une nouvelle valeur)…" : item.create ? `➕ Ajouter « ${item.label} »` : item.label;
       li.addEventListener("mousedown", event => event.preventDefault());
-      li.addEventListener("click", () => { commit(item.value, item.label); close(); });
+      li.addEventListener("click", () => { if (item.ask) { startOther(); return; } commit(item.value, item.label); close(); });
       return li;
     }));
     if (!items.length) { const li = document.createElement("li"); li.className = "combo-empty"; li.textContent = "Aucun résultat"; list.replaceChildren(li); }
@@ -111,6 +116,7 @@ export function enhanceCombobox(select, { otherValue, otherInput, placeholder = 
     else if (event.key === "ArrowUp") { event.preventDefault(); active = Math.max(0, active - 1); highlight(); }
     else if (event.key === "Enter") {
       event.preventDefault();
+      if (!list.hidden && active >= 0 && items[active]?.ask) { startOther(); return; }
       if (!list.hidden && active >= 0 && items[active]) commit(items[active].value, items[active].label); else settleTyped();
       close();
     } else if (event.key === "Escape") { input.value = currentLabel(); close(); }
@@ -164,7 +170,9 @@ export function enhanceMulti(select, { otherInput, placeholder = "Tapez pour ajo
     [...list.children].forEach((li, index) => li.classList.toggle("is-active", index === active));
     if (active >= 0) list.children[active]?.scrollIntoView({ block: "nearest" });
   };
+  const askOther = () => { input.value = ""; input.placeholder = "Saisissez la nouvelle valeur puis Entrée"; input.focus(); list.hidden = true; };
   const pick = item => {
+    if (item.ask) { askOther(); return; }
     if (item.create) { if (!typed().some(name => fold(name) === fold(item.label))) setTyped([...typed(), item.label]); }
     else { const option = [...select.options].find(candidate => candidate.value === item.value); if (option && !option.selected) { option.selected = true; changed(); } }
     input.value = ""; renderChips(); render();
@@ -175,11 +183,12 @@ export function enhanceMulti(select, { otherInput, placeholder = "Tapez pour ajo
     items = rank(all, query).slice(0, showAll ? 500 : 80);
     const exact = [...select.options].some(option => fold(option.textContent) === query);
     if (query && !exact && otherInput) items.push({ label: input.value.trim(), create: true });
+    if (!query && otherInput) items.push({ ask: true });
     list.replaceChildren(...items.map(item => {
-      const li = document.createElement("li"); li.setAttribute("role", "option"); li.className = item.create ? "combo-create" : "";
-      li.textContent = item.create ? `➕ Ajouter « ${item.label} »` : item.label;
+      const li = document.createElement("li"); li.setAttribute("role", "option"); li.className = item.create || item.ask ? "combo-create" : "";
+      li.textContent = item.ask ? "➕ Autre (saisir une nouvelle valeur)…" : item.create ? `➕ Ajouter « ${item.label} »` : item.label;
       li.addEventListener("mousedown", event => event.preventDefault());
-      li.addEventListener("click", () => pick(item));
+      li.addEventListener("click", () => item.ask ? askOther() : pick(item));
       return li;
     }));
     if (!items.length) { const li = document.createElement("li"); li.className = "combo-empty"; li.textContent = query ? "Aucun résultat" : "Tout est déjà choisi"; list.replaceChildren(li); }
@@ -204,7 +213,7 @@ export function enhanceMulti(select, { otherInput, placeholder = "Tapez pour ajo
       renderChips();
     } else if (event.key === "Escape") { input.value = ""; close(); }
   });
-  input.addEventListener("blur", () => { input.value = ""; close(); });
+  input.addEventListener("blur", () => { input.value = ""; input.placeholder = placeholder; close(); });
   new MutationObserver(renderChips).observe(select, { childList: true, subtree: true, attributes: true, attributeFilter: ["selected"] });
   select.addEventListener("change", renderChips);
   otherInput?.addEventListener("input", renderChips);
