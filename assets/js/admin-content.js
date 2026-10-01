@@ -13,7 +13,7 @@ const text = value => String(value ?? "").trim();
 const slugify = value => text(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
-const MINERAL_CLASSES = ["Éléments natifs", "Sulfures et sulfosels", "Halogénures", "Oxydes et hydroxydes", "Carbonates", "Sulfates, chromates, molybdates et tungstates",
+const MINERAL_CLASSES = ["Éléments natifs", "Sulfures et sulfosels", "Halogénures", "Oxydes et hydroxydes", "Carbonates", "Borates", "Sulfates, chromates, molybdates et tungstates",
   "Phosphates, arséniates et vanadates", "Silicates (nésosilicates)", "Silicates (sorosilicates)", "Silicates (cyclosilicates)", "Silicates (inosilicates)",
   "Silicates (phyllosilicates)", "Silicates (tectosilicates)", "Composés organiques"];
 const CRYSTAL_SYSTEMS = ["Cubique", "Quadratique", "Hexagonal", "Trigonal", "Orthorhombique", "Monoclinique", "Triclinique", "Amorphe"];
