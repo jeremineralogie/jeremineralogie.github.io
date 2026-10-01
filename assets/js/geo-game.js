@@ -1,7 +1,8 @@
 // « Devine le gisement » (accueil) : une photo de pièce, on touche la carte là où elle a été trouvée.
 // 5 manches par jour, les mêmes pour tout le monde ; score de 0 à 1 000 par manche selon la distance.
 import { loadLeaflet } from "./leaflet-loader.js";
-import { parisDay, recordGame } from "./game-progress.js";
+import { parisDay, recordGame, streakOf } from "./game-progress.js";
+import { dateFr, sharePanel } from "./share.js";
 
 const ROUNDS = 5;
 const FRANCE = [[41.3, -5.2], [51.1, 9.6]];
@@ -138,13 +139,13 @@ export async function renderGeoGame(panel, pieces) {
       item.append(image, text); list.append(item);
     });
     end.append(list);
-    const share = el("button", "geo-share", "Partager mon score"); share.type = "button";
-    const shareText = `🗺️ Devine le gisement — ${new Intl.DateTimeFormat("fr-FR").format(new Date(`${today}T12:00:00`))}\n${results.map(result => square(result.points)).join("")} ${finalScore}/${max}\nhttps://jeremineralogie.github.io/`;
-    share.addEventListener("click", async () => {
-      try {
-        if (navigator.share) { await navigator.share({ text: shareText }); return; }
-        await navigator.clipboard.writeText(shareText); share.textContent = "Score copié !";
-      } catch (error) { if (error?.name !== "AbortError") share.textContent = "Partage impossible"; }
+    const squares = results.map(result => square(result.points));
+    const streak = streakOf("geo");
+    const share = sharePanel({
+      fileName: `devine-le-gisement-${today}.png`,
+      text: `🗺️ Devine le gisement — ${new Intl.DateTimeFormat("fr-FR").format(new Date(`${today}T12:00:00`))}\n${squares.join("")} ${finalScore}/${max}\nEt vous, ferez-vous mieux ?`,
+      spec: { title: "Devine le gisement", date: dateFr(today), big: finalScore.toLocaleString("fr-FR"), bigSub: `sur ${max.toLocaleString("fr-FR")} points`, squares,
+        photos: chosen.slice(0, results.length).map(piece => piece.photo), streak: streak > 1 ? `🔥 Série de ${streak} jours` : "" }
     });
     end.append(share, el("p", "geo-next-day", "De nouvelles pièces à deviner demain."));
     body.replaceChildren(end);

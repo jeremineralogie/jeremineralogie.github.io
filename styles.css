@@ -603,3 +603,11 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .home-games-body{display:grid;gap:18px}
 .learn-games{margin-top:4px}
 .learn-games .home-games-body>.home-game:first-child{border-top:0;padding-top:0}
+/* Partage des résultats des jeux */
+.share{display:grid;gap:10px;justify-items:center;width:100%;max-width:560px;margin-top:6px}
+.share-preview{width:min(46%,200px);aspect-ratio:9/16;object-fit:cover;border:1px solid #6a37b6;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.55)}
+.share-preview[hidden]{display:none}
+.share-btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 20px;border:1px solid #b48cff;border-radius:3px;background:#3a1d63;color:#fff;font:inherit;font-size:.95rem;font-weight:600;cursor:pointer}
+.share-btn:hover{background:#4a2580}
+.share-status{margin:0;max-width:460px;font-size:.8rem;color:#cdb6f2}
+.share-status:empty{display:none}

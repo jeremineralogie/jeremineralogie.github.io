@@ -3,8 +3,9 @@
 import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
-import { recordGame, renderBadges } from "./game-progress.js";
+import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
 import { renderGeoGame } from "./geo-game.js";
+import { dateFr, sharePanel } from "./share.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const fold = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
@@ -47,6 +48,19 @@ const store = {
   set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* sans mémoire : le quiz reste jouable */ } }
 };
 
+// Partage du quiz : le résultat sans dévoiler le minéral.
+function quizShare(correct) {
+  const hints = todayResult("quiz")?.hints;
+  const detail = !correct ? "pas trouvé cette fois" : hints === 0 ? "sans aucun indice" : hints ? `avec ${hints} indice${hints > 1 ? "s" : ""} en plus` : "";
+  const streak = streakOf("quiz");
+  return sharePanel({
+    fileName: `quiz-du-jour-${today}.png`,
+    text: `🧪 Quiz du jour Jeremineralogie — ${new Intl.DateTimeFormat("fr-FR").format(new Date(`${today}T12:00:00`))}\n${correct ? "✅ Trouvé" : "❌ Raté"}${detail && correct ? ` ${detail}` : ""}\nSaurez-vous trouver le minéral mystère ?`,
+    spec: { title: "Le quiz du jour", date: dateFr(today), big: correct ? "Trouvé !" : "Raté…", bigSub: detail, note: "Le minéral reste secret : à vous de jouer !", mystery: true,
+      streak: streak > 1 ? `🔥 Série de ${streak} jours` : "", footer: "Saurez-vous le trouver ?" }
+  });
+}
+
 function renderQuiz(panel, mineral, minerals) {
   const body = panel.querySelector("[data-body]");
   const random = seeded(`quiz-indices-${today}`);
@@ -85,6 +99,7 @@ function renderQuiz(panel, mineral, minerals) {
     const streak = store.get("jm-quiz-serie");
     if (streak?.count > 1 && correct) result.append(el("span", "quiz-streak", `Série en cours : ${streak.count} bonnes réponses d’affilée`));
     result.append(el("span", "quiz-next", "Un nouveau quiz vous attend demain."));
+    result.append(quizShare(correct));
   };
   const saved = store.get("jm-quiz");
   if (saved?.date === today) { showResult(saved.answer, saved.correct); return; }
@@ -97,8 +112,8 @@ function renderQuiz(panel, mineral, minerals) {
     const streak = store.get("jm-quiz-serie") || { count: 0, last: null };
     const yesterday = new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(Date.now() - 86400000));
     store.set("jm-quiz-serie", correct ? { count: streak.last === yesterday ? streak.count + 1 : 1, last: today } : { count: 0, last: today });
-    showResult(answer, correct);
     recordGame("quiz", { correct, hints: hintsUsed, family: mineral.chemical_class || null });
+    showResult(answer, correct);
   });
 }
 

@@ -98,6 +98,7 @@ export function recordGame(game, result) {
 }
 
 export const streakOf = game => statsOf(read())[game].streak;
+export const todayResult = game => read()[game][parisDay()] || null;
 
 function toast(badge) {
   const box = document.createElement("div"); box.className = "badge-toast"; box.setAttribute("role", "status");
