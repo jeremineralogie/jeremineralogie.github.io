@@ -3,6 +3,7 @@ import { categoryLabel } from "./reference-resolver.js";
 import { documentUrl, renderNeighbours } from "./detail-nav.js";
 import { applyGlossary } from "./glossary-links.js";
 import { documentTitle } from "./seo-titles.js";
+import { renderBlocks } from "./article-content.js";
 
 const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("slug");
 const status = document.querySelector("#detail-status");
@@ -17,7 +18,10 @@ function render(client, row) {
   const meta = document.createElement("div"); meta.className = "meta";
   meta.textContent = [row.document_date && new Intl.DateTimeFormat("fr-FR").format(new Date(`${row.document_date}T00:00:00`)), row.rights_note].filter(Boolean).join(" · ");
   page.append(category, title, meta);
-  if (row.description) { const description = document.createElement("p"); description.textContent = row.description; page.append(description); void applyGlossary(description); }
+  // Description mise en forme dans l'éditeur (alignement, images…) ; à défaut, l'ancien texte brut.
+  const blocks = (row.body || []).length ? renderBlocks(page, row.body, client) : [];
+  if (blocks.length) blocks.filter(node => node.classList.contains("art-text") || node.classList.contains("art-rich")).forEach(node => void applyGlossary(node));
+  else if (row.description) { const description = document.createElement("p"); description.textContent = row.description; page.append(description); void applyGlossary(description); }
   // Liens saisis dans l'admin : « Texte | https://… » ou simplement l'adresse.
   (row.links || []).forEach(line => {
     const [label, url] = line.includes("|") ? line.split("|").map(part => part.trim()) : [line.trim(), line.trim()];

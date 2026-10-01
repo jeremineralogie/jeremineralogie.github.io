@@ -3,6 +3,7 @@ import { enhanceCombobox, enhanceMulti } from "./combobox.js";
 import { backfillLocalities, communeLabel, communeUpdate, departmentOfCommune, findCommune, searchCommunes } from "./geo-communes.js";
 import { createPointTool, pickPoint, pointKey, savePendingPoints } from "./point-picker.js";
 import { createContentEditor } from "./article-editor.js";
+import { blocksToText } from "./article-content.js";
 import { formatDiscoveryDate, parseDiscoveryDate, parseWeight } from "./specimen-fields.js";
 import { nextReference, referencePrefix } from "./shop-reference.js";
 
@@ -77,7 +78,7 @@ const sections = [
     { key: "title", label: "Titre", required: true },
     { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["autre", "Autre"], ["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
     { key: "cover_path", label: "Image de fiche (illustration de la carte côté public)", cover: true },
-    { key: "description", label: "Description", type: "textarea", notNull: true },
+    { key: "body", label: "Description", richBody: true, notNull: true, plainText: "description" },
     { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }, { key: "link_articles", label: "Articles liés", ref: "articles", display: "title", multi: true },
     { key: "link_mines", label: "Gisements liés", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true },
     { key: "link_departments", label: "Départements liés", ref: "departments", display: "name", value: "code", multi: true }, { key: "link_regions", label: "Régions liées", ref: "regions", display: "name", multi: true },
@@ -400,6 +401,8 @@ function createField(field, value, typed = "") {
     return wrapper;
   }
   if (field.richBody) {
+    // Fiche enregistrée avant l'éditeur : l'ancien texte brut sert de point de départ.
+    if (!(value || []).length && field.plainText && selectedRecord?.[field.plainText]) value = [String(selectedRecord[field.plainText])];
     const hidden = document.createElement("input"); hidden.type = "hidden"; hidden.name = field.key; hidden.value = JSON.stringify(value || []);
     contentEditor = createContentEditor({ client, initial: value || [], onChange: blocks => { hidden.value = JSON.stringify(blocks); } });
     wrapper.className = "rich-field"; wrapper.append(hidden, contentEditor.element);
@@ -562,6 +565,8 @@ async function saveRecord(form) {
       if (field.euros && value !== "") { const amount = Number(value); if (!Number.isFinite(amount) || amount < 0) throw new Error("Le prix doit être un nombre positif ou nul."); value = Math.round(amount * 100); }
       else if (field.type === "number" && value !== "") { value = Number(value); if (!Number.isFinite(value)) throw new Error(`Valeur numérique invalide pour « ${field.label} ».`); }
       if (field.richBody) value = contentEditor ? contentEditor.getBlocks() : JSON.parse(input.value || "[]");
+      // Copie en texte brut (recherche, référencement) d'un contenu mis en forme.
+      if (field.plainText) record[field.plainText] = blocksToText(value).join("\n\n");
       if (field.lines) value = String(input.value || "").split("\n").map(line => line.trim()).filter(Boolean);
       if (field.cover) {
         const chosen = form.elements.namedItem(`${field.key}__file`)?.files?.[0];
