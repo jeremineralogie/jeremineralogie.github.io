@@ -1,24 +1,11 @@
 // Pose manuelle d'un point sur la carte, depuis les formulaires de l'admin.
 // Sert aux communes absentes du référentiel officiel (hameaux, lieux-dits) ou mal placées.
 import { isFrenchCode, searchCommunes, searchWorld } from "./geo-communes.js";
+import { loadLeaflet } from "./leaflet-loader.js";
 
-const LEAFLET = "https://unpkg.com/leaflet@1.9.4/dist/";
 const FRANCE = [[41.3, -5.2], [51.1, 9.6]];
 const fold = value => String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[’`]/g, "'").toLowerCase().replace(/[\s-]+/g, " ").trim();
 const round = value => Math.round(value * 1e6) / 1e6;
-let loading = null;
-
-function loadLeaflet() {
-  if (window.L) return Promise.resolve(window.L);
-  loading ||= new Promise((resolve, reject) => {
-    const css = document.createElement("link"); css.rel = "stylesheet"; css.href = `${LEAFLET}leaflet.css`; document.head.append(css);
-    const script = document.createElement("script"); script.src = `${LEAFLET}leaflet.js`;
-    script.onload = () => resolve(window.L);
-    script.onerror = () => { loading = null; reject(new Error("La carte n’a pas pu se charger. Vérifiez votre connexion.")); };
-    document.head.append(script);
-  });
-  return loading;
-}
 
 async function startView(target) {
   if (target.latitude != null && target.longitude != null) return { center: [target.latitude, target.longitude], zoom: 14 };

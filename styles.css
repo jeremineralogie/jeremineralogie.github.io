@@ -503,3 +503,103 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .art-file-inline{display:inline-block;padding:1px 8px;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.6);color:#e6dcf5;white-space:nowrap;text-decoration:none}
 .art-file-inline:hover{border-color:var(--violet2);color:#fff}
 .art-rich a:not(.art-file-inline){color:var(--violet2);text-decoration:underline;text-underline-offset:3px}
+/* Devine le gisement (accueil) */
+.geo{display:grid;gap:10px;justify-items:center}
+.geo-head{display:flex;justify-content:space-between;gap:10px;width:100%;max-width:620px;font-size:.86rem;color:#cdb6f2}
+.geo-score{color:#f0d9a8;font-variant-numeric:tabular-nums}
+.geo-intro{margin:0;color:#d6c4f3}
+.geo-photo{width:min(100%,420px);aspect-ratio:4/3;object-fit:contain;background:#000;border:1px solid #3a1d63}
+.geo-map{width:100%;max-width:620px;aspect-ratio:4/3;max-height:70vh;border:1px solid #3a1d63;border-radius:4px;background:#0b0612;z-index:0}
+.geo-map .leaflet-container{background:#0b0612}
+.geo-note{margin:0;font-size:.8rem;color:var(--muted)}
+.geo-note[hidden],.geo-actions [hidden]{display:none}
+.geo-actions{display:flex;gap:8px}
+.geo-actions .btn{cursor:pointer;background:transparent;font:inherit}
+.geo-actions .btn:disabled{opacity:.45;cursor:default}
+.geo-outcome{margin:0;max-width:560px;line-height:1.5;color:#e6dcf5}
+.geo-outcome:empty{display:none}
+.geo-outcome strong{color:#f3eaff}
+.geo-total{margin:0;font-family:var(--serif);font-size:clamp(1.5rem,6vw,2.1rem);color:#f3eaff;font-variant-numeric:tabular-nums}
+.geo-squares{margin:0;font-size:1.3rem;letter-spacing:.15em}
+.geo-record{margin:0;color:#f0d9a8;font-size:.86rem}
+.geo-list{display:grid;gap:8px;width:100%;max-width:560px;margin:4px 0;padding:0;list-style:none;text-align:left}
+.geo-item{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;align-items:center;padding:8px;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.6)}
+.geo-thumb{width:64px;height:48px;object-fit:contain;background:#000}
+.geo-item-text{display:grid;gap:2px;min-width:0}
+.geo-item-place{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}
+.geo-item-score{font-size:.8rem;color:#f0d9a8;font-variant-numeric:tabular-nums}
+.geo-share{padding:9px 16px;border:1px solid var(--violet);border-radius:3px;background:#1c1030;color:#fff;font:inherit;font-size:.86rem;cursor:pointer}
+.geo-share:hover{background:#2a1846}
+.geo-next-day{margin:0;color:var(--muted);font-size:.8rem}
+/* Séries et badges */
+.badges{display:grid;gap:16px}
+.badge-count{margin:0;color:#cdb6f2;font-size:.86rem}
+.badge-group{display:grid;gap:8px}
+.badge-group-title{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:4px 10px;margin:0;font-family:var(--serif);font-weight:500;font-size:1.1rem;color:#f3eaff}
+.badge-streak{font-family:Inter,system-ui,sans-serif;font-size:.8rem;color:#f0d9a8}
+.badge-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.badge{display:grid;gap:2px;justify-items:center;align-content:start;min-width:0;padding:8px 3px;border:1px solid #2a1846;border-radius:4px;background:rgba(10,5,18,.7);opacity:.5;filter:grayscale(1)}
+.badge.is-earned{opacity:1;filter:none;border-color:#6a37b6;background:rgba(36,20,58,.75)}
+.badge.is-new{border-color:#f0d9a8;box-shadow:0 0 14px rgba(240,217,168,.35)}
+.badge-icon{font-size:1.5rem;line-height:1.2}
+.badge-name{max-width:100%;font-size:clamp(.62rem,2.6vw,.78rem);color:#f3eaff;line-height:1.2;overflow-wrap:anywhere;hyphens:auto}
+.badge-rule{max-width:100%;font-size:clamp(.58rem,2.2vw,.66rem);color:var(--muted);line-height:1.25;overflow-wrap:anywhere}
+.badge-toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:1100;display:flex;align-items:center;gap:10px;max-width:calc(100% - 32px);padding:10px 16px;border:1px solid #f0d9a8;border-radius:999px;background:#1c1030;color:#f3eaff;box-shadow:0 10px 30px rgba(0,0,0,.6);transform:translate(-50%,30px);opacity:0;transition:transform .35s,opacity .35s}
+.badge-toast.is-shown{transform:translate(-50%,0);opacity:1}
+.badge-toast-icon{font-size:1.4rem}
+.badge-toast strong{color:#f0d9a8}
+.badge-list:has(> :nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,calc(25% - 3px)));justify-content:center}
+/* Apprendre & jouer : 5 sous-onglets sur deux lignes (3 + 2) */
+.learn-tabs{flex-wrap:wrap}
+/* Tests et outils */
+.tools-intro{max-width:760px;margin:18px auto 10px;padding:14px 16px;background:rgba(6,2,12,.86);border:1px solid #3a1d63;border-radius:4px;text-align:center;line-height:1.55;color:#e6dcf5}
+.tools-intro p{margin:0}
+.tools-toc{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:760px;margin:0 auto 14px}
+.tools-toc a{padding:5px 11px;border:1px solid #3a1d63;border-radius:999px;background:rgba(6,2,12,.82);color:#dccbf7;font-size:.8rem}
+.tools-toc a:hover{border-color:var(--violet2);color:#fff}
+.tool{max-width:760px;margin:0 auto 14px;padding:16px clamp(12px,3vw,20px);background:rgba(6,2,12,.86);border:1px solid #3a1d63;border-radius:4px;text-align:left;line-height:1.6;color:#e6dcf5;scroll-margin-top:90px;overflow-wrap:break-word}
+.tool h2{margin:0 0 10px;font-family:var(--serif);font-weight:500;font-size:1.4rem;color:#f3eaff;text-align:center;letter-spacing:.04em}
+.tool p{margin:0 0 10px}
+.tool ul,.tool ol{margin:0 0 10px;padding-left:1.3em}
+.tool li{margin:3px 0}
+.tool .meta{font-size:.84rem}
+.tool-warning{border-color:#b8842c;background:rgba(30,18,4,.86)}
+.tool-warning h2{color:#f0d9a8}
+.tools-kit{columns:2;column-gap:24px}
+.tools-steps li{margin:5px 0}
+.tools-table-wrap{overflow-x:auto;margin:0 0 12px}
+.tools-table{width:100%;border-collapse:collapse;font-size:.9rem}
+.tools-table caption{margin-bottom:6px;color:#cdb6f2;font-size:.84rem}
+.tools-table th,.tools-table td{padding:7px 8px;border-bottom:1px solid #2a1846;text-align:left;vertical-align:top}
+.tools-table th{color:#c9a9f5;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+.tools-table td:first-child{text-align:center;color:#f0d9a8;font-variant-numeric:tabular-nums;width:4.5em}
+.tool-calc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0 8px;padding:14px;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.55)}
+.tool-calc .field{display:grid;gap:5px;margin:0;min-width:0}
+.tool-calc label{font-size:.86rem;color:#d6c4f3}
+.tool-calc input[type=number],.tool-calc select{width:100%;min-width:0;padding:9px 10px;border:1px solid #3a1d63;border-radius:3px;background:#0b0612;color:var(--text);font:inherit}
+.tool-mode{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 18px}
+.tool-mode label{display:flex;align-items:center;justify-content:flex-start;gap:8px;width:auto;margin:0;text-align:left;font-size:.86rem;color:#d6c4f3}
+.tool-mode input[type=radio]{flex:0 0 auto;width:auto;min-width:0;margin:0;padding:0}
+.tool-result{margin:0 0 8px;text-align:center;font-weight:600;color:#f0d9a8}
+.tool-match-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px;margin:0;padding:0;list-style:none}
+.tool-match-list li{display:grid;gap:1px;padding:6px 0;border-bottom:1px solid #1d1030;min-width:0}
+.tool-match-detail{font-size:.8rem;color:var(--muted)}
+@media(max-width:620px){.tools-kit{columns:1}.tool-calc,.tool-match-list{grid-template-columns:1fr}}
+/* Section Jeux de l'accueil : jeux toujours visibles, badges repliables */
+.home-games{display:grid;gap:18px}
+.home-games .home-title{margin-bottom:0}
+.home-game{display:grid;gap:12px;padding-top:16px;border-top:1px solid #2a1846}
+.home-game[hidden],.home-badges[hidden]{display:none}
+.home-game-title{margin:0;font-family:var(--serif);font-weight:500;font-size:clamp(1.05rem,4.2vw,1.35rem);letter-spacing:.1em;text-transform:uppercase;color:#f1e8ff}
+.home-badges{border-top:1px solid #2a1846;padding-top:14px}
+.home-badges>summary{list-style:none;display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:10px;padding:10px 14px;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.6);cursor:pointer;user-select:none}
+.home-badges>summary::-webkit-details-marker{display:none}
+.home-badges>summary::after{content:"▾";color:#c4a6f5}
+.home-badges[open]>summary::after{content:"▴"}
+.home-badges>summary:hover{border-color:var(--violet2)}
+.home-badges-label{min-width:0;font-family:var(--serif);font-size:clamp(.92rem,3.8vw,1.1rem);color:#f3eaff;letter-spacing:.06em}
+.home-badges-count{flex:0 0 auto;font-size:clamp(.72rem,3vw,.82rem);color:#f0d9a8}
+.home-badges .badges{margin-top:14px}
+.home-games-body{display:grid;gap:18px}
+.learn-games{margin-top:4px}
+.learn-games .home-games-body>.home-game:first-child{border-top:0;padding-top:0}
