@@ -2,6 +2,8 @@
 // en 640 px de large au plus, avec un fichier de crédits (auteur, licence, page d'origine) affiché sous chaque photo.
 // Les photos ont ensuite été converties en WebP (640 px) avec une vignette « -mini » (160 px) ; relancer ce script
 // remplacerait ces fichiers optimisés par des JPEG : à refaire seulement pour une nouvelle sélection.
+// Avec LISTE=nouveaux : lit tools/images/proposition-nouveaux.json et ajoute les photos aux crédits existants,
+// sans toucher aux photos déjà présentes.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,10 +24,11 @@ async function get(url, as = "json") {
   throw new Error(`Échec répété : ${url}`);
 }
 
-const { results } = JSON.parse(await readFile(path.join(ROOT, "tools/images/proposition.json"), "utf8"));
+const NEW_LIST = process.env.LISTE === "nouveaux";
+const { results } = JSON.parse(await readFile(path.join(ROOT, `tools/images/${NEW_LIST ? "proposition-nouveaux" : "proposition"}.json`), "utf8"));
 await mkdir(DIR, { recursive: true });
-const credits = {};
-for (const entry of results.filter(item => item.status === "trouvee")) {
+const credits = NEW_LIST ? JSON.parse(await readFile(path.join(DIR, "credits.json"), "utf8")) : {};
+for (const entry of results.filter(item => item.status === "trouvee" && !(NEW_LIST && credits[item.slug]))) {
   const { file, author, license, licenseUrl, page } = entry.image;
   try {
     const data = await get(`https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&iiurlwidth=${WIDTH}&titles=${encodeURIComponent(`File:${file}`)}`);

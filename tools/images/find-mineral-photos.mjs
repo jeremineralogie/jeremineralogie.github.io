@@ -3,6 +3,8 @@
 // 2. Image de référence de l'espèce sur Wikidata (propriété P18), à défaut l'image principale de l'article Wikipédia en français.
 // 3. Licence et auteur lus sur Wikimedia Commons ; seules les licences libres sont retenues (domaine public, CC0, CC BY, CC BY-SA).
 // Résultat : tools/images/proposition.json et tools/images/proposition.html (page de relecture avec vignettes et crédits).
+// Avec LISTE=nouveaux : fiches de tools/minerals/nouveaux-mineraux.json (pas encore dans Supabase),
+// résultat dans tools/images/proposition-nouveaux.json et .html.
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,9 +13,17 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const OUT = path.join(ROOT, "tools/images");
 const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.github.io; recherche de photos libres pour fiches minéraux)";
 const FREE = /^(cc0|public domain|pd\b|pd-|cc[- ]by(-sa)?[- ]?\d|cc[- ]by(-sa)?$|attribution|no restrictions|copyrighted free use)/i;
+const NEW_LIST = process.env.LISTE === "nouveaux";
+const OUT_NAME = NEW_LIST ? "proposition-nouveaux" : "proposition";
 const MIN_SIDE = 600; // en dessous, une photo plus grande est cherchée sur l'article Wikipédia
 // Noms ambigus : l'élément chimique ou un composé passerait avant le minéral natif.
-const SEARCH = { cuivre: ["native copper", "en"], bismuth: ["native bismuth", "en"], or: ["native gold", "en"], argent: ["native silver", "en"] };
+const SEARCH = {
+  cuivre: ["native copper", "en"], bismuth: ["native bismuth", "en"], or: ["native gold", "en"], argent: ["native silver", "en"],
+  antimoine: ["native antimony", "en"], arsenic: ["native arsenic", "en"], platine: ["native platinum", "en"],
+  rosedefer: ["iron rose", "en"], columbitefe: ["columbite-(Fe)", "en"]
+};
+// Dernier recours : recherche directe de fichiers sur Commons (variétés absentes de Wikidata) ; résultat à vérifier.
+const COMMONS_QUERY = { chessylite: "azurite Chessy", rosedefer: "hematite rose", quincyte: "quincyte opal", menilite: "menilite opal", pyreneite: "andradite Pyrénées" };
 const fold = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const esc = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -30,6 +40,7 @@ async function json(url) {
 }
 
 async function minerals() {
+  if (NEW_LIST) return JSON.parse(await readFile(path.join(ROOT, "tools/minerals/nouveaux-mineraux.json"), "utf8")).map(({ slug, name, formula }) => ({ slug, name, formula }));
   const source = await readFile(path.join(ROOT, "assets/js/supabase-config.js"), "utf8");
   const url = /url:\s*"([^"]+)"/.exec(source)[1], key = /publishableKey:\s*"([^"]+)"/.exec(source)[1];
   const response = await fetch(`${url}/rest/v1/minerals?select=slug,name,formula&publication_status=eq.published&order=name`, { headers: { apikey: key } });
@@ -55,6 +66,12 @@ async function wikidataItem(name) {
     return { id: candidate.id, label: entity?.labels?.fr?.value || entity?.labels?.en?.value || candidate.label, description: candidate.description, image: image || null, frwiki: entity?.sitelinks?.frwiki?.title || null, exact: forced || exact(candidate) };
   }
   return null;
+}
+
+async function commonsSearch(name) {
+  const term = COMMONS_QUERY[fold(name)] || `${name} mineral`;
+  const data = await json(`https://commons.wikimedia.org/w/api.php?action=query&format=json&list=search&srnamespace=6&srlimit=8&srsearch=${encodeURIComponent(`${term} filetype:bitmap`)}`);
+  return (data.query?.search || []).map(hit => hit.title.replace(/^File:/, ""));
 }
 
 async function frWikipediaImage(title) {
@@ -92,14 +109,20 @@ for (const [index, mineral] of rows.entries()) {
     if (item?.image) options.push([item.image, "wikidata"]);
     const wikiImage = await frWikipediaImage(item?.frwiki || mineral.name).catch(() => null);
     if (wikiImage && wikiImage !== item?.image) options.push([wikiImage, "wikipedia-fr"]);
-    let chosen = null, rejected = null;
+    let chosen = null, rejected = null, viaSearch = false;
+    // Rien sur Wikidata ni Wikipédia : recherche de fichiers sur Commons.
+    // Variétés connues sous un autre nom : la recherche Commons ciblée passe en premier.
+    if (COMMONS_QUERY[fold(mineral.name)]) options.length = 0;
+    if (!options.length) { viaSearch = true; (await commonsSearch(mineral.name).catch(() => [])).forEach(file => options.push([file, "recherche-commons"])); }
     for (const [file, origin] of options) {
+      if (viaSearch && chosen) break;
       const info = await commonsInfo(file);
       if (!info) continue;
       if (!info.free) { rejected ||= { ...info, origin }; continue; }
       const side = Math.min(info.width || 0, info.height || 0);
       if (!chosen || (Math.min(chosen.width || 0, chosen.height || 0) < MIN_SIDE && side > Math.min(chosen.width || 0, chosen.height || 0))) chosen = { ...info, origin };
     }
+    if (chosen && viaSearch) entry.note += "Trouvée par recherche sur Commons : vérifier que c'est bien ce minéral. ";
     if (chosen) { entry.status = "trouvee"; entry.image = chosen; if (Math.min(chosen.width, chosen.height) < MIN_SIDE) entry.note += "Photo de petite taille."; }
     else if (rejected) { entry.status = "licence-non-libre"; entry.image = rejected; entry.note += `Licence « ${rejected.license} » écartée.`; }
     else entry.note += item ? "Pas d'image libre trouvée." : "Espèce non trouvée sur Wikidata.";
@@ -109,7 +132,7 @@ for (const [index, mineral] of rows.entries()) {
   await sleep(400);
 }
 
-await writeFile(path.join(OUT, "proposition.json"), `${JSON.stringify({ generated: new Date().toISOString(), results }, null, 2)}\n`);
+await writeFile(path.join(OUT, `${OUT_NAME}.json`), `${JSON.stringify({ generated: new Date().toISOString(), results }, null, 2)}\n`);
 
 const found = results.filter(entry => entry.status === "trouvee");
 const card = entry => `<article class="c${entry.status === "trouvee" ? "" : " off"}">
@@ -127,5 +150,5 @@ h2{font-size:1.05rem;margin:8px 0 4px}a{color:#c4a6f5}.cr{font-size:.85rem;margi
 <h1>Photos libres proposées pour les fiches minéraux</h1>
 <p class="s">${found.length} photo(s) libre(s) trouvée(s) sur ${results.length} fiches — générée le ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}. Cliquez une photo pour voir sa page Commons (auteur, licence). Les cartes en pointillés n'ont pas de photo retenue.</p>
 <div class="g">${[...found, ...results.filter(entry => entry.status !== "trouvee")].map(card).join("\n")}</div></body></html>`;
-await writeFile(path.join(OUT, "proposition.html"), html);
+await writeFile(path.join(OUT, `${OUT_NAME}.html`), html);
 console.log(`Terminé : ${found.length} photos libres sur ${results.length} fiches.`);
