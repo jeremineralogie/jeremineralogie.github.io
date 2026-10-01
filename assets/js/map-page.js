@@ -9,6 +9,8 @@ const panel = document.querySelector(".map-filters");
 const typeBoxes = [...panel.querySelectorAll(".map-types input")];
 const mineralSelect = document.querySelector("#map-mineral");
 const communeSelect = document.querySelector("#map-commune");
+const FRANCE = [[41.3, -5.2], [51.1, 9.6]];
+const isFrench = code => /^(2[AB]|\d{2,3})$/i.test(String(code ?? ""));
 const TYPES = { collection: "Collection", boutique: "Boutique", article: "Article", archive: "Archive" };
 const fold = value => String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
@@ -16,7 +18,7 @@ const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&a
 let map, cluster, places = new Map(), entries = [];
 
 function initMap() {
-  map = L.map("map", { zoomControl: true, minZoom: 4, maxZoom: 16, worldCopyJump: false, tap: true }).fitBounds([[41.3, -5.2], [51.1, 9.6]]);
+  map = L.map("map", { zoomControl: true, minZoom: 2, maxZoom: 16, worldCopyJump: true, tap: true }).fitBounds(FRANCE);
   map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19, className: "map-tiles",
@@ -36,7 +38,7 @@ function initMap() {
 async function loadData(client) {
   const pick = async (query, label) => { const { data, error } = await query; if (error) { console.error(`Carte — ${label} :`, error); return []; } return data || []; };
   const [localities, mines, specimens, shop, articles, archives] = await Promise.all([
-    pick(client.from("localities").select("id,name,slug,latitude,longitude,postal_code,department_code").eq("publication_status", "published"), "communes"),
+    pick(client.from("localities").select("id,name,slug,latitude,longitude,postal_code,department_code,department:departments(name)").eq("publication_status", "published"), "communes"),
     pick(client.from("mines").select("id,name,locality_id").eq("publication_status", "published"), "gisements"),
     pick(client.from("specimens").select("slug,mineral_name,locality_id,mine_id,locality_name,provenance,mineral:minerals!specimens_mineral_id_fkey(name),associations:specimen_associations(mineral:minerals(name))").eq("publication_status", "published"), "collection"),
     pick(client.from("shop_items").select("slug,reference,title,mineral_name,locality_id,mine_id,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name),associations:shop_item_associations(mineral:minerals(name))").eq("publication_status", "published").eq("sale_status", "available"), "boutique"),
@@ -75,7 +77,7 @@ async function loadData(client) {
 }
 
 function communeLabel(place, duplicates) {
-  return duplicates.has(fold(place.name)) ? `${place.name} (${place.postal_code || place.department_code || "?"})` : place.name;
+  return duplicates.has(fold(place.name)) ? `${place.name} (${place.postal_code || (isFrench(place.department_code) ? place.department_code : place.department?.name) || "?"})` : place.name;
 }
 
 function fillFilters() {
@@ -89,7 +91,7 @@ function fillFilters() {
 
 function popupHtml(place, list) {
   const rows = list.map(entry => `<li><span class="map-tag map-tag-${entry.type}">${TYPES[entry.type]}</span><a href="${esc(entry.href)}">${esc(entry.title)}</a>${entry.subtitle ? `<small>${esc(entry.subtitle)}</small>` : ""}</li>`).join("");
-  const where = [place.postal_code, place.department_code && `dép. ${place.department_code}`].filter(Boolean).join(" · ");
+  const where = isFrench(place.department_code) ? [place.postal_code, `dép. ${place.department_code}`].filter(Boolean).join(" · ") : place.department?.name || "";
   return `<div class="map-popup"><strong>${esc(place.name)}</strong>${where ? `<em>${esc(where)}</em>` : ""}<ul>${rows}</ul></div>`;
 }
 
@@ -124,6 +126,14 @@ function render() {
   missingNote.textContent = unplaced ? `${unplaced} fiche${unplaced > 1 ? "s" : ""} sans commune localisée n’apparai${unplaced > 1 ? "ssent" : "t"} pas sur la carte.` : "";
   if (commune && markers[0]) { cluster.zoomToShowLayer(markers[0], () => markers[0].openPopup()); }
   else if (markers.length && (mineral || types.size < typeBoxes.length)) map.fitBounds(cluster.getBounds(), { padding: [30, 30], maxZoom: 11 });
+  return markers;
+}
+
+// Vue d'ensemble : la France, élargie pour montrer aussi les lieux à l'étranger s'il y en a.
+function overview(markers) {
+  const france = L.latLngBounds(FRANCE);
+  if (markers.some(marker => !france.contains(marker.getLatLng()))) map.fitBounds(L.latLngBounds(FRANCE).extend(cluster.getBounds()), { padding: [24, 24] });
+  else map.fitBounds(FRANCE);
 }
 
 async function start() {
@@ -134,7 +144,7 @@ async function start() {
   try {
     entries = await loadData(client);
     fillFilters();
-    render();
+    overview(render());
   } catch (error) {
     console.error("Chargement de la carte :", error);
     status.textContent = "Impossible de charger les lieux. Réessayez dans quelques instants.";
@@ -144,7 +154,7 @@ async function start() {
   communeSelect.addEventListener("change", render);
   panel.querySelector(".filter-reset").addEventListener("click", () => {
     typeBoxes.forEach(box => { box.checked = true; }); mineralSelect.value = ""; communeSelect.value = "";
-    map.fitBounds([[41.3, -5.2], [51.1, 9.6]]); render();
+    overview(render());
   });
 }
 

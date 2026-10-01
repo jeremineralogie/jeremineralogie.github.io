@@ -46,6 +46,23 @@ export async function departmentOfCommune(name) {
   } catch { return null; }
 }
 
+// Lieux hors de France : recherche mondiale OpenStreetMap (Nominatim), au plus une requête par seconde.
+export const isFrenchCode = code => /^(2[AB]|\d{2,3})$/i.test(String(code ?? "").trim());
+let lastWorldCall = 0;
+export async function searchWorld(query, limit = 6) {
+  const text = String(query || "").trim();
+  if (!text) return [];
+  const wait = lastWorldCall + 1100 - Date.now();
+  if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+  lastWorldCall = Date.now();
+  const params = new URLSearchParams({ format: "jsonv2", q: text, limit: String(limit), "accept-language": "fr", addressdetails: "0" });
+  const response = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, { headers: { Accept: "application/json" } });
+  if (!response.ok) throw new Error(`Recherche mondiale indisponible (${response.status}).`);
+  return (await response.json() || []).map(row => ({ name: row.display_name, latitude: Number(row.lat), longitude: Number(row.lon), kind: row.addresstype || row.type || "" }))
+    .filter(row => Number.isFinite(row.latitude) && Number.isFinite(row.longitude));
+}
+const SETTLEMENTS = new Set(["city", "town", "village", "hamlet", "municipality", "suburb", "locality", "isolated_dwelling", "neighbourhood", "quarter", "county", "district", "administrative"]);
+
 export const communeLabel = row => `${row.name} — ${row.postalCodes[0] || row.insee} (${row.department})`;
 
 export function communeUpdate(match, knownDepartment) {
@@ -57,11 +74,21 @@ export function communeUpdate(match, knownDepartment) {
 
 // Complète les communes enregistrées sans coordonnées. Les homonymes (plusieurs communes du même nom) sont laissés à choisir à la main.
 export async function backfillLocalities(client) {
-  const { data, error } = await client.from("localities").select("id,name,department_code").is("latitude", null);
+  const { data, error } = await client.from("localities").select("id,name,department_code,department:departments(name)").is("latitude", null);
   if (error) throw error;
   const summary = { located: [], ambiguous: [], notFound: [] };
   for (const row of data || []) {
     try {
+      // Commune étrangère (département ou province hors de France) : premier lieu habité trouvé dans le monde.
+      if (row.department_code && !isFrenchCode(row.department_code)) {
+        const found = (await searchWorld([row.name, row.department?.name].filter(Boolean).join(", "), 3)).find(item => SETTLEMENTS.has(item.kind)) || null;
+        if (found) {
+          const { error: updateError } = await client.from("localities").update({ latitude: found.latitude, longitude: found.longitude }).eq("id", row.id);
+          if (updateError) throw updateError;
+          summary.located.push(row.name);
+        } else summary.notFound.push(row.name);
+        continue;
+      }
       const matches = await findCommune(row.name, row.department_code);
       if (matches.length === 1) {
         const { error: updateError } = await client.from("localities").update(communeUpdate(matches[0], row.department_code)).eq("id", row.id);

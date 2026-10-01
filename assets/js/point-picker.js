@@ -1,6 +1,6 @@
 // Pose manuelle d'un point sur la carte, depuis les formulaires de l'admin.
 // Sert aux communes absentes du référentiel officiel (hameaux, lieux-dits) ou mal placées.
-import { searchCommunes } from "./geo-communes.js";
+import { isFrenchCode, searchCommunes, searchWorld } from "./geo-communes.js";
 
 const LEAFLET = "https://unpkg.com/leaflet@1.9.4/dist/";
 const FRANCE = [[41.3, -5.2], [51.1, 9.6]];
@@ -23,9 +23,14 @@ function loadLeaflet() {
 async function startView(target) {
   if (target.latitude != null && target.longitude != null) return { center: [target.latitude, target.longitude], zoom: 14 };
   if (!target.name) return null;
+  const foreign = target.department && !isFrenchCode(target.department);
   try {
-    const rows = await searchCommunes(target.name, target.department || "");
-    if (rows[0]) return { center: [rows[0].latitude, rows[0].longitude], zoom: 12 };
+    if (!foreign) {
+      const rows = await searchCommunes(target.name, target.department || "");
+      if (rows[0]) return { center: [rows[0].latitude, rows[0].longitude], zoom: 12 };
+    }
+    const world = await searchWorld([target.name, foreign ? target.department.replace(/-/g, " ") : ""].filter(Boolean).join(", "), 1);
+    if (world[0]) return { center: [world[0].latitude, world[0].longitude], zoom: 12 };
   } catch { /* Service indisponible : on part de la vue France. */ }
   return null;
 }
@@ -39,7 +44,12 @@ export async function pickPoint(target) {
     const head = document.createElement("div"); head.className = "pick-head";
     const title = document.createElement("strong"); title.textContent = `📍 ${target.name || "Nouveau lieu"}`;
     const help = document.createElement("span"); help.textContent = "Touchez la carte à l’endroit exact, puis faites glisser le point pour l’ajuster.";
-    head.append(title, help);
+    const finder = document.createElement("form"); finder.className = "pick-search";
+    const query = document.createElement("input"); query.type = "search"; query.placeholder = "Chercher un lieu dans le monde (ville, pays…)"; query.value = target.name || ""; query.setAttribute("aria-label", "Chercher un lieu dans le monde");
+    const go = document.createElement("button"); go.type = "submit"; go.className = "admin-secondary"; go.textContent = "Chercher";
+    const found = document.createElement("div"); found.className = "pick-results";
+    finder.append(query, go);
+    head.append(title, help, finder, found);
     const mapBox = document.createElement("div"); mapBox.className = "pick-map";
     const foot = document.createElement("div"); foot.className = "pick-foot";
     const coords = document.createElement("span"); coords.className = "pick-coords"; coords.textContent = "Aucun point posé.";
@@ -69,6 +79,19 @@ export async function pickPoint(target) {
     if (target.latitude != null && target.longitude != null) place(L.latLng(target.latitude, target.longitude));
     void startView(target).then(view => { if (view) map.setView(view.center, view.zoom); });
     requestAnimationFrame(() => map.invalidateSize());
+    finder.addEventListener("submit", async event => {
+      event.preventDefault();
+      found.textContent = "Recherche…";
+      try {
+        const rows = await searchWorld(query.value, 6);
+        if (!rows.length) { found.textContent = "Aucun lieu trouvé."; return; }
+        found.replaceChildren(...rows.map(row => {
+          const choice = document.createElement("button"); choice.type = "button"; choice.className = "pick-result"; choice.textContent = row.name;
+          choice.addEventListener("click", () => { map.setView([row.latitude, row.longitude], 13); found.replaceChildren(); });
+          return choice;
+        }));
+      } catch (error) { found.textContent = error.message; }
+    });
 
     mine.hidden = !navigator.geolocation;
     mine.addEventListener("click", () => {
