@@ -1,4 +1,4 @@
-import { ensureNamed, normalizeName, OTHER } from "./reference-resolver.js";
+import { ensureDepartment, ensureNamed, isFrenchDepartmentCode, normalizeName, OTHER } from "./reference-resolver.js";
 import { enhanceCombobox, enhanceMulti } from "./combobox.js";
 import { backfillLocalities, communeLabel, communeUpdate, departmentOfCommune, findCommune, searchCommunes } from "./geo-communes.js";
 import { createPointTool, pickPoint, pointKey, savePendingPoints } from "./point-picker.js";
@@ -527,6 +527,14 @@ async function saveRecord(form) {
       }
       record[field.key] = value === "" ? (field.notNull ? "" : field.key === "value" ? {} : null) : value;
     }
+    // Département sans région (nouveau département ou province étrangère) : rattaché à la région choisie dans la fiche.
+    if (record.department_code && record.region_id && section.id !== "departments") {
+      const department = (refs.departments || []).find(item => String(item.code) === String(record.department_code));
+      if (department && !department.region_id) {
+        const { error } = await client.from("departments").update({ region_id: record.region_id }).eq("code", department.code).is("region_id", null);
+        if (!error) department.region_id = record.region_id;
+      }
+    }
     if (section.id === "settings") {
       const payload = { key: record.key, value: record.value, is_public: record.is_public };
       const { error } = await client.from(section.table).upsert(payload, { onConflict: "key" }).select("key").single(); if (error) throw error;
@@ -541,10 +549,6 @@ async function saveRecord(form) {
       }
       if (["shop", "articles", "archives"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.title || record.reference, section.table);
       if (section.id === "glossary") record.slug = current?.slug || await uniqueSlug(record.term, section.table);
-      if (section.id === "shop" && !record.mine_id && record.provenance) {
-        const mine = await ensureNamed(client, "mines", record.provenance, { locality_id: record.locality_id || null });
-        if (mine) { record.mine_id = mine.id; if (mine.created) createdNames.push(mine.name); }
-      }
       if (section.id === "shop" && record.price_cents == null) throw new Error("Le schéma de la boutique exige un prix (0 est accepté).");
       let saved;
       if (current?.id || current?.code) {
@@ -678,7 +682,7 @@ function wireGeoAutofill(form) {
     const department = (refs.departments || []).find(item => String(item.code) === String(code));
     if (department?.region_id) setValue("region_id", department.region_id);
     const country = field("provenance");
-    if (department && country && activeSection.id === "shop" && !country.value.trim()) country.value = "France";
+    if (department && country && activeSection.id === "shop" && !country.value.trim() && isFrenchDepartmentCode(department.code)) country.value = "France";
   };
   const fromLocality = id => { const locality = (refs.localities || []).find(item => String(item.id) === String(id)); if (locality?.department_code && setValue("department_code", locality.department_code)) fromDepartment(locality.department_code); };
   field("department_code")?.addEventListener?.("change", event => fromDepartment(event.target.value));
@@ -712,10 +716,10 @@ function wireGeoAutofill(form) {
 
 async function ensureRef(table, name) {
   if (table === "departments") {
-    const wanted = normalizeName(name);
-    const found = (refs.departments || []).find(item => normalizeName(item.name) === wanted || normalizeName(item.code) === wanted);
-    if (!found) throw new Error(`Département « ${name} » inconnu : choisissez-le dans la liste ou saisissez son nom exact ou son numéro (ex. « Creuse » ou « 23 »).`);
-    return found.code;
+    // Département connu (nom ou numéro), sinon créé : provinces et départements étrangers acceptés.
+    const result = await ensureDepartment(client, name);
+    if (result.created) { createdNames.push(result.name); (refs.departments ||= []).push({ code: result.code, name: result.name, region_id: null }); }
+    return result.code;
   }
   const result = await ensureNamed(client, table, name);
   if (result.created) createdNames.push(result.name);
