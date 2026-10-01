@@ -214,7 +214,7 @@ body{touch-action:pan-y pinch-zoom}
 /* Recherche : texte centré dans le cadre */
 .search{padding:0 21% 1% 21%!important}
 /* Photos des fiches : ouverture en plein écran */
-main img:not(.card img):not(.thumbs img){cursor:zoom-in}
+main img:not(.card img):not(.thumbs img):not(a[href] img){cursor:zoom-in}
 .lb{position:fixed;inset:0;z-index:1000;background:rgba(2,0,5,.96);display:flex;align-items:center;justify-content:center;touch-action:pinch-zoom}
 .lb[hidden]{display:none}
 .lb-img{max-width:100vw;max-height:100vh;max-height:100dvh;width:auto;height:auto;object-fit:contain;cursor:default}
@@ -611,3 +611,14 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .share-btn:hover{background:#4a2580}
 .share-status{margin:0;max-width:460px;font-size:.8rem;color:#cdb6f2}
 .share-status:empty{display:none}
+/* Photos libres des fiches minéraux : crédits et vignettes */
+.photo-credit{max-width:560px;margin:4px auto 12px;font-size:.75rem;line-height:1.45;color:var(--muted);text-align:center;overflow-wrap:anywhere}
+.photo-credit a{color:#c4a6f5;text-decoration:underline;text-underline-offset:2px}
+.learn-mineral.has-thumb{grid-template-columns:64px minmax(0,1fr);column-gap:12px;align-items:center}
+.learn-mineral.has-thumb>:not(.learn-thumb){grid-column:2}
+.learn-thumb{grid-column:1;grid-row:1/span 3;width:64px;height:64px;object-fit:cover;border:1px solid #3a1d63;border-radius:4px;background:#000}
+.legal-credits{margin:10px 0}
+.legal-credits>summary{cursor:pointer;color:#c4a6f5}
+.legal-credits ul{margin:8px 0 0;padding-left:1.2em;font-size:.82rem;line-height:1.5}
+.legal-credits li{margin:3px 0;overflow-wrap:anywhere}
+.legal-credits li a{color:#c4a6f5}

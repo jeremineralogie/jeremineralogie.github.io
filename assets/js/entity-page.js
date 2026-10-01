@@ -6,6 +6,7 @@ import { mineralTitle } from "./seo-titles.js";
 import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
+import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
 // Fiche générique d'un minéral, d'un gisement ou d'une commune : fiche.html?type=mineral|mine|locality&id=<slug>.
 const KINDS = {
@@ -84,9 +85,16 @@ async function load() {
     const photos = (entity.media || []).filter(item => item.bucket_id === "site-media-public" && item.storage_path).sort((a, b) => a.position - b.position);
     const gallery = document.querySelector("#fiche-photos");
     gallery.replaceChildren(...photos.map(item => { const image = document.createElement("img"); image.src = publicUrl(item); image.alt = item.alt_text || entity.name; image.loading = "lazy"; return image; }));
-    gallery.hidden = !photos.length;
+    // Sans photo ajoutée dans l'admin : photo libre de Wikimedia Commons, avec son crédit.
+    const commons = photos.length ? null : commonsPhoto(await loadMineralPhotos(), entity.slug);
+    document.querySelector("#fiche .photo-credit")?.remove();
+    if (commons) {
+      const image = document.createElement("img"); image.src = commons.src; image.alt = entity.name; image.loading = "lazy";
+      gallery.replaceChildren(image); gallery.after(creditLine(commons));
+    }
+    gallery.hidden = !photos.length && !commons;
     document.querySelector("#fiche .fav-btn")?.remove();
-    subtitle.after(favoriteButton({ type: "mineral", id: entity.slug, name: entity.name, href: ficheUrl("mineral", entity.slug), meta: [entity.formula, entity.crystal_system].filter(Boolean).join(" · "), image: photos[0] ? publicUrl(photos[0]) : "" }));
+    subtitle.after(favoriteButton({ type: "mineral", id: entity.slug, name: entity.name, href: ficheUrl("mineral", entity.slug), meta: [entity.formula, entity.crystal_system].filter(Boolean).join(" · "), image: photos[0] ? publicUrl(photos[0]) : commons?.src || "" }));
     const back = document.querySelector("#fiche-back");
     back.href = "apprendre.html#mineraux"; back.textContent = "← Retour aux fiches minéraux";
     const learn = document.querySelector('.nav a[href="apprendre.html"]'); if (learn) learn.setAttribute("aria-current", "page");

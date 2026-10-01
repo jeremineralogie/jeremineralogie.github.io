@@ -4,6 +4,7 @@ import { pieceUrl, articleUrl, documentUrl, specimenUrl } from "./detail-nav.js"
 import { ficheUrl } from "./entity-links.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { dailyMinerals, mountGames } from "./games.js";
+import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
 // Page d'accueil : nouveautés, minéral du jour, jeux du jour (quiz, devine le gisement) et badges, chiffres du site.
 const client = getSupabase();
@@ -55,12 +56,17 @@ function fillGroup(id, cards) {
 }
 
 // ----- Minéral du jour -----
-function renderDaily(mineral) {
+async function renderDaily(mineral) {
   const panel = document.querySelector("#home-daily");
   const body = panel.querySelector("[data-body]");
   const box = el("div", "daily");
   const photo = firstPhoto(mineral.media);
   if (photo) { const image = el("img", "daily-photo"); image.src = publicMediaUrl(client, photo); image.alt = mineral.name; image.loading = "lazy"; box.append(image); }
+  else {
+    // Sans photo ajoutée dans l'admin : photo libre de Wikimedia Commons, avec son crédit.
+    const commons = commonsPhoto(await loadMineralPhotos(), mineral.slug);
+    if (commons) { const image = el("img", "daily-photo"); image.src = commons.src; image.alt = mineral.name; image.loading = "lazy"; box.append(image, creditLine(commons)); }
+  }
   const name = el("a", "daily-name", mineral.name); name.href = ficheUrl("mineral", mineral.slug);
   box.append(name);
   if (mineral.formula) box.append(el("div", "daily-formula", mineral.formula));
@@ -134,7 +140,7 @@ async function load() {
   fillGroup("#home-reads", [...articles.map(row => readCard(row, "article")), ...archives.map(row => readCard(row, "archive"))]);
 
   const { daily } = dailyMinerals(minerals);
-  if (daily) renderDaily(daily);
+  if (daily) void renderDaily(daily);
   void mountGames(document.querySelector("#home-games [data-games]"), { client, minerals });
   const [specimenCount, shopCount, termCount, articleCount, archiveCount] = counts;
   const plural = (count, one, many) => count > 1 ? many : one;
