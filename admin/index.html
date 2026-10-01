@@ -25,56 +25,8 @@
         <button type="button" class="admin-tab" data-main="shop">Boutique</button>
         <button type="button" class="admin-tab" data-main="articles">Articles</button>
         <button type="button" class="admin-tab" data-main="archives">Archives</button>
-        <button type="button" class="admin-tab is-active" data-main="collection" aria-current="page">Ma collection</button>
+        <button type="button" class="admin-tab" data-main="collection">Ma collection</button>
       </nav>
-      <section id="collection-panel" aria-label="Ma collection">
-        <nav class="admin-tabs" id="collection-tabs" aria-label="Ma collection">
-          <button type="button" class="admin-tab" data-collection-view="add">Ajouter un spécimen</button>
-          <button type="button" class="admin-tab is-active" data-collection-view="list" aria-current="page">Ma collection</button>
-        </nav>
-        <div id="collection-list-view">
-          <section class="admin-panel"><h3>Spécimens enregistrés</h3><div id="specimen-list" class="admin-list"></div></section>
-        </div>
-        <div id="collection-add-view" hidden>
-        <section class="admin-panel" id="editor-panel" hidden>
-          <h3 id="editor-title">Nouveau spécimen</h3>
-          <form id="specimen-form" novalidate>
-            <input id="specimen-id" type="hidden">
-            <label for="photos">Ajouter photo(s)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
-            <div id="existing-photo-group" hidden><small>Photos enregistrées sur ce spécimen</small><div id="existing-photos" class="admin-photos"></div></div>
-            <div id="selected-photo-group" hidden><small>Nouvelles photos sélectionnées</small><div id="selected-photos" class="admin-photos"></div></div>
-            <label for="specimen-title">Titre <small>(visible seulement dans l’admin)</small></label><input id="specimen-title" type="text">
-            <label for="mineral-name">Minéral principal</label><select id="mineral-name"></select><input id="mineral-name-other" type="text" placeholder="Ajouter un minéral" hidden>
-            <label>Minéraux associés (secondaires)</label>
-            <div style="display:flex;gap:8px;margin-bottom:16px;align-items:flex-start">
-              <div style="flex:1">
-                <select id="mineral-association-select"></select>
-                <input id="mineral-association-other" type="text" placeholder="Ajouter un minéral associé" hidden style="width:100%;margin-top:8px">
-              </div>
-              <button id="mineral-association-add" type="button" style="padding:10px 16px;margin-top:27px;background:transparent;border:1px solid #2b2033;border-radius:8px;cursor:pointer;color:#f4f1f5;font-inherit">Ajouter</button>
-            </div>
-            <div id="mineral-association-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px"></div>
-            <input id="mineral-association-data" type="hidden">
-            <label for="provenance">Gisement</label><select id="provenance"></select><input id="provenance-other" type="text" placeholder="Ajouter un gisement" hidden>
-            <label for="locality">Commune</label><select id="locality"></select><input id="locality-other" type="text" placeholder="Ajouter une commune" hidden>
-            <label for="department">Département</label><select id="department"></select><input id="department-other" type="text" placeholder="Ajouter un département" hidden>
-            <label for="region">Région</label><select id="region"></select><input id="region-other" type="text" placeholder="Ajouter une région" hidden>
-            <label for="country">Pays</label><input id="country" type="text" autocomplete="country-name" list="dl-countries">
-            <label for="site-type">Type de site</label><select id="site-type"></select><input id="site-type-other" type="text" placeholder="Saisir un autre type de site" hidden>
-            <label for="dimensions">Dimensions</label><input id="dimensions">
-            <label for="weight">Poids</label><input id="weight" type="text" inputmode="decimal"><small>grammes</small>
-            <label for="description">Description</label><textarea id="description"></textarea>
-            <label for="keywords">Mots-clés</label><input id="keywords" type="text">
-            <label for="specimen-date">Date de découverte</label><input id="specimen-date" type="text" lang="fr" inputmode="numeric" placeholder="AAAA, MM/AAAA ou JJ/MM/AAAA" aria-describedby="specimen-date-help"><small id="specimen-date-help">Exemples : 2018, 09/2018 ou 29/09/2018.</small>
-            <input id="specimen-slug" type="hidden">
-            <input id="publication-status" type="hidden" value="published">
-            <datalist id="dl-minerals"></datalist><datalist id="dl-countries"></datalist><datalist id="dl-regions"></datalist><datalist id="dl-departments"></datalist><datalist id="dl-localities"></datalist><datalist id="dl-mines"></datalist>
-            <p class="notice" id="specimen-status" role="status" aria-live="polite" hidden></p>
-            <div class="admin-actions"><button class="btn" type="submit">Enregistrer</button><button class="admin-secondary" id="cancel-edit" type="button">Annuler</button><button class="admin-secondary" id="duplicate-specimen" type="button" hidden>Dupliquer</button><button class="admin-danger" id="delete-specimen" type="button" hidden>Supprimer</button></div>
-          </form>
-        </section>
-        </div>
-      </section>
       <section id="messages-panel" class="admin-panel" aria-label="Messages" hidden>
         <div class="admin-toolbar"><h3 style="margin-right:auto">Messages reçus</h3>
           <select id="messages-filter" aria-label="Afficher"><option value="nouveau">Nouveaux</option><option value="traite">Traités</option><option value="">Tous</option></select>
@@ -98,7 +50,7 @@
       <section id="appearance-panel" aria-label="Apparence du site" hidden>
         <div class="admin-panel"><h3>Éditeur visuel</h3><p>Modifiez la page telle qu’elle est affichée, en plein écran : déplacez, redimensionnez, changez les textes et les couleurs, puis publiez.</p><a class="btn" href="editeur.html">Ouvrir l’éditeur en plein écran</a></div>
       </section>
-      <section class="admin-panel" id="content-manager" aria-label="Boutique, articles, archives et référentiels" hidden>
+      <section class="admin-panel" id="content-manager" aria-label="Ma collection, boutique, articles, archives et référentiels" hidden>
         <nav class="admin-tabs" id="content-tabs" aria-label="Onglets de la section"></nav>
         <p class="notice" id="content-status" role="status" aria-live="polite" hidden></p>
         <div id="content-workspace"></div>

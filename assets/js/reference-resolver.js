@@ -1,13 +1,6 @@
-// Résolution des textes libres du formulaire spécimen vers les référentiels
-// (départements, régions, minéraux, localités). Ne crée jamais de donnée : renvoie null si rien ne correspond.
+// Référentiels : comparaison de noms, départements, valeurs communes et création automatique de fiches.
 export const normalizeName = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   .replace(/[’`]/g, "'").toLowerCase().replace(/[\s-]+/g, " ").trim();
-
-async function rows(client, table, columns) {
-  const { data, error } = await client.from(table).select(columns);
-  if (error) throw error;
-  return data || [];
-}
 
 export function matchDepartment(departments, text) {
   const raw = String(text ?? "").trim();
@@ -20,30 +13,6 @@ export function matchDepartment(departments, text) {
   }
   const name = normalizeName(raw.replace(/\s*\([^)]*\)\s*$/, ""));
   return departments.find(department => normalizeName(department.name) === name) || null;
-}
-
-function uniqueByName(list, text) {
-  const wanted = normalizeName(text);
-  if (!wanted) return null;
-  const found = list.filter(item => normalizeName(item.name) === wanted);
-  return found.length === 1 ? found[0] : null;
-}
-
-export async function resolveReferences(client, values) {
-  const [departments, regions, minerals, localities] = await Promise.all([
-    rows(client, "departments", "code,name,region_id"),
-    rows(client, "regions", "id,name"),
-    rows(client, "minerals", "id,name"),
-    rows(client, "localities", "id,name,department_code")
-  ]);
-  const department = matchDepartment(departments, values.department);
-  const localityPool = department ? localities.filter(item => item.department_code === department.code) : localities;
-  return {
-    department,
-    regionId: uniqueByName(regions, values.region)?.id ?? null,
-    mineralId: uniqueByName(minerals, values.mineral)?.id ?? null,
-    localityId: (uniqueByName(localityPool, values.locality) || uniqueByName(localities, values.locality))?.id ?? null
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -100,13 +69,27 @@ export async function ensureDepartment(client, name, regionId = null) {
 export async function ensureNamed(client, table, name, extra = {}) {
   const clean = String(name ?? "").replace(/\s+/g, " ").trim();
   if (!clean || !(table in CREATE_DEFAULTS)) return null;
-  const columns = table === "localities" ? "id,name,slug,department_code" : "id,name,slug";
+  const columns = table === "localities" ? "id,name,slug,department_code" : table === "mines" ? "id,name,slug,locality_id" : "id,name,slug";
   const { data, error } = await client.from(table).select(columns);
   if (error) throw error;
   const wanted = normalizeName(clean);
   const same = (data || []).filter(row => normalizeName(row.name) === wanted);
-  const found = (extra.department_code && same.find(row => row.department_code === extra.department_code)) || same[0];
-  if (found) return { id: found.id, name: found.name, created: false };
+  if (table === "mines") {
+    // Un gisement est reconnu par son nom ET sa commune : deux gisements homonymes de communes différentes restent distincts.
+    // Un gisement homonyme encore sans commune est repris et rattaché à la commune indiquée.
+    const place = extra.locality_id || null;
+    const found = place ? same.find(row => row.locality_id === place) || same.find(row => !row.locality_id) : same.find(row => !row.locality_id) || same[0];
+    if (found) {
+      if (place && !found.locality_id) {
+        const { error: updateError } = await client.from("mines").update({ locality_id: place }).eq("id", found.id).is("locality_id", null);
+        if (updateError) throw updateError;
+      }
+      return { id: found.id, name: found.name, created: false };
+    }
+  } else {
+    const found = (extra.department_code && same.find(row => row.department_code === extra.department_code)) || same[0];
+    if (found) return { id: found.id, name: found.name, created: false };
+  }
   const slugs = new Set((data || []).map(row => row.slug));
   const base = slugify(clean) || `${table}-${crypto.randomUUID()}`;
   let slug = base; let suffix = 2;
