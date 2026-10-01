@@ -66,7 +66,7 @@ export const CATEGORY_LABELS = {
   decouvertes: "Découvertes", identification: "Identification", collection: "Collection", pedagogie: "Pédagogie",
   "mine-gisement": "Mine / gisement", "archive-historique": "Archive historique", "plan-carte": "Plan / carte",
   "histoire-exploitation": "Histoire de l’exploitation", "publication-scientifique": "Publication scientifique",
-  catalogue: "Catalogue", bibliographie: "Bibliographie", "photographie-ancienne": "Photographie ancienne"
+  catalogue: "Catalogue", bibliographie: "Bibliographie", "photographie-ancienne": "Photographie ancienne", autre: "Autre"
 };
 export const categoryLabel = value => CATEGORY_LABELS[value] ?? value ?? "";
 

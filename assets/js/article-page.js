@@ -4,6 +4,7 @@ import { categoryLabel } from "./reference-resolver.js";
 import { articleUrl, renderNeighbours } from "./detail-nav.js";
 import { applyGlossary } from "./glossary-links.js";
 import { articleTitle } from "./seo-titles.js";
+import { renderBlocks } from "./article-content.js";
 
 const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("slug");
 const status = document.querySelector("#detail-status");
@@ -39,6 +40,17 @@ function readMore(articles) {
   return box;
 }
 
+// Liens automatiques vers les fiches dans un texte mis en forme (sans toucher aux liens existants).
+function linkTextNodes(root, linker, used) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: node => node.parentElement?.closest("a") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node => {
+    const parts = linker(node.nodeValue, used);
+    if (!parts.some(part => part.href)) return;
+    const fragment = document.createDocumentFragment(); appendLinked(fragment, parts); node.replaceWith(fragment);
+  });
+}
+
 function render(client, article, { linker, chosen }, all = []) {
   document.title = articleTitle(article.title);
   document.querySelector("[data-seo]")?.remove();
@@ -51,13 +63,8 @@ function render(client, article, { linker, chosen }, all = []) {
   date.textContent = article.published_on ? new Intl.DateTimeFormat("fr-FR").format(new Date(`${article.published_on}T00:00:00`)) : "";
   page.append(category, title, date);
   if (images[0]) { const image = document.createElement("img"); image.src = publicMediaUrl(client, images[0]); image.alt = images[0].alt_text || article.title; page.append(image); }
-  (Array.isArray(article.body) ? article.body : []).forEach(block => {
-    const content = typeof block === "string" ? block : block?.text || "";
-    if (!content) return;
-    const element = document.createElement(block?.type === "heading" ? "h2" : "p");
-    if (linker) appendLinked(element, linker(content, used)); else element.textContent = content;
-    page.append(element);
-  });
+  const blocks = renderBlocks(page, article.body, client);
+  if (linker) blocks.filter(node => node.classList.contains("art-text")).forEach(node => linkTextNodes(node, linker, used));
   for (const media of images.slice(1)) {
     const image = document.createElement("img"); image.loading = "lazy"; image.src = publicMediaUrl(client, media); image.alt = media.alt_text || article.title; page.append(image);
     if (media.caption) { const caption = document.createElement("div"); caption.className = "meta"; caption.textContent = media.caption; page.append(caption); }
@@ -71,7 +78,7 @@ function render(client, article, { linker, chosen }, all = []) {
   const others = relatedArticles(article, all, chosen);
   if (others.length) page.append(readMore(others));
   root.replaceChildren(page);
-  void applyGlossary([...page.querySelectorAll(":scope > p:not(.meta)")]);
+  void applyGlossary([...page.querySelectorAll("p.art-text")]);
 }
 
 try {

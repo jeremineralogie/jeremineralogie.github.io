@@ -1,3 +1,4 @@
+import { blocksToText } from "./article-content.js";
 import { loadPublishedContent, publicMediaUrl, showLoadError, watchContent } from "./content-repository.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { articleUrl } from "./detail-nav.js";
@@ -8,11 +9,7 @@ let rows = [];
 let client;
 
 // Résumé : l'extrait saisi ; à défaut, le début du premier paragraphe de l'article (coupé par le CSS).
-const summaryOf = article => {
-  if (article.excerpt) return article.excerpt;
-  const first = (Array.isArray(article.body) ? article.body : []).find(block => block?.type !== "heading" && (typeof block === "string" ? block : block?.text));
-  return typeof first === "string" ? first : first?.text || "";
-};
+const summaryOf = article => article.excerpt || blocksToText((Array.isArray(article.body) ? article.body : []).filter(block => block?.type !== "heading"))[0] || "";
 
 function render() {
   grid.replaceChildren();

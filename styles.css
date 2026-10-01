@@ -464,3 +464,18 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 /* Page introuvable */
 .notfound{padding-top:60px}
 .notfound-links{margin-top:22px;line-height:2;text-shadow:0 1px 3px #000}
+
+/* ===== Contenu riche des articles ===== */
+.article-full .art-text{margin:0 0 14px}
+.article-full h2.art-text{margin:26px 0 12px}
+.art-image{margin:14px auto;max-width:100%}
+.art-image img{display:block;width:100%;height:auto;margin:0!important;border:1px solid #3a1d63}
+.art-image figcaption{margin-top:6px;font-size:.84rem;color:var(--muted);text-align:center}
+.art-align-left{float:left;margin:6px 18px 12px 0}
+.art-align-right{float:right;margin:6px 0 12px 18px}
+.art-align-center{display:block;margin-left:auto;margin-right:auto;clear:both}
+.art-clear{clear:both}
+.art-file,.art-link{display:flex;align-items:center;gap:10px;margin:12px auto;max-width:520px;padding:12px 14px;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.6);color:#e6dcf5;text-align:left;transition:border-color .2s;clear:both}
+.art-file:hover,.art-link:hover{border-color:var(--violet2);color:#fff}
+.art-file-icon{font-size:1.4rem}.art-file-name{flex:1;min-width:0;overflow-wrap:anywhere}.art-file-open{font-size:.8rem;color:#c4a6f5;white-space:nowrap}
+.article-full .art-text{overflow-wrap:break-word;hyphens:auto}

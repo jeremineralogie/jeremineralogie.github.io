@@ -9,6 +9,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mineralTitle, pieceTitle, specimenTitle, articleTitle, documentTitle, termTitle } from "../../assets/js/seo-titles.js";
 import { categoryLabel } from "../../assets/js/reference-resolver.js";
+import { blocksToText } from "../../assets/js/article-content.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SITE = "https://jeremineralogie.github.io";
@@ -129,7 +130,7 @@ async function main() {
     });
   });
   articles.forEach(item => {
-    const paragraphs = (Array.isArray(item.body) ? item.body : []).map(part => typeof part === "string" ? part : part?.text).filter(Boolean);
+    const paragraphs = blocksToText(item.body);
     const image = photoUrl(cfg, item.media);
     add("article", item.slug, {
       template: "article", page: "article", params: `slug=${item.slug}`, lastmod: day(item.updated_at), image, ogType: "article",

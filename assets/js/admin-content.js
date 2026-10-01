@@ -2,6 +2,7 @@ import { ensureNamed, normalizeName, OTHER } from "./reference-resolver.js";
 import { enhanceCombobox } from "./combobox.js";
 import { backfillLocalities, communeLabel, communeUpdate, findCommune, searchCommunes } from "./geo-communes.js";
 import { createPointTool, pickPoint, pointKey, savePendingPoints } from "./point-picker.js";
+import { createContentEditor, openLayoutEditor } from "./article-editor.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -28,11 +29,16 @@ const sections = [
     { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] },
     { key: "keywords", label: "Mots-clés" }, { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA" }
   ] },
-  { id: "articles", label: "Articles", table: "articles", title: "Articles", mediaTable: "article_media", foreignKey: "article_id", path: "articles", links: [["article_specimens", "specimen_id", "specimens"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_minerals", "mineral_id", "minerals"]], fields: [
-    { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"], ["mines-histoire", "Mines & histoire"], ["decouvertes", "Découvertes"], ["identification", "Identification"], ["collection", "Collection"], ["pedagogie", "Pédagogie"]] },
-    { key: "excerpt", label: "Résumé", type: "textarea", notNull: true }, { key: "body", label: "Contenu (un paragraphe par ligne vide)", type: "textarea", body: true, notNull: true },
-    { key: "published_on", label: "Date de publication", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] },
-    { key: "link_specimens", label: "Spécimens liés", ref: "specimens", display: "slug", multi: true }, { key: "link_mines", label: "Mines liées", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true }, { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }
+  { id: "articles", label: "Articles", table: "articles", title: "Articles", mediaTable: "article_media", foreignKey: "article_id", path: "articles", mediaAfter: "body", singleCover: true,
+    links: [["article_minerals", "mineral_id", "minerals"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_departments", "department_code", "departments"], ["article_regions", "region_id", "regions"]], fields: [
+    { key: "title", label: "Titre", required: true },
+    { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["autre", "Autre"], ["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"], ["mines-histoire", "Mines & histoire"], ["decouvertes", "Découvertes"], ["identification", "Identification"], ["collection", "Collection"], ["pedagogie", "Pédagogie"]] },
+    { key: "body", label: "Contenu", richBody: true, notNull: true },
+    { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }, { key: "link_mines", label: "Gisements liés", ref: "mines", display: "name", multi: true },
+    { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true },
+    { key: "link_departments", label: "Départements liés", ref: "departments", display: "name", value: "code", multi: true }, { key: "link_regions", label: "Régions liées", ref: "regions", display: "name", multi: true },
+    { key: "excerpt", label: "Résumé", type: "textarea", notNull: true },
+    { key: "published_on", label: "Date de publication", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }
   ] },
   { id: "archives", label: "Archives & Documentation", table: "archive_documents", title: "Archives & Documentation", singleFile: true, path: "archives", links: [["archive_specimens", "specimen_id", "specimens"], ["archive_articles", "article_id", "articles"], ["archive_mines", "mine_id", "mines"], ["archive_localities", "locality_id", "localities"], ["archive_minerals", "mineral_id", "minerals"]], fields: [
     { key: "title", label: "Titre", required: true }, { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
@@ -86,6 +92,7 @@ let pendingLinkExtras = {};
 let createdNames = [];
 let pointTool = null;
 let prefill = null;
+let contentEditor = null;
 const resolvedLocalities = new Map();
 // Listes dont la valeur « Autre » crée une nouvelle fiche (ou une nouvelle catégorie) enregistrée pour les saisies suivantes.
 const CREATABLE_REFS = ["minerals", "mines", "localities", "regions", "departments"];
@@ -282,12 +289,27 @@ function buildEditorPanel() {
   const form = document.createElement("form"); form.noValidate = true;
   // Boutique : les photos en tête du formulaire.
   if (activeSection.id === "shop") appendMediaControls(form);
-  activeSection.fields.forEach(field => form.append(createField(field, (selectedRecord || copy?.values)?.[field.key])));
+  contentEditor = null;
+  activeSection.fields.forEach(field => {
+    form.append(createField(field, (selectedRecord || copy?.values)?.[field.key]));
+    if (activeSection.mediaAfter === field.key) appendMediaControls(form);
+  });
+  if (activeSection.id === "articles") {
+    const layout = document.createElement("div"); layout.className = "layout-tool";
+    const open = document.createElement("button"); open.type = "button"; open.className = "admin-secondary layout-btn"; open.textContent = "🖌 Mise en page";
+    const note = document.createElement("small"); note.textContent = "Ouvre l’éditeur de mise en page du contenu : gras, italique, police, couleur, alignement, déplacement des blocs et taille des images.";
+    open.addEventListener("click", async () => {
+      if (!contentEditor) return;
+      const result = await openLayoutEditor({ client, blocks: contentEditor.getBlocks() });
+      if (result) { contentEditor.setBlocks(result); report("Mise en page appliquée. Pensez à enregistrer l’article."); }
+    });
+    layout.append(open, note); form.append(layout);
+  }
   if (copy?.referenceHint) { const reference = form.elements.namedItem("reference"); if (reference) reference.placeholder = `ex. ${copy.referenceHint} (première référence libre)`; }
   wireGeoAutofill(form);
   if (activeSection.id === "localities") addLocateTool(form);
   else addPointTool(form);
-  if ((activeSection.mediaTable || activeSection.singleFile) && activeSection.id !== "shop") appendMediaControls(form);
+  if ((activeSection.mediaTable || activeSection.singleFile) && activeSection.id !== "shop" && !activeSection.mediaAfter) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
   if (viewMode === "add") {
@@ -312,6 +334,12 @@ function buildEditorPanel() {
 function createField(field, value) {
   const wrapper = document.createElement("div");
   const label = document.createElement("label"); label.textContent = field.label; wrapper.append(label);
+  if (field.richBody) {
+    const hidden = document.createElement("input"); hidden.type = "hidden"; hidden.name = field.key; hidden.value = JSON.stringify(value || []);
+    contentEditor = createContentEditor({ client, initial: value || [], onChange: blocks => { hidden.value = JSON.stringify(blocks); } });
+    wrapper.className = "rich-field"; wrapper.append(hidden, contentEditor.element);
+    return wrapper;
+  }
   let input;
   if (field.ref) {
     input = document.createElement("select");
@@ -361,7 +389,7 @@ function bodyToText(body) {
 }
 
 function appendMediaControls(panel) {
-  const title = document.createElement("h4"); title.textContent = activeSection.singleFile ? "Document" : activeSection.id === "articles" ? "Images" : "Photos"; panel.append(title);
+  const title = document.createElement("h4"); title.textContent = activeSection.singleFile ? "Document" : activeSection.singleCover ? "Image de fiche (illustration de l’article côté public)" : "Photos"; panel.append(title);
   const container = document.createElement("div"); container.className = "admin-content-media"; container.dataset.mediaContainer = ""; panel.append(container);
   if (activeSection.singleFile && selectedRecord?.storage_path) {
     const link = document.createElement("a"); link.textContent = `Document actuel (${selectedRecord.bucket_id})`;
@@ -382,7 +410,7 @@ function appendMediaControls(panel) {
   }
   if (activeSection.mediaTable || activeSection.singleFile) {
     uploadInput = document.createElement("input"); uploadInput.type = "file"; uploadInput.accept = activeSection.singleFile ? ".pdf,image/*" : "image/jpeg,image/png,image/webp";
-    uploadInput.multiple = Boolean(activeSection.mediaTable); uploadInput.setAttribute("aria-label", "Ajouter un média");
+    uploadInput.multiple = Boolean(activeSection.mediaTable) && !activeSection.singleCover; uploadInput.setAttribute("aria-label", "Ajouter un média");
     uploadInput.addEventListener("change", renderNewMediaPreview); container.append(uploadInput);
     const previews = document.createElement("div"); previews.className = "admin-content-media"; previews.dataset.newMediaPreview = ""; container.append(previews);
   }
@@ -455,7 +483,7 @@ async function saveRecord(form) {
       if (field.required && !value && value !== 0 && value !== false) throw new Error(`Le champ « ${field.label} » est requis par le schéma actuel.`);
       if (field.euros && value !== "") { const amount = Number(value); if (!Number.isFinite(amount) || amount < 0) throw new Error("Le prix doit être un nombre positif ou nul."); value = Math.round(amount * 100); }
       else if (field.type === "number" && value !== "") { value = Number(value); if (!Number.isFinite(value)) throw new Error(`Valeur numérique invalide pour « ${field.label} ».`); }
-      if (field.body) value = value ? value.split(/\n\s*\n/).map(paragraph => ({ type: "paragraph", text: paragraph.trim() })).filter(block => block.text) : [];
+      if (field.richBody) value = contentEditor ? contentEditor.getBlocks() : JSON.parse(input.value || "[]");
       if (field.array) value = value ? value.split(",").map(part => part.trim()).filter(Boolean) : [];
       if (field.key === "value") { try { value = value ? JSON.parse(value) : {}; } catch { throw new Error("La valeur du paramètre doit être du JSON valide."); } }
       if (field.multi) {
