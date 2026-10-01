@@ -1,0 +1,115 @@
+// Recherche d'une photo libre de droits pour chaque fiche minéral (proposition à valider, rien n'est publié).
+// 1. Fiches publiées lues dans Supabase (clé publique du site, lecture seule).
+// 2. Image de référence de l'espèce sur Wikidata (propriété P18), à défaut l'image principale de l'article Wikipédia en français.
+// 3. Licence et auteur lus sur Wikimedia Commons ; seules les licences libres sont retenues (domaine public, CC0, CC BY, CC BY-SA).
+// Résultat : tools/images/proposition.json et tools/images/proposition.html (page de relecture avec vignettes et crédits).
+import { readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const OUT = path.join(ROOT, "tools/images");
+const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.github.io; recherche de photos libres pour fiches minéraux)";
+const FREE = /^(cc0|public domain|pd\b|pd-|cc[- ]by(-sa)?[- ]?\d|cc[- ]by(-sa)?$|attribution|no restrictions)/i;
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const esc = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const stripHtml = value => String(value ?? "").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, "\"").replace(/&#0?39;/g, "'").replace(/\s+/g, " ").trim();
+
+async function json(url) {
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    const response = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
+    if (response.ok) return response.json();
+    if (response.status === 429 || response.status >= 500) { await sleep(2000 * attempt); continue; }
+    throw new Error(`${response.status} ${url}`);
+  }
+  throw new Error(`Échec répété : ${url}`);
+}
+
+async function minerals() {
+  const source = await readFile(path.join(ROOT, "assets/js/supabase-config.js"), "utf8");
+  const url = /url:\s*"([^"]+)"/.exec(source)[1], key = /publishableKey:\s*"([^"]+)"/.exec(source)[1];
+  const response = await fetch(`${url}/rest/v1/minerals?select=slug,name,formula&publication_status=eq.published&order=name`, { headers: { apikey: key } });
+  if (!response.ok) throw new Error(`Lecture des fiches impossible (${response.status})`);
+  return response.json();
+}
+
+// Élément Wikidata d'un minéral : recherche du nom en français puis en anglais, en préférant les éléments décrits comme minéraux.
+async function wikidataItem(name) {
+  for (const language of ["fr", "en"]) {
+    const search = await json(`https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&type=item&limit=7&language=${language}&uselang=${language}&search=${encodeURIComponent(name)}`);
+    const candidates = (search.search || []).filter(item => /min[ée]ral|gem|gemme|variet|variété|cristal/i.test(item.description || ""));
+    if (!candidates.length) continue;
+    const ids = candidates.map(item => item.id).join("|");
+    const entities = await json(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=claims|labels|sitelinks&languages=fr|en&ids=${ids}`);
+    for (const candidate of candidates) {
+      const entity = entities.entities?.[candidate.id];
+      const image = entity?.claims?.P18?.[0]?.mainsnak?.datavalue?.value;
+      return { id: candidate.id, label: entity?.labels?.fr?.value || entity?.labels?.en?.value || candidate.label, description: candidate.description, image: image || null, frwiki: entity?.sitelinks?.frwiki?.title || null };
+    }
+  }
+  return null;
+}
+
+async function frWikipediaImage(title) {
+  const data = await json(`https://fr.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=name&redirects=1&titles=${encodeURIComponent(title)}`);
+  const page = Object.values(data.query?.pages || {})[0];
+  return page?.pageimage || null;
+}
+
+// Licence, auteur et vignette d'un fichier Commons.
+async function commonsInfo(file) {
+  const data = await json(`https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url|extmetadata|size&iiurlwidth=480&titles=${encodeURIComponent(`File:${file}`)}`);
+  const page = Object.values(data.query?.pages || {})[0];
+  const info = page?.imageinfo?.[0];
+  if (!info) return null;
+  const meta = info.extmetadata || {};
+  const license = stripHtml(meta.LicenseShortName?.value || meta.License?.value || "");
+  return {
+    file, page: info.descriptionurl, thumb: info.thumburl, original: info.url, width: info.width, height: info.height,
+    author: stripHtml(meta.Artist?.value || meta.Credit?.value || "Auteur inconnu"), license, licenseUrl: meta.LicenseUrl?.value || "",
+    free: FREE.test(license) || /^(cc0|pd|cc-by)/i.test(meta.License?.value || ""),
+    attributionRequired: meta.AttributionRequired?.value === "true"
+  };
+}
+
+const rows = await minerals();
+const results = [];
+for (const [index, mineral] of rows.entries()) {
+  const entry = { slug: mineral.slug, name: mineral.name, wikidata: null, image: null, status: "introuvable", note: "" };
+  try {
+    const item = await wikidataItem(mineral.name);
+    if (item) entry.wikidata = { id: item.id, label: item.label, description: item.description };
+    let file = item?.image || null, origin = "wikidata";
+    if (!file) { file = await frWikipediaImage(item?.frwiki || mineral.name); origin = "wikipedia-fr"; }
+    if (file) {
+      const info = await commonsInfo(file);
+      if (!info) entry.note = `Fichier ${file} absent de Commons.`;
+      else if (!info.free) { entry.status = "licence-non-libre"; entry.note = `Licence « ${info.license} » écartée.`; entry.image = { ...info, origin }; }
+      else { entry.status = "trouvee"; entry.image = { ...info, origin }; }
+    } else entry.note = item ? "Pas d'image de référence." : "Espèce non trouvée sur Wikidata.";
+  } catch (error) { entry.status = "erreur"; entry.note = error.message; }
+  results.push(entry);
+  console.log(`${index + 1}/${rows.length} ${mineral.name} → ${entry.status}${entry.image ? ` (${entry.image.file})` : ""}`);
+  await sleep(250);
+}
+
+await writeFile(path.join(OUT, "proposition.json"), `${JSON.stringify({ generated: new Date().toISOString(), results }, null, 2)}\n`);
+
+const found = results.filter(entry => entry.status === "trouvee");
+const card = entry => `<article class="c${entry.status === "trouvee" ? "" : " off"}">
+${entry.image?.thumb ? `<a href="${esc(entry.image.page)}" target="_blank" rel="noopener"><img src="${esc(entry.image.thumb)}" alt="${esc(entry.name)}" loading="lazy"></a>` : `<div class="none">Pas de photo</div>`}
+<h2>${esc(entry.name)}</h2>
+${entry.wikidata ? `<p class="m">Wikidata : <a href="https://www.wikidata.org/wiki/${esc(entry.wikidata.id)}" target="_blank" rel="noopener">${esc(entry.wikidata.label)}</a> — ${esc(entry.wikidata.description || "")}</p>` : ""}
+${entry.image ? `<p class="cr">${esc(entry.image.author)} — <a href="${esc(entry.image.licenseUrl || entry.image.page)}" target="_blank" rel="noopener">${esc(entry.image.license)}</a>, via Wikimedia Commons</p><p class="m">Fichier : ${esc(entry.image.file)} (${esc(entry.image.origin)})</p>` : ""}
+${entry.note ? `<p class="n">${esc(entry.note)}</p>` : ""}
+</article>`;
+const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Photos libres proposées — fiches minéraux</title>
+<style>body{margin:0;padding:16px;background:#0b0612;color:#e6dcf5;font:15px/1.5 system-ui,sans-serif}h1{font-size:1.4rem;margin:0 0 6px}p.s{color:#b9a5d8;margin:0 0 16px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.c{background:#160c26;border:1px solid #3a1d63;border-radius:8px;padding:10px;min-width:0}
+.c.off{opacity:.6;border-style:dashed}.c img{width:100%;aspect-ratio:4/3;object-fit:contain;background:#000;border-radius:4px}.none{aspect-ratio:4/3;display:grid;place-items:center;background:#000;color:#8f7bb0;border-radius:4px}
+h2{font-size:1.05rem;margin:8px 0 4px}a{color:#c4a6f5}.cr{font-size:.85rem;margin:4px 0}.m{font-size:.75rem;color:#8f7bb0;margin:2px 0;overflow-wrap:anywhere}.n{font-size:.8rem;color:#f0d9a8;margin:4px 0}</style></head><body>
+<h1>Photos libres proposées pour les fiches minéraux</h1>
+<p class="s">${found.length} photo(s) libre(s) trouvée(s) sur ${results.length} fiches — générée le ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}. Cliquez une photo pour voir sa page Commons (auteur, licence). Les cartes en pointillés n'ont pas de photo retenue.</p>
+<div class="g">${[...found, ...results.filter(entry => entry.status !== "trouvee")].map(card).join("\n")}</div></body></html>`;
+await writeFile(path.join(OUT, "proposition.html"), html);
+console.log(`Terminé : ${found.length} photos libres sur ${results.length} fiches.`);

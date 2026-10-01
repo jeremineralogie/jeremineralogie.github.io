@@ -1,0 +1,36 @@
+# Recherche de photos libres de droits pour les fiches minéraux (Wikidata / Wikimedia Commons).
+# Produit seulement une proposition à relire (tools/images/proposition.html et .json) : rien n'est publié sur le site
+# ni écrit dans Supabase (lecture seule avec la clé publique du site).
+name: Photos libres des fiches minéraux (proposition)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths: ["tools/images/find-mineral-photos.mjs", ".github/workflows/mineral-photos.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mineral-photos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Chercher une photo libre par fiche minéral
+        run: node tools/images/find-mineral-photos.mjs
+      - name: Enregistrer la proposition sur la branche
+        run: |
+          git add tools/images/proposition.json tools/images/proposition.html
+          if git diff --cached --quiet; then echo "Aucun changement."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Photos libres : proposition à relire (aucune publication)"
+          git push origin HEAD:${{ github.ref_name }}
