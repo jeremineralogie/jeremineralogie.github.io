@@ -282,6 +282,8 @@ form[data-message-form]{max-width:640px;margin:0 auto}
 .doc-full .page-title{margin-top:8px}
 .doc-full p{color:#ddd0ee;line-height:1.75;font-size:.98rem;text-shadow:none;text-align:left}
 .doc-full .doc-image,.doc-full .viewer{border-color:#3a1d63}
+.doc-full .art-rich{overflow-wrap:break-word;hyphens:auto}
+.doc-full h2{text-align:left;color:#d8c2fa;margin:28px 0 10px}
 /* Carte interactive */
 .map-view{height:min(68vh,620px);min-height:380px;margin:12px 0 10px;border:1px solid #3a1d63;border-radius:4px;background:#07030d;box-shadow:0 0 40px -18px rgba(138,77,224,.6);z-index:1}
 .map-view .leaflet-control-attribution{background:rgba(6,2,12,.8);color:#a98fd2;font-size:.68rem}

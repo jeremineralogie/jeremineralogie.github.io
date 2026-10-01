@@ -78,9 +78,9 @@ export function createContentEditor({ client, initial, onChange }) {
   font.addEventListener("change", () => { if (font.value) exec("fontName", font.value); else exec("removeFormat"); font.value = ""; });
   const color = el("input", "ce-color"); color.type = "color"; color.value = "#e6dcf5"; color.title = "Couleur du texte";
   color.addEventListener("input", () => exec("foreColor", color.value));
-  const aligns = [["⇤", "left", "justifyLeft", "Aligner à gauche"], ["↔", "center", "justifyCenter", "Centrer"], ["⇥", "right", "justifyRight", "Aligner à droite"]].map(([label, position, command, title]) => {
+  const aligns = [["⇤", "left", "justifyLeft", "Aligner à gauche"], ["↔", "center", "justifyCenter", "Centrer"], ["⇥", "right", "justifyRight", "Aligner à droite"], ["☰", null, "justifyFull", "Justifier le texte"]].map(([label, position, command, title]) => {
     const button = tool(label, title);
-    button.addEventListener("click", () => { if (selectedImage) setPosition(position); else exec(command); });
+    button.addEventListener("click", () => { if (selectedImage && position) setPosition(position); else if (!selectedImage) exec(command); });
     return button;
   });
   const addImage = tool("🖼 Image", "Insérer une image à l’endroit du curseur", "ce-tool ce-insert");

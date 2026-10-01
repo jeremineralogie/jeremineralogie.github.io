@@ -1,6 +1,6 @@
 // Contenu riche des articles : blocs de texte mis en forme, intertitres, images, PDF et liens.
 // Format enregistré dans articles.body (JSON) :
-//   { type: "text" | "heading", html, align }           align : "left" | "center" | "right" (vide = alignement par défaut)
+//   { type: "text" | "heading", html, align }           align : "left" | "center" | "right" | "justify" (vide = alignement par défaut)
 //   { type: "image", bucket, path, width, align, caption } width : pourcentage de la largeur (15 à 100)
 //   { type: "pdf", bucket, path, name }
 //   { type: "link", url, label }
@@ -14,6 +14,7 @@ export const FONTS = [
   ["'Courier New', monospace", "Machine à écrire"]
 ];
 const ALIGNS = new Set(["left", "center", "right"]);
+const TEXT_ALIGNS = new Set([...ALIGNS, "justify"]);
 const escapeHtml = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 export function normalizeBlocks(body) {
@@ -22,7 +23,7 @@ export function normalizeBlocks(body) {
     if (!block || typeof block !== "object") return null;
     if (block.type === "paragraph" || block.type === "text" || block.type === "heading") {
       const html = block.html != null ? String(block.html) : escapeHtml(block.text).replace(/\n/g, "<br>");
-      return { type: block.type === "heading" ? "heading" : "text", html, align: ALIGNS.has(block.align) ? block.align : "" };
+      return { type: block.type === "heading" ? "heading" : "text", html, align: TEXT_ALIGNS.has(block.align) ? block.align : "" };
     }
     if (block.type === "image" && block.path) return { type: "image", bucket: block.bucket || "site-media-public", path: block.path, width: Math.min(100, Math.max(15, Number(block.width) || 100)), align: ALIGNS.has(block.align) ? block.align : "center", caption: String(block.caption || "") };
     if (block.type === "pdf" && block.path) return { type: "pdf", bucket: block.bucket || "site-media-public", path: block.path, name: String(block.name || "Document PDF") };
@@ -147,7 +148,7 @@ export function sanitizeRich(html, client, { editing = false } = {}) {
       if (BLOCKS[tag]) {
         const element = document.createElement(BLOCKS[tag]);
         const align = child.style?.textAlign || child.getAttribute("align") || "";
-        if (ALIGNS.has(align)) element.style.textAlign = align;
+        if (TEXT_ALIGNS.has(align)) element.style.textAlign = align;
         element.append(clean(child)); out.append(element); return;
       }
       const color = SAFE_COLOR(child.style?.color || child.getAttribute("color") || "");

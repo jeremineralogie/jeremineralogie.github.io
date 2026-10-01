@@ -4,6 +4,12 @@ name: Photos libres des fiches minéraux (téléchargement)
 
 on:
   workflow_dispatch:   # lancement manuel uniquement (onglet Actions de GitHub)
+    inputs:
+      liste:
+        description: "fiches (déjà dans Supabase) ou nouveaux (tools/minerals/nouveaux-mineraux.json)"
+        type: choice
+        options: [fiches, nouveaux]
+        default: fiches
 
 permissions:
   contents: write
@@ -21,6 +27,8 @@ jobs:
         with:
           node-version: 22
       - name: Télécharger les photos et les crédits
+        env:
+          LISTE: ${{ inputs.liste }}
         run: node tools/images/download-mineral-photos.mjs
       - name: Enregistrer sur la branche
         run: |
