@@ -1,0 +1,26 @@
+{
+ "formula": "SiO₂·nH₂O",
+ "crystal_system": "Amorphe",
+ "chemical_class": "Oxydes et hydroxydes",
+ "hardness": 5.5,
+ "hardness_max": 6.0,
+ "density": 2.0,
+ "density_max": 2.1,
+ "colors": [
+  "blanc laiteux",
+  "blanc bleuté",
+  "incolore"
+ ],
+ "luster": "soyeux à cireux",
+ "cleavage": "aucun",
+ "streak": "blanc",
+ "transparency": "translucide",
+ "fracture": "conchoïdale à fibreuse",
+ "fluorescence": "Parfois verte aux UV (traces d'uranium).",
+ "habit": "Croûtes mamelonnées à structure fibreuse, enduits dans les fissures.",
+ "formation": "Fissures de roches volcaniques et sédimentaires ; localité type : Lussat (Puy-de-Dôme).",
+ "etymology": "De Lussat (Puy-de-Dôme), où Ernest Mallard la décrivit en 1890.",
+ "varieties": "Variété fibreuse d'opale (opale-CT, silice mal cristallisée de type cristobalite-tridymite).",
+ "confusions": "Calcédoine : plus dure et plus dense. Hyalite : limpide, en gouttelettes.",
+ "description": "Opale fibreuse décrite en Auvergne, à Lussat : une silice à mi-chemin entre l'opale et la cristobalite."
+}
