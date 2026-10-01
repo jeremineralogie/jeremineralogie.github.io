@@ -629,3 +629,5 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .quiz-photo[hidden]{display:none}
 .quiz-photo img{width:min(100%,320px);aspect-ratio:4/3;object-fit:contain;background:#000;border:1px solid #3a1d63;border-radius:4px}
 .quiz-photo .photo-credit{margin:0}
+/* Texte justifié propre : césure française (Safari compris), espacement des mots limité, dernière ligne à gauche */
+:is(.article-full,.doc-full) :is(p,h2,h3,div,li)[style*="justify"]{text-align:justify;text-justify:inter-word;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 2;-webkit-hyphenate-limit-before:3;-webkit-hyphenate-limit-after:2;overflow-wrap:normal;word-break:normal;text-wrap:pretty;text-align-last:left}

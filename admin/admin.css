@@ -210,3 +210,5 @@ body.ce-open{overflow:hidden}
 .pick-results:empty{display:none}
 .pick-result{padding:8px 10px;border:1px solid #3a2160;border-radius:8px;background:#120a1d;color:#e6dcf5;font:inherit;text-align:left;cursor:pointer}
 .pick-result:hover{border-color:#8e5cff;color:#fff}
+/* Aperçu fidèle du texte justifié dans l'éditeur (même rendu que sur le site) */
+.ce-doc :is(p,h2,h3,div,li)[style*="justify"]{text-justify:inter-word;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 2;-webkit-hyphenate-limit-before:3;-webkit-hyphenate-limit-after:2;text-wrap:pretty;text-align-last:left}
