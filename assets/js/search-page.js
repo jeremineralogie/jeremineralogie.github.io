@@ -13,8 +13,8 @@ const client = getSupabase();
 const sources = [
   { type: "Spécimen", table: "specimens", select: "slug,mineral_name,provenance,locality_name,department_name,country,keywords,description,mineral:minerals!specimens_mineral_id_fkey(name)",
     map: r => ({ title: r.mineral_name ?? r.mineral?.name ?? "Spécimen", meta: [r.provenance, r.locality_name, r.department_name].filter(Boolean).join(" · "), href: `specimen.html?id=${encodeURIComponent(r.slug)}`, haystack: [r.mineral_name, r.mineral?.name, r.provenance, r.locality_name, r.department_name, r.country, r.keywords, r.description] }) },
-  { type: "Boutique", table: "shop_items", select: "slug,reference,title,mineral_name,provenance,description,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name)", filter: q => q.eq("sale_status", "available"),
-    map: r => ({ title: shopItemName(r), meta: [r.mine?.name || r.provenance, r.reference].filter(Boolean).join(" · "), href: pieceUrl(r), haystack: [r.reference, r.mineral_name, r.mineral?.name, r.mine?.name, r.provenance, r.description] }) },
+  { type: "Boutique", table: "shop_items", select: "slug,reference,title,mineral_name,provenance,description,keywords,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name)", filter: q => q.eq("sale_status", "available"),
+    map: r => ({ title: shopItemName(r), meta: [r.mine?.name || r.provenance, r.reference].filter(Boolean).join(" · "), href: pieceUrl(r), haystack: [r.reference, r.mineral_name, r.mineral?.name, r.mine?.name, r.provenance, r.keywords, r.description] }) },
   { type: "Article", table: "articles", select: "slug,title,excerpt,category",
     map: r => ({ title: r.title, meta: categoryLabel(r.category), href: articleUrl(r), haystack: [r.title, r.excerpt, r.category] }) },
   { type: "Archive", table: "archive_documents", select: "slug,title,description,category",

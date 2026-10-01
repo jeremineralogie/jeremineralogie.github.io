@@ -69,6 +69,20 @@ export async function loadLinkEntities(client) {
 export async function loadArticleLinks(client) {
   const joins = [["article_minerals", "minerals", "mineral"], ["article_mines", "mines", "mine"], ["article_localities", "localities", "locality"]];
   const map = new Map();
+  const extra = [
+    ["article_departments", "entity:departments(name,code)", row => ({ name: row.entity.name, href: `departement.html?dep=${encodeURIComponent(row.entity.code)}` })],
+    ["article_regions", "entity:regions(name)", row => ({ name: row.entity.name, href: null })],
+    ["archive_articles", "entity:archive_documents(title,slug)", row => ({ name: row.entity.title, href: `document.html?slug=${encodeURIComponent(row.entity.slug)}` })]
+  ];
+  await Promise.all(extra.map(async ([table, select, toLink]) => {
+    const { data, error } = await client.from(table).select(`article_id,${select}`);
+    if (error) { console.error(`Liens ${table} :`, error); return; }
+    (data || []).forEach(row => {
+      if (!row.entity) return;
+      if (!map.has(row.article_id)) map.set(row.article_id, []);
+      map.get(row.article_id).push(toLink(row));
+    });
+  }));
   await Promise.all(joins.map(async ([table, entityTable, type]) => {
     const { data, error } = await client.from(table).select(`article_id,entity:${entityTable}(name,slug)`);
     if (error) throw error;

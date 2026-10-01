@@ -9,6 +9,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mineralTitle, pieceTitle, specimenTitle, articleTitle, documentTitle, termTitle } from "../../assets/js/seo-titles.js";
 import { categoryLabel } from "../../assets/js/reference-resolver.js";
+import { blocksToText } from "../../assets/js/article-content.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SITE = "https://jeremineralogie.github.io";
@@ -86,7 +87,7 @@ async function main() {
     read("shop_items", `shop_items?select=slug,reference,title,mineral_name,provenance,price_cents,currency,description,dimensions,updated_at,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name),department:departments!shop_items_department_code_fkey(name),media:shop_item_media(${MEDIA})&publication_status=eq.published&sale_status=eq.available&order=reference`),
     read("specimens", `specimens?select=slug,mineral_name,provenance,locality_name,department_name,country,description,updated_at,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(${MEDIA})&publication_status=eq.published&order=slug`),
     read("articles", `articles?select=slug,title,category,excerpt,body,published_on,updated_at,media:article_media(${MEDIA})&publication_status=eq.published&order=slug`),
-    read("archive_documents", `archive_documents?select=slug,title,category,description,document_date,updated_at&publication_status=eq.published&bucket_id=eq.site-media-public&order=slug`),
+    read("archive_documents", `archive_documents?select=slug,title,category,description,summary,cover_bucket,cover_path,document_date,updated_at&publication_status=eq.published&bucket_id=eq.site-media-public&order=slug`),
     read("glossary_terms", `glossary_terms?select=slug,term,domain,definition,updated_at&publication_status=eq.published&order=slug`)
   ]);
   const templates = Object.fromEntries(await Promise.all([["fiche", "fiche.html"], ["piece", "piece.html"], ["specimen", "specimen.html"], ["article", "article.html"], ["document", "document.html"], ["apprendre", "apprendre.html"]]
@@ -129,7 +130,7 @@ async function main() {
     });
   });
   articles.forEach(item => {
-    const paragraphs = (Array.isArray(item.body) ? item.body : []).map(part => typeof part === "string" ? part : part?.text).filter(Boolean);
+    const paragraphs = blocksToText(item.body);
     const image = photoUrl(cfg, item.media);
     add("article", item.slug, {
       template: "article", page: "article", params: `slug=${item.slug}`, lastmod: day(item.updated_at), image, ogType: "article",
@@ -141,7 +142,8 @@ async function main() {
   archives.forEach(item => {
     add("archive", item.slug, {
       template: "document", page: "document", params: `slug=${item.slug}`, lastmod: day(item.updated_at),
-      title: documentTitle(item.title), description: cut(item.description || `${item.title} — ${categoryLabel(item.category)}, archives et documentation Jeremineralogie.`),
+      image: item.cover_path ? photoUrl(cfg, [{ bucket_id: item.cover_bucket || "site-media-public", storage_path: item.cover_path, position: 0 }]) : null,
+      title: documentTitle(item.title), description: cut(item.summary || item.description || `${item.title} — ${categoryLabel(item.category)}, archives et documentation Jeremineralogie.`),
       hidden: block(item.title, categoryLabel(item.category), item.description)
     });
   });

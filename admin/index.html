@@ -40,6 +40,10 @@
           <h3 id="editor-title">Nouveau spécimen</h3>
           <form id="specimen-form" novalidate>
             <input id="specimen-id" type="hidden">
+            <label for="photos">Ajouter photo(s)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+            <div id="existing-photo-group" hidden><small>Photos enregistrées sur ce spécimen</small><div id="existing-photos" class="admin-photos"></div></div>
+            <div id="selected-photo-group" hidden><small>Nouvelles photos sélectionnées</small><div id="selected-photos" class="admin-photos"></div></div>
+            <label for="specimen-title">Titre <small>(visible seulement dans l’admin)</small></label><input id="specimen-title" type="text">
             <label for="mineral-name">Minéral principal</label><select id="mineral-name"></select><input id="mineral-name-other" type="text" placeholder="Ajouter un minéral" hidden>
             <label>Minéraux associés (secondaires)</label>
             <div style="display:flex;gap:8px;margin-bottom:16px;align-items:flex-start">
@@ -51,22 +55,19 @@
             </div>
             <div id="mineral-association-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px"></div>
             <input id="mineral-association-data" type="hidden">
-            <label for="country">Pays</label><input id="country" type="text" autocomplete="country-name" list="dl-countries">
-            <label for="region">Région</label><select id="region"></select><input id="region-other" type="text" placeholder="Ajouter une région" hidden>
-            <label for="department">Département</label><select id="department"></select><input id="department-other" type="text" placeholder="Ajouter un département" hidden>
+            <label for="provenance">Gisement</label><select id="provenance"></select><input id="provenance-other" type="text" placeholder="Ajouter un gisement" hidden>
             <label for="locality">Commune</label><select id="locality"></select><input id="locality-other" type="text" placeholder="Ajouter une commune" hidden>
-            <label for="provenance">Nom du gisement</label><select id="provenance"></select><input id="provenance-other" type="text" placeholder="Ajouter un gisement" hidden>
+            <label for="department">Département</label><select id="department"></select><input id="department-other" type="text" placeholder="Ajouter un département" hidden>
+            <label for="region">Région</label><select id="region"></select><input id="region-other" type="text" placeholder="Ajouter une région" hidden>
+            <label for="country">Pays</label><input id="country" type="text" autocomplete="country-name" list="dl-countries">
             <label for="site-type">Type de site</label><select id="site-type"></select><input id="site-type-other" type="text" placeholder="Saisir un autre type de site" hidden>
             <label for="dimensions">Dimensions</label><input id="dimensions">
             <label for="weight">Poids</label><input id="weight" type="text" inputmode="decimal"><small>grammes</small>
             <label for="description">Description</label><textarea id="description"></textarea>
             <label for="keywords">Mots-clés</label><input id="keywords" type="text">
-            <label for="specimen-date">Date de découverte ou d'entrée en collection</label><input id="specimen-date" type="text" lang="fr" inputmode="numeric" placeholder="AAAA, MM/AAAA ou JJ/MM/AAAA" aria-describedby="specimen-date-help"><small id="specimen-date-help">Exemples : 2018, 09/2018 ou 29/09/2018.</small>
-            <label for="photos">Ajouter photo(s)</label><input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+            <label for="specimen-date">Date de découverte</label><input id="specimen-date" type="text" lang="fr" inputmode="numeric" placeholder="AAAA, MM/AAAA ou JJ/MM/AAAA" aria-describedby="specimen-date-help"><small id="specimen-date-help">Exemples : 2018, 09/2018 ou 29/09/2018.</small>
             <input id="specimen-slug" type="hidden">
             <input id="publication-status" type="hidden" value="published">
-            <div id="existing-photo-group" hidden><small>Photos enregistrées sur ce spécimen</small><div id="existing-photos" class="admin-photos"></div></div>
-            <div id="selected-photo-group" hidden><small>Nouvelles photos sélectionnées</small><div id="selected-photos" class="admin-photos"></div></div>
             <datalist id="dl-minerals"></datalist><datalist id="dl-countries"></datalist><datalist id="dl-regions"></datalist><datalist id="dl-departments"></datalist><datalist id="dl-localities"></datalist><datalist id="dl-mines"></datalist>
             <p class="notice" id="specimen-status" role="status" aria-live="polite" hidden></p>
             <div class="admin-actions"><button class="btn" type="submit">Enregistrer</button><button class="admin-secondary" id="cancel-edit" type="button">Annuler</button><button class="admin-secondary" id="duplicate-specimen" type="button" hidden>Dupliquer</button><button class="admin-danger" id="delete-specimen" type="button" hidden>Supprimer</button></div>

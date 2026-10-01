@@ -7,19 +7,15 @@ const status = document.querySelector("#articles-status");
 let rows = [];
 let client;
 
-// Résumé : l'extrait saisi ; à défaut, le début du premier paragraphe de l'article (coupé par le CSS).
-const summaryOf = article => {
-  if (article.excerpt) return article.excerpt;
-  const first = (Array.isArray(article.body) ? article.body : []).find(block => block?.type !== "heading" && (typeof block === "string" ? block : block?.text));
-  return typeof first === "string" ? first : first?.text || "";
-};
+// Résumé : seulement celui saisi dans l'admin.
+const summaryOf = article => article.excerpt || "";
 
 function render() {
   grid.replaceChildren();
   if (!rows.length) { status.textContent = "Aucun article publié pour le moment."; status.hidden = false; return; }
   status.hidden = true;
   rows.forEach(article => {
-    const card = document.createElement("a"); card.className = "card"; card.href = articleUrl(article);
+    const card = document.createElement("a"); card.className = "card card-wide"; card.href = articleUrl(article);
     const image = (article.media || []).filter(item => item.bucket_id === "site-media-public").sort((a, b) => a.position - b.position)[0];
     if (image) { const element = document.createElement("img"); element.src = publicMediaUrl(client, image); element.alt = image.alt_text || article.title; card.append(element); }
     const body = document.createElement("div"); body.className = "card-body";

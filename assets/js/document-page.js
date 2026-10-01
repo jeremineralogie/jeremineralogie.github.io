@@ -18,6 +18,13 @@ function render(client, row) {
   meta.textContent = [row.document_date && new Intl.DateTimeFormat("fr-FR").format(new Date(`${row.document_date}T00:00:00`)), row.rights_note].filter(Boolean).join(" · ");
   page.append(category, title, meta);
   if (row.description) { const description = document.createElement("p"); description.textContent = row.description; page.append(description); void applyGlossary(description); }
+  // Liens saisis dans l'admin : « Texte | https://… » ou simplement l'adresse.
+  (row.links || []).forEach(line => {
+    const [label, url] = line.includes("|") ? line.split("|").map(part => part.trim()) : [line.trim(), line.trim()];
+    if (!/^https?:\/\//i.test(url)) return;
+    const link = document.createElement("a"); link.className = "art-link"; link.href = url; link.target = "_blank"; link.rel = "noopener"; link.textContent = `🔗 ${label || url}`;
+    page.append(link);
+  });
   if (row.storage_path && row.bucket_id === "site-media-public") {
     const url = client.storage.from(row.bucket_id).getPublicUrl(row.storage_path).data.publicUrl;
     const open = document.createElement("a"); open.className = "btn"; open.href = url; open.target = "_blank"; open.rel = "noopener"; open.textContent = "Ouvrir dans un nouvel onglet";
