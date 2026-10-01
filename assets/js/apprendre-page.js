@@ -1,10 +1,11 @@
 import { getSupabase } from "./supabase-client.js";
 import { ficheUrl } from "./entity-links.js";
 
-// Onglet « Apprendre » : fiches minéraux (référentiel minerals) et glossaire (glossary_terms), avec filtres et index A–Z.
+// Onglet « Apprendre » : fiches minéraux (référentiel minerals) et glossaire (glossary_terms), avec filtres et index A–Z,
+// aide à l'identification et « Tests et outils » (densité, dureté, fluorescence).
 const status = document.querySelector("#learn-status");
 const tabs = [...document.querySelectorAll(".learn-tabs [data-tab]")];
-const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire"), identification: document.querySelector("#panel-identification") };
+const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire"), identification: document.querySelector("#panel-identification"), outils: document.querySelector("#panel-outils") };
 const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
 const COLORS = [
   ["incolore", /incolore|limpide/], ["blanc", /blanc|argent/], ["gris", /gris|plomb|acier/], ["noir", /noir/],
@@ -253,6 +254,80 @@ function renderIdentification() {
   }));
 }
 
+// ----- Tests et outils -----
+const tPanel = panels.outils;
+const parse = input => { const value = Number(String(input.value).replace(",", ".")); return input.value !== "" && Number.isFinite(value) && value > 0 ? value : null; };
+// Liste de minéraux cliquables (fiches), avec la valeur utile au test.
+function matchList(container, items, detail, empty) {
+  if (!items.length) { container.replaceChildren(element("p", "meta", empty)); return; }
+  const list = element("ul", "tool-match-list");
+  items.forEach(mineral => { const item = element("li"); item.append(link(ficheUrl("mineral", mineral.slug), mineral.name), element("span", "tool-match-detail", detail(mineral))); list.append(item); });
+  container.replaceChildren(list);
+}
+const densityText = mineral => mineral.density == null ? "" : `densité ${range(mineral.density, mineral.density_max)}`;
+const hardnessText = mineral => mineral.hardness == null ? "" : `dureté ${range(mineral.hardness, mineral.hardness_max)}`;
+
+function setupDensity() {
+  const form = tPanel.querySelector("#density-form");
+  const air = form.querySelector("#density-air"), water = form.querySelector("#density-water");
+  const waterLabel = form.querySelector('label[for="density-water"]');
+  const result = tPanel.querySelector("#density-result"), matches = tPanel.querySelector("#density-matches");
+  const update = () => {
+    const mode = form.querySelector('input[name="density-mode"]:checked').value;
+    waterLabel.textContent = waterLabel.dataset[mode === "tare" ? "labelTare" : "labelWater"];
+    const a = parse(air), b = parse(water);
+    if (!a || !b) { result.textContent = "Saisissez les deux pesées pour obtenir la densité."; matches.replaceChildren(); return; }
+    const displaced = mode === "tare" ? b : a - b;
+    if (displaced <= 0) { result.textContent = "Vérifiez les pesées : le poids dans l’eau doit être inférieur au poids dans l’air."; matches.replaceChildren(); return; }
+    const density = a / displaced;
+    result.textContent = `Densité mesurée : ${density.toLocaleString("fr-FR", { maximumFractionDigits: 2 })}`;
+    // Fiches dont la densité (fourchette) est à moins de 0,15 de la mesure, les plus proches d'abord.
+    const gap = mineral => { const low = Number(mineral.density), high = Number(mineral.density_max ?? mineral.density); return density < low ? low - density : density > high ? density - high : 0; };
+    const close = minerals.filter(mineral => mineral.density != null && gap(mineral) <= 0.15).sort((x, y) => gap(x) - gap(y) || x.name.localeCompare(y.name, "fr"));
+    matchList(matches, close.slice(0, 24), mineral => [densityText(mineral), hardnessText(mineral)].filter(Boolean).join(" · "), "Aucune fiche minéral ne correspond à cette densité. Refaites la mesure (bulles d’air, gangue ?).");
+  };
+  form.addEventListener("input", update); form.addEventListener("change", update);
+  update();
+}
+
+// Repères de dureté : minéraux de l'échelle et objets du quotidien.
+const MOHS_REFERENCES = [[1, "Talc (1)"], [2, "Gypse (2)"], [2.5, "Ongle (2,5)"], [3, "Calcite (3)"], [3.5, "Objet en cuivre (3,5)"], [4, "Fluorite (4)"], [4.5, "Clou en fer (4,5)"],
+  [5, "Apatite (5)"], [5.5, "Verre ou lame de couteau (5,5)"], [6, "Orthose (6)"], [6.5, "Lime en acier (6,5)"], [7, "Quartz ou porcelaine (7)"], [8, "Topaze (8)"], [9, "Corindon (9)"], [10, "Diamant (10)"]];
+function setupMohs() {
+  const scratches = tPanel.querySelector("#mohs-scratches"), scratched = tPanel.querySelector("#mohs-scratched");
+  scratches.add(new Option("Je ne sais pas / rien de la liste", ""));
+  scratched.add(new Option("Je ne sais pas / rien de la liste", ""));
+  MOHS_REFERENCES.forEach(([value, label]) => { scratches.add(new Option(label, String(value))); scratched.add(new Option(label, String(value))); });
+  const result = tPanel.querySelector("#mohs-result"), matches = tPanel.querySelector("#mohs-matches");
+  const update = () => {
+    const low = scratches.value ? Number(scratches.value) : null, high = scratched.value ? Number(scratched.value) : null;
+    if (low == null && high == null) { result.textContent = "Indiquez ce que votre minéral raye, ou ce qui le raye."; matches.replaceChildren(); return; }
+    if (low != null && high != null && low > high) { result.textContent = "Ces deux observations se contredisent : refaites le test sur une surface fraîche."; matches.replaceChildren(); return; }
+    const from = low ?? 1, to = high ?? 10;
+    result.textContent = from === to ? `Dureté estimée : environ ${number(from)}` : `Dureté estimée : entre ${number(from)} et ${number(to)}`;
+    const fits = minerals.filter(mineral => mineral.hardness != null && Number(mineral.hardness_max ?? mineral.hardness) >= from && Number(mineral.hardness) <= to)
+      .sort((x, y) => Number(x.hardness) - Number(y.hardness) || x.name.localeCompare(y.name, "fr"));
+    const shown = fits.slice(0, 40);
+    matchList(matches, shown, mineral => [hardnessText(mineral), densityText(mineral)].filter(Boolean).join(" · "), "Aucune fiche minéral dans cette fourchette.");
+    if (fits.length > shown.length) matches.append(element("p", "meta", `… et ${fits.length - shown.length} autres. Affinez avec la densité ou l’aide à l’identification.`));
+  };
+  scratches.addEventListener("change", update); scratched.addEventListener("change", update);
+  update();
+}
+
+function setupTools() {
+  setupDensity();
+  setupMohs();
+  const fluorescent = minerals.filter(mineral => mineral.fluorescence);
+  matchList(tPanel.querySelector("#uv-matches"), fluorescent, mineral => mineral.fluorescence, "Aucune fluorescence renseignée pour le moment.");
+  // Liens vers les fiches et sommaire : défilement sans changer d'onglet.
+  tPanel.querySelectorAll("a[data-mineral]").forEach(anchor => { anchor.href = ficheUrl("mineral", anchor.dataset.mineral); });
+  tPanel.querySelectorAll("a[data-jump]").forEach(anchor => anchor.addEventListener("click", event => {
+    event.preventDefault();
+    tPanel.querySelector(anchor.getAttribute("href"))?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }));
+}
+
 async function load() {
   const client = getSupabase();
   if (!client) { status.textContent = "Contenu momentanément indisponible."; return; }
@@ -271,6 +346,7 @@ async function load() {
   renderMinerals();
   renderGlossary();
   setupIdentification();
+  setupTools();
   status.hidden = true;
   document.querySelector("[data-seo]")?.remove();
   // Lien depuis une bulle du glossaire : apprendre.html?terme=<slug>#glossaire

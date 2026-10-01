@@ -3,8 +3,10 @@ import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, articleUrl, documentUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
 import { categoryLabel } from "./reference-resolver.js";
+import { recordGame, renderBadges } from "./game-progress.js";
+import { renderGeoGame } from "./geo-game.js";
 
-// Page d'accueil : nouveautés, minéral du jour, quiz du jour, chiffres du site.
+// Page d'accueil : nouveautés, minéral du jour, jeux du jour (quiz, devine le gisement) et badges, chiffres du site.
 const client = getSupabase();
 const home = document.querySelector("#home");
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
@@ -104,6 +106,7 @@ function renderQuiz(mineral, minerals) {
     .map(entry => [random(), entry]).sort((a, b) => a[0] - b[0]).map(([, entry]) => entry);
   const shown = clues.slice(0, 3);
   const extra = EXTRA_CLUES.map(([label, get]) => [label, get(mineral)]).filter(([, value]) => value);
+  let hintsUsed = 0;
   const box = el("div", "quiz");
   box.append(el("p", "quiz-intro", "Quel minéral se cache derrière ces indices ?"));
   const list = el("dl", "quiz-clues");
@@ -111,7 +114,7 @@ function renderQuiz(mineral, minerals) {
   shown.forEach(addClue);
   box.append(list);
   const hint = el("button", "quiz-hint", `Un indice de plus (${extra.length})`); hint.type = "button"; hint.hidden = !extra.length;
-  hint.addEventListener("click", () => { const next = extra.shift(); if (next) addClue(next); hint.textContent = `Un indice de plus (${extra.length})`; hint.hidden = !extra.length; });
+  hint.addEventListener("click", () => { const next = extra.shift(); if (next) { addClue(next); hintsUsed += 1; } hint.textContent = `Un indice de plus (${extra.length})`; hint.hidden = !extra.length; });
   const form = el("form", "quiz-form");
   const label = el("label", "visually-hidden", "Nom du minéral"); label.htmlFor = "quiz-answer";
   const input = el("input", "quiz-input"); input.id = "quiz-answer"; input.type = "text"; input.autocomplete = "off"; input.placeholder = "Nom du minéral"; input.setAttribute("list", "quiz-names");
@@ -147,6 +150,7 @@ function renderQuiz(mineral, minerals) {
     const yesterday = new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(Date.now() - 86400000));
     store.set("jm-quiz-serie", correct ? { count: streak.last === yesterday ? streak.count + 1 : 1, last: today } : { count: 0, last: today });
     showResult(answer, correct);
+    recordGame("quiz", { correct, hints: hintsUsed, family: mineral.chemical_class || null });
   });
 }
 
@@ -179,6 +183,34 @@ async function communesOnMap() {
   return used.size;
 }
 
+// Pièces à deviner : collection et boutique, avec une photo publique et une commune placée sur la carte.
+async function geoPieces() {
+  const rows = async query => { const { data, error } = await query; if (error) throw error; return data || []; };
+  const [localities, mines, departments, specimens, shop] = await Promise.all([
+    rows(client.from("localities").select("id,name,latitude,longitude,department_code").not("latitude", "is", null)),
+    rows(client.from("mines").select("id,name,locality_id")),
+    rows(client.from("departments").select("code,name")),
+    rows(client.from("specimens").select("slug,mineral_name,locality_id,mine_id,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)").eq("publication_status", "published")),
+    rows(client.from("shop_items").select("slug,reference,title,mineral_name,locality_id,mine_id,mineral:minerals!shop_items_mineral_id_fkey(name),media:shop_item_media(bucket_id,storage_path,position)").eq("publication_status", "published").neq("sale_status", "hidden"))
+  ]);
+  const localityById = new Map(localities.map(row => [row.id, row]));
+  const mineById = new Map(mines.map(row => [row.id, row]));
+  const departmentName = new Map(departments.map(row => [row.code, row.name]));
+  const piece = (type, row, name, href) => {
+    const mine = mineById.get(row.mine_id);
+    const place = localityById.get(row.locality_id) || localityById.get(mine?.locality_id);
+    const photo = firstPhoto(row.media);
+    if (!place || place.longitude == null || !photo) return null;
+    const department = departmentName.get(place.department_code);
+    return { key: `${type}:${row.slug}`, name, href, photo: publicMediaUrl(client, photo), lat: place.latitude, lng: place.longitude, department: place.department_code,
+      place: [mine?.name, place.name, department].filter(Boolean).join(" · ") };
+  };
+  return [
+    ...specimens.map(row => piece("collection", row, row.mineral_name || row.mineral?.name || "Spécimen", specimenUrl({ id: row.slug }))),
+    ...shop.map(row => piece("boutique", row, shopItemName(row), pieceUrl(row)))
+  ].filter(Boolean);
+}
+
 async function load() {
   if (!client) return;
   const safe = (label, task, fallback) => task().catch(error => { console.error(`Accueil — ${label} :`, error); return fallback; });
@@ -204,6 +236,7 @@ async function load() {
     ]), [0, 0, 0, 0, 0]),
     safe("communes", communesOnMap, 0)
   ]);
+  void safe("devine le gisement", async () => { const pieces = await geoPieces(); if (pieces.length) await renderGeoGame(document.querySelector("#home-geo"), pieces); }, null);
 
   fillGroup("#home-shop", shop.map(shopCard));
   fillGroup("#home-collection", specimens.map(specimenCard));
@@ -219,6 +252,8 @@ async function load() {
       renderQuiz(playable[quizIndex], minerals);
     }
   }
+  const badges = document.querySelector("#home-badges");
+  renderBadges(badges.querySelector("[data-body]")); badges.hidden = false;
   const [specimenCount, shopCount, termCount, articleCount, archiveCount] = counts;
   const plural = (count, one, many) => count > 1 ? many : one;
   renderStats([
