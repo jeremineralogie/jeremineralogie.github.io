@@ -1,4 +1,6 @@
 // Tableau de bord de l'admin : tout ce qui reste à compléter, avec accès direct à chaque fiche.
+import { loadMineralPhotos } from "./mineral-photos.js";
+
 const $ = selector => document.querySelector(selector);
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const SIX_MONTHS = 1000 * 60 * 60 * 24 * 182;
@@ -16,20 +18,23 @@ async function load() {
   const status = $("#home-status");
   status.textContent = "Analyse des fiches…";
   const pick = async (label, query) => { const { data, error } = await query; if (error) { console.error(`Tableau de bord — ${label} :`, error); return null; } return data || []; };
-  const [specimens, shop, articles, archives, localities, mines, minerals, messages] = await Promise.all([
+  const [specimens, shop, articles, archives, localities, mines, minerals, messages, commons] = await Promise.all([
     pick("collection", client.from("specimens").select("id,slug,mineral_name,mineral_id,locality_id,mine_id,locality_name,provenance,description,publication_status,created_at,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(id)")),
     pick("boutique", client.from("shop_items").select("id,reference,title,mineral_name,mineral_id,locality_id,mine_id,description,dimensions,publication_status,sale_status,created_at,mineral:minerals!shop_items_mineral_id_fkey(name),media:shop_item_media(id)")),
     pick("articles", client.from("articles").select("id,title,publication_status,media:article_media(id)")),
     pick("archives", client.from("archive_documents").select("id,title,publication_status,storage_path")),
     pick("communes", client.from("localities").select("id,name,latitude,department_code").order("name")),
     pick("gisements", client.from("mines").select("id,name,locality_id").order("name")),
-    pick("minéraux", client.from("minerals").select("id,name,publication_status,media:mineral_media(id)").order("name")),
-    client.from("messages").select("id", { count: "exact", head: true }).eq("status", "nouveau").then(({ count, error }) => error ? 0 : count || 0)
+    pick("minéraux", client.from("minerals").select("id,slug,name,publication_status,media:mineral_media(id)").order("name")),
+    client.from("messages").select("id", { count: "exact", head: true }).eq("status", "nouveau").then(({ count, error }) => error ? 0 : count || 0),
+    loadMineralPhotos()
   ]);
   const mineLocality = new Map((mines || []).map(row => [row.id, row.locality_id]));
   const located = new Map((localities || []).map(row => [row.id, row.latitude != null]));
   const place = row => row.locality_id || mineLocality.get(row.mine_id) || null;
   const noPhoto = row => !(row.media || []).length;
+  // Fiche minéral : photo ajoutée dans l'admin ou photo libre trouvée par le robot GitHub (Wikimedia Commons).
+  const mineralNoPhoto = row => noPhoto(row) && !commons?.[row.slug];
   const specimenName = row => row.mineral_name || row.mineral?.name || row.slug || "Spécimen sans nom";
   const shopName = row => `${row.mineral_name || row.mineral?.name || row.title || "Pièce"} — ${row.reference || "sans référence"}`;
   const openSpecimen = row => () => actions.openSpecimen(row.id);
@@ -64,9 +69,9 @@ async function load() {
       ["Gisements sans commune", mines.filter(row => !row.locality_id), row => row.name, row => () => actions.openRecord("referentiels", "mines", row.id)]
     ]],
     ["Fiches minéraux (Apprendre)", minerals && [
-      ["Minéraux de votre collection ou boutique dont la fiche n’a pas de photo", minerals.filter(row => usedMineralIds.has(row.id) && noPhoto(row)), row => row.name, row => () => actions.openRecord("referentiels", "minerals", row.id)],
+      ["Minéraux de votre collection ou boutique dont la fiche n’a pas de photo", minerals.filter(row => usedMineralIds.has(row.id) && mineralNoPhoto(row)), row => row.name, row => () => actions.openRecord("referentiels", "minerals", row.id)],
       ["Fiches en brouillon (invisibles dans Apprendre)", minerals.filter(row => row.publication_status !== "published"), row => row.name, row => () => actions.openRecord("referentiels", "minerals", row.id)],
-      ["Toutes les fiches sans photo", minerals.filter(noPhoto), row => row.name, row => () => actions.openRecord("referentiels", "minerals", row.id)]
+      ["Toutes les fiches sans photo", minerals.filter(mineralNoPhoto), row => row.name, row => () => actions.openRecord("referentiels", "minerals", row.id)]
     ]]
   ];
 
