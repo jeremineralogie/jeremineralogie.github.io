@@ -61,7 +61,10 @@ async function renderDaily(mineral) {
   const body = panel.querySelector("[data-body]");
   const box = el("div", "daily");
   const photo = firstPhoto(mineral.media);
-  if (photo) { const image = el("img", "daily-photo"); image.src = publicMediaUrl(client, photo); image.alt = mineral.name; image.loading = "lazy"; box.append(image); }
+  if (photo) {
+    const image = el("img", "daily-photo"); image.src = publicMediaUrl(client, photo); image.alt = mineral.name; image.loading = "lazy"; box.append(image);
+    if (mineral.photo_credit) box.append(el("p", "photo-credit", mineral.photo_credit));
+  }
   else {
     // Sans photo ajoutée dans l'admin : photo libre de Wikimedia Commons, avec son crédit.
     const commons = commonsPhoto(await loadMineralPhotos(), mineral.slug);
@@ -123,7 +126,7 @@ async function load() {
       .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false }).limit(1)), []),
     safe("archives", () => rows(client.from("archive_documents").select("slug,title,category,document_date,summary,cover_bucket,cover_path")
       .eq("publication_status", "published").order("created_at", { ascending: false }).limit(1)), []),
-    safe("minéraux", () => rows(client.from("minerals").select("id,name,slug,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,streak,luster,transparency,colors,description,media:mineral_media(bucket_id,storage_path,position)")
+    safe("minéraux", () => rows(client.from("minerals").select("id,name,slug,photo_credit,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,streak,luster,transparency,colors,description,media:mineral_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").order("slug")), []),
     safe("chiffres", () => Promise.all([
       total(client.from("specimens").select("id", { count: "exact", head: true }).eq("publication_status", "published")),

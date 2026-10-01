@@ -91,6 +91,9 @@ async function load() {
     if (commons) {
       const image = document.createElement("img"); image.src = commons.src; image.alt = entity.name; image.loading = "lazy";
       gallery.replaceChildren(image); gallery.after(creditLine(commons));
+    } else if (photos.length && entity.photo_credit) {
+      // Photos ajoutées dans l'admin avec un crédit / une licence.
+      const credit = document.createElement("p"); credit.className = "photo-credit"; credit.textContent = entity.photo_credit; gallery.after(credit);
     }
     gallery.hidden = !photos.length && !commons;
     document.querySelector("#fiche .fav-btn")?.remove();
