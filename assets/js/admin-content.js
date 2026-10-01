@@ -1,8 +1,9 @@
-import { ensureDepartment, ensureNamed, isFrenchDepartmentCode, normalizeName, OTHER } from "./reference-resolver.js";
+import { ensureDepartment, ensureNamed, isFrenchDepartmentCode, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
 import { enhanceCombobox, enhanceMulti } from "./combobox.js";
 import { backfillLocalities, communeLabel, communeUpdate, departmentOfCommune, findCommune, searchCommunes } from "./geo-communes.js";
 import { createPointTool, pickPoint, pointKey, savePendingPoints } from "./point-picker.js";
 import { createContentEditor } from "./article-editor.js";
+import { formatDiscoveryDate, parseDiscoveryDate, parseWeight } from "./specimen-fields.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -16,8 +17,36 @@ const MINERAL_CLASSES = ["Éléments natifs", "Sulfures et sulfosels", "Halogén
   "Silicates (phyllosilicates)", "Silicates (tectosilicates)", "Composés organiques"];
 const CRYSTAL_SYSTEMS = ["Cubique", "Quadratique", "Hexagonal", "Trigonal", "Orthorhombique", "Monoclinique", "Triclinique", "Amorphe"];
 
+const PUBLICATION_OPTIONS = [["draft", "Brouillon"], ["published", "Publié"]];
+
+// Une section = un formulaire. Options possibles :
+//   mediaTable / foreignKey / path : photos ; mediaFirst : photos en tête du formulaire ; mediaRow(parent, file, position) : colonnes en plus pour chaque photo
+//   links : tables de liaison (champs « link_… ») ; linkExclude : valeur de la fiche à ne pas reprendre dans une liaison ; countryField : champ Pays rempli « France » avec un département français
+//   duplicate : { fields, title } bouton « Dupliquer » ; listLabel(record) : texte d'une ligne de la liste
+//   prepare(record) : valeurs affichées à l'ouverture ; complete(record, context) : colonnes calculées avant l'enregistrement
+// Champs : ref (liste liée à une table), multi, options, blank (choix vide), customOptions, help (aide sous le champ), suggest (propositions de saisie)…
 const sections = [
-  { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", fields: [
+  { id: "collection", label: "Ma collection", table: "specimens", title: "Ma collection", mediaTable: "specimen_media", foreignKey: "specimen_id", path: "collection", mediaFirst: true,
+    links: [["specimen_associations", "mineral_id", "minerals"]], linkOwner: "specimen_id", linkPrefix: "specimen_", linkExclude: { link_associations: "mineral_id" }, countryField: "country",
+    duplicate: { title: "Nouveau spécimen (copie)", fields: ["mineral_id", "mine_id", "locality_id", "department_code", "region_id", "country", "site_type"] },
+    listLabel: record => `${record.title || record.mineral_name || "Spécimen"} — ${record.slug}`,
+    prepare: prepareSpecimen, complete: completeSpecimen,
+    mediaRow: (parent, file, position) => ({ role: position ? "detail" : "general", alt_text: `${parent.mineral_name || "Spécimen"} — ${file.name}` }),
+    fields: [
+    { key: "title", label: "Titre (visible seulement dans l’admin)" },
+    { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "link_associations", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true },
+    { key: "mine_id", label: "Gisement", ref: "mines", display: "name" }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" },
+    { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "region_id", label: "Région", ref: "regions", display: "name" },
+    { key: "country", label: "Pays", suggest: ["France"] },
+    { key: "site_type", label: "Type de site", type: "select", blank: "— Non renseigné —", customOptions: true, options: SITE_TYPES },
+    { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_text", label: "Poids", help: "grammes" },
+    { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "keywords", label: "Mots-clés" },
+    { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA", help: "Exemples : 2018, 09/2018 ou 29/09/2018." },
+    { key: "publication_status", label: "Publication", type: "select", options: [["published", "Publié"], ["draft", "Brouillon"]] }
+  ] },
+  { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", mediaFirst: true,
+    links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", countryField: "provenance",
+    duplicate: { title: "Nouveau produit (copie)", fields: ["mineral_id", "provenance", "mine_id", "locality_id", "department_code", "region_id"], nextReference: true }, fields: [
     { key: "title", label: "Titre (visible seulement dans l’admin)" }, { key: "reference", label: "Référence", required: true },
     { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "link_associations", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true },
     { key: "mine_id", label: "Gisement", ref: "mines", display: "name" }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" },
@@ -26,7 +55,7 @@ const sections = [
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_grams", label: "Poids (g)", type: "number", step: "0.001" },
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "price_cents", label: "Prix (euros)", type: "number", step: "0.01", required: true, euros: true },
     { key: "sale_status", label: "Disponibilité", type: "select", options: [["available", "Disponible"], ["sold", "Vendu"], ["hidden", "Masqué"]] },
-    { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] },
+    { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS },
     { key: "keywords", label: "Mots-clés" }, { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA" }
   ] },
   { id: "articles", label: "Articles", table: "articles", title: "Articles", mediaTable: "article_media", foreignKey: "article_id", path: "articles", mediaAfter: "body", singleCover: true,
@@ -39,7 +68,7 @@ const sections = [
     { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true },
     { key: "link_departments", label: "Départements liés", ref: "departments", display: "name", value: "code", multi: true }, { key: "link_regions", label: "Régions liées", ref: "regions", display: "name", multi: true },
     { key: "excerpt", label: "Résumé", type: "textarea", notNull: true },
-    { key: "published_on", label: "Date de publication", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }
+    { key: "published_on", label: "Date de publication", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }
   ] },
   { id: "archives", label: "Archives & Documentation", table: "archive_documents", title: "Archives & Documentation", singleFile: true, path: "archives", mediaAfter: "cover_path",
     links: [["archive_minerals", "mineral_id", "minerals"], ["archive_articles", "article_id", "articles"], ["archive_mines", "mine_id", "mines"], ["archive_localities", "locality_id", "localities"], ["archive_departments", "department_code", "departments"], ["archive_regions", "region_id", "regions"]], fields: [
@@ -52,12 +81,12 @@ const sections = [
     { key: "link_departments", label: "Départements liés", ref: "departments", display: "name", value: "code", multi: true }, { key: "link_regions", label: "Régions liées", ref: "regions", display: "name", multi: true },
     { key: "summary", label: "Résumé", type: "textarea", notNull: true }, { key: "rights_note", label: "Droits et crédits", type: "textarea", notNull: true },
     { key: "links", label: "Liens (un par ligne : « Texte | https://… » ou simplement l’adresse)", type: "textarea", lines: true },
-    { key: "document_date", label: "Date du document", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }
+    { key: "document_date", label: "Date du document", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }
   ] },
   { id: "regions", label: "Régions", table: "regions", title: "Régions", fields: [{ key: "name", label: "Nom", required: true }] },
   { id: "departments", label: "Départements", table: "departments", title: "Départements", fields: [{ key: "code", label: "Code (identifiant)", required: true }, { key: "name", label: "Nom", required: true }, { key: "region_id", label: "Région", ref: "regions", display: "name" }] },
-  { id: "localities", label: "Communes", table: "localities", title: "Communes", fields: [{ key: "name", label: "Nom", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "postal_code", label: "Code postal" }, { key: "insee_code", label: "Code INSEE" }, { key: "latitude", label: "Latitude", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude", type: "number", step: "0.000001" }, { key: "notes", label: "Notes", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
-  { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
+  { id: "localities", label: "Communes", table: "localities", title: "Communes", fields: [{ key: "name", label: "Nom", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "postal_code", label: "Code postal" }, { key: "insee_code", label: "Code INSEE" }, { key: "latitude", label: "Latitude", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude", type: "number", step: "0.000001" }, { key: "notes", label: "Notes", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
+  { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
   { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral (fiches Apprendre)", mediaTable: "mineral_media", foreignKey: "mineral_id", path: "minerals", fields: [
     { key: "name", label: "Nom", required: true }, { key: "formula", label: "Formule chimique (ex. CaCO₃)" },
     { key: "chemical_class", label: "Famille chimique", type: "select", customOptions: true, options: MINERAL_CLASSES.map(value => [value, value]) },
@@ -68,7 +97,7 @@ const sections = [
     { key: "cleavage", label: "Clivage" }, { key: "fracture", label: "Cassure" }, { key: "habit", label: "Habitus", type: "textarea" }, { key: "fluorescence", label: "Fluorescence" },
     { key: "description", label: "Présentation", type: "textarea" }, { key: "formation", label: "Formation et gisements", type: "textarea" },
     { key: "varieties", label: "Variétés", type: "textarea" }, { key: "confusions", label: "Confusions possibles", type: "textarea" }, { key: "etymology", label: "Étymologie", type: "textarea" },
-    { key: "publication_status", label: "Publication", type: "select", options: [["draft", "Brouillon"], ["published", "Publié"]] }] },
+    { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
   { id: "glossary", label: "Glossaire", table: "glossary_terms", title: "Glossaire (onglet Apprendre)", fields: [
     { key: "term", label: "Terme", required: true },
     { key: "domain", label: "Domaine", type: "select", required: true, options: [["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"]] },
@@ -98,6 +127,8 @@ let viewMode = "both";
 let openToken = 0;
 let pendingLinkExtras = {};
 let createdNames = [];
+const refNames = new Map(); // « table:identifiant » → nom, pour les valeurs créées pendant l'enregistrement
+const createdMines = new Set();
 let pointTool = null;
 let prefill = null;
 let contentEditor = null;
@@ -111,6 +142,9 @@ const allowsOther = field => (field.ref && CREATABLE_REFS.includes(field.ref)) |
 const referentialViews = ["regions", "departments", "localities", "mines", "minerals", "glossary", "occurrences", "settings"]
   .map(id => ({ id, label: sections.find(section => section.id === id).label, section: id, mode: "both" }));
 const groups = {
+  collection: { start: "list", views: [
+    { id: "add", label: "Ajouter un spécimen", section: "collection", mode: "add" },
+    { id: "list", label: "Ma collection", section: "collection", mode: "list" }] },
   shop: { start: "list", views: [
     { id: "add", label: "Ajouter un produit", section: "shop", mode: "add" },
     { id: "list", label: "Produits dans la boutique", section: "shop", mode: "list" }] },
@@ -238,7 +272,7 @@ async function loadReferences(section) {
     if (table === "localities") {
       const count = new Map();
       refs.localities.forEach(item => { const key = normalizeName(item.name); count.set(key, (count.get(key) || 0) + 1); });
-      refs.localities.forEach(item => { if (count.get(normalizeName(item.name)) > 1) item.name = `${item.name} (${item.postal_code || item.department_code || "?"})`; });
+      refs.localities.forEach(item => { item.plainName = item.name; if (count.get(normalizeName(item.name)) > 1) item.name = `${item.name} (${item.postal_code || item.department_code || "?"})`; });
     }
   }
 }
@@ -279,7 +313,7 @@ function buildListPanel() {
   records.forEach(record => {
     const button = document.createElement("button"); button.type = "button";
     const labelField = activeSection.table === "shop_items" || activeSection.table === "articles" || activeSection.table === "archive_documents" ? "title" : activeSection.table === "site_settings" ? "key" : activeSection.table === "glossary_terms" ? "term" : "name";
-    const label = record[labelField] || record.code || record.reference || (activeSection.table === "mineral_occurrences" ? `${refs.minerals?.find(item => item.id === record.mineral_id)?.name || "Minéral"} · ${refs.departments?.find(item => item.code === record.department_code)?.name || record.department_code}` : "Entrée");
+    const label = activeSection.listLabel?.(record) || record[labelField] || record.code || record.reference || (activeSection.table === "mineral_occurrences" ? `${refs.minerals?.find(item => item.id === record.mineral_id)?.name || "Minéral"} · ${refs.departments?.find(item => item.code === record.department_code)?.name || record.department_code}` : "Entrée");
     button.textContent = `${label}${record.publication_status ? ` — ${record.publication_status === "published" ? "publié" : "brouillon"}` : ""}`;
     button.addEventListener("click", () => void selectRecord(record)); list.append(button);
   });
@@ -293,13 +327,14 @@ function buildEditorPanel() {
   const title = document.createElement("h3");
   title.textContent = selectedRecord ? "Modifier" : (viewMode === "add" ? (currentView()?.label || "Nouveau contenu") : "Nouveau contenu"); editorPanel.append(title);
   const copy = selectedRecord ? null : prefill; prefill = null;
-  if (copy) title.textContent = "Nouveau produit (copie)";
+  if (copy) title.textContent = activeSection.duplicate.title;
   const form = document.createElement("form"); form.noValidate = true;
-  // Boutique : les photos en tête du formulaire.
-  if (activeSection.id === "shop") appendMediaControls(form);
+  if (activeSection.mediaFirst) appendMediaControls(form);
   contentEditor = null;
+  const source = selectedRecord || copy?.values || {};
+  const values = activeSection.prepare ? activeSection.prepare(source) : source;
   activeSection.fields.forEach(field => {
-    form.append(createField(field, (selectedRecord || copy?.values)?.[field.key]));
+    form.append(createField(field, values[field.key], values._typed?.[field.key]));
     if (activeSection.mediaAfter === field.key) appendMediaControls(form);
   });
   if (activeSection.id === "articles") {
@@ -313,7 +348,7 @@ function buildEditorPanel() {
   wireGeoAutofill(form);
   if (activeSection.id === "localities") addLocateTool(form);
   else addPointTool(form);
-  if ((activeSection.mediaTable || activeSection.singleFile) && activeSection.id !== "shop" && !activeSection.mediaAfter) appendMediaControls(form);
+  if ((activeSection.mediaTable || activeSection.singleFile) && !activeSection.mediaFirst && !activeSection.mediaAfter) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
   if (viewMode === "add") {
@@ -321,9 +356,9 @@ function buildEditorPanel() {
     cancel.addEventListener("click", () => { clearNewMediaSelection(); selectedRecord = null; currentMedia = []; setListMode(); renderWorkspace(); report("Modification annulée."); });
     actions.append(cancel);
   }
-  if (selectedRecord && activeSection.id === "shop") {
+  if (selectedRecord && activeSection.duplicate) {
     const duplicate = document.createElement("button"); duplicate.type = "button"; duplicate.className = "admin-secondary"; duplicate.textContent = "Dupliquer";
-    duplicate.addEventListener("click", () => duplicateShopItem(selectedRecord)); actions.append(duplicate);
+    duplicate.addEventListener("click", () => duplicateRecord(selectedRecord)); actions.append(duplicate);
   }
   if (selectedRecord) {
     const remove = document.createElement("button"); remove.type = "button"; remove.className = "admin-danger"; remove.textContent = "Supprimer";
@@ -335,7 +370,8 @@ function buildEditorPanel() {
   return editorPanel;
 }
 
-function createField(field, value) {
+// typed : valeur libre à afficher dans « Autre » quand la fiche n'a qu'un nom, sans lien vers le référentiel (anciennes fiches).
+function createField(field, value, typed = "") {
   const wrapper = document.createElement("div");
   const label = document.createElement("label"); label.textContent = field.label; wrapper.append(label);
   if (field.cover) {
@@ -372,6 +408,7 @@ function createField(field, value) {
     }
   } else if (field.options) {
     input = document.createElement("select");
+    if (field.blank) { const blank = document.createElement("option"); blank.value = ""; blank.textContent = field.blank; input.append(blank); }
     if (allowsOther(field)) { const other = document.createElement("option"); other.value = OTHER; other.textContent = "➕ Autre (saisir une valeur)…"; input.append(other); }
     const known = new Set(field.options.map(([key]) => key));
     field.options.forEach(([key, labelText]) => { const option = document.createElement("option"); option.value = key; option.textContent = labelText; input.append(option); });
@@ -393,10 +430,18 @@ function createField(field, value) {
   else if (value != null && value !== "") input.value = field.body ? bodyToText(value) : field.key === "value" ? JSON.stringify(value, null, 2) : field.euros ? (Number(value) / 100).toFixed(2) : field.array && Array.isArray(value) ? value.join(", ") : String(value);
   label.htmlFor = `content-${field.key}`; input.id = label.htmlFor; input.name = field.key;
   wrapper.append(input);
+  if (field.suggest) {
+    const list = document.createElement("datalist"); list.id = `${input.id}-suggestions`; input.setAttribute("list", list.id);
+    const known = [...field.suggest, ...records.map(record => record[field.key])].map(text).filter(Boolean);
+    [...new Set(known)].sort((a, b) => a.localeCompare(b, "fr")).forEach(item => { const option = document.createElement("option"); option.value = item; list.append(option); });
+    wrapper.append(list);
+  }
+  if (field.help) { const help = document.createElement("small"); help.textContent = field.help; wrapper.append(help); }
   if (allowsOther(field)) {
     const box = document.createElement("input"); box.type = "text"; box.name = `${field.key}__other`; box.id = `content-${field.key}__other`;
     if (field.multi) { box.placeholder = "Autres, séparés par des virgules (créés automatiquement)"; }
     else { box.hidden = true; box.placeholder = "Saisir la nouvelle valeur"; input.addEventListener("change", () => { box.hidden = input.value !== OTHER; if (!box.hidden) box.focus(); }); }
+    if (!field.multi && !input.value && text(typed)) { input.value = OTHER; box.value = text(typed); }
     wrapper.append(box);
     if (!field.multi) enhanceCombobox(input, { otherValue: OTHER, otherInput: box, placeholder: `${field.label}…` });
     else enhanceMulti(input, { otherInput: box, placeholder: "Tapez pour ajouter…" });
@@ -488,7 +533,7 @@ async function selectRecord(record) {
 async function saveRecord(form) {
   const section = activeSection;
   let databaseSaved = false;
-  pendingLinkExtras = {}; createdNames = []; resolvedLocalities.clear();
+  pendingLinkExtras = {}; createdNames = []; resolvedLocalities.clear(); refNames.clear(); createdMines.clear();
   const pointTargets = pointTool?.targets() || [];
   report("Enregistrement…");
   try {
@@ -527,6 +572,11 @@ async function saveRecord(form) {
       }
       record[field.key] = value === "" ? (field.notNull ? "" : field.key === "value" ? {} : null) : value;
     }
+    // Gisement créé pendant l'enregistrement : rattaché à la commune de la fiche.
+    if (record.mine_id && record.locality_id && createdMines.has(String(record.mine_id))) {
+      const { error } = await client.from("mines").update({ locality_id: record.locality_id }).eq("id", record.mine_id).is("locality_id", null);
+      if (error) throw error;
+    }
     // Département sans région (nouveau département ou province étrangère) : rattaché à la région choisie dans la fiche.
     if (record.department_code && record.region_id && section.id !== "departments") {
       const department = (refs.departments || []).find(item => String(item.code) === String(record.department_code));
@@ -550,6 +600,7 @@ async function saveRecord(form) {
       if (["shop", "articles", "archives"].includes(section.id)) record.slug = current?.slug || await uniqueSlug(record.title || record.reference, section.table);
       if (section.id === "glossary") record.slug = current?.slug || await uniqueSlug(record.term, section.table);
       if (section.id === "shop" && record.price_cents == null) throw new Error("Le schéma de la boutique exige un prix (0 est accepté).");
+      if (section.complete) await section.complete(record, { current });
       let saved;
       if (current?.id || current?.code) {
         const key = current.id ? "id" : "code";
@@ -576,9 +627,8 @@ async function saveRecord(form) {
   }
 }
 
-// Boutique : nouvelle fiche reprenant uniquement le minéral principal et la localisation.
-// Ni titre, référence, prix, dimensions, poids, description, minéraux associés ni photos ne sont copiés.
-const COPIED_SHOP_FIELDS = ["mineral_id", "provenance", "mine_id", "locality_id", "department_code", "region_id"];
+// « Dupliquer » : nouvelle fiche reprenant uniquement le minéral principal et la localisation (champs listés dans duplicate.fields).
+// Rien d'autre n'est copié : ni titre, référence, prix, dimensions, poids, description, minéraux associés ni photos.
 function nextReference(reference) {
   const match = /^(.*?)(\d+)$/.exec(text(reference));
   if (!match) return "";
@@ -588,8 +638,9 @@ function nextReference(reference) {
   do { number += 1; candidate = `${match[1]}${String(number).padStart(match[2].length, "0")}`; } while (used.has(candidate.toUpperCase()));
   return candidate;
 }
-function duplicateShopItem(source) {
-  prefill = { values: Object.fromEntries(COPIED_SHOP_FIELDS.map(key => [key, source[key]])), referenceHint: nextReference(source.reference) };
+function duplicateRecord(source) {
+  const { fields, nextReference: hint } = activeSection.duplicate;
+  prefill = { values: Object.fromEntries(fields.map(key => [key, source[key]])), referenceHint: hint ? nextReference(source.reference) : "" };
   clearNewMediaSelection(); selectedRecord = null; currentMedia = [];
   setFormMode(); renderWorkspace();
   workspace.querySelector("form")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -677,12 +728,12 @@ function wireGeoAutofill(form) {
     const other = form.elements.namedItem(`${name}__other`); if (other && other.type === "text") other.hidden = true;
     return true;
   };
-  // Département → région ; pays « France » si la case est vide (boutique).
+  // Département → région ; pays « France » si la case est vide et le département français.
   const fromDepartment = code => {
     const department = (refs.departments || []).find(item => String(item.code) === String(code));
     if (department?.region_id) setValue("region_id", department.region_id);
-    const country = field("provenance");
-    if (department && country && activeSection.id === "shop" && !country.value.trim() && isFrenchDepartmentCode(department.code)) country.value = "France";
+    const country = activeSection.countryField && field(activeSection.countryField);
+    if (department && country && !country.value.trim() && isFrenchDepartmentCode(department.code)) country.value = "France";
   };
   const fromLocality = id => { const locality = (refs.localities || []).find(item => String(item.id) === String(id)); if (locality?.department_code && setValue("department_code", locality.department_code)) fromDepartment(locality.department_code); };
   field("department_code")?.addEventListener?.("change", event => fromDepartment(event.target.value));
@@ -719,12 +770,46 @@ async function ensureRef(table, name) {
     // Département connu (nom ou numéro), sinon créé : provinces et départements étrangers acceptés.
     const result = await ensureDepartment(client, name);
     if (result.created) { createdNames.push(result.name); (refs.departments ||= []).push({ code: result.code, name: result.name, region_id: null }); }
+    refNames.set(`${table}:${result.code}`, result.name);
     return result.code;
   }
   const result = await ensureNamed(client, table, name);
   if (result.created) createdNames.push(result.name);
+  if (result.created && table === "mines") createdMines.add(String(result.id));
   if (table === "localities") resolvedLocalities.set(normalizeName(name), result.id);
+  refNames.set(`${table}:${result.id}`, result.name);
   return result.id;
+}
+
+// Nom d'une valeur liée (référentiel chargé ou valeur créée pendant l'enregistrement), sans la précision ajoutée aux communes homonymes.
+function refName(table, id) {
+  if (id == null || id === "") return "";
+  const known = (refs[table] || []).find(item => String(table === "departments" ? item.code : item.id) === String(id));
+  return known ? known.plainName ?? known.name : refNames.get(`${table}:${id}`) || "";
+}
+
+// ---------- Ma collection ----------
+// À l'ouverture : date et poids des fiches anciennes remis au format de saisie ; nom sans lien vers le référentiel proposé en « Autre ».
+function prepareSpecimen(record) {
+  const typed = {};
+  [["mineral_id", "mineral_name"], ["mine_id", "provenance"], ["locality_id", "locality_name"], ["department_code", "department_name"], ["region_id", "region_name"]]
+    .forEach(([key, nameKey]) => { if (!record[key] && text(record[nameKey])) typed[key] = record[nameKey]; });
+  return {
+    ...record,
+    weight_text: record.weight_text ?? (record.weight_grams != null ? String(record.weight_grams) : ""),
+    discovery_date_text: record.discovery_date_text ?? formatDiscoveryDate(record),
+    _typed: typed
+  };
+}
+// Avant l'enregistrement : noms recopiés (utilisés par les pages publiques), poids en grammes, date exploitable et adresse de la fiche.
+async function completeSpecimen(record, { current }) {
+  record.mineral_name = refName("minerals", record.mineral_id) || null;
+  record.provenance = refName("mines", record.mine_id);
+  record.locality_name = refName("localities", record.locality_id) || null;
+  record.department_name = refName("departments", record.department_code) || null;
+  record.region_name = refName("regions", record.region_id) || null;
+  Object.assign(record, parseWeight(record.weight_text), parseDiscoveryDate(record.discovery_date_text));
+  if (!current) record.slug = await uniqueSlug([record.mineral_name, record.provenance, record.locality_name].filter(Boolean).join("-"), "specimens");
 }
 
 function linkOwner(section) { return section.linkOwner || (section.id === "articles" ? "article_id" : "archive_id"); }
@@ -736,7 +821,9 @@ async function saveLinks(parent, form) {
     const fieldKey = `link_${table.replace(linkPrefix(activeSection), "")}`;
     const linkField = form.elements.namedItem(fieldKey);
     if (!linkField) throw new Error(`Le champ de relations « ${fieldKey} » est introuvable.`);
-    const desired = [...new Set([...[...linkField.selectedOptions].map(option => option.value), ...(pendingLinkExtras[fieldKey] || [])])];
+    const excluded = activeSection.linkExclude?.[fieldKey];
+    const desired = [...new Set([...[...linkField.selectedOptions].map(option => option.value), ...(pendingLinkExtras[fieldKey] || [])])]
+      .filter(id => !excluded || id !== String(parent[excluded]));
     const { data: current, error: readError } = await client.from(table).select(column).eq(ownerColumn, parent.id);
     if (readError) throw readError;
     const currentIds = (current || []).map(row => String(row[column]));
@@ -763,7 +850,8 @@ async function uploadMedia(parent) {
     const name = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
     const path = `${activeSection.path}/${parent.slug}/${crypto.randomUUID()}-${name}`;
     const { error: uploadError } = await client.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type }); if (uploadError) throw uploadError;
-    const row = { [activeSection.foreignKey]: parent.id, bucket_id: bucket, storage_path: path, alt_text: file.name, position: currentPosition + index };
+    const position = currentPosition + index;
+    const row = { [activeSection.foreignKey]: parent.id, bucket_id: bucket, storage_path: path, alt_text: file.name, position, ...activeSection.mediaRow?.(parent, file, position) };
     const { error: insertError } = await client.from(activeSection.mediaTable).insert(row);
     if (insertError) { await removeStorageIfUnreferenced(bucket, path, activeSection.mediaTable); throw insertError; }
     uploadedFileKeys.add(key);
