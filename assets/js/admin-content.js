@@ -4,6 +4,7 @@ import { backfillLocalities, communeLabel, communeUpdate, departmentOfCommune, f
 import { createPointTool, pickPoint, pointKey, savePendingPoints } from "./point-picker.js";
 import { createContentEditor } from "./article-editor.js";
 import { formatDiscoveryDate, parseDiscoveryDate, parseWeight } from "./specimen-fields.js";
+import { nextReference, referencePrefix } from "./shop-reference.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -22,7 +23,7 @@ const PUBLICATION_OPTIONS = [["draft", "Brouillon"], ["published", "Publié"]];
 // Une section = un formulaire. Options possibles :
 //   mediaTable / foreignKey / path : photos ; mediaFirst : photos en tête du formulaire ; mediaRow(parent, file, position) : colonnes en plus pour chaque photo
 //   links : tables de liaison (champs « link_… ») ; linkExclude : valeur de la fiche à ne pas reprendre dans une liaison ; countryField : champ Pays rempli « France » avec un département français
-//   duplicate : { fields, title } bouton « Dupliquer » ; listLabel(record) : texte d'une ligne de la liste
+//   duplicate : { fields, title } bouton « Dupliquer » ; autoReference : référence produit construite automatiquement (shop-reference.js) ; listLabel(record) : texte d'une ligne de la liste
 //   prepare(record) : valeurs affichées à l'ouverture ; complete(record, context) : colonnes calculées avant l'enregistrement
 // Champs : ref (liste liée à une table), multi, options, blank (choix vide), customOptions, help (aide sous le champ), suggest (propositions de saisie)…
 const sections = [
@@ -46,8 +47,9 @@ const sections = [
   ] },
   { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", mediaFirst: true,
     links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", countryField: "provenance",
-    duplicate: { title: "Nouveau produit (copie)", fields: ["mineral_id", "provenance", "mine_id", "locality_id", "department_code", "region_id"], nextReference: true }, fields: [
-    { key: "title", label: "Titre (visible seulement dans l’admin)" }, { key: "reference", label: "Référence", required: true },
+    duplicate: { title: "Nouveau produit (copie)", fields: ["mineral_id", "provenance", "mine_id", "locality_id", "department_code", "region_id"] }, autoReference: true, fields: [
+    { key: "title", label: "Titre (visible seulement dans l’admin)" },
+    { key: "reference", label: "Référence (créée automatiquement)", required: true, help: "JM + 2 lettres du minéral + lettres du gisement + numéro, ex. JMFLLB1. Modifiable si besoin." },
     { key: "mineral_id", label: "Minéral principal", ref: "minerals", display: "name" }, { key: "link_associations", label: "Minéraux associés (secondaires)", ref: "minerals", display: "name", multi: true },
     { key: "mine_id", label: "Gisement", ref: "mines", display: "name" }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" },
     { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "region_id", label: "Région", ref: "regions", display: "name" },
@@ -350,7 +352,7 @@ function buildEditorPanel() {
     open.addEventListener("click", () => contentEditor?.toggleFullscreen(true));
     layout.append(open, note); form.append(layout);
   }
-  if (copy?.referenceHint) { const reference = form.elements.namedItem("reference"); if (reference) reference.placeholder = `ex. ${copy.referenceHint} (première référence libre)`; }
+  if (activeSection.autoReference && !selectedRecord) wireAutoReference(form);
   wireGeoAutofill(form);
   if (activeSection.id === "localities") addLocateTool(form);
   else addPointTool(form);
@@ -581,6 +583,14 @@ async function saveRecord(form) {
       record[field.key] = value === "" ? (field.notNull ? "" : field.key === "value" ? {} : null) : value;
     }
     if (typedMine) record.mine_id = String(await ensureRef("mines", typedMine, { locality_id: record.locality_id || null }));
+    // Référence automatique : numéro recalculé sur les références enregistrées au moment même de l'enregistrement.
+    if (section.autoReference && !selectedRecord && form.elements.namedItem("reference")?.dataset.auto === "1") {
+      const prefix = referencePrefix(refName("minerals", record.mineral_id), refName("mines", record.mine_id));
+      if (!prefix) throw new Error("Choisissez le minéral principal pour créer la référence (ou saisissez-la à la main).");
+      const { data, error } = await client.from(section.table).select("reference").ilike("reference", `${prefix}%`);
+      if (error) throw error;
+      record.reference = nextReference(prefix, (data || []).map(row => row.reference));
+    }
     // Département sans région (nouveau département ou province étrangère) : rattaché à la région choisie dans la fiche.
     if (record.department_code && record.region_id && section.id !== "departments") {
       const department = (refs.departments || []).find(item => String(item.code) === String(record.department_code));
@@ -633,22 +643,32 @@ async function saveRecord(form) {
 
 // « Dupliquer » : nouvelle fiche reprenant uniquement le minéral principal et la localisation (champs listés dans duplicate.fields).
 // Rien d'autre n'est copié : ni titre, référence, prix, dimensions, poids, description, minéraux associés ni photos.
-function nextReference(reference) {
-  const match = /^(.*?)(\d+)$/.exec(text(reference));
-  if (!match) return "";
-  const used = new Set(records.map(record => text(record.reference).toUpperCase()));
-  let number = Number(match[2]);
-  let candidate;
-  do { number += 1; candidate = `${match[1]}${String(number).padStart(match[2].length, "0")}`; } while (used.has(candidate.toUpperCase()));
-  return candidate;
-}
 function duplicateRecord(source) {
-  const { fields, nextReference: hint } = activeSection.duplicate;
-  prefill = { values: Object.fromEntries(fields.map(key => [key, source[key]])), referenceHint: hint ? nextReference(source.reference) : "" };
+  prefill = { values: Object.fromEntries(activeSection.duplicate.fields.map(key => [key, source[key]])) };
   clearNewMediaSelection(); selectedRecord = null; currentMedia = [];
   setFormMode(); renderWorkspace();
   workspace.querySelector("form")?.scrollIntoView({ behavior: "smooth", block: "start" });
   report("Copie prête : minéral principal et localisation repris. Complétez le reste puis enregistrez.");
+}
+
+// Référence produit remplie en direct à partir du minéral principal et du gisement, tant qu'elle n'est pas modifiée à la main.
+function wireAutoReference(form) {
+  const input = form.elements.namedItem("reference");
+  if (!input) return;
+  input.placeholder = "Choisissez le minéral et le gisement";
+  input.dataset.auto = "1";
+  const nameOf = (key, table) => {
+    const select = form.elements.namedItem(key);
+    if (!select?.value) return "";
+    return select.value === OTHER ? text(form.elements.namedItem(`${key}__other`)?.value) : refName(table, select.value);
+  };
+  const update = () => {
+    if (input.dataset.auto !== "1") return;
+    input.value = nextReference(referencePrefix(nameOf("mineral_id", "minerals"), nameOf("mine_id", "mines")), records.map(record => record.reference));
+  };
+  input.addEventListener("input", () => { input.dataset.auto = input.value.trim() ? "0" : "1"; if (input.dataset.auto === "1") update(); });
+  form.addEventListener("change", event => { if (event.target !== input) update(); });
+  update();
 }
 
 // Localités : recherche des coordonnées officielles, avec choix quand plusieurs communes portent le même nom.
