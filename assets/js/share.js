@@ -1,6 +1,5 @@
 // Partage des résultats des jeux : une image au format story (1080 × 1920) aux couleurs du site,
-// partagée avec le menu du téléphone (Instagram, TikTok, Snapchat, WhatsApp…), téléchargeable, et des boutons directs
-// pour les réseaux qui acceptent un lien depuis le web.
+// envoyée au menu de partage de l'appareil (Instagram, TikTok, Snapchat, WhatsApp…).
 const SITE = "https://jeremineralogie.github.io/";
 const LOGO = "/assets/decor/logo-jeux.webp";
 const W = 1080, H = 1920;
@@ -99,55 +98,34 @@ export async function makeCardBlob(spec) {
   catch { return toBlob(await drawCard(spec, false)); }
 }
 
-const NETWORKS = [
-  ["Facebook", "facebook", (text, url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`],
-  ["WhatsApp", "whatsapp", (text, url) => `https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`],
-  ["X", "x", (text, url) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`],
-  ["Telegram", "telegram", (text, url) => `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`],
-  ["Pinterest", "pinterest", (text, url) => `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(url)}&media=${encodeURIComponent(`${SITE}assets/decor/logo-jeux.png`)}&description=${encodeURIComponent(text)}`],
-  ["E-mail", "email", (text, url) => `mailto:?subject=${encodeURIComponent("Mon score sur Jeremineralogie")}&body=${encodeURIComponent(`${text}\n${url}`)}`]
-];
-
-// Bloc de partage : aperçu de l'image, « Partager l'image » (menu du téléphone), « Enregistrer l'image », réseaux, copie du texte.
+// Bloc de partage : aperçu de l'image et un seul bouton « Partager les résultats ».
+// Le menu de partage de l'appareil propose ensuite toutes les applications (Instagram, TikTok, WhatsApp…) et l'enregistrement de l'image.
+// Sans menu de partage (certains ordinateurs), l'image est téléchargée.
 export function sharePanel({ spec, text, fileName }) {
   const box = el("div", "share");
   const preview = el("img", "share-preview"); preview.alt = "Image de votre résultat à partager"; preview.hidden = true;
-  const main = el("div", "share-main");
-  const shareButton = el("button", "share-btn is-primary", "📲 Partager l’image"); shareButton.type = "button";
-  const save = el("a", "share-btn", "⬇️ Enregistrer l’image"); save.download = fileName; save.hidden = true;
-  main.append(shareButton, save);
-  const networks = el("div", "share-networks");
-  NETWORKS.forEach(([label, key, href]) => {
-    const link = el("a", `share-net share-${key}`, label); link.href = href(text, SITE);
-    if (key !== "email") { link.target = "_blank"; link.rel = "noopener"; }
-    networks.append(link);
-  });
-  const copy = el("button", "share-net", "Copier le texte"); copy.type = "button";
-  copy.addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(`${text}\n${SITE}`); copy.textContent = "Texte copié !"; }
-    catch { copy.textContent = "Copie impossible"; }
-  });
-  networks.append(copy);
-  const hint = el("p", "share-hint", "Instagram, TikTok, Snapchat : touchez « Partager l’image », ou enregistrez-la puis publiez-la depuis l’application.");
+  const button = el("button", "share-btn is-primary", "📲 Partager les résultats"); button.type = "button";
   const status = el("p", "share-status"); status.setAttribute("aria-live", "polite");
-  box.append(preview, main, networks, hint, status);
-
-  let file = null;
-  const ready = makeCardBlob(spec).then(blob => {
-    file = new File([blob], fileName, { type: "image/png" });
-    const url = URL.createObjectURL(blob);
-    preview.src = url; preview.hidden = false; save.href = url; save.hidden = false;
-    const canShareFiles = Boolean(navigator.canShare?.({ files: [file] }));
-    shareButton.hidden = !canShareFiles;
-    if (!canShareFiles) save.classList.add("is-primary");
-  }).catch(error => { console.error("Image de partage :", error); shareButton.hidden = true; status.textContent = "L’image n’a pas pu être créée : utilisez les boutons ci-dessous."; });
-  shareButton.addEventListener("click", async () => {
+  box.append(preview, button, status);
+  const message = `${text}\n${SITE}`;
+  let blob = null;
+  const ready = makeCardBlob(spec).then(result => { blob = result; preview.src = URL.createObjectURL(blob); preview.hidden = false; })
+    .catch(error => console.error("Image de partage :", error));
+  button.addEventListener("click", async () => {
+    status.textContent = "";
     await ready;
-    if (!file) return;
-    try { await navigator.share({ files: [file], text: `${text}\n${SITE}` }); }
-    catch (error) {
-      if (error?.name === "AbortError") return;
-      try { await navigator.share({ files: [file] }); } catch (retry) { if (retry?.name !== "AbortError") status.textContent = "Partage impossible : enregistrez l’image puis publiez-la."; }
+    const file = blob && new File([blob], fileName, { type: "image/png" });
+    try {
+      if (file && navigator.canShare?.({ files: [file] })) {
+        try { await navigator.share({ files: [file], text: message }); }
+        catch (error) { if (error?.name === "AbortError") return; await navigator.share({ files: [file] }); }
+      } else if (navigator.share) await navigator.share({ text: message });
+      else if (blob) {
+        const link = el("a"); link.href = preview.src; link.download = fileName; link.click();
+        status.textContent = "Image enregistrée : vous pouvez maintenant la publier où vous voulez.";
+      } else throw new Error("Partage indisponible");
+    } catch (error) {
+      if (error?.name !== "AbortError") status.textContent = "Le partage n’a pas fonctionné sur cet appareil.";
     }
   });
   return box;
