@@ -6,6 +6,7 @@ import { ficheUrl } from "./entity-links.js";
 import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
 import { renderGeoGame } from "./geo-game.js";
 import { dateFr, sharePanel } from "./share.js";
+import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const fold = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
@@ -61,7 +62,15 @@ function quizShare(correct) {
   });
 }
 
-function renderQuiz(panel, mineral, minerals) {
+// Photo du minéral à trouver, montrée avec le résultat : photo ajoutée dans l'admin (et son crédit), sinon photo libre de Wikimedia Commons.
+async function answerPhoto(mineral, client) {
+  const own = firstPhoto(mineral.media);
+  if (own) return { src: publicMediaUrl(client, own), credit: mineral.photo_credit ? el("p", "photo-credit", mineral.photo_credit) : null };
+  const commons = commonsPhoto(await loadMineralPhotos(), mineral.slug);
+  return commons ? { src: commons.src, credit: creditLine(commons) } : null;
+}
+
+function renderQuiz(panel, mineral, minerals, client) {
   const body = panel.querySelector("[data-body]");
   const random = seeded(`quiz-indices-${today}`);
   const clues = CLUES.map(([label, get]) => [label, get(mineral)]).filter(([, value]) => value)
@@ -94,6 +103,12 @@ function renderQuiz(panel, mineral, minerals) {
     result.className = `quiz-result ${correct ? "is-right" : "is-wrong"}`;
     result.replaceChildren(el("strong", "", correct ? "Bravo, bonne réponse !" : "Ce n’est pas ça…"),
       el("span", "", correct ? ` C'était bien ${mineral.name}.` : ` La réponse était : ${mineral.name}.`));
+    const figure = el("figure", "quiz-photo"); figure.hidden = true; result.append(figure);
+    void answerPhoto(mineral, client).then(photo => {
+      if (!photo) return;
+      const image = el("img"); image.src = photo.src; image.alt = mineral.name; image.loading = "lazy";
+      figure.append(image); if (photo.credit) figure.append(photo.credit); figure.hidden = false;
+    }).catch(() => {});
     const link = el("a", "link quiz-link", `Voir la fiche ${mineral.name} →`); link.href = ficheUrl("mineral", mineral.slug);
     result.append(el("br"), link);
     const streak = store.get("jm-quiz-serie");
@@ -156,7 +171,7 @@ export async function mountGames(root, { client, minerals }) {
   badges.append(summary, list);
   root.replaceChildren(quizBlock, geoBlock, badges);
   const { quiz } = dailyMinerals(minerals);
-  if (quiz) renderQuiz(quizBlock, quiz, minerals);
+  if (quiz) renderQuiz(quizBlock, quiz, minerals, client);
   renderBadges(list, count);
   try { const pieces = await geoPieces(client); if (pieces.length) await renderGeoGame(geoBlock, pieces); }
   catch (error) { console.error("Devine le gisement :", error); }

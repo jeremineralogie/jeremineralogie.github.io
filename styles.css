@@ -622,3 +622,8 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .legal-credits ul{margin:8px 0 0;padding-left:1.2em;font-size:.82rem;line-height:1.5}
 .legal-credits li{margin:3px 0;overflow-wrap:anywhere}
 .legal-credits li a{color:#c4a6f5}
+/* Quiz du jour : photo du minéral à trouver dans le résultat */
+.quiz-photo{display:grid;gap:4px;justify-items:center;width:100%;margin:8px 0 4px}
+.quiz-photo[hidden]{display:none}
+.quiz-photo img{width:min(100%,320px);aspect-ratio:4/3;object-fit:contain;background:#000;border:1px solid #3a1d63;border-radius:4px}
+.quiz-photo .photo-credit{margin:0}
