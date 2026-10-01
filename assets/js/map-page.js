@@ -15,7 +15,7 @@ const TYPES = { collection: "Collection", boutique: "Boutique", article: "Articl
 const fold = value => String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
 
-let map, cluster, places = new Map(), entries = [];
+let map, cluster, places = new Map(), entries = [], minesOfCommune = new Map();
 
 function initMap() {
   map = L.map("map", { zoomControl: true, minZoom: 2, maxZoom: 16, worldCopyJump: true, tap: true }).fitBounds(FRANCE);
@@ -37,10 +37,9 @@ function initMap() {
 
 async function loadData(client) {
   const pick = async (query, label) => { const { data, error } = await query; if (error) { console.error(`Carte — ${label} :`, error); return []; } return data || []; };
-  const [localities, points, mines, specimens, shop, articles, archives] = await Promise.all([
+  const [localities, mines, specimens, shop, articles, archives] = await Promise.all([
     pick(client.from("localities").select("id,name,slug,latitude,longitude,postal_code,department_code,department:departments(name)").eq("publication_status", "published"), "communes"),
-    pick(client.from("locality_points").select("id,locality_id,latitude,longitude"), "points des communes"),
-    pick(client.from("mines").select("id,name,locality_id,point_id").eq("publication_status", "published"), "gisements"),
+    pick(client.from("mines").select("id,name,locality_id,latitude,longitude").eq("publication_status", "published"), "gisements"),
     pick(client.from("specimens").select("slug,mineral_name,locality_id,mine_id,locality_name,provenance,mineral:minerals!specimens_mineral_id_fkey(name),associations:specimen_associations(mineral:minerals(name))").eq("publication_status", "published"), "collection"),
     pick(client.from("shop_items").select("slug,reference,title,mineral_name,locality_id,mine_id,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name),associations:shop_item_associations(mineral:minerals(name))").eq("publication_status", "published").eq("sale_status", "available"), "boutique"),
     pick(client.from("articles").select("slug,title,localities:article_localities(locality_id),mines:article_mines(mine_id),minerals:article_minerals(mineral:minerals(name))").eq("publication_status", "published"), "articles"),
@@ -53,31 +52,38 @@ async function loadData(client) {
   const placeOf = (localityId, mineId, localityName, mineName) =>
     localityById.get(localityId) || localityById.get(mineById.get(mineId)?.locality_id) ||
     localityByName.get(fold(localityName)) || localityById.get(mineByName.get(fold(mineName))?.locality_id) || null;
-  // Point supplémentaire de la commune dans lequel le gisement est inclus (sinon : point principal de la commune).
-  const pointById = new Map(points.map(row => [row.id, row]));
-  const pointOf = (mineId, mineName) => pointById.get((mineById.get(mineId) || mineByName.get(fold(mineName)))?.point_id) || null;
+  // Gisement doté de son propre point : marqueur distinct de celui de la commune.
+  const spotOf = (mineId, mineName) => {
+    const mine = mineById.get(mineId) || mineByName.get(fold(mineName));
+    return mine && mine.latitude != null && mine.longitude != null ? mine : null;
+  };
+  // Gisements placés de chaque commune (ordre alphabétique) : la commune s'efface derrière eux sur la carte.
+  minesOfCommune = new Map();
+  mines.filter(mine => mine.latitude != null && mine.longitude != null && mine.locality_id).sort((a, b) => a.name.localeCompare(b.name, "fr"))
+    .forEach(mine => { if (!minesOfCommune.has(mine.locality_id)) minesOfCommune.set(mine.locality_id, []); minesOfCommune.get(mine.locality_id).push(mine); });
   const names = list => (list || []).map(item => item?.mineral?.name).filter(Boolean);
   const all = [];
-  const push = (type, title, subtitle, href, minerals, locality, point = null) => all.push({ type, title, subtitle, href, minerals: [...new Set(minerals.filter(Boolean))], locality, point: point && point.locality_id === locality?.id ? point : null });
+  const push = (type, title, subtitle, href, minerals, locality, mine = null) => all.push({ type, title, subtitle, href, minerals: [...new Set(minerals.filter(Boolean))], locality, mine });
   specimens.forEach(row => {
     const mineral = row.mineral_name || row.mineral?.name || "Spécimen";
     push("collection", mineral, row.provenance || mineById.get(row.mine_id)?.name || "", `specimen.html?id=${encodeURIComponent(row.slug)}`,
-      [mineral, ...names(row.associations)], placeOf(row.locality_id, row.mine_id, row.locality_name, row.provenance), pointOf(row.mine_id, row.provenance));
+      [mineral, ...names(row.associations)], placeOf(row.locality_id, row.mine_id, row.locality_name, row.provenance), spotOf(row.mine_id, row.provenance));
   });
   shop.forEach(row => {
     const mineral = shopItemName(row);
-    push("boutique", mineral, row.mine?.name || "", pieceUrl(row), [row.mineral_name || row.mineral?.name, ...names(row.associations)], placeOf(row.locality_id, row.mine_id, null, row.mine?.name), pointOf(row.mine_id, row.mine?.name));
+    push("boutique", mineral, row.mine?.name || "", pieceUrl(row), [row.mineral_name || row.mineral?.name, ...names(row.associations)], placeOf(row.locality_id, row.mine_id, null, row.mine?.name), spotOf(row.mine_id, row.mine?.name));
   });
   const linked = (row, type, href) => {
     const spots = new Map();
-    (row.localities || []).forEach(link => { const place = localityById.get(link.locality_id); if (place) spots.set(place.id, place); });
+    (row.localities || []).forEach(link => { const place = localityById.get(link.locality_id); if (place) spots.set(`l:${place.id}`, [place, null]); });
     (row.mines || []).forEach(link => {
-      const place = localityById.get(mineById.get(link.mine_id)?.locality_id); if (!place) return;
-      const point = pointOf(link.mine_id);
-      spots.set(point ? `p:${point.id}` : place.id, point ? [place, point] : place);
+      const mine = mineById.get(link.mine_id); const place = localityById.get(mine?.locality_id) || null;
+      const spot = spotOf(link.mine_id);
+      if (spot) spots.set(`m:${spot.id}`, [place, spot]);
+      else if (place) spots.set(`l:${place.id}`, [place, null]);
     });
     if (!spots.size) push(type, row.title, "", href, names(row.minerals), null);
-    spots.forEach(spot => Array.isArray(spot) ? push(type, row.title, "", href, names(row.minerals), spot[0], spot[1]) : push(type, row.title, "", href, names(row.minerals), spot));
+    spots.forEach(([place, spot]) => push(type, row.title, "", href, names(row.minerals), place, spot));
   };
   articles.forEach(row => linked(row, "article", articleUrl(row)));
   archives.forEach(row => linked(row, "archive", documentUrl(row)));
@@ -97,9 +103,10 @@ function fillFilters() {
   located.sort((a, b) => a.name.localeCompare(b.name, "fr")).forEach(place => communeSelect.add(new Option(communeLabel(place, duplicates), place.id)));
 }
 
-function popupHtml(place, list) {
+function popupHtml(place, list, mine = null) {
   const rows = list.map(entry => `<li><span class="map-tag map-tag-${entry.type}">${TYPES[entry.type]}</span><a href="${esc(entry.href)}">${esc(entry.title)}</a>${entry.subtitle ? `<small>${esc(entry.subtitle)}</small>` : ""}</li>`).join("");
-  const where = isFrench(place.department_code) ? [place.postal_code, `dép. ${place.department_code}`].filter(Boolean).join(" · ") : place.department?.name || "";
+  const where = !place ? "" : isFrench(place.department_code) ? [place.postal_code, `dép. ${place.department_code}`].filter(Boolean).join(" · ") : place.department?.name || "";
+  if (mine) return `<div class="map-popup"><strong>${esc(mine.name)}</strong><em>${esc([place?.name, where].filter(Boolean).join(" · "))}</em><ul>${rows}</ul></div>`;
   return `<div class="map-popup"><strong>${esc(place.name)}</strong>${where ? `<em>${esc(where)}</em>` : ""}<ul>${rows}</ul></div>`;
 }
 
@@ -113,21 +120,24 @@ function render() {
   panel.querySelector(".filter-reset").disabled = !active;
   cluster.clearLayers(); places = new Map();
   let unplaced = 0;
-  // Un marqueur par point : point principal de la commune, ou point supplémentaire regroupant des gisements.
+  // Un point par gisement placé. La commune n'a pas de point à elle dès qu'un de ses gisements est placé :
+  // les fiches de la commune sans gisement placé rejoignent alors le premier gisement placé de la commune.
   visible.forEach(entry => {
     const place = entry.locality;
-    const at = entry.point || place;
-    if (!place || at.latitude == null || at.longitude == null) { unplaced += 1; return; }
-    const key = entry.point ? `p:${entry.point.id}` : place.id;
-    if (!places.has(key)) places.set(key, { place, at, list: [] });
+    const mine = entry.mine || (place && minesOfCommune.get(place.id)?.[0]) || null;
+    const at = mine || place;
+    if (!at || at.latitude == null || at.longitude == null) { unplaced += 1; return; }
+    const key = mine ? `m:${mine.id}` : `l:${place.id}`;
+    if (!places.has(key)) places.set(key, { place, mine, list: [] });
     places.get(key).list.push(entry);
   });
   const markers = [];
-  places.forEach(({ place, at, list }) => {
+  places.forEach(({ place, mine, list }) => {
+    const at = mine || place;
     const icon = L.divIcon({ html: `<span>${list.length}</span>`, className: "map-point", iconSize: [34, 34] });
-    const marker = L.marker([at.latitude, at.longitude], { icon, count: list.length, title: place.name, keyboard: true });
-    marker.bindPopup(popupHtml(place, list), { maxWidth: 300, autoPanPadding: [20, 20] });
-    marker.placeId = place.id;
+    const marker = L.marker([at.latitude, at.longitude], { icon, count: list.length, title: mine ? mine.name : place.name, keyboard: true });
+    marker.bindPopup(popupHtml(place, list, mine), { maxWidth: 300, autoPanPadding: [20, 20] });
+    marker.placeId = place?.id;
     markers.push(marker);
   });
   cluster.addLayers(markers);

@@ -89,7 +89,7 @@ const sections = [
   { id: "regions", label: "Régions", table: "regions", title: "Régions", fields: [{ key: "name", label: "Nom", required: true }] },
   { id: "departments", label: "Départements", table: "departments", title: "Départements", fields: [{ key: "code", label: "Code (identifiant)", required: true }, { key: "name", label: "Nom", required: true }, { key: "region_id", label: "Région", ref: "regions", display: "name" }] },
   { id: "localities", label: "Communes", table: "localities", title: "Communes", fields: [{ key: "name", label: "Nom", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "postal_code", label: "Code postal" }, { key: "insee_code", label: "Code INSEE" }, { key: "latitude", label: "Latitude", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude", type: "number", step: "0.000001" }, { key: "notes", label: "Notes", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
-  { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" }, { key: "point_id", label: "Point de la commune sur la carte", options: [["", "Point principal de la commune"]], noCombo: true }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
+  { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" }, { key: "latitude", label: "Latitude du gisement", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude du gisement", type: "number", step: "0.000001" }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
   { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral (fiches Apprendre)", mediaTable: "mineral_media", foreignKey: "mineral_id", path: "minerals", mediaAfter: "etymology", fields: [
     { key: "name", label: "Nom", required: true }, { key: "formula", label: "Formule chimique (ex. CaCO₃)" },
     { key: "chemical_class", label: "Famille chimique", type: "select", customOptions: true, options: MINERAL_CLASSES.map(value => [value, value]) },
@@ -268,7 +268,7 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,latitude,longitude,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
     const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" || table === "archive_documents" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
@@ -357,9 +357,8 @@ function buildEditorPanel() {
   if (activeSection.autoReference && !selectedRecord) wireAutoReference(form);
   wireGeoAutofill(form);
   if (activeSection.id === "localities") addLocateTool(form);
+  else if (activeSection.id === "mines") addMinePointTool(form);
   else addPointTool(form);
-  if (activeSection.id === "localities") addCommunePointsTool(form);
-  if (activeSection.id === "mines") wireMinePoint(form);
   if ((activeSection.mediaTable || activeSection.singleFile) && !activeSection.mediaFirst && !activeSection.mediaAfter) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
   const save = document.createElement("button"); save.className = "btn"; save.type = "submit"; save.textContent = selectedRecord ? "Enregistrer les modifications" : "Créer"; actions.append(save);
@@ -437,7 +436,6 @@ function createField(field, value, typed = "") {
   if (field.type === "checkbox") input.type = "checkbox";
   else if (field.type !== "textarea" && !field.options && !field.ref) input.type = field.type || "text";
   if (field.step) input.step = field.step;
-  if (field.noCombo) input.dataset.noCombo = "1";
   if (field.placeholder) input.placeholder = field.placeholder;
   if (field.required) { input.required = true; label.textContent += " *"; }
   if (field.type === "checkbox") input.checked = Boolean(value);
@@ -636,7 +634,7 @@ async function saveRecord(form) {
       databaseSaved = true;
       report("Fiche enregistrée. Traitement des médias…");
       if (section.links) await saveLinks(saved, form);
-      if (pointTargets.length) await savePendingPoints(client, pointTool, pointTargets, target => target.id || (saved.locality_id && !form.elements.namedItem("link_localities") ? saved.locality_id : resolvedLocalities.get(normalizeName(target.name))));
+      if (pointTargets.length) await savePendingPoints(client, pointTool, pointTargets, target => target.id || (target.table === "mines" ? saved.mine_id : null) || (target.table !== "mines" && saved.locality_id && !form.elements.namedItem("link_localities") ? saved.locality_id : resolvedLocalities.get(normalizeName(target.name))));
       if (section.mediaTable) await uploadMedia(saved);
       if (section.singleFile) await saveArchiveFile(saved, current);
       if (section.mediaTable && current && current.publication_status !== saved.publication_status) await syncMedia(saved);
@@ -728,113 +726,43 @@ function addLocateTool(form) {
   });
 }
 
-// Communes : plusieurs points sur la carte. Le point principal est celui de la commune (latitude / longitude) ;
-// chaque point supplémentaire regroupe un ou plusieurs gisements de la commune, qui n'ont pas de position propre.
-// Les points s'enregistrent tout de suite (la commune doit déjà exister).
-function addCommunePointsTool(form) {
-  const box = document.createElement("div"); box.className = "point-tool commune-points";
-  const title = document.createElement("strong"); title.textContent = "Points supplémentaires sur la carte";
-  const help = document.createElement("small"); help.textContent = "Le point principal est celui de la commune ci-dessus. Ajoutez un point pour chaque gisement à montrer à part : la carte affiche alors un point par endroit, toujours sous le nom de la commune. Un gisement non coché reste au point principal.";
-  const list = document.createElement("div"); list.className = "commune-points-list";
-  const add = document.createElement("button"); add.type = "button"; add.className = "admin-secondary"; add.textContent = "➕ Ajouter un point";
-  const note = document.createElement("p"); note.className = "point-state"; note.setAttribute("aria-live", "polite");
-  box.append(title, help, list, add, note);
-  (form.elements.namedItem("notes")?.closest("div") || form.lastElementChild)?.before(box);
-  const commune = selectedRecord;
-  if (!commune?.id) { list.hidden = true; add.disabled = true; note.textContent = "Enregistrez d’abord la commune pour lui ajouter des points."; return; }
-  const center = () => {
-    const number = key => { const raw = form.elements.namedItem(key)?.value; const value = Number(raw); return raw !== "" && Number.isFinite(value) ? value : null; };
-    return { latitude: number("latitude") ?? commune.latitude ?? null, longitude: number("longitude") ?? commune.longitude ?? null };
+// Gisements : point propre sur la carte, posé à la main (plusieurs gisements d'une même commune = plusieurs points).
+// Sans point, le gisement s'affiche au point de sa commune. La carte s'ouvre sur la commune pour viser plus vite.
+function addMinePointTool(form) {
+  pointTool = null;
+  const field = key => form.elements.namedItem(key);
+  const number = key => { const raw = field(key)?.value; const value = Number(raw); return raw !== "" && raw != null && Number.isFinite(value) ? value : null; };
+  const box = document.createElement("div"); box.className = "point-tool";
+  const row = document.createElement("div"); row.className = "point-row";
+  const state = document.createElement("span");
+  const place = document.createElement("button"); place.type = "button"; place.className = "admin-secondary";
+  const clear = document.createElement("button"); clear.type = "button"; clear.className = "admin-secondary"; clear.textContent = "Retirer le point";
+  row.append(state, place, clear); box.append(row);
+  const commune = () => (refs.localities || []).find(item => String(item.id) === String(field("locality_id")?.value));
+  const refresh = () => {
+    const located = number("latitude") != null && number("longitude") != null;
+    const town = commune();
+    state.className = `point-state ${located ? "is-ok" : "is-missing"}`;
+    state.textContent = located ? `Gisement placé sur la carte (${number("latitude").toFixed(5)}, ${number("longitude").toFixed(5)}).`
+      : town ? `Pas encore de point propre : le gisement apparaît au point de la commune ${town.name}. Posez son point pour le distinguer des autres gisements de la commune.`
+      : "Pas encore de point : choisissez la commune ou posez le point du gisement sur la carte.";
+    place.textContent = located ? "Déplacer le point du gisement" : "📍 Poser le point du gisement sur la carte";
+    clear.hidden = !located;
   };
-  let points = [], mines = [];
-  const fail = error => { note.textContent = `Erreur : ${errorText(error)}`; };
-  async function load() {
-    const [pointResult, mineResult] = await Promise.all([
-      client.from("locality_points").select("id,label,latitude,longitude,created_at").eq("locality_id", commune.id).order("created_at"),
-      client.from("mines").select("id,name,point_id").eq("locality_id", commune.id).order("name")
-    ]);
-    if (pointResult.error || mineResult.error) { fail(pointResult.error || mineResult.error); return; }
-    points = pointResult.data || []; mines = mineResult.data || [];
-    draw();
-  }
-  function draw() {
-    list.replaceChildren(...points.map((point, index) => {
-      const row = document.createElement("div"); row.className = "commune-point";
-      const head = document.createElement("div"); head.className = "point-row";
-      const name = document.createElement("span"); name.className = "point-state is-ok"; name.textContent = `Point ${index + 2} (${point.latitude.toFixed(5)}, ${point.longitude.toFixed(5)})`;
-      const label = document.createElement("input"); label.type = "text"; label.maxLength = 120; label.placeholder = "Repère personnel (facultatif, non affiché)"; label.value = point.label || "";
-      label.setAttribute("aria-label", `Repère du point ${index + 2}`);
-      label.addEventListener("change", async () => { const { error } = await client.from("locality_points").update({ label: label.value.trim() }).eq("id", point.id); if (error) fail(error); else note.textContent = "Repère enregistré."; });
-      const move = document.createElement("button"); move.type = "button"; move.className = "admin-secondary"; move.textContent = "Déplacer";
-      move.addEventListener("click", async () => {
-        const moved = await pickPoint({ name: commune.plainName || commune.name, department: commune.department_code || "", latitude: point.latitude, longitude: point.longitude }).catch(fail);
-        if (!moved) return;
-        const { error } = await client.from("locality_points").update(moved).eq("id", point.id);
-        if (error) fail(error); else { note.textContent = "Point déplacé."; await load(); }
-      });
-      const remove = document.createElement("button"); remove.type = "button"; remove.className = "admin-danger"; remove.textContent = "Supprimer";
-      remove.addEventListener("click", async () => {
-        if (!remove.dataset.confirm) { remove.dataset.confirm = "1"; remove.textContent = "Confirmer la suppression"; return; }
-        const { error } = await client.from("locality_points").delete().eq("id", point.id);
-        if (error) fail(error); else { note.textContent = "Point supprimé : ses gisements reviennent au point principal."; await load(); }
-      });
-      head.append(name, label, move, remove);
-      const choices = document.createElement("div"); choices.className = "commune-point-mines";
-      if (!mines.length) choices.textContent = "Aucun gisement enregistré dans cette commune.";
-      mines.forEach(mine => {
-        const item = document.createElement("label"); item.className = "check";
-        const box = document.createElement("input"); box.type = "checkbox"; box.checked = mine.point_id === point.id;
-        box.addEventListener("change", async () => {
-          const value = box.checked ? point.id : null;
-          const { error } = await client.from("mines").update({ point_id: value }).eq("id", mine.id);
-          if (error) { fail(error); box.checked = !box.checked; return; }
-          mine.point_id = value; note.textContent = box.checked ? `${mine.name} est inclus dans le point ${index + 2}.` : `${mine.name} revient au point principal.`; draw();
-        });
-        item.append(box, ` ${mine.name}`);
-        choices.append(item);
-      });
-      row.append(head, choices);
-      return row;
-    }));
-    if (!points.length) { const empty = document.createElement("p"); empty.className = "meta"; empty.textContent = "Aucun point supplémentaire : tout est affiché au point principal de la commune."; list.append(empty); }
-  }
-  add.addEventListener("click", async () => {
-    add.disabled = true;
+  place.addEventListener("click", async () => {
+    const town = commune();
+    place.disabled = true;
     try {
-      const point = await pickPoint({ name: commune.plainName || commune.name, department: commune.department_code || "", ...center() });
-      if (point) {
-        const { error } = await client.from("locality_points").insert({ locality_id: commune.id, ...point });
-        if (error) fail(error); else { note.textContent = "Point ajouté : cochez les gisements qu’il regroupe."; await load(); }
-      }
-    } catch (error) { fail(error); }
-    add.disabled = false;
+      const start = number("latitude") != null ? { latitude: number("latitude"), longitude: number("longitude") } : { latitude: town?.latitude ?? null, longitude: town?.longitude ?? null };
+      const point = await pickPoint({ name: field("name")?.value.trim() || town?.name || "", department: town?.department_code || "", ...start });
+      if (point) { field("latitude").value = point.latitude; field("longitude").value = point.longitude; }
+    } catch (error) { state.textContent = error.message; }
+    place.disabled = false; refresh();
   });
-  void load();
-}
-
-// Gisements : choix du point de la commune dans lequel le gisement est inclus (point principal par défaut).
-function wireMinePoint(form) {
-  const select = form.elements.namedItem("point_id");
-  const commune = form.elements.namedItem("locality_id");
-  if (!select || !commune) return;
-  const wanted = selectedRecord?.point_id || "";
-  let loaded = null;
-  const refresh = async () => {
-    const id = commune.value && commune.value !== OTHER ? commune.value : "";
-    if (id === loaded) return;
-    loaded = id;
-    const keep = select.value || wanted;
-    select.replaceChildren(new Option("Point principal de la commune", ""));
-    if (!id) return;
-    const { data, error } = await client.from("locality_points").select("id,label,created_at").eq("locality_id", id).order("created_at");
-    if (error) { console.error("Points de la commune :", error); return; }
-    (data || []).forEach((point, index) => select.add(new Option(`Point ${index + 2}${point.label ? ` — ${point.label}` : ""}`, point.id)));
-    select.value = [...select.options].some(option => option.value === keep) ? keep : "";
-  };
-  form.addEventListener("change", event => { if (event.target === commune || event.target.name === "locality_id__other") void refresh(); });
-  const help = document.createElement("small"); help.textContent = "Les points supplémentaires se créent dans Référentiels → Communes. Le gisement n’a pas de position propre : il est montré au point choisi, sous le nom de la commune.";
-  select.after(help);
-  void refresh();
+  clear.addEventListener("click", () => { field("latitude").value = ""; field("longitude").value = ""; refresh(); });
+  (field("latitude")?.closest("div") || form.lastElementChild)?.before(box);
+  form.addEventListener("change", refresh); form.addEventListener("input", refresh);
+  refresh();
 }
 
 // Fiches liées à une commune : position sur la carte posable à la main sous le champ « Localité ».
@@ -850,9 +778,27 @@ function addPointTool(form) {
     return known && { key: pointKey(known.id), id: known.id, name: known.name, department: department() || known.department_code, latitude: known.latitude, longitude: known.longitude };
   };
   const typed = name => ({ key: pointKey(null, name), id: null, name, department: department() });
+  // Fiche avec un gisement : le point posé est celui du gisement (un point par gisement), rattaché à la commune.
+  // La carte s'ouvre sur la commune, car les gisements sont trop précis pour être trouvés par leur nom.
+  const mineField = form.elements.namedItem("mine_id");
+  const mineTarget = commune => {
+    if (!mineField?.value) return null;
+    const typedName = mineField.value === OTHER ? text(form.elements.namedItem("mine_id__other")?.value) : "";
+    const known = typedName ? null : (refs.mines || []).find(item => String(item.id) === String(mineField.value));
+    const name = typedName || known?.plainName || known?.name;
+    if (!name) return null;
+    return { key: known ? `mine:${known.id}` : `mine-new:${normalizeName(name)}`, table: "mines", id: known?.id || null, name, commune: commune?.name || "",
+      search: commune?.name || "", department: commune?.department || department(), latitude: known?.latitude ?? null, longitude: known?.longitude ?? null,
+      startLatitude: commune?.latitude ?? null, startLongitude: commune?.longitude ?? null };
+  };
   const targets = () => {
     const other = text(form.elements.namedItem(`${select.name}__other`)?.value);
-    if (single) return single.value === OTHER ? (other ? [typed(other)] : []) : [fromRef(single.value)].filter(Boolean);
+    if (single) {
+      const commune = single.value === OTHER ? (other ? typed(other) : null) : fromRef(single.value);
+      const mine = mineTarget(commune);
+      if (mine) return [mine];
+      return commune ? [commune] : [];
+    }
     return [...[...multi.selectedOptions].map(option => fromRef(option.value)).filter(Boolean), ...other.split(",").map(part => part.trim()).filter(Boolean).map(typed)];
   };
   const tool = createPointTool(targets);

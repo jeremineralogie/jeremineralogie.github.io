@@ -135,17 +135,15 @@ function renderQuiz(panel, mineral, minerals, client) {
 // Pièces à deviner : collection et boutique, avec une photo publique et une commune placée sur la carte.
 async function geoPieces(client) {
   const rows = async query => { const { data, error } = await query; if (error) throw error; return data || []; };
-  const [localities, points, mines, departments, specimens, shop] = await Promise.all([
+  const [localities, mines, departments, specimens, shop] = await Promise.all([
     rows(client.from("localities").select("id,name,latitude,longitude,department_code").not("latitude", "is", null)),
-    rows(client.from("locality_points").select("id,locality_id,latitude,longitude")),
-    rows(client.from("mines").select("id,name,locality_id,point_id")),
+    rows(client.from("mines").select("id,name,locality_id,latitude,longitude")),
     rows(client.from("departments").select("code,name")),
     rows(client.from("specimens").select("slug,mineral_name,locality_id,mine_id,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)").eq("publication_status", "published")),
     rows(client.from("shop_items").select("slug,reference,title,mineral_name,locality_id,mine_id,mineral:minerals!shop_items_mineral_id_fkey(name),media:shop_item_media(bucket_id,storage_path,position)").eq("publication_status", "published").neq("sale_status", "hidden"))
   ]);
   const localityById = new Map(localities.map(row => [row.id, row]));
   const mineById = new Map(mines.map(row => [row.id, row]));
-  const pointById = new Map(points.map(row => [row.id, row]));
   const departmentName = new Map(departments.map(row => [row.code, row.name]));
   const piece = (type, row, name, href) => {
     const mine = mineById.get(row.mine_id);
@@ -153,9 +151,8 @@ async function geoPieces(client) {
     const photo = firstPhoto(row.media);
     if (!place || place.longitude == null || !photo) return null;
     const department = departmentName.get(place.department_code);
-    // Point supplémentaire de la commune regroupant le gisement (plus précis), sinon le point principal.
-    const point = pointById.get(mine?.point_id);
-    const spot = point && point.locality_id === place.id ? point : place;
+    // Point du gisement s'il a été posé (plus précis), sinon celui de la commune.
+    const spot = mine?.latitude != null && mine?.longitude != null ? mine : place;
     return { key: `${type}:${row.slug}`, name, href, photo: publicMediaUrl(client, photo), lat: spot.latitude, lng: spot.longitude, department: place.department_code,
       place: [mine?.name, place.name, department].filter(Boolean).join(" · ") };
   };
