@@ -69,13 +69,27 @@ export async function ensureDepartment(client, name, regionId = null) {
 export async function ensureNamed(client, table, name, extra = {}) {
   const clean = String(name ?? "").replace(/\s+/g, " ").trim();
   if (!clean || !(table in CREATE_DEFAULTS)) return null;
-  const columns = table === "localities" ? "id,name,slug,department_code" : "id,name,slug";
+  const columns = table === "localities" ? "id,name,slug,department_code" : table === "mines" ? "id,name,slug,locality_id" : "id,name,slug";
   const { data, error } = await client.from(table).select(columns);
   if (error) throw error;
   const wanted = normalizeName(clean);
   const same = (data || []).filter(row => normalizeName(row.name) === wanted);
-  const found = (extra.department_code && same.find(row => row.department_code === extra.department_code)) || same[0];
-  if (found) return { id: found.id, name: found.name, created: false };
+  if (table === "mines") {
+    // Un gisement est reconnu par son nom ET sa commune : deux gisements homonymes de communes différentes restent distincts.
+    // Un gisement homonyme encore sans commune est repris et rattaché à la commune indiquée.
+    const place = extra.locality_id || null;
+    const found = place ? same.find(row => row.locality_id === place) || same.find(row => !row.locality_id) : same.find(row => !row.locality_id) || same[0];
+    if (found) {
+      if (place && !found.locality_id) {
+        const { error: updateError } = await client.from("mines").update({ locality_id: place }).eq("id", found.id).is("locality_id", null);
+        if (updateError) throw updateError;
+      }
+      return { id: found.id, name: found.name, created: false };
+    }
+  } else {
+    const found = (extra.department_code && same.find(row => row.department_code === extra.department_code)) || same[0];
+    if (found) return { id: found.id, name: found.name, created: false };
+  }
   const slugs = new Set((data || []).map(row => row.slug));
   const base = slugify(clean) || `${table}-${crypto.randomUUID()}`;
   let slug = base; let suffix = 2;

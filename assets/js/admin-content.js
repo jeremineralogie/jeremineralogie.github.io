@@ -128,7 +128,6 @@ let openToken = 0;
 let pendingLinkExtras = {};
 let createdNames = [];
 const refNames = new Map(); // « table:identifiant » → nom, pour les valeurs créées pendant l'enregistrement
-const createdMines = new Set();
 let pointTool = null;
 let prefill = null;
 let contentEditor = null;
@@ -265,16 +264,23 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
     const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" || table === "archive_documents" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
-    if (table === "localities") {
-      const count = new Map();
-      refs.localities.forEach(item => { const key = normalizeName(item.name); count.set(key, (count.get(key) || 0) + 1); });
-      refs.localities.forEach(item => { item.plainName = item.name; if (count.get(normalizeName(item.name)) > 1) item.name = `${item.name} (${item.postal_code || item.department_code || "?"})`; });
-    }
   }
+  if (refs.localities) disambiguate(refs.localities, item => item.postal_code || item.department_code);
+  if (refs.mines) {
+    const communeName = id => (refs.localities || []).find(item => String(item.id) === String(id))?.plainName;
+    disambiguate(refs.mines, item => item.locality?.name || communeName(item.locality_id));
+  }
+}
+
+// Homonymes (communes, gisements) : précision ajoutée au nom affiché dans les listes ; le nom d'origine reste dans plainName.
+function disambiguate(list, detail) {
+  const count = new Map();
+  list.forEach(item => { const key = normalizeName(item.name); count.set(key, (count.get(key) || 0) + 1); });
+  list.forEach(item => { item.plainName = item.name; if (count.get(normalizeName(item.name)) > 1) item.name = `${item.name} (${detail(item) || "?"})`; });
 }
 
 async function loadRecords() {
@@ -533,18 +539,20 @@ async function selectRecord(record) {
 async function saveRecord(form) {
   const section = activeSection;
   let databaseSaved = false;
-  pendingLinkExtras = {}; createdNames = []; resolvedLocalities.clear(); refNames.clear(); createdMines.clear();
+  pendingLinkExtras = {}; createdNames = []; resolvedLocalities.clear(); refNames.clear();
   const pointTargets = pointTool?.targets() || [];
   report("Enregistrement…");
   try {
     const record = {};
+    let typedMine = ""; // gisement saisi en « Autre » : reconnu par son nom et sa commune, une fois la commune connue
     for (const field of section.fields) {
       const input = form.elements.namedItem(field.key);
       if (!input) throw new Error(`Le champ « ${field.label} » est introuvable dans le formulaire.`);
       let value = field.type === "checkbox" ? input.checked : field.multi ? [...input.selectedOptions].map(option => option.value) : text(input.value);
       if (!field.multi && value === OTHER) {
         const typed = text(form.elements.namedItem(`${field.key}__other`)?.value);
-        if (field.ref) value = typed ? String(await ensureRef(field.ref, typed)) : "";
+        if (field.ref === "mines") { typedMine = typed; value = ""; }
+        else if (field.ref) value = typed ? String(await ensureRef(field.ref, typed)) : "";
         else value = typed;
       }
       if (field.required && !value && value !== 0 && value !== false) throw new Error(`Le champ « ${field.label} » est requis par le schéma actuel.`);
@@ -572,11 +580,7 @@ async function saveRecord(form) {
       }
       record[field.key] = value === "" ? (field.notNull ? "" : field.key === "value" ? {} : null) : value;
     }
-    // Gisement créé pendant l'enregistrement : rattaché à la commune de la fiche.
-    if (record.mine_id && record.locality_id && createdMines.has(String(record.mine_id))) {
-      const { error } = await client.from("mines").update({ locality_id: record.locality_id }).eq("id", record.mine_id).is("locality_id", null);
-      if (error) throw error;
-    }
+    if (typedMine) record.mine_id = String(await ensureRef("mines", typedMine, { locality_id: record.locality_id || null }));
     // Département sans région (nouveau département ou province étrangère) : rattaché à la région choisie dans la fiche.
     if (record.department_code && record.region_id && section.id !== "departments") {
       const department = (refs.departments || []).find(item => String(item.code) === String(record.department_code));
@@ -765,7 +769,7 @@ function wireGeoAutofill(form) {
   field("link_departments")?.addEventListener?.("change", () => { [...field("link_departments").selectedOptions].forEach(option => { const department = (refs.departments || []).find(item => String(item.code) === option.value); if (department?.region_id) select("link_regions", department.region_id); }); });
 }
 
-async function ensureRef(table, name) {
+async function ensureRef(table, name, extra = {}) {
   if (table === "departments") {
     // Département connu (nom ou numéro), sinon créé : provinces et départements étrangers acceptés.
     const result = await ensureDepartment(client, name);
@@ -773,9 +777,8 @@ async function ensureRef(table, name) {
     refNames.set(`${table}:${result.code}`, result.name);
     return result.code;
   }
-  const result = await ensureNamed(client, table, name);
+  const result = await ensureNamed(client, table, name, extra);
   if (result.created) createdNames.push(result.name);
-  if (result.created && table === "mines") createdMines.add(String(result.id));
   if (table === "localities") resolvedLocalities.set(normalizeName(name), result.id);
   refNames.set(`${table}:${result.id}`, result.name);
   return result.id;
