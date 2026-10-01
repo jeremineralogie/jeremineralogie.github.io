@@ -61,13 +61,20 @@ export function blocksToRichHtml(body) {
 // Nettoyage du HTML saisi : seuls gras, italique, souligné, couleur, police, retours à la ligne et liens sont conservés.
 const SAFE_FONT = value => FONTS.some(([font]) => font && font === value) ? value : null;
 const SAFE_COLOR = value => /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\))$/i.test(value.trim()) ? value.trim() : null;
+// Espaces propres pour un texte justifié : les espaces insécables laissées par l'éditeur ne s'étirent pas
+// et empêchent la césure, ce qui creuse de grands blancs. On ne garde l'insécable que là où la typographie
+// française l'exige (avant ; : ! ? » % et après «) et on réduit les espaces multiples à une seule.
+const tidySpaces = text => text
+  .replace(/[ \u00a0]+/g, match => match.includes("\u00a0") ? "\u00a0" : " ")
+  .replace(/\u00a0(?![;:!?»%\u00bb])/g, (match, offset, whole) => whole[offset - 1] === "«" ? match : " ");
+
 export function sanitizeHtml(html) {
   const template = document.createElement("template");
   template.innerHTML = String(html ?? "");
   const clean = node => {
     const out = document.createDocumentFragment();
     node.childNodes.forEach(child => {
-      if (child.nodeType === Node.TEXT_NODE) { out.append(child.nodeValue); return; }
+      if (child.nodeType === Node.TEXT_NODE) { out.append(tidySpaces(child.nodeValue)); return; }
       if (child.nodeType !== Node.ELEMENT_NODE) return;
       const tag = child.tagName.toLowerCase();
       const inner = clean(child);
@@ -112,7 +119,7 @@ export function sanitizeRich(html, client, { editing = false } = {}) {
   const clean = node => {
     const out = document.createDocumentFragment();
     node.childNodes.forEach(child => {
-      if (child.nodeType === Node.TEXT_NODE) { out.append(child.nodeValue); return; }
+      if (child.nodeType === Node.TEXT_NODE) { out.append(tidySpaces(child.nodeValue)); return; }
       if (child.nodeType !== Node.ELEMENT_NODE) return;
       const tag = child.tagName.toLowerCase();
       if (["script", "style", "iframe", "object", "embed", "noscript", "template", "svg", "math"].includes(tag)) return;
