@@ -57,12 +57,14 @@ function render(client, item) {
     row("Minéraux associés", list);
   }
   row("Gisement", link(mineName, item.mine?.slug && ficheUrl("mine", item.mine.slug)));
-  if (provenance && provenance !== mineName) row("Provenance", provenance);
   row("Localité", link(localityName, item.locality?.slug && ficheUrl("locality", item.locality.slug)));
   row("Département", link(departmentName && (departmentName + (item.department_code ? ` (${item.department_code})` : "")), item.department_code && `departement.html?dep=${encodeURIComponent(item.department_code)}`));
-  row("Région", clean(item.department?.region?.name));
+  row("Région", clean(item.region?.name || item.department?.region?.name));
+  if (provenance && provenance !== mineName) row("Pays", provenance);
   row("Dimensions", clean(item.dimensions));
   row("Poids", item.weight_grams == null ? "" : `${String(item.weight_grams).replace(".", ",")} g`);
+  row("Mots-clés", clean(item.keywords));
+  row("Date de découverte", clean(item.discovery_date_text));
   const price = document.createElement("div"); price.className = "price";
   price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100);
   const contact = document.createElement("a"); contact.className = "btn"; contact.href = `contact.html?reference=${encodeURIComponent(item.reference)}`; contact.textContent = "Me contacter";
