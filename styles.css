@@ -643,10 +643,11 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 .card-boutique::after{background-image:url("assets/decor/carte-boutique.webp")}
 .card-boutique>img,.card-boutique>.card-photo-placeholder{left:22%;top:8.8%;width:56.1%;height:43%}
 .card-boutique>.card-photo-placeholder{font-size:4.6cqw}
-/* Au-dessus du filet : le prix. En dessous : le minéral, puis le gisement (ou la commune à défaut). */
-.card.card-boutique .card-body .price{left:26%;right:26%;top:54.8%;height:8%;display:flex;align-items:center;justify-content:center;font-size:7.4cqw;line-height:1}
-.card.card-boutique .card-body h3{left:26%;right:26%;top:66.6%;height:auto;font-size:6.4cqw;line-height:1.15}
-.card.card-boutique .card-body .meta{left:26%;right:26%;top:71.9%;height:auto;font-size:4.4cqw;line-height:1.2}
+/* Zones libres mesurées sur le cadre (hauteur 100 % = 1351 px) : prix 53,8–60,4 % ; nom 65,7–70,2 % ; gisement 70,3–73,6 % ;
+   largeur libre 24,5–75,5 %. L'ornement du bouton commence à 74,3 % : rien ne doit descendre plus bas. */
+.card.card-boutique .card-body .price{left:24.5%;right:24.5%;top:53.8%;height:6.6%;display:flex;align-items:center;justify-content:center;font-size:7.4cqw;line-height:1}
+.card.card-boutique .card-body h3{left:24.5%;right:24.5%;top:65.7%;height:4.5%;display:block;font-size:6.8cqw;line-height:1.06}
+.card.card-boutique .card-body .meta{left:24.5%;right:24.5%;top:70.3%;height:3.3%;font-size:4.8cqw;line-height:1.1}
 
 /* ===== Affichage ordinateur (≥ 1100 px) : le téléphone n'est pas touché, tout ce bloc est réservé aux grands écrans ===== */
 @media(min-width:1100px){
