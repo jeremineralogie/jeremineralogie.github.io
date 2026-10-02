@@ -1,3 +1,4 @@
+import { fitCardText } from "./card-fit.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError, watchContent } from "./content-repository.js";
 import { pieceUrl } from "./detail-nav.js";
 import { bindFilterPanel, fillFilterOptions } from "./filter-panel.js";
@@ -31,17 +32,17 @@ function render() {
   count.textContent = `${visible.length} spécimen${visible.length === 1 ? "" : "s"}`;
   empty.hidden = visible.length > 0;
   visible.forEach(item => {
-    const card = document.createElement("a"); card.className = "card"; card.href = pieceUrl(item);
+    const card = document.createElement("a"); card.className = "card card-boutique"; card.href = pieceUrl(item);
     const photo = (item.media || []).filter(media => media.bucket_id === "site-media-public").sort((a, b) => a.position - b.position)[0];
     if (photo) { const image = document.createElement("img"); image.src = publicMediaUrl(client, photo); image.alt = photo.alt_text || shopItemName(item); card.append(image); }
     else { const placeholder = document.createElement("div"); placeholder.className = "card-photo-placeholder"; placeholder.textContent = "Photographie à ajouter"; placeholder.setAttribute("role", "img"); card.append(placeholder); }
     const body = document.createElement("div"); body.className = "card-body";
     const heading = document.createElement("h3"); heading.textContent = shopItemName(item); body.append(heading);
     const meta = document.createElement("div"); meta.className = "meta";
-    meta.textContent = item.mine?.name || item.provenance || ""; body.append(meta);
+    meta.textContent = item.mine?.name || item.provenance || item.locality_name || item.locality?.name || ""; body.append(meta);
     const price = document.createElement("div"); price.className = "price"; price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100); body.append(price);
     const more = document.createElement("div"); more.className = "more"; more.textContent = "Voir la fiche"; body.append(more);
-    card.append(body); grid.append(card);
+    card.append(body); grid.append(card); fitCardText(card);
   });
 }
 
