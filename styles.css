@@ -631,3 +631,38 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .quiz-photo .photo-credit{margin:0}
 /* Texte justifié propre : césure française (Safari compris), espacement des mots limité, dernière ligne à gauche */
 :is(.article-full,.doc-full) :is(p,h2,h3,div,li)[style*="justify"]{text-align:justify;text-justify:inter-word;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 2;-webkit-hyphenate-limit-before:3;-webkit-hyphenate-limit-after:2;overflow-wrap:normal;word-break:normal;text-wrap:pretty;text-align-last:left}
+
+/* Voile sombre sous chaque bloc de texte (titres, introductions, légendes), ajusté à la longueur du texte : jamais derrière les cartes */
+main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-top,.fiche-back,.field>label,.collection-filters label):not(:is(.card,.article-full,.doc-full,.home-panel,.notice,.ident-intro,.ident-form,.ident-results,.department-region,.department-detail,.details,.legal-doc,.legal-toc,.filter-panel,.learn-letter,.learn-glossary) *):not(:empty){
+  display:block;width:fit-content;max-width:100%;margin-left:auto;margin-right:auto;padding:.35em .9em;box-sizing:border-box;
+  background:rgba(5,2,10,.78);border:1px solid rgba(138,77,224,.28);border-radius:6px}
+
+/* ===== Affichage ordinateur (≥ 1100 px) : le téléphone n'est pas touché, tout ce bloc est réservé aux grands écrans ===== */
+@media(min-width:1100px){
+  html{font-size:112.5%}
+  main,.header-inner,.footer-inner{max-width:1180px}
+  .search{width:min(760px,100%)}
+  .search input{font-size:.82rem;letter-spacing:0}
+  .brand{font-size:2.5rem}
+  .nav{gap:12px;flex-wrap:wrap;justify-content:center;max-width:960px;margin-left:auto;margin-right:auto}
+  .nav a{flex:0 0 300px!important;font-size:.9rem!important;letter-spacing:.12em!important}
+  .footer-links{gap:12px;justify-content:center;max-width:960px;margin-left:auto;margin-right:auto}
+  .footer-links a{flex:0 0 300px!important;font-size:.9rem!important;letter-spacing:.12em!important}
+  .footer-inner>div:last-child{font-size:.95rem}
+  .grid{gap:26px}
+  .grid>.card{flex:0 1 calc((100% - 52px)/3)}
+  .grid>.card.card-wide{flex:1 1 100%}
+  .filter-panel>summary{font-size:.85rem}
+  .map{height:520px}
+  .article-full,.doc-full,.legal,.home-panel,.fav-group,.ident-intro,.ident-form,.ident-note,form[data-message-form]{max-width:960px}
+  #fiche,.learn-letter,.learn-glossary,.ident-results{max-width:1000px}
+  .learn-az{max-width:620px}
+  .lead,.tagline{max-width:880px}
+  .fiche-photos img{width:min(100%,520px)}
+}
+@media(min-width:1600px){
+  html{font-size:125%}
+  main,.header-inner,.footer-inner{max-width:1360px}
+  .article-full,.doc-full,.legal,.home-panel,.fav-group,.ident-intro,.ident-form,.ident-note,form[data-message-form]{max-width:1060px}
+  #fiche,.learn-letter,.learn-glossary,.ident-results{max-width:1120px}
+}
