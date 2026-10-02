@@ -3848,5 +3848,1958 @@
   "width": 640,
   "height": 353,
   "name": "Saphir"
+ },
+ "fer-natif": {
+  "photo": "fer-natif.jpg",
+  "author": "Darla Sondrol",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Native_iron_and_magnetite_(GeoDIL_number_-_882).jpg",
+  "width": 640,
+  "height": 448
+ },
+ "mercure": {
+  "photo": "mercure.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Mercury-61215.jpg",
+  "width": 640,
+  "height": 631
+ },
+ "tellure": {
+  "photo": "tellure.jpg",
+  "author": "Solid State",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Tellurium.jpg",
+  "width": 640,
+  "height": 441
+ },
+ "moissanite": {
+  "photo": "moissanite.jpg",
+  "author": "Andrew Silver",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Moissanite-USGS-20-1002b.jpg",
+  "width": 640,
+  "height": 400
+ },
+ "electrum": {
+  "photo": "electrum.jpg",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Electrum_on_quartz_Telluride_(cropped).jpg",
+  "width": 640,
+  "height": 741
+ },
+ "alabandite": {
+  "photo": "alabandite.jpg",
+  "author": "Rock Currier",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Alabandite_-_Uchucchacua_Mine,_Oyon,_Lima,_Peru.jpg",
+  "width": 640,
+  "height": 434
+ },
+ "argyrodite": {
+  "photo": "argyrodite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Argyrodite-170093.jpg",
+  "width": 640,
+  "height": 656
+ },
+ "cubanite": {
+  "photo": "cubanite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cubanite-163273.jpg",
+  "width": 640,
+  "height": 683
+ },
+ "carrollite": {
+  "photo": "carrollite.jpg",
+  "author": "Strickja",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Carrollite02.jpg",
+  "width": 640,
+  "height": 427
+ },
+ "linnaeite": {
+  "photo": "linnaeite.jpg",
+  "author": "Joachim Esche",
+  "license": "CC BY-SA 3.0 de",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Linneit-Viktoria_M%C3%BCsen_NRW_D-4545-1-72.jpg",
+  "width": 640,
+  "height": 466
+ },
+ "greenockite": {
+  "photo": "greenockite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Greenockite-259580.jpg",
+  "width": 640,
+  "height": 665
+ },
+ "wurtzite": {
+  "photo": "wurtzite.jpg",
+  "author": "Henk Smeets – tomeikminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Wurtzite6779.jpg",
+  "width": 640,
+  "height": 427
+ },
+ "metacinabre": {
+  "photo": "metacinabre.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Metacinnabar-146931.jpg",
+  "width": 640,
+  "height": 566
+ },
+ "digenite": {
+  "photo": "digenite.jpg",
+  "author": "Strickja",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Digenite.jpg",
+  "width": 640,
+  "height": 461
+ },
+ "polybasite": {
+  "photo": "polybasite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Polybasite-tmu16b.jpg",
+  "width": 640,
+  "height": 479
+ },
+ "miargyrite": {
+  "photo": "miargyrite.jpg",
+  "author": "Maurizio Dini",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Miargyrite_and_Quartz_-_Red_Mountain,_Randsburg,_California,_USA.jpg",
+  "width": 640,
+  "height": 481
+ },
+ "freibergite": {
+  "photo": "freibergite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Freibergite.jpg",
+  "width": 640,
+  "height": 723
+ },
+ "pyrostilpnite": {
+  "photo": "pyrostilpnite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Pyrostilpnite-217330.jpg",
+  "width": 640,
+  "height": 580
+ },
+ "stromeyerite": {
+  "photo": "stromeyerite.jpg",
+  "author": "John Sobolewski (JSS)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Stromeyerite_-_Magma_Mine,_Broken_Hill,_Pinal_County,_Arizona,_USA.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "dyscrasite": {
+  "photo": "dyscrasite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Dyscrasite-22000.jpg",
+  "width": 640,
+  "height": 696
+ },
+ "rammelsbergite": {
+  "photo": "rammelsbergite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Rammelsbergite-180028.jpg",
+  "width": 640,
+  "height": 458
+ },
+ "ullmannite": {
+  "photo": "ullmannite.jpg",
+  "author": "Hectonichus",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Ullmannite_-_Mt_Narba_-_Sardinia.JPG",
+  "width": 640,
+  "height": 480
+ },
+ "cylindrite": {
+  "photo": "cylindrite.jpg",
+  "author": "Ra'ike",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cylindrite_-_San_Francisco_Mine,_Poop%C3%B3_town,_Oruro_Department,_Bolivia.JPG",
+  "width": 640,
+  "height": 452
+ },
+ "franckeite": {
+  "photo": "franckeite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Franckeite.jpg",
+  "width": 640,
+  "height": 601
+ },
+ "teallite": {
+  "photo": "teallite.jpg",
+  "author": "Ra'ike (see also: de:Benutzer:Ra'ike)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Teallit_-_Ichocollo,_Bolivien.jpg",
+  "width": 640,
+  "height": 463
+ },
+ "luzonite": {
+  "photo": "luzonite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Luzonite-Pyrite-210857.jpg",
+  "width": 640,
+  "height": 409
+ },
+ "geocronite": {
+  "photo": "geocronite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Geocronite-170116.jpg",
+  "width": 640,
+  "height": 659
+ },
+ "meneghinite": {
+  "photo": "meneghinite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Meneghinite-113674.jpg",
+  "width": 640,
+  "height": 1302
+ },
+ "violarite": {
+  "photo": "violarite.jpg",
+  "author": "Pacific Museum of Earth from Canada",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Violarite_(49055219618-cropped).jpg",
+  "width": 640,
+  "height": 686
+ },
+ "dufrenoysite": {
+  "photo": "dufrenoysite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Dufrenoysite-291315.jpg",
+  "width": 640,
+  "height": 538
+ },
+ "jordanite": {
+  "photo": "jordanite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Jordanite-460419.jpg",
+  "width": 640,
+  "height": 528
+ },
+ "sartorite": {
+  "photo": "sartorite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Sartorite-tuc1053c.jpg",
+  "width": 640,
+  "height": 715
+ },
+ "lillianite": {
+  "photo": "lillianite.jpg",
+  "author": "David Hospital",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Lillianite.jpg",
+  "width": 640,
+  "height": 519
+ },
+ "galenobismutite": {
+  "photo": "galenobismutite.jpg",
+  "author": "Ra'ike (see also: de:Benutzer:Ra'ike)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Galenobismutite_-_Vulcano_Island,_Italy.jpg",
+  "width": 640,
+  "height": 524
+ },
+ "cosalite": {
+  "photo": "cosalite.jpg",
+  "author": "Ra'ike (Wikipedia)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cosalit_-_Willroth,_Westerwald.jpg",
+  "width": 640,
+  "height": 520
+ },
+ "aikinite": {
+  "photo": "aikinite.jpg",
+  "author": "Ra'ike (see also: de:Benutzer:Ra'ike)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Aikinite_-_Beresowsk,_Ural.JPG",
+  "width": 640,
+  "height": 609
+ },
+ "emplectite": {
+  "photo": "emplectite.jpg",
+  "author": "Henk Smeets – tomeikminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Emplectite,_Chalcopyrite_Tomeik.jpg",
+  "width": 640,
+  "height": 426
+ },
+ "wittichenite": {
+  "photo": "wittichenite.jpg",
+  "author": "Ralph Bottrill",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Wittichenite-370039.jpg",
+  "width": 640,
+  "height": 481
+ },
+ "tetradymite": {
+  "photo": "tetradymite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tetradymite.jpg",
+  "width": 640,
+  "height": 409
+ },
+ "carnallite": {
+  "photo": "carnallite.jpg",
+  "author": "Miguelsierra",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Carnalita.jpg",
+  "width": 640,
+  "height": 640
+ },
+ "bromargyrite": {
+  "photo": "bromargyrite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Bromargyrite.jpg",
+  "width": 640,
+  "height": 460
+ },
+ "iodargyrite": {
+  "photo": "iodargyrite.jpg",
+  "author": "Henk Smeets – tomeikminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Iodargyrite15427-5.jpg",
+  "width": 640,
+  "height": 427
+ },
+ "sal-ammoniac": {
+  "photo": "sal-ammoniac.jpg",
+  "author": "Darla Sondrol",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Sal-ammoniac_on_basalt_(GeoDIL_number_-_188).jpg",
+  "width": 640,
+  "height": 470
+ },
+ "paratacamite": {
+  "photo": "paratacamite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Paratacamite-231241.jpg",
+  "width": 640,
+  "height": 587
+ },
+ "matlockite": {
+  "photo": "matlockite.jpg",
+  "author": "Elke Wetzig (Elya)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Matlockit_mineralogisches_museum_bonn.jpg",
+  "width": 640,
+  "height": 659
+ },
+ "laurionite": {
+  "photo": "laurionite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Laurionite.jpg",
+  "width": 640,
+  "height": 427
+ },
+ "sellaite": {
+  "photo": "sellaite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Sellaite-39033.jpg",
+  "width": 640,
+  "height": 1074
+ },
+ "bischofite": {
+  "photo": "bischofite.jpg",
+  "author": "Mampato",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Bischofite_-_Antofagasta.JPG",
+  "width": 640,
+  "height": 361
+ },
+ "nantokite": {
+  "photo": "nantokite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Nantokite-199981.jpg",
+  "width": 640,
+  "height": 530
+ },
+ "cotunnite": {
+  "photo": "cotunnite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cotunnite-896817.jpg",
+  "width": 640,
+  "height": 566
+ },
+ "calomel": {
+  "photo": "calomel.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Calomel-154907.jpg",
+  "width": 640,
+  "height": 550
+ },
+ "zincite": {
+  "photo": "zincite.jpg",
+  "author": "cobalt123",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Zincite_from_Arizona.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "tenorite": {
+  "photo": "tenorite.jpg",
+  "author": "Henk Smeets – tomeikminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tenorite_cornwallite_Clara.jpg",
+  "width": 640,
+  "height": 431
+ },
+ "perovskite": {
+  "photo": "perovskite.jpg",
+  "author": "Kelly Nash",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Perovskite_-_Perovskite_Hill,_Magnet_Cove,_Hot_Spring_Co,_Arkansas,_USA.jpg",
+  "width": 640,
+  "height": 529
+ },
+ "tantalite-fe": {
+  "photo": "tantalite-fe.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tantalite-(Fe)-236459.jpg",
+  "width": 640,
+  "height": 633
+ },
+ "pyrochlore": {
+  "photo": "pyrochlore.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Pyrochlore-114105.jpg",
+  "width": 640,
+  "height": 603
+ },
+ "microlite": {
+  "photo": "microlite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Microlite-bem-42a.jpg",
+  "width": 640,
+  "height": 532
+ },
+ "thorianite": {
+  "photo": "thorianite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Thorianite-54888.jpg",
+  "width": 640,
+  "height": 812
+ },
+ "bixbyite": {
+  "photo": "bixbyite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Bixbyite-160214.jpg",
+  "width": 640,
+  "height": 492
+ },
+ "hausmannite": {
+  "photo": "hausmannite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hausmannite-120647.jpg",
+  "width": 640,
+  "height": 656
+ },
+ "braunite": {
+  "photo": "braunite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Braunite-195641.jpg",
+  "width": 640,
+  "height": 815
+ },
+ "romanechite": {
+  "photo": "romanechite.jpg",
+  "author": "Sanjay Acharya",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Romanechite.jpg",
+  "width": 640,
+  "height": 511
+ },
+ "cryptomelane": {
+  "photo": "cryptomelane.jpg",
+  "author": "No machine-readable author provided. Kluka assumed (based on copyright claims).",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Kryptomelan2,_Maroko.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "diaspore": {
+  "photo": "diaspore.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Diaspore-md58a.jpg",
+  "width": 640,
+  "height": 1056
+ },
+ "boehmite": {
+  "photo": "boehmite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:B%C3%B6hmite-89904.jpg",
+  "width": 640,
+  "height": 514
+ },
+ "periclase": {
+  "photo": "periclase.jpg",
+  "author": "Thomas Witzke",
+  "license": "CC BY-SA 3.0 de",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Periclase_-_Ronneburg,_Thuringia1.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "jacobsite": {
+  "photo": "jacobsite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Jacobsite-cktsr-15a.jpg",
+  "width": 640,
+  "height": 504
+ },
+ "hercynite": {
+  "photo": "hercynite.jpg",
+  "author": "Fred Kruijen",
+  "license": "CC BY-SA 3.0 nl",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Hercynite-73060.jpg",
+  "width": 640,
+  "height": 479
+ },
+ "limonite": {
+  "photo": "limonite.jpg",
+  "author": "Kritzolina",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Limonite_pseudomorph_after_pyrite_01.jpg",
+  "width": 640,
+  "height": 427
+ },
+ "plattnerite": {
+  "photo": "plattnerite.jpg",
+  "author": "Henk Smeets – tomeikminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Plattnerite16346-5.jpg",
+  "width": 640,
+  "height": 426
+ },
+ "minium": {
+  "photo": "minium.jpg",
+  "author": "BXXXD at German Wikipedia (Original text: BXXXD)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Red_lead.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "massicot": {
+  "photo": "massicot.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Massicot-177334.jpg",
+  "width": 640,
+  "height": 581
+ },
+ "cervantite": {
+  "photo": "cervantite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cervantite-109568.jpg",
+  "width": 640,
+  "height": 424
+ },
+ "arsenolite": {
+  "photo": "arsenolite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Arsenolite-333170.jpg",
+  "width": 640,
+  "height": 449
+ },
+ "bismite": {
+  "photo": "bismite.jpg",
+  "author": "Photograph by Andrew Silver",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Bismite.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "tungstite": {
+  "photo": "tungstite.jpg",
+  "author": "Aram Dulyan (User:Aramgutang)",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Tungstite_on_ferberite.jpg",
+  "width": 640,
+  "height": 569
+ },
+ "molybdite": {
+  "photo": "molybdite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Molybdite-Molybdenite-233200.jpg",
+  "width": 640,
+  "height": 445
+ },
+ "delafossite": {
+  "photo": "delafossite.jpg",
+  "author": "Joan Rosell, from rosellminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Delafossite,_San_Miguel_mine.jpg",
+  "width": 640,
+  "height": 428
+ },
+ "chalcophanite": {
+  "photo": "chalcophanite.jpg",
+  "author": "Joachim Esche",
+  "license": "CC BY-SA 3.0 de",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Chalkophanit_-_Mohawk_Mine,_Mohawk_Hill,_Clark_Mountains,_California,_USA.jpg",
+  "width": 640,
+  "height": 507
+ },
+ "coronadite": {
+  "photo": "coronadite.jpg",
+  "author": "Joan Rosell",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:RM2019-Coronadita.jpg",
+  "width": 640,
+  "height": 925
+ },
+ "lithiophorite": {
+  "photo": "lithiophorite.jpg",
+  "author": "David Hospital",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Lithiophorite.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "vaterite": {
+  "photo": "vaterite.jpg",
+  "author": "Pavel M. Kartashov",
+  "license": "CC BY-SA 3.0 de",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Vaterite2-San_Vito,_Monte_Somma,_Italy.tif",
+  "width": 640,
+  "height": 480
+ },
+ "huntite": {
+  "photo": "huntite.jpg",
+  "author": "Bergminer",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Huntite.jpg",
+  "width": 640,
+  "height": 320
+ },
+ "trona": {
+  "photo": "trona.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Trona-179863.jpg",
+  "width": 640,
+  "height": 412
+ },
+ "gaylussite": {
+  "photo": "gaylussite.jpg",
+  "author": "Ra'ike (see also: de:Benutzer:Ra'ike)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Gaylussit_-_Lagunillas,_Venezuela.jpg",
+  "width": 640,
+  "height": 533
+ },
+ "hydromagnesite": {
+  "photo": "hydromagnesite.png",
+  "author": "Dr.T",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hydromagnesite.png",
+  "width": 640,
+  "height": 505
+ },
+ "bastnasite-ce": {
+  "photo": "bastnasite-ce.jpg",
+  "author": "Kouame",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Bastnaesit_Burundi.jpg",
+  "width": 640,
+  "height": 392
+ },
+ "parisite-ce": {
+  "photo": "parisite-ce.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Parisite-(Ce)-180017.jpg",
+  "width": 640,
+  "height": 736
+ },
+ "kutnohorite": {
+  "photo": "kutnohorite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Kutnohorite-122397.jpg",
+  "width": 640,
+  "height": 603
+ },
+ "otavite": {
+  "photo": "otavite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Otavite-89481.jpg",
+  "width": 640,
+  "height": 580
+ },
+ "leadhillite": {
+  "photo": "leadhillite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Leadhillite-189253.jpg",
+  "width": 640,
+  "height": 610
+ },
+ "hydrocerussite": {
+  "photo": "hydrocerussite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hydrocerussite-163774.jpg",
+  "width": 640,
+  "height": 601
+ },
+ "alstonite": {
+  "photo": "alstonite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Alstonite-Witherite-oldeuro-107a.jpg",
+  "width": 640,
+  "height": 347
+ },
+ "barytocalcite": {
+  "photo": "barytocalcite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Barytocalcite-230536.jpg",
+  "width": 640,
+  "height": 596
+ },
+ "dawsonite": {
+  "photo": "dawsonite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Dawsonite-90694.jpg",
+  "width": 640,
+  "height": 479
+ },
+ "gaspeite": {
+  "photo": "gaspeite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Gillardite-Gaspeite-160515.jpg",
+  "width": 640,
+  "height": 473
+ },
+ "sphaerocobaltite": {
+  "photo": "sphaerocobaltite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Spherocobaltite-112780.jpg",
+  "width": 640,
+  "height": 547
+ },
+ "nahcolite": {
+  "photo": "nahcolite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Halite-Nahcolite-49343.jpg",
+  "width": 640,
+  "height": 497
+ },
+ "epsomite": {
+  "photo": "epsomite.jpg",
+  "author": "WTucker (talk)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Epsomite.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "melanterite": {
+  "photo": "melanterite.jpg",
+  "author": "John Krygier",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Melanterite-322401.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "goslarite": {
+  "photo": "goslarite.jpg",
+  "author": "Copydays",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Goslarita._Gostar.Hartz,Sajonia.JPG",
+  "width": 640,
+  "height": 480
+ },
+ "antlerite": {
+  "photo": "antlerite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Antlerite-480741.jpg",
+  "width": 640,
+  "height": 557
+ },
+ "caledonite": {
+  "photo": "caledonite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Caledonite-Diaboleite-177582.jpg",
+  "width": 640,
+  "height": 538
+ },
+ "lanarkite": {
+  "photo": "lanarkite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Lanarkite-sea28b.jpg",
+  "width": 640,
+  "height": 398
+ },
+ "kieserite": {
+  "photo": "kieserite.jpg",
+  "author": "Rasbak",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Kieseriet_(Kieserite).jpg",
+  "width": 640,
+  "height": 597
+ },
+ "polyhalite": {
+  "photo": "polyhalite.jpg",
+  "author": "John Sobolewski (JSS)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Polyhalite-784531.jpg",
+  "width": 640,
+  "height": 512
+ },
+ "kainite": {
+  "photo": "kainite.jpg",
+  "author": "Thomas Witzke",
+  "license": "CC BY-SA 3.0 de",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Kainite_-_Grube_Brefeld,_Tarthun,_Sta%C3%9Ffurt,_Sachsen-Anhalt.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "glauberite": {
+  "photo": "glauberite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Glauberite-172284.jpg",
+  "width": 640,
+  "height": 754
+ },
+ "thenardite": {
+  "photo": "thenardite.jpg",
+  "author": "Dave Dyet http://www.shutterstone.com http://www.dyet.com",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Thenardite_Sodium_sulfate_near_Sodaville_Mineral_County_Nevada.jpg",
+  "width": 640,
+  "height": 640
+ },
+ "mirabilite": {
+  "photo": "mirabilite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Thenardite-Mirabilite-210778.jpg",
+  "width": 640,
+  "height": 635
+ },
+ "alunogen": {
+  "photo": "alunogen.jpg",
+  "author": "Rock Currier",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Alunogen_-_Almyras,_Agia_Varvara,_Cyprus.jpg",
+  "width": 640,
+  "height": 773
+ },
+ "copiapite": {
+  "photo": "copiapite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Copiapite-199662.jpg",
+  "width": 640,
+  "height": 653
+ },
+ "coquimbite": {
+  "photo": "coquimbite.jpg",
+  "author": "Jeffrey Hill",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Coquimbite,_Voltaite-256099.jpg",
+  "width": 640,
+  "height": 648
+ },
+ "natrojarosite": {
+  "photo": "natrojarosite.jpg",
+  "author": "Joan GarciaBadalona",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Natrojarosita,_Pedrera_Asland,_Montcada.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "plumbojarosite": {
+  "photo": "plumbojarosite.jpg",
+  "author": "John Sobolewski (JSS)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Plumbojarosite-392298.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "ettringite": {
+  "photo": "ettringite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Charlesite-Ettringite-jmix07-166a.jpg",
+  "width": 640,
+  "height": 489
+ },
+ "thaumasite": {
+  "photo": "thaumasite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Thaumasite-d06-80a.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "vauquelinite": {
+  "photo": "vauquelinite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Vauquelinite-544001.jpg",
+  "width": 640,
+  "height": 615
+ },
+ "stolzite": {
+  "photo": "stolzite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Stolzite-t07-25b.jpg",
+  "width": 640,
+  "height": 653
+ },
+ "powellite": {
+  "photo": "powellite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Powellite2.jpg",
+  "width": 640,
+  "height": 517
+ },
+ "hubnerite": {
+  "photo": "hubnerite.jpg",
+  "author": "Ivar Leidus",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:H%C3%BCbnerite_-_Pasto_Bueno,_Ancash,_Peru.jpg",
+  "width": 640,
+  "height": 684
+ },
+ "posnjakite": {
+  "photo": "posnjakite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Posnjakite-113800.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "hanksite": {
+  "photo": "hanksite.jpg",
+  "author": "Matt Affolter(QFL247) (talk) (Transferred by Citypeek/Original uploaded by Matt Affolter(QFL247))",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hanksite.JPG",
+  "width": 640,
+  "height": 427
+ },
+ "creedite": {
+  "photo": "creedite.jpg",
+  "author": "Didier Desouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Creedite_3_photo_fond.jpg",
+  "width": 640,
+  "height": 424
+ },
+ "lithiophilite": {
+  "photo": "lithiophilite.jpg",
+  "author": "Christopher Emproto",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Lithiophilite-955197.jpg",
+  "width": 640,
+  "height": 508
+ },
+ "phosphophyllite": {
+  "photo": "phosphophyllite.jpg",
+  "author": "Lua error in Module:DateI18n at line 114: attempt to index local 'tab' (a boolean value).",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Phosphophyllite-rw06a.jpg",
+  "width": 640,
+  "height": 680
+ },
+ "brazilianite": {
+  "photo": "brazilianite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Brazilianite-monocristal.jpg",
+  "width": 640,
+  "height": 657
+ },
+ "childrenite": {
+  "photo": "childrenite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Childrenite-child-12c.jpg",
+  "width": 640,
+  "height": 541
+ },
+ "eosphorite": {
+  "photo": "eosphorite.jpg",
+  "author": "Parent Géry",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:%C3%89osphorite,_quartz.jpeg",
+  "width": 640,
+  "height": 431
+ },
+ "fairfieldite": {
+  "photo": "fairfieldite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Fairfieldite-37889.jpg",
+  "width": 640,
+  "height": 756
+ },
+ "hopeite": {
+  "photo": "hopeite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hopeite_Vieille_Montagne.jpg",
+  "width": 640,
+  "height": 427
+ },
+ "tarbuttite": {
+  "photo": "tarbuttite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tarbuttite-mun08-10b.jpg",
+  "width": 640,
+  "height": 790
+ },
+ "wardite": {
+  "photo": "wardite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Wardite.jpg",
+  "width": 640,
+  "height": 759
+ },
+ "crandallite": {
+  "photo": "crandallite.jpg",
+  "author": "John Sobolewski (JSS)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Crandallite-162072.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "goyazite": {
+  "photo": "goyazite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Goyazite-283005.jpg",
+  "width": 640,
+  "height": 600
+ },
+ "gorceixite": {
+  "photo": "gorceixite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Gorceixite-20266.jpg",
+  "width": 640,
+  "height": 853
+ },
+ "cornetite": {
+  "photo": "cornetite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cornetite.jpg",
+  "width": 640,
+  "height": 507
+ },
+ "clinoclase": {
+  "photo": "clinoclase.jpg",
+  "author": "Yaiba Sakaguchi",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Clinoclase-377299.jpg",
+  "width": 640,
+  "height": 479
+ },
+ "euchroite": {
+  "photo": "euchroite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Euchroite-242668.jpg",
+  "width": 640,
+  "height": 685
+ },
+ "conichalcite": {
+  "photo": "conichalcite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Conichalcite-157162.jpg",
+  "width": 640,
+  "height": 524
+ },
+ "duftite": {
+  "photo": "duftite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Duftite-107516.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "bayldonite": {
+  "photo": "bayldonite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Bayldonite-173845.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "cacoxenite": {
+  "photo": "cacoxenite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cacoxenite-94189.jpg",
+  "width": 640,
+  "height": 488
+ },
+ "beraunite": {
+  "photo": "beraunite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Beraunite-91804.jpg",
+  "width": 640,
+  "height": 498
+ },
+ "rockbridgeite": {
+  "photo": "rockbridgeite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Phosphosiderite-Rockbridgeite-k330a.jpg",
+  "width": 640,
+  "height": 740
+ },
+ "symplesite": {
+  "photo": "symplesite.jpg",
+  "author": "David Hospital",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Symplesite.jpg",
+  "width": 640,
+  "height": 558
+ },
+ "austinite": {
+  "photo": "austinite.jpg",
+  "author": "Henk Smeets – tomeikminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Austinite_Tomeik.jpg",
+  "width": 640,
+  "height": 427
+ },
+ "tyrolite": {
+  "photo": "tyrolite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tyrolite-100003.jpg",
+  "width": 640,
+  "height": 481
+ },
+ "chalcophyllite": {
+  "photo": "chalcophyllite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Chalcophyllite-283004.jpg",
+  "width": 640,
+  "height": 681
+ },
+ "volborthite": {
+  "photo": "volborthite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Volborthite-65625.jpg",
+  "width": 640,
+  "height": 498
+ },
+ "calciovolborthite": {
+  "photo": "calciovolborthite.jpg",
+  "author": "David M. Maietta",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tangeite-434442.jpg",
+  "width": 640,
+  "height": 575
+ },
+ "pucherite": {
+  "photo": "pucherite.jpg",
+  "author": "Leon Hupperichs",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Pucherite-120507.jpg",
+  "width": 640,
+  "height": 457
+ },
+ "amblygonite": {
+  "photo": "amblygonite.jpg",
+  "author": "Mai Seppel",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Estonian_Museum_of_Natural_History_Specimen_No_202251_photo_(g27_g27-601_1_jpg).jpg",
+  "width": 640,
+  "height": 548
+ },
+ "berlinite": {
+  "photo": "berlinite.jpg",
+  "author": "David Hospital",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Blue_Berlinite.jpg",
+  "width": 640,
+  "height": 574
+ },
+ "augelite": {
+  "photo": "augelite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Augelite-78938.jpg",
+  "width": 640,
+  "height": 590
+ },
+ "vauxite": {
+  "photo": "vauxite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Vauxite-27142.jpg",
+  "width": 640,
+  "height": 535
+ },
+ "howlite": {
+  "photo": "howlite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Howlite_-_turkenite.jpg",
+  "width": 640,
+  "height": 387
+ },
+ "boracite": {
+  "photo": "boracite.jpg",
+  "author": "Elke Wetzig (Elya)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Boracit_mineralogisches_museum_bonn.jpg",
+  "width": 640,
+  "height": 386
+ },
+ "kernite": {
+  "photo": "kernite.jpg",
+  "author": "Andrew Silver",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Kernite_-_USGS_Mineral_Specimens_692.jpg",
+  "width": 640,
+  "height": 935
+ },
+ "hambergite": {
+  "photo": "hambergite.jpg",
+  "author": "Ra'ike (see also: de:Benutzer:Ra'ike)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hambergit_-_Madagaskar.jpg",
+  "width": 640,
+  "height": 472
+ },
+ "sinhalite": {
+  "photo": "sinhalite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Sinhalite-656999.jpg",
+  "width": 640,
+  "height": 618
+ },
+ "szaibelyite": {
+  "photo": "szaibelyite.jpg",
+  "author": "Henk Smeets – tomeikminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Szaib%C3%A9lyite_Brosso_Ben_4mm-9.jpg",
+  "width": 640,
+  "height": 415
+ },
+ "hydroboracite": {
+  "photo": "hydroboracite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hydroboracite-239916.jpg",
+  "width": 640,
+  "height": 585
+ },
+ "willemite": {
+  "photo": "willemite.jpg",
+  "author": "Christian Rewitzer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Willemite-130544.jpg",
+  "width": 640,
+  "height": 649
+ },
+ "chloritoide": {
+  "photo": "chloritoide.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Chloritoid-bem-12b.jpg",
+  "width": 640,
+  "height": 592
+ },
+ "monticellite": {
+  "photo": "monticellite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Monticellite-D1056b.jpg",
+  "width": 640,
+  "height": 626
+ },
+ "clinohumite": {
+  "photo": "clinohumite.jpg",
+  "author": "Zotter at English Wikipedia",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Clinohumite.jpg",
+  "width": 640,
+  "height": 598
+ },
+ "tephroite": {
+  "photo": "tephroite.jpg",
+  "author": "Modris Baum",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Tephroite_and_Willemite_-_Franklin_Mine,_Sussex_County,_New_Jersey,_USA.jpg",
+  "width": 640,
+  "height": 826
+ },
+ "thorite": {
+  "photo": "thorite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Thorite-288916.jpg",
+  "width": 640,
+  "height": 656
+ },
+ "soddyite": {
+  "photo": "soddyite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Soddyite-Swamboite-180982.jpg",
+  "width": 640,
+  "height": 498
+ },
+ "carpholite": {
+  "photo": "carpholite.jpg",
+  "author": "Sbisolo",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Carfolite.jpg",
+  "width": 640,
+  "height": 479
+ },
+ "lawsonite": {
+  "photo": "lawsonite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Lawsonite-169898.jpg",
+  "width": 640,
+  "height": 429
+ },
+ "ilvaite": {
+  "photo": "ilvaite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Ilvaite-Quartz-233498.jpg",
+  "width": 640,
+  "height": 874
+ },
+ "gehlenite": {
+  "photo": "gehlenite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Gehlenite-sea65c.jpg",
+  "width": 640,
+  "height": 647
+ },
+ "bertrandite": {
+  "photo": "bertrandite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Bertrandite-Quartz-230542.jpg",
+  "width": 640,
+  "height": 570
+ },
+ "eudialyte": {
+  "photo": "eudialyte.jpg",
+  "author": "Baryonyx at English Wikipedia",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Eudialyte.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "milarite": {
+  "photo": "milarite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Milarite-t06-12a.jpg",
+  "width": 640,
+  "height": 648
+ },
+ "cancrinite": {
+  "photo": "cancrinite.jpg",
+  "author": "Henk Smeets – tomeikminerals.com",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cancrinite1_Bellerberg_RuudKoorn-7.jpg",
+  "width": 640,
+  "height": 427
+ },
+ "nosean": {
+  "photo": "nosean.jpg",
+  "author": "Fred Kruijen",
+  "license": "CC BY-SA 3.0 nl",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Nosean_single_crystal_-_Ochtendung,_Eifel,_Germany.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "bytownite": {
+  "photo": "bytownite.jpg",
+  "author": "Manfred Mader",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Anorthit_Miyake,Japan.JPG",
+  "width": 640,
+  "height": 796
+ },
+ "petalite": {
+  "photo": "petalite.jpg",
+  "author": "Eurico Zimbres",
+  "license": "CC BY-SA 2.5",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+  "page": "https://commons.wikimedia.org/wiki/File:Petalite.jpg",
+  "width": 640,
+  "height": 481
+ },
+ "pollucite": {
+  "photo": "pollucite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Pollucite-193819.jpg",
+  "width": 640,
+  "height": 656
+ },
+ "tugtupite": {
+  "photo": "tugtupite.jpg",
+  "author": "Géry PARENT",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Tugtupite_3.JPG",
+  "width": 640,
+  "height": 425
+ },
+ "halloysite": {
+  "photo": "halloysite.jpg",
+  "author": "Dave Dyet http://www.shutterstone.com http://www.dyet.com",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Halloysite_variety_Indianaite_Hydrous_Aluminum_silicate_Bedford,_Lawrence_County,_Indiana_2770.jpg",
+  "width": 640,
+  "height": 697
+ },
+ "montmorillonite": {
+  "photo": "montmorillonite.jpg",
+  "author": "Shannon Heinle",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Montmorillonite_(GeoDIL_number_-_2341).jpg",
+  "width": 640,
+  "height": 549
+ },
+ "vermiculite": {
+  "photo": "vermiculite.jpg",
+  "author": "Auteur inconnu",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:VermiculiteUSGOV.jpg",
+  "width": 640,
+  "height": 567
+ },
+ "glauconite": {
+  "photo": "glauconite.jpg",
+  "author": "Auteur inconnu",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Mineraly.sk_-_glaukonit.jpg",
+  "width": 640,
+  "height": 376
+ },
+ "palygorskite": {
+  "photo": "palygorskite.jpg",
+  "author": "Source: http://www.mineraly.sk , permission details on sk:Wikipédia:Zdroje/mineraly Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the section entitled GNU Free Documentation License.http://www.gnu.org/copyleft/fdl.htmlGFDLGNU Free Documentation Licensetruetrue This file is licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license. You are free: to share – to copy, distribute and transmit the work to remix – to adapt the work Under the following conditions: attribution – You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use. share alike – If you remix, transform, or build upon the material, you must distribute your contributions under the same or compatible license as the original. This licensing tag was added to this file as part of the GFDL licensing update.http://creativecommons.org/licenses/by-sa/3.0/CC BY-SA 3.0Creative Commons Attribution-Share Alike 3.0truetrue This file is licensed under the Creative Commons Attribution 2.0 Generic license. You are free: to share – to copy, distribute and transmit the work to remix – to adapt the work Under the following conditions: attribution – You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use. https://creativecommons.org/licenses/by/2.0CC BY 2.0 Creative Commons Attribution 2.0 truetrue",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Mineraly.sk_-_palygorskit.jpg",
+  "width": 640,
+  "height": 376
+ },
+ "margarite": {
+  "photo": "margarite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Margarite-202074.jpg",
+  "width": 640,
+  "height": 590
+ },
+ "gyrolite": {
+  "photo": "gyrolite.jpg",
+  "author": "Ivar Leidus",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Gyrolite_-_Malad_quarry,_Mumbai,_Maharashtra,_India.jpg",
+  "width": 640,
+  "height": 512
+ },
+ "celadonite": {
+  "photo": "celadonite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Celadonite-heulanditea.jpg",
+  "width": 640,
+  "height": 679
+ },
+ "kammererite": {
+  "photo": "kammererite.jpg",
+  "author": "Géry PARENT",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Kammererite_7100.5453.jpg",
+  "width": 640,
+  "height": 471
+ },
+ "anthophyllite": {
+  "photo": "anthophyllite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Anthophyllite_Su%C3%A8de_Fond.jpg",
+  "width": 640,
+  "height": 558
+ },
+ "cummingtonite": {
+  "photo": "cummingtonite.jpg",
+  "author": "Hannes Osterhammer",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Cummingtonite_-_Dannemora_Mine,_Uppsala_L%C3%A4n,_Uppland,_Sweden.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "pargasite": {
+  "photo": "pargasite.jpg",
+  "author": "Parent Géry",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Pargasite_sur_calcite_5(Vietnam).jpg",
+  "width": 640,
+  "height": 425
+ },
+ "omphacite": {
+  "photo": "omphacite.jpg",
+  "author": "No machine-readable author provided. Woudloper assumed (based on copyright claims).",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Eclogite_Norway.jpg",
+  "width": 640,
+  "height": 480
+ },
+ "johannsenite": {
+  "photo": "johannsenite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Johannsenite-233188.jpg",
+  "width": 640,
+  "height": 563
+ },
+ "bustamite": {
+  "photo": "bustamite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Rhodonite.jpg",
+  "width": 640,
+  "height": 392
+ },
+ "serandite": {
+  "photo": "serandite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Serandite-Aegirine-20264.jpg",
+  "width": 640,
+  "height": 490
+ },
+ "sapphirine": {
+  "photo": "sapphirine.jpg",
+  "author": "Géry Parent",
+  "license": "Copyrighted free use",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Sapphirine_(Madagascar).jpg",
+  "width": 640,
+  "height": 426
+ },
+ "kornerupine": {
+  "photo": "kornerupine.jpg",
+  "author": "John Sobolewski (JSS)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Kornerupine-162065.jpg",
+  "width": 640,
+  "height": 853
+ },
+ "taaffeite": {
+  "photo": "taaffeite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Magnesiotaaffeite-2N2S-53105.jpg",
+  "width": 640,
+  "height": 557
+ },
+ "bazzite": {
+  "photo": "bazzite.jpg",
+  "author": "Joachim Esche",
+  "license": "CC BY-SA 3.0 de",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Bazzite_-_Fibbia_Ticino_Switzerland.jpg",
+  "width": 640,
+  "height": 465
+ },
+ "pentagonite": {
+  "photo": "pentagonite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Pentagonite-177805.jpg",
+  "width": 640,
+  "height": 624
+ },
+ "shattuckite": {
+  "photo": "shattuckite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Shattuckite-Calcite-244429.jpg",
+  "width": 640,
+  "height": 758
+ },
+ "plancheite": {
+  "photo": "plancheite.jpg",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Plancheite-224143.jpg",
+  "width": 640,
+  "height": 523
+ },
+ "kinoite": {
+  "photo": "kinoite.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Apophyllite-Kinoite_(0)_Fond.jpg",
+  "width": 640,
+  "height": 534
+ },
+ "charoite": {
+  "photo": "charoite.jpg",
+  "author": "derivative work: MichaelFrey (talk) Czaroit_płytka,_Rosja.jpg: Kluka",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Charoite_MFrey.jpg",
+  "width": 640,
+  "height": 394
+ },
+ "larimar": {
+  "photo": "larimar.jpg",
+  "author": "No machine-readable author provided. Vassil assumed (based on copyright claims).",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Larimar.jpg",
+  "width": 640,
+  "height": 495
+ },
+ "obsidienne": {
+  "photo": "obsidienne.jpg",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Obsidian_8.jpg",
+  "width": 640,
+  "height": 481
+ },
+ "moldavite": {
+  "photo": "moldavite.jpg",
+  "author": "H. Raab (User:Vesta)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Moldavite_Besednice.jpg",
+  "width": 640,
+  "height": 448
+ },
+ "jais": {
+  "photo": "jais.jpg",
+  "author": "Thmsfrst",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Gagat-Holzmaden.JPG",
+  "width": 640,
+  "height": 480
+ },
+ "silex": {
+  "photo": "silex.jpg",
+  "author": "Evelyn Simak",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Flint_nodule_on_foreshore_-_geograph.org.uk_-_792710.jpg",
+  "width": 640,
+  "height": 853
+ },
+ "sardoine": {
+  "photo": "sardoine.jpg",
+  "author": "Auteur inconnu",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Agate_banded_750pix.jpg",
+  "width": 640,
+  "height": 534
+ },
+ "ametrine": {
+  "photo": "ametrine.png",
+  "author": "Steven HAuse",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Ametrine_In_Palm.png",
+  "width": 640,
+  "height": 360
+ },
+ "quartz-rutile": {
+  "photo": "quartz-rutile.jpg",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Quartz_a_rutile.jpg",
+  "width": 640,
+  "height": 689
+ },
+ "lapis-lazuli": {
+  "photo": "lapis-lazuli.jpg",
+  "author": "Hannes Grobe",
+  "license": "CC BY-SA 2.5",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+  "page": "https://commons.wikimedia.org/wiki/File:Lapis-lazuli_hg.jpg",
+  "width": 640,
+  "height": 549
  }
 }
