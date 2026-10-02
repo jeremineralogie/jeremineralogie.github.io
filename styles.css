@@ -638,16 +638,17 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
   display:block;width:fit-content;max-width:100%;margin-left:auto;margin-right:auto;padding:.35em .9em;box-sizing:border-box;
   background:rgba(5,2,10,.78);border:1px solid rgba(138,77,224,.28);border-radius:6px}
 
-/* Cartes de la boutique : cadre plus haut, avec plus de place pour le nom, le gisement et le prix (cadre 977 × 1610) */
-.grid>.card.card-boutique{aspect-ratio:977/1610}
-.card-boutique::after{background-image:url("assets/decor/carte-boutique.webp")}
-.card-boutique>img,.card-boutique>.card-photo-placeholder{left:22%;top:8.8%;width:56.1%;height:43%}
+/* Cartes de la boutique : cadre 978 × 1608 (fenêtre photo 21,3–78,4 % × 9,5–52,6 %) */
+.grid>.card.card-boutique{aspect-ratio:978/1608}
+.card-boutique::after{background-image:url("assets/decor/carte-boutique-v2.webp")}
+.card-boutique>img,.card-boutique>.card-photo-placeholder{left:21.3%;top:9.5%;width:57.1%;height:43.1%}
 .card-boutique>.card-photo-placeholder{font-size:4.6cqw}
-/* Zones libres mesurées sur le cadre (hauteur 100 % = 1351 px) : prix 53,8–60,4 % ; nom 65,7–70,2 % ; gisement 70,3–73,6 % ;
-   largeur libre 24,5–75,5 %. L'ornement du bouton commence à 74,3 % : rien ne doit descendre plus bas. */
-.card.card-boutique .card-body .price{left:24.5%;right:24.5%;top:53.8%;height:6.6%;display:flex;align-items:center;justify-content:center;font-size:7.4cqw;line-height:1}
-.card.card-boutique .card-body h3{left:24.5%;right:24.5%;top:65.7%;height:4.5%;display:block;font-size:6.8cqw;line-height:1.06}
-.card.card-boutique .card-body .meta{left:24.5%;right:24.5%;top:70.3%;height:3.3%;font-size:4.8cqw;line-height:1.1}
+/* Zones libres mesurées sur le cadre (hauteur 100 % = 1348 px). Au-dessus du filet (losange à 61,4–66,8 %) : le nom du minéral
+   (53,9–58,1 %) puis le gisement ou la commune (58,2–61,0 %). Sous le filet : le prix (67,3–72,2 %), car l'ornement du bouton
+   commence à 72,6 %. Largeur libre : 25–75 %. */
+.card.card-boutique .card-body h3{left:25%;right:25%;top:53.9%;height:4.2%;display:block;font-size:6.2cqw;line-height:1.1}
+.card.card-boutique .card-body .meta{left:25%;right:25%;top:58.2%;height:2.8%;font-size:4.3cqw;line-height:1.1}
+.card.card-boutique .card-body .price{left:25%;right:25%;top:67.3%;height:4.9%;display:flex;align-items:center;justify-content:center;font-size:7cqw;line-height:1}
 
 /* ===== Affichage ordinateur (≥ 1100 px) : le téléphone n'est pas touché, tout ce bloc est réservé aux grands écrans ===== */
 @media(min-width:1100px){
