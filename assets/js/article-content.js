@@ -9,10 +9,33 @@
 export const FONTS = [
   ["", "Police par défaut"],
   ["'Cormorant Garamond', Georgia, serif", "Élégante (Cormorant)"],
+  ["'EB Garamond', Georgia, serif", "Garamond"],
+  ["'Playfair Display', Georgia, serif", "Playfair Display"],
+  ["Lora, Georgia, serif", "Lora"],
+  ["Merriweather, Georgia, serif", "Merriweather"],
   ["Georgia, 'Times New Roman', serif", "Classique (Georgia)"],
+  ["'Times New Roman', Times, serif", "Times New Roman"],
+  ["Cinzel, Georgia, serif", "Cinzel (majuscules antiques)"],
   ["Inter, system-ui, sans-serif", "Moderne (sans empattement)"],
+  ["Montserrat, Arial, sans-serif", "Montserrat"],
+  ["Poppins, Arial, sans-serif", "Poppins"],
+  ["'Open Sans', Arial, sans-serif", "Open Sans"],
+  ["Roboto, Arial, sans-serif", "Roboto"],
+  ["Oswald, Arial, sans-serif", "Oswald (condensée)"],
+  ["Arial, Helvetica, sans-serif", "Arial"],
+  ["'Dancing Script', cursive", "Manuscrite (Dancing Script)"],
+  ["'Great Vibes', cursive", "Calligraphie (Great Vibes)"],
+  ["Caveat, cursive", "Écriture à la main (Caveat)"],
   ["'Courier New', monospace", "Machine à écrire"]
 ];
+// Tailles proposées dans l'éditeur (en pixels) ; « 1em » = taille normale du texte autour.
+export const FONT_SIZES = [10, 12, 14, 16, 18, 20, 22, 24, 28, 32, 36, 42, 48, 60, 72, 96];
+const SAFE_SIZE = value => {
+  const text = String(value || "").trim();
+  if (text === "1em") return text;
+  const match = /^(\d+(?:\.\d+)?)px$/.exec(text);
+  return match && match[1] >= 10 && match[1] <= 96 ? `${match[1]}px` : null;
+};
 const ALIGNS = new Set(["left", "center", "right"]);
 const TEXT_ALIGNS = new Set([...ALIGNS, "justify"]);
 const escapeHtml = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -90,12 +113,14 @@ export function sanitizeHtml(html) {
       // span / font : on garde seulement couleur et police autorisées.
       const color = SAFE_COLOR(child.style?.color || child.getAttribute("color") || "");
       const font = SAFE_FONT((child.style?.fontFamily || child.getAttribute("face") || "").replace(/"/g, "'"));
+      const size = SAFE_SIZE(child.style?.fontSize || "");
       const bold = /^(bold|[6-9]00)$/.test(child.style?.fontWeight || "");
       const italic = child.style?.fontStyle === "italic";
-      if (color || font || bold || italic) {
+      if (color || font || size || bold || italic) {
         const span = document.createElement("span");
         if (color) span.style.color = color;
         if (font) span.style.fontFamily = font;
+        if (size) span.style.fontSize = size;
         if (bold) span.style.fontWeight = "700";
         if (italic) span.style.fontStyle = "italic";
         span.append(inner); out.append(span);
@@ -160,12 +185,14 @@ export function sanitizeRich(html, client, { editing = false } = {}) {
       }
       const color = SAFE_COLOR(child.style?.color || child.getAttribute("color") || "");
       const font = SAFE_FONT((child.style?.fontFamily || child.getAttribute("face") || "").replace(/"/g, "'"));
+      const size = SAFE_SIZE(child.style?.fontSize || "");
       const bold = /^(bold|[6-9]00)$/.test(child.style?.fontWeight || "");
       const italic = child.style?.fontStyle === "italic";
-      if (color || font || bold || italic) {
+      if (color || font || size || bold || italic) {
         const span = document.createElement("span");
         if (color) span.style.color = color;
         if (font) span.style.fontFamily = font;
+        if (size) span.style.fontSize = size;
         if (bold) span.style.fontWeight = "700";
         if (italic) span.style.fontStyle = "italic";
         span.append(clean(child)); out.append(span);

@@ -172,6 +172,7 @@ body.pick-open{overflow:hidden}
 .ce-insert{border-style:dashed;border-color:#6a37b6}
 .ce-bold{font-weight:700}.ce-italic{font-style:italic}.ce-underline{text-decoration:underline}
 .ce-font{height:34px;max-width:180px;padding:0 8px}
+.ce-fontsize{height:34px;width:84px;padding:0 6px}
 .ce-color{width:40px;height:34px;padding:2px;border:1px solid #3a2160;border-radius:8px;background:#120a1d;cursor:pointer}
 .ce-size{display:flex;align-items:center;gap:6px;font-size:.84rem;color:#dccbf7}
 .ce-size input{width:120px;padding:0}

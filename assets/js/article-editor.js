@@ -2,7 +2,7 @@
 // Images, PDF et liens s'insèrent à l'endroit du curseur, n'importe où dans le texte (même entre deux mots).
 // Une image touchée se règle (taille, position dans le texte / à gauche / centrée / à droite), se déplace
 // par glisser-déposer (ordinateur) ou avec « Déplacer » puis un toucher dans le texte (téléphone), et se pince pour changer de taille.
-import { FONTS, blocksToRichHtml, sanitizeRich } from "./article-content.js";
+import { FONTS, FONT_SIZES, blocksToRichHtml, sanitizeRich } from "./article-content.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const tool = (label, title, className = "ce-tool") => { const node = el("button", className, label); node.type = "button"; node.title = title; node.setAttribute("aria-label", title); node.addEventListener("mousedown", event => event.preventDefault()); return node; };
@@ -74,8 +74,18 @@ export function createContentEditor({ client, initial, onChange }) {
     document.execCommand("formatBlock", false, current && doc.contains(current) ? "p" : "h2"); changed();
   });
   const font = el("select", "ce-font"); font.dataset.noCombo = "1"; font.title = "Police";
-  FONTS.forEach(([value, label]) => { const option = el("option", "", label); option.value = value; font.append(option); });
+  FONTS.forEach(([value, label]) => { const option = el("option", "", label); option.value = value; if (value) option.style.fontFamily = value; font.append(option); });
   font.addEventListener("change", () => { if (font.value) exec("fontName", font.value); else exec("removeFormat"); font.value = ""; });
+  // Taille : execCommand("fontSize") ne connaît que 7 crans ; on pose le cran 7 puis on le remplace par la taille choisie en pixels.
+  const sizeSelect = el("select", "ce-fontsize"); sizeSelect.dataset.noCombo = "1"; sizeSelect.title = "Taille de la police";
+  [["", "Taille"], ["1em", "Normale"], ...FONT_SIZES.map(px => [`${px}px`, `${px}`])].forEach(([value, label]) => { const option = el("option", "", label); option.value = value; sizeSelect.append(option); });
+  sizeSelect.addEventListener("change", () => {
+    const value = sizeSelect.value; sizeSelect.value = ""; if (!value) return;
+    restore(); document.execCommand("styleWithCSS", false, false); document.execCommand("fontSize", false, "7");
+    doc.querySelectorAll('font[size="7"]').forEach(node => { const span = el("span"); span.style.fontSize = value; span.append(...node.childNodes); node.replaceWith(span); });
+    doc.querySelectorAll("span").forEach(span => { if (span.style.fontSize && /^(xxx-large|-webkit-xxx-large)$/.test(span.style.fontSize)) span.style.fontSize = value; });
+    changed();
+  });
   const color = el("input", "ce-color"); color.type = "color"; color.value = "#e6dcf5"; color.title = "Couleur du texte";
   color.addEventListener("input", () => exec("foreColor", color.value));
   const aligns = [["⇤", "left", "justifyLeft", "Aligner à gauche"], ["↔", "center", "justifyCenter", "Centrer"], ["⇥", "right", "justifyRight", "Aligner à droite"], ["☰", null, "justifyFull", "Justifier le texte"]].map(([label, position, command, title]) => {
@@ -86,8 +96,14 @@ export function createContentEditor({ client, initial, onChange }) {
   const addImage = tool("🖼 Image", "Insérer une image à l’endroit du curseur", "ce-tool ce-insert");
   const addPdf = tool("📄 PDF", "Insérer un PDF à l’endroit du curseur", "ce-tool ce-insert");
   const addLink = tool("🔗 Lien", "Insérer un lien (ou transformer le texte sélectionné en lien)", "ce-tool ce-insert");
+  const selectAll = tool("☑ Tout sélectionner", "Sélectionner tout le texte de l’article", "ce-tool ce-insert");
+  selectAll.addEventListener("click", () => {
+    doc.focus({ preventScroll: true });
+    const range = document.createRange(); range.selectNodeContents(doc);
+    const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range); saved = range.cloneRange();
+  });
   const full = tool("⛶ Plein écran", "Agrandir l’éditeur sur tout l’écran", "ce-tool ce-full");
-  bar.append(bold, italic, underline, heading, font, color, ...aligns, addImage, addPdf, addLink, full);
+  bar.append(bold, italic, underline, heading, font, sizeSelect, color, ...aligns, selectAll, addImage, addPdf, addLink, full);
 
   async function insertImageFile(file, range) {
     say("Envoi de l’image…");
