@@ -242,5 +242,7 @@ M("Quartz rutile","quartz-rutile","SiO₂ + TiO₂","Trigonal","O",(7,7),(2.65,2
 M("Lapis-lazuli","lapis-lazuli","(Na,Ca)₈(AlSiO₄)₆(S,SO₄,Cl)₁₋₂ + calcite + pyrite","Cubique","T",(5,5.5),(2.7,2.9),["bleu roi","bleu nuit","pailleté d'or"],"vitreux à terne","imparfait","bleu pâle","translucide à opaque","irrégulière","Roche massive de lazurite, calcite et pyrite.","Marbres métamorphiques (Badakhchan, Afghanistan ; Chili).","Du latin lapis (pierre) et de l'arabe lazward (bleu).","Sodalite : sans pyrite. Azurite : effervescente.","Roche bleue formée surtout de lazurite, parsemée de paillettes de pyrite, source de l'outremer des peintres.")
 M("Topazolite","topazolite","Ca₃Fe₂(SiO₄)₃","Cubique","N",(6.5,7),(3.8,3.9),["jaune","jaune vert"],"adamantin","aucun","blanc","transparent","conchoïdale","Dodécaèdres.","Fentes alpines et skarns (Val d'Ala, Piémont).","De sa ressemblance avec la topaze.","Démantoïde : plus verte.","Variété jaune d'andradite, d'un feu proche de celui du diamant.")
 
+# Fiches retirées faute de photo libre convenable.
+OUT = [m for m in OUT if m["slug"] not in {"sardonyx", "struvite", "topazolite"}]
 json.dump(OUT, open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "lot4.json"), "w"), ensure_ascii=False, indent=0)
 print(len(OUT))

@@ -6213,5 +6213,38 @@
   "height": 549,
   "thumb": "lapis-lazuli-mini.webp",
   "name": "Lapis-lazuli"
+ },
+ "ambre": {
+  "photo": "ambre.webp",
+  "thumb": "ambre-mini.webp",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Beetle_in_amber_(Amber_Formation,_Middle_Eocene;_Yantarnyi,_Samland_Peninsula_along_the_Baltic_Sea,_far-western_Russia)_(15111983330).jpg",
+  "width": 640,
+  "height": 982,
+  "name": "Ambre"
+ },
+ "silex": {
+  "photo": "silex.webp",
+  "thumb": "silex-mini.webp",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Fossiliferous_flint_masses_in_limestone_(Upper_Mercer_Limestone,_Middle_Pennsylvanian;_Rock_Cut_railroad_cut,_south-southeast_of_Dresden,_Ohio,_USA)_4_(33216477011).jpg",
+  "width": 640,
+  "height": 480,
+  "name": "Silex"
+ },
+ "tenorite": {
+  "photo": "tenorite.webp",
+  "thumb": "tenorite-mini.webp",
+  "author": "Andrew Silver",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Tenorite_-_USGS_Mineral_Specimens_1083.jpg",
+  "width": 640,
+  "height": 436,
+  "name": "Ténorite"
  }
 }

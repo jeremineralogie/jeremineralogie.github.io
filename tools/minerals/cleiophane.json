@@ -1,0 +1,26 @@
+{
+ "formula": "ZnS",
+ "crystal_system": "Cubique",
+ "chemical_class": "Sulfures et sulfosels",
+ "hardness": 3.5,
+ "hardness_max": 4,
+ "density": 3.9,
+ "density_max": 4.1,
+ "colors": [
+  "jaune pâle",
+  "incolore",
+  "vert pâle"
+ ],
+ "luster": "adamantin",
+ "cleavage": "parfait (dodécaédrique)",
+ "streak": "blanc",
+ "transparency": "transparent",
+ "fracture": "conchoïdale",
+ "fluorescence": "Parfois orangée aux UV (traces de manganèse).",
+ "habit": "Cristaux limpides tétraédriques, masses clivables.",
+ "formation": "Filons de zinc pauvres en fer et pegmatites (Franklin, Picos de Europa, Alpes).",
+ "etymology": "Du grec kleiô (je ferme) et phainesthai (paraître) : il paraît cacher sa clarté, à cause de sa limpidité trompeuse.",
+ "varieties": "Variété presque pure de sphalérite, quasi incolore (jusqu'à 0,1 % de fer).",
+ "confusions": "Diamant : plus dur. Zircon : plus dense et plus dur. Quartz : sans clivage.",
+ "description": "Sphalérite presque incolore, pauvre en fer, d'une limpidité rare ; taillée, elle égale le diamant par son éclat mais reste très tendre."
+}

@@ -8890,34 +8890,6 @@
 "description": "Phosphate de fer vert sombre en croûtes mamelonnées."
 },
 {
-"name": "Struvite",
-"slug": "struvite",
-"formula": "NH₄MgPO₄·6H₂O",
-"crystal_system": "Orthorhombique",
-"chemical_class": "Phosphates, arséniates et vanadates",
-"hardness": 1.5,
-"hardness_max": 2,
-"density": 1.7,
-"density_max": 1.7,
-"colors": [
-"incolore",
-"jaune",
-"brun"
-],
-"luster": "vitreux",
-"cleavage": "parfait",
-"streak": "blanc",
-"transparency": "transparent à translucide",
-"fracture": "conchoïdale",
-"fluorescence": null,
-"habit": "Cristaux en coin, croûtes.",
-"formation": "Guano, grottes à chauves-souris, calculs urinaires.",
-"etymology": "De Heinrich von Struve (1772-1851), diplomate russe.",
-"varieties": null,
-"confusions": "Gypse : sans ammonium.",
-"description": "Phosphate d'ammonium et magnésium des guanos et de certains calculs."
-},
-{
 "name": "Symplésite",
 "slug": "symplesite",
 "formula": "Fe₃(AsO₄)₂·8H₂O",
@@ -10855,33 +10827,6 @@
 "description": "Calcédoine brune translucide, sœur de la cornaline."
 },
 {
-"name": "Sardonyx",
-"slug": "sardonyx",
-"formula": "SiO₂",
-"crystal_system": "Trigonal",
-"chemical_class": "Oxydes et hydroxydes",
-"hardness": 6.5,
-"hardness_max": 7,
-"density": 2.6,
-"density_max": 2.65,
-"colors": [
-"brun rouge et blanc",
-"bandes brun et blanc"
-],
-"luster": "cireux",
-"cleavage": "aucun",
-"streak": "blanc",
-"transparency": "translucide",
-"fracture": "conchoïdale",
-"fluorescence": null,
-"habit": "Plaques à bandes parallèles brun rouge et blanches.",
-"formation": "Laves (Brésil, Inde).",
-"etymology": "Du grec sardios (sardoine) et onyx.",
-"varieties": null,
-"confusions": "Onyx : noir et blanc.",
-"description": "Onyx à bandes brun rouge et blanches, gravé en camées."
-},
-{
 "name": "Améthrine",
 "slug": "ametrine",
 "formula": "SiO₂",
@@ -10962,32 +10907,5 @@
 "varieties": null,
 "confusions": "Sodalite : sans pyrite. Azurite : effervescente.",
 "description": "Roche bleue formée surtout de lazurite, parsemée de paillettes de pyrite, source de l'outremer des peintres."
-},
-{
-"name": "Topazolite",
-"slug": "topazolite",
-"formula": "Ca₃Fe₂(SiO₄)₃",
-"crystal_system": "Cubique",
-"chemical_class": "Silicates (nésosilicates)",
-"hardness": 6.5,
-"hardness_max": 7,
-"density": 3.8,
-"density_max": 3.9,
-"colors": [
-"jaune",
-"jaune vert"
-],
-"luster": "adamantin",
-"cleavage": "aucun",
-"streak": "blanc",
-"transparency": "transparent",
-"fracture": "conchoïdale",
-"fluorescence": null,
-"habit": "Dodécaèdres.",
-"formation": "Fentes alpines et skarns (Val d'Ala, Piémont).",
-"etymology": "De sa ressemblance avec la topaze.",
-"varieties": null,
-"confusions": "Démantoïde : plus verte.",
-"description": "Variété jaune d'andradite, d'un feu proche de celui du diamant."
 }
 ]
