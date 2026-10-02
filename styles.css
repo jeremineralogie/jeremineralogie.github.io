@@ -632,6 +632,9 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 /* Texte justifié propre : césure française (Safari compris), espacement des mots limité, dernière ligne à gauche */
 :is(.article-full,.doc-full) :is(p,h2,h3,div,li)[style*="justify"]{text-align:justify;text-justify:inter-word;-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 2;-webkit-hyphenate-limit-before:3;-webkit-hyphenate-limit-after:2;overflow-wrap:normal;word-break:normal;text-wrap:pretty;text-align-last:left}
 
+/* Voile sombre sous le contenu de toutes les pages publiques : le texte ne repose plus directement sur le fond damassé */
+body:not(.admin-page) main{background:rgba(5,2,10,.78);border:1px solid #3a1d63;border-radius:6px;box-shadow:0 0 40px -14px rgba(0,0,0,.9);width:calc(100% - 20px);margin-top:16px;margin-bottom:28px;padding-top:6px}
+
 /* ===== Affichage ordinateur (≥ 1100 px) : le téléphone n'est pas touché, tout ce bloc est réservé aux grands écrans ===== */
 @media(min-width:1100px){
   html{font-size:112.5%}
