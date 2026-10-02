@@ -638,6 +638,15 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
   display:block;width:fit-content;max-width:100%;margin-left:auto;margin-right:auto;padding:.35em .9em;box-sizing:border-box;
   background:rgba(5,2,10,.78);border:1px solid rgba(138,77,224,.28);border-radius:6px}
 
+/* Cartes de la boutique : cadre plus haut, avec plus de place pour le nom, le gisement et le prix (cadre 977 × 1610) */
+.grid>.card.card-boutique{aspect-ratio:977/1610}
+.card-boutique::after{background-image:url("assets/decor/carte-boutique.webp")}
+.card-boutique>img,.card-boutique>.card-photo-placeholder{left:22%;top:8.8%;width:56.1%;height:43%}
+.card-boutique>.card-photo-placeholder{font-size:4.6cqw}
+.card.card-boutique .card-body h3{left:19%;right:19%;top:54.6%;height:auto;font-size:6.2cqw;line-height:1.15}
+.card.card-boutique .card-body .meta{left:19%;right:19%;top:57.9%;height:auto;font-size:4.2cqw;line-height:1.2}
+.card.card-boutique .card-body .price{left:19%;right:19%;top:67.6%;height:6%;display:flex;align-items:center;justify-content:center;font-size:6.4cqw;line-height:1}
+
 /* ===== Affichage ordinateur (≥ 1100 px) : le téléphone n'est pas touché, tout ce bloc est réservé aux grands écrans ===== */
 @media(min-width:1100px){
   html{font-size:112.5%}

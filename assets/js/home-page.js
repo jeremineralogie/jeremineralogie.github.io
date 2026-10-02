@@ -21,7 +21,7 @@ function cardPhoto(card, url, alt) {
   else { const placeholder = el("div", "card-photo-placeholder", "Photographie à ajouter"); placeholder.setAttribute("role", "img"); card.append(placeholder); }
 }
 function shopCard(item) {
-  const card = el("a", "card"); card.href = pieceUrl(item);
+  const card = el("a", "card card-boutique"); card.href = pieceUrl(item);
   const photo = firstPhoto(item.media);
   cardPhoto(card, photo && publicMediaUrl(client, photo), shopItemName(item));
   const body = el("div", "card-body");

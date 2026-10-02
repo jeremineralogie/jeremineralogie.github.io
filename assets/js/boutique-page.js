@@ -31,7 +31,7 @@ function render() {
   count.textContent = `${visible.length} spécimen${visible.length === 1 ? "" : "s"}`;
   empty.hidden = visible.length > 0;
   visible.forEach(item => {
-    const card = document.createElement("a"); card.className = "card"; card.href = pieceUrl(item);
+    const card = document.createElement("a"); card.className = "card card-boutique"; card.href = pieceUrl(item);
     const photo = (item.media || []).filter(media => media.bucket_id === "site-media-public").sort((a, b) => a.position - b.position)[0];
     if (photo) { const image = document.createElement("img"); image.src = publicMediaUrl(client, photo); image.alt = photo.alt_text || shopItemName(item); card.append(image); }
     else { const placeholder = document.createElement("div"); placeholder.className = "card-photo-placeholder"; placeholder.textContent = "Photographie à ajouter"; placeholder.setAttribute("role", "img"); card.append(placeholder); }
