@@ -9,6 +9,9 @@ const round = value => Math.round(value * 1e6) / 1e6;
 
 async function startView(target) {
   if (target.latitude != null && target.longitude != null) return { center: [target.latitude, target.longitude], zoom: 14 };
+  // Gisement sans point : on part de sa commune (centre connu, sinon recherche par le nom de la commune).
+  if (target.startLatitude != null && target.startLongitude != null) return { center: [target.startLatitude, target.startLongitude], zoom: 13 };
+  if (target.search) target = { ...target, name: target.search };
   if (!target.name) return null;
   const foreign = target.department && !isFrenchCode(target.department);
   try {
@@ -32,7 +35,7 @@ export async function pickPoint(target) {
     const title = document.createElement("strong"); title.textContent = `📍 ${target.name || "Nouveau lieu"}`;
     const help = document.createElement("span"); help.textContent = "Touchez la carte à l’endroit exact, puis faites glisser le point pour l’ajuster.";
     const finder = document.createElement("form"); finder.className = "pick-search";
-    const query = document.createElement("input"); query.type = "search"; query.placeholder = "Chercher un lieu dans le monde (ville, pays…)"; query.value = target.name || ""; query.setAttribute("aria-label", "Chercher un lieu dans le monde");
+    const query = document.createElement("input"); query.type = "search"; query.placeholder = "Chercher un lieu dans le monde (ville, pays…)"; query.value = target.search || target.name || ""; query.setAttribute("aria-label", "Chercher un lieu dans le monde");
     const go = document.createElement("button"); go.type = "submit"; go.className = "admin-secondary"; go.textContent = "Chercher";
     const found = document.createElement("div"); found.className = "pick-results";
     finder.append(query, go);
@@ -119,11 +122,14 @@ export function createPointTool(getTargets) {
       const state = document.createElement("span");
       const manual = pending.get(target.key);
       const located = target.latitude != null && target.longitude != null;
-      if (manual) { state.className = "point-state is-manual"; state.textContent = `${target.name} : point posé à la main (${manual.latitude.toFixed(5)}, ${manual.longitude.toFixed(5)}), enregistré avec la fiche.`; }
-      else if (located) { state.className = "point-state is-ok"; state.textContent = `${target.name} : placée sur la carte ✓`; }
+      const mine = target.table === "mines";
+      const where = mine && target.commune ? ` (commune : ${target.commune})` : "";
+      if (manual) { state.className = "point-state is-manual"; state.textContent = `${mine ? "Gisement " : ""}${target.name}${where} : point posé à la main (${manual.latitude.toFixed(5)}, ${manual.longitude.toFixed(5)}), enregistré avec la fiche.`; }
+      else if (located) { state.className = "point-state is-ok"; state.textContent = mine ? `Gisement ${target.name}${where} : placé sur la carte ✓` : `${target.name} : placée sur la carte ✓`; }
+      else if (mine) { state.className = "point-state is-missing"; state.textContent = `Le gisement ${target.name}${where} n’a pas encore de point. Posez-le : la carte s’ouvre sur la commune.`; }
       else { state.className = "point-state is-missing"; state.textContent = target.id ? `${target.name} n’est pas encore sur la carte. Elle sera cherchée automatiquement à l’enregistrement, ou posez le point vous-même.` : `Nouvelle commune « ${target.name} » : elle sera cherchée automatiquement à l’enregistrement, ou posez le point vous-même.`; }
       const button = document.createElement("button"); button.type = "button"; button.className = "admin-secondary";
-      button.textContent = manual || located ? "Déplacer le point" : "📍 Poser le point sur la carte";
+      button.textContent = manual || located ? "Déplacer le point" : mine ? "📍 Poser le point du gisement" : "📍 Poser le point sur la carte";
       button.addEventListener("click", async () => {
         button.disabled = true;
         try {
@@ -146,14 +152,15 @@ export function createPointTool(getTargets) {
 
 export const pointKey = (id, name) => id ? `id:${id}` : `new:${fold(name)}`;
 
-// Enregistre les points posés à la main. resolveId(target) renvoie l'identifiant de la commune une fois la fiche enregistrée.
+// Enregistre les points posés à la main (commune, ou gisement si target.table = « mines »).
+// resolveId(target) renvoie l'identifiant de la commune ou du gisement une fois la fiche enregistrée.
 export async function savePendingPoints(client, tool, targets, resolveId) {
   const errors = [];
   for (const target of targets) {
     const point = tool.pending.get(target.key);
     const id = point && await resolveId(target);
     if (!id) continue;
-    const { error } = await client.from("localities").update({ latitude: point.latitude, longitude: point.longitude }).eq("id", id);
+    const { error } = await client.from(target.table || "localities").update({ latitude: point.latitude, longitude: point.longitude }).eq("id", id);
     if (error) errors.push(`${target.name} : ${error.message}`);
   }
   if (errors.length) throw new Error(`Point non enregistré pour ${errors.join(" ; ")}`);

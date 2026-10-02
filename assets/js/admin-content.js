@@ -89,7 +89,7 @@ const sections = [
   { id: "regions", label: "Régions", table: "regions", title: "Régions", fields: [{ key: "name", label: "Nom", required: true }] },
   { id: "departments", label: "Départements", table: "departments", title: "Départements", fields: [{ key: "code", label: "Code (identifiant)", required: true }, { key: "name", label: "Nom", required: true }, { key: "region_id", label: "Région", ref: "regions", display: "name" }] },
   { id: "localities", label: "Communes", table: "localities", title: "Communes", fields: [{ key: "name", label: "Nom", required: true }, { key: "department_code", label: "Département", ref: "departments", display: "name", value: "code" }, { key: "postal_code", label: "Code postal" }, { key: "insee_code", label: "Code INSEE" }, { key: "latitude", label: "Latitude", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude", type: "number", step: "0.000001" }, { key: "notes", label: "Notes", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
-  { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
+  { id: "mines", label: "Mines & gisements", table: "mines", title: "Mines & gisements", fields: [{ key: "name", label: "Nom", required: true }, { key: "locality_id", label: "Commune", ref: "localities", display: "name" }, { key: "latitude", label: "Latitude du gisement", type: "number", step: "0.000001" }, { key: "longitude", label: "Longitude du gisement", type: "number", step: "0.000001" }, { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }] },
   { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral (fiches Apprendre)", mediaTable: "mineral_media", foreignKey: "mineral_id", path: "minerals", mediaAfter: "etymology", fields: [
     { key: "name", label: "Nom", required: true }, { key: "formula", label: "Formule chimique (ex. CaCO₃)" },
     { key: "chemical_class", label: "Famille chimique", type: "select", customOptions: true, options: MINERAL_CLASSES.map(value => [value, value]) },
@@ -268,7 +268,7 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,latitude,longitude,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
     const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" || table === "archive_documents" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
@@ -357,6 +357,7 @@ function buildEditorPanel() {
   if (activeSection.autoReference && !selectedRecord) wireAutoReference(form);
   wireGeoAutofill(form);
   if (activeSection.id === "localities") addLocateTool(form);
+  else if (activeSection.id === "mines") addMinePointTool(form);
   else addPointTool(form);
   if ((activeSection.mediaTable || activeSection.singleFile) && !activeSection.mediaFirst && !activeSection.mediaAfter) appendMediaControls(form);
   const actions = document.createElement("div"); actions.className = "admin-actions";
@@ -633,7 +634,7 @@ async function saveRecord(form) {
       databaseSaved = true;
       report("Fiche enregistrée. Traitement des médias…");
       if (section.links) await saveLinks(saved, form);
-      if (pointTargets.length) await savePendingPoints(client, pointTool, pointTargets, target => target.id || (saved.locality_id && !form.elements.namedItem("link_localities") ? saved.locality_id : resolvedLocalities.get(normalizeName(target.name))));
+      if (pointTargets.length) await savePendingPoints(client, pointTool, pointTargets, target => target.id || (target.table === "mines" ? saved.mine_id : null) || (target.table !== "mines" && saved.locality_id && !form.elements.namedItem("link_localities") ? saved.locality_id : resolvedLocalities.get(normalizeName(target.name))));
       if (section.mediaTable) await uploadMedia(saved);
       if (section.singleFile) await saveArchiveFile(saved, current);
       if (section.mediaTable && current && current.publication_status !== saved.publication_status) await syncMedia(saved);
@@ -725,6 +726,45 @@ function addLocateTool(form) {
   });
 }
 
+// Gisements : point propre sur la carte, posé à la main (plusieurs gisements d'une même commune = plusieurs points).
+// Sans point, le gisement s'affiche au point de sa commune. La carte s'ouvre sur la commune pour viser plus vite.
+function addMinePointTool(form) {
+  pointTool = null;
+  const field = key => form.elements.namedItem(key);
+  const number = key => { const raw = field(key)?.value; const value = Number(raw); return raw !== "" && raw != null && Number.isFinite(value) ? value : null; };
+  const box = document.createElement("div"); box.className = "point-tool";
+  const row = document.createElement("div"); row.className = "point-row";
+  const state = document.createElement("span");
+  const place = document.createElement("button"); place.type = "button"; place.className = "admin-secondary";
+  const clear = document.createElement("button"); clear.type = "button"; clear.className = "admin-secondary"; clear.textContent = "Retirer le point";
+  row.append(state, place, clear); box.append(row);
+  const commune = () => (refs.localities || []).find(item => String(item.id) === String(field("locality_id")?.value));
+  const refresh = () => {
+    const located = number("latitude") != null && number("longitude") != null;
+    const town = commune();
+    state.className = `point-state ${located ? "is-ok" : "is-missing"}`;
+    state.textContent = located ? `Gisement placé sur la carte (${number("latitude").toFixed(5)}, ${number("longitude").toFixed(5)}).`
+      : town ? `Pas encore de point propre : le gisement apparaît au point de la commune ${town.name}. Posez son point pour le distinguer des autres gisements de la commune.`
+      : "Pas encore de point : choisissez la commune ou posez le point du gisement sur la carte.";
+    place.textContent = located ? "Déplacer le point du gisement" : "📍 Poser le point du gisement sur la carte";
+    clear.hidden = !located;
+  };
+  place.addEventListener("click", async () => {
+    const town = commune();
+    place.disabled = true;
+    try {
+      const start = number("latitude") != null ? { latitude: number("latitude"), longitude: number("longitude") } : { latitude: town?.latitude ?? null, longitude: town?.longitude ?? null };
+      const point = await pickPoint({ name: field("name")?.value.trim() || town?.name || "", department: town?.department_code || "", ...start });
+      if (point) { field("latitude").value = point.latitude; field("longitude").value = point.longitude; }
+    } catch (error) { state.textContent = error.message; }
+    place.disabled = false; refresh();
+  });
+  clear.addEventListener("click", () => { field("latitude").value = ""; field("longitude").value = ""; refresh(); });
+  (field("latitude")?.closest("div") || form.lastElementChild)?.before(box);
+  form.addEventListener("change", refresh); form.addEventListener("input", refresh);
+  refresh();
+}
+
 // Fiches liées à une commune : position sur la carte posable à la main sous le champ « Localité ».
 function addPointTool(form) {
   pointTool = null;
@@ -738,9 +778,27 @@ function addPointTool(form) {
     return known && { key: pointKey(known.id), id: known.id, name: known.name, department: department() || known.department_code, latitude: known.latitude, longitude: known.longitude };
   };
   const typed = name => ({ key: pointKey(null, name), id: null, name, department: department() });
+  // Fiche avec un gisement : le point posé est celui du gisement (un point par gisement), rattaché à la commune.
+  // La carte s'ouvre sur la commune, car les gisements sont trop précis pour être trouvés par leur nom.
+  const mineField = form.elements.namedItem("mine_id");
+  const mineTarget = commune => {
+    if (!mineField?.value) return null;
+    const typedName = mineField.value === OTHER ? text(form.elements.namedItem("mine_id__other")?.value) : "";
+    const known = typedName ? null : (refs.mines || []).find(item => String(item.id) === String(mineField.value));
+    const name = typedName || known?.plainName || known?.name;
+    if (!name) return null;
+    return { key: known ? `mine:${known.id}` : `mine-new:${normalizeName(name)}`, table: "mines", id: known?.id || null, name, commune: commune?.name || "",
+      search: commune?.name || "", department: commune?.department || department(), latitude: known?.latitude ?? null, longitude: known?.longitude ?? null,
+      startLatitude: commune?.latitude ?? null, startLongitude: commune?.longitude ?? null };
+  };
   const targets = () => {
     const other = text(form.elements.namedItem(`${select.name}__other`)?.value);
-    if (single) return single.value === OTHER ? (other ? [typed(other)] : []) : [fromRef(single.value)].filter(Boolean);
+    if (single) {
+      const commune = single.value === OTHER ? (other ? typed(other) : null) : fromRef(single.value);
+      const mine = mineTarget(commune);
+      if (mine) return [mine];
+      return commune ? [commune] : [];
+    }
     return [...[...multi.selectedOptions].map(option => fromRef(option.value)).filter(Boolean), ...other.split(",").map(part => part.trim()).filter(Boolean).map(typed)];
   };
   const tool = createPointTool(targets);

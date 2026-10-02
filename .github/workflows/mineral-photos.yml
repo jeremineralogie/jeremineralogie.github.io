@@ -7,10 +7,14 @@ on:
   workflow_dispatch:   # lancement manuel uniquement (onglet Actions de GitHub)
     inputs:
       liste:
-        description: "fiches (déjà dans Supabase) ou nouveaux (tools/minerals/nouveaux-mineraux.json)"
+        description: "fiches (déjà dans Supabase), nouveaux (tools/minerals/nouveaux-mineraux.json) ou candidats (plusieurs photos au choix)"
         type: choice
-        options: [fiches, nouveaux]
+        options: [fiches, nouveaux, candidats]
         default: fiches
+      candidats:
+        description: "Pour « candidats » : slug:recherche séparés par | (ex. rubis:ruby crystal)"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -30,12 +34,14 @@ jobs:
       - name: Chercher une photo libre par fiche minéral
         env:
           LISTE: ${{ inputs.liste }}
-        run: node tools/images/find-mineral-photos.mjs
+          CANDIDATS: ${{ inputs.candidats }}
+        run: if [ "$LISTE" = "candidats" ]; then node tools/images/candidate-photos.mjs; else node tools/images/find-mineral-photos.mjs; fi
       - name: Enregistrer la proposition sur la branche
         run: |
-          git add tools/images/proposition*.json tools/images/proposition*.html
+          git add tools/images/proposition*.json tools/images/proposition*.html; [ -d tools/images/candidats ] && git add tools/images/candidats
           if git diff --cached --quiet; then echo "Aucun changement."; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Photos libres : proposition à relire (aucune publication)"
+          git pull --rebase origin ${{ github.ref_name }}
           git push origin HEAD:${{ github.ref_name }}

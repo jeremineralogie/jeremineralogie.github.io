@@ -23,7 +23,15 @@ const SEARCH = {
   rosedefer: ["iron rose", "en"], columbitefe: ["columbite-(Fe)", "en"]
 };
 // Dernier recours : recherche directe de fichiers sur Commons (variétés absentes de Wikidata) ; résultat à vérifier.
-const COMMONS_QUERY = { chessylite: "azurite Chessy", rosedefer: "hematite rose", quincyte: "quincyte opal", menilite: "menilite opal", pyreneite: "andradite Pyrénées" };
+const COMMONS_QUERY = {
+  fernatif: "native iron meteorite", mercurenatif: "native mercury droplets", tellurenatif: "native tellurium", selammoniac: "sal ammoniac crystals", limonite: "limonite", electrum: "electrum gold silver",
+  obsidienne: "obsidian", silex: "flint nodule", ambre: "amber", jais: "jet gemstone", quartzrutile: "rutilated quartz", lapislazuli: "lapis lazuli", topazolite: "topazolite", amethrine: "ametrine", sardonyx: "sardonyx",
+  larimar: "larimar", moldavite: "moldavite", moissanite: "moissanite", howlite: "howlite", charoite: "charoite", vermiculite: "vermiculite mineral", montmorillonite: "montmorillonite clay", glauconite: "glauconite",
+  chessylite: "azurite Chessy", rosedefer: "hematite rose", quincyte: "quincyte opal", menilite: "menilite opal", pyreneite: "andradite Pyrénées",
+  tourmalinemelondeau: "watermelon tourmaline", spathdislande: "Iceland spar calcite", rosedessables: "desert rose gypsum", opaledefeu: "fire opal",
+  opalenoble: "precious opal", pierredelune: "moonstone feldspar", pierredesoleil: "sunstone feldspar", quartzfume: "smoky quartz crystal",
+  quartzrose: "rose quartz", cristalderoche: "rock crystal quartz", diopsidechromifere: "chrome diopside", oeildetigre: "tiger's eye"
+};
 const fold = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const esc = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -40,7 +48,11 @@ async function json(url) {
 }
 
 async function minerals() {
-  if (NEW_LIST) return JSON.parse(await readFile(path.join(ROOT, "tools/minerals/nouveaux-mineraux.json"), "utf8")).map(({ slug, name, formula }) => ({ slug, name, formula }));
+  if (NEW_LIST) {
+    // Seules les fiches qui n'ont pas encore de photo libre sont cherchées.
+    const credits = JSON.parse(await readFile(path.join(ROOT, "assets/mineraux-photos/credits.json"), "utf8"));
+    return JSON.parse(await readFile(path.join(ROOT, "tools/minerals/nouveaux-mineraux.json"), "utf8")).filter(({ slug }) => !credits[slug]).map(({ slug, name, formula }) => ({ slug, name, formula }));
+  }
   const source = await readFile(path.join(ROOT, "assets/js/supabase-config.js"), "utf8");
   const url = /url:\s*"([^"]+)"/.exec(source)[1], key = /publishableKey:\s*"([^"]+)"/.exec(source)[1];
   const response = await fetch(`${url}/rest/v1/minerals?select=slug,name,formula&publication_status=eq.published&order=name`, { headers: { apikey: key } });
