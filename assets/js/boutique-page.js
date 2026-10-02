@@ -1,3 +1,4 @@
+import { fitCardText } from "./card-fit.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError, watchContent } from "./content-repository.js";
 import { pieceUrl } from "./detail-nav.js";
 import { bindFilterPanel, fillFilterOptions } from "./filter-panel.js";
@@ -41,7 +42,7 @@ function render() {
     meta.textContent = item.mine?.name || item.provenance || item.locality_name || item.locality?.name || ""; body.append(meta);
     const price = document.createElement("div"); price.className = "price"; price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100); body.append(price);
     const more = document.createElement("div"); more.className = "more"; more.textContent = "Voir la fiche"; body.append(more);
-    card.append(body); grid.append(card);
+    card.append(body); grid.append(card); fitCardText(card);
   });
 }
 

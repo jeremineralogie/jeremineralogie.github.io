@@ -1,3 +1,4 @@
+import { fitCardText } from "./card-fit.js";
 import { getSupabase } from "./supabase-client.js";
 import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, articleUrl, documentUrl, specimenUrl } from "./detail-nav.js";
@@ -27,7 +28,7 @@ function shopCard(item) {
   const body = el("div", "card-body");
   body.append(el("h3", "", shopItemName(item)), el("div", "meta", item.mine?.name || item.provenance || item.locality_name || item.locality?.name || ""),
     el("div", "price", new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format((item.price_cents ?? 0) / 100)), el("div", "more", "Voir la fiche"));
-  card.append(body); return card;
+  card.append(body); queueMicrotask(() => fitCardText(card)); return card;
 }
 function specimenCard(row) {
   const card = el("a", "card card-specimen"); card.href = specimenUrl({ id: row.slug });
