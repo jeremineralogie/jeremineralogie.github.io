@@ -24,6 +24,9 @@ const SEARCH = {
 };
 // Dernier recours : recherche directe de fichiers sur Commons (variétés absentes de Wikidata) ; résultat à vérifier.
 const COMMONS_QUERY = {
+  fernatif: "native iron meteorite", mercurenatif: "native mercury droplets", tellurenatif: "native tellurium", selammoniac: "sal ammoniac crystals", limonite: "limonite", electrum: "electrum gold silver",
+  obsidienne: "obsidian", silex: "flint nodule", ambre: "amber", jais: "jet gemstone", quartzrutile: "rutilated quartz", lapislazuli: "lapis lazuli", topazolite: "topazolite", amethrine: "ametrine", sardonyx: "sardonyx",
+  larimar: "larimar", moldavite: "moldavite", moissanite: "moissanite", howlite: "howlite", charoite: "charoite", vermiculite: "vermiculite mineral", montmorillonite: "montmorillonite clay", glauconite: "glauconite",
   chessylite: "azurite Chessy", rosedefer: "hematite rose", quincyte: "quincyte opal", menilite: "menilite opal", pyreneite: "andradite Pyrénées",
   tourmalinemelondeau: "watermelon tourmaline", spathdislande: "Iceland spar calcite", rosedessables: "desert rose gypsum", opaledefeu: "fire opal",
   opalenoble: "precious opal", pierredelune: "moonstone feldspar", pierredesoleil: "sunstone feldspar", quartzfume: "smoky quartz crystal",
