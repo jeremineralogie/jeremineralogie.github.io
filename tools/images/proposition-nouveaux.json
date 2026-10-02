@@ -3644,8 +3644,8 @@
         "attributionRequired": true,
         "origin": "wikipedia-fr"
       },
-      "status": "trouvee",
-      "note": "Correspondance approchée : « struvite-(K) ». "
+      "status": "rejetee",
+      "note": "Correspondance approchée : « struvite-(K) ». Écartée à la relecture : installation de traitement de lisier."
     },
     {
       "slug": "symplesite",
@@ -5303,8 +5303,8 @@
         "attributionRequired": true,
         "origin": "recherche-commons"
       },
-      "status": "trouvee",
-      "note": "Trouvée par recherche sur Commons : vérifier que c'est bien ce minéral. "
+      "status": "rejetee",
+      "note": "Trouvée par recherche sur Commons : vérifier que c'est bien ce minéral. Écartée à la relecture : photo d’un caméléon."
     },
     {
       "slug": "jais",
@@ -5403,8 +5403,8 @@
         "attributionRequired": true,
         "origin": "recherche-commons"
       },
-      "status": "trouvee",
-      "note": "Trouvée par recherche sur Commons : vérifier que c'est bien ce minéral. "
+      "status": "rejetee",
+      "note": "Trouvée par recherche sur Commons : vérifier que c'est bien ce minéral. Écartée à la relecture : photo d’une guitare."
     },
     {
       "slug": "ametrine",
@@ -5495,8 +5495,8 @@
         "attributionRequired": true,
         "origin": "recherche-commons"
       },
-      "status": "trouvee",
-      "note": "Trouvée par recherche sur Commons : vérifier que c'est bien ce minéral. "
+      "status": "rejetee",
+      "note": "Trouvée par recherche sur Commons : vérifier que c'est bien ce minéral. Écartée à la relecture : même photo que la mélanite, pas de la topazolite."
     }
   ]
 }
