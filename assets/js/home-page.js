@@ -25,7 +25,7 @@ function shopCard(item) {
   const photo = firstPhoto(item.media);
   cardPhoto(card, photo && publicMediaUrl(client, photo), shopItemName(item));
   const body = el("div", "card-body");
-  body.append(el("h3", "", shopItemName(item)), el("div", "meta", item.mine?.name || item.provenance || ""),
+  body.append(el("h3", "", shopItemName(item)), el("div", "meta", item.mine?.name || item.provenance || item.locality_name || item.locality?.name || ""),
     el("div", "price", new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format((item.price_cents ?? 0) / 100)), el("div", "more", "Voir la fiche"));
   card.append(body); return card;
 }
@@ -118,7 +118,7 @@ async function load() {
   const rows = async query => { const { data, error } = await query; if (error) throw error; return data || []; };
   const total = async query => { const { count, error } = await query; if (error) throw error; return count || 0; };
   const [shop, specimens, articles, archives, minerals, counts, communes] = await Promise.all([
-    safe("boutique", () => rows(client.from("shop_items").select("slug,reference,title,mineral_name,provenance,price_cents,currency,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name),media:shop_item_media(bucket_id,storage_path,position)")
+    safe("boutique", () => rows(client.from("shop_items").select("slug,reference,title,mineral_name,provenance,locality_name,price_cents,currency,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name),locality:localities!shop_items_locality_id_fkey(name),media:shop_item_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").eq("sale_status", "available").order("created_at", { ascending: false }).limit(4)), []),
     safe("collection", () => rows(client.from("specimens").select("slug,mineral_name,provenance,locality_name,department_name,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").order("created_at", { ascending: false }).limit(4)), []),

@@ -38,7 +38,7 @@ function render() {
     const body = document.createElement("div"); body.className = "card-body";
     const heading = document.createElement("h3"); heading.textContent = shopItemName(item); body.append(heading);
     const meta = document.createElement("div"); meta.className = "meta";
-    meta.textContent = item.mine?.name || item.provenance || ""; body.append(meta);
+    meta.textContent = item.mine?.name || item.provenance || item.locality_name || item.locality?.name || ""; body.append(meta);
     const price = document.createElement("div"); price.className = "price"; price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100); body.append(price);
     const more = document.createElement("div"); more.className = "more"; more.textContent = "Voir la fiche"; body.append(more);
     card.append(body); grid.append(card);
