@@ -1,5 +1,6 @@
 // « Trouve le minéral » (niveau facile) : une photo de minéral, quatre noms au choix.
 // 5 manches par jour, les mêmes pour tout le monde (tirage fixé par la date) ; les erreurs ne coûtent rien, on voit tout de suite la bonne réponse.
+// Les bonnes réponses sont des minéraux très communs ou communs ; les mauvaises propositions peuvent être rares.
 import { publicMediaUrl } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { parisDay, recordGame, streakOf, todayResult } from "./game-progress.js";
@@ -28,11 +29,12 @@ function photoOf(mineral, client, credits) {
   return commons ? { src: commons.src, credit: creditLine(commons) } : null;
 }
 
-// Les trois mauvaises réponses : des minéraux d'autres familles chimiques (donc faciles à écarter), sans nom proche de la bonne réponse.
-function choicesFor(target, pool, random) {
+// Les trois mauvaises réponses : n'importe quels minéraux, rares compris (seules les bonnes réponses sont limitées aux minéraux courants),
+// de préférence d'autres familles chimiques, sans nom proche de la bonne réponse.
+function choicesFor(target, all, random) {
   const name = fold(target.name);
   const close = other => { const text = fold(other.name); return text === name || text.includes(name) || name.includes(text); };
-  const others = pool.filter(other => other.id !== target.id && !close(other));
+  const others = all.filter(other => other.id !== target.id && !close(other));
   const different = others.filter(other => !target.chemical_class || other.chemical_class !== target.chemical_class);
   const wrong = [...shuffled(different, random), ...shuffled(others.filter(other => !different.includes(other)), random)].slice(0, CHOICES - 1);
   return shuffled([target, ...wrong], random);
@@ -45,7 +47,8 @@ export function dailyRounds(minerals, credits, day = parisDay()) {
   const pool = [...byRarity(withPhoto, EASY_RARITIES)].sort((a, b) => String(a.slug).localeCompare(String(b.slug)));
   if (pool.length < CHOICES) return { pool, rounds: [] };
   const random = seeded(`trouve-mineral-${day}`);
-  const rounds = shuffled(pool, random).slice(0, ROUNDS).map(target => ({ target, choices: choicesFor(target, pool, random) }));
+  const all = [...minerals].filter(item => item.name).sort((a, b) => String(a.slug).localeCompare(String(b.slug)));
+  const rounds = shuffled(pool, random).slice(0, ROUNDS).map(target => ({ target, choices: choicesFor(target, all, random) }));
   return { pool, rounds };
 }
 
