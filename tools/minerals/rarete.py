@@ -3,7 +3,7 @@
 # Critère : fréquence dans la nature et en collection, avec un coup de pouce aux espèces et gemmes que le grand public connaît.
 import json, re, sys
 TRES_COMMUN = """quartz calcite pyrite fluorite gypse hematite magnetite galene malachite azurite amethyste agate jaspe calcedoine opale silex
-talc muscovite biotite orthose albite dolomite baryte sphalerite almandin schorl beryl aragonite halite soufre graphite limonite
+talc muscovite biotite orthose albite dolomite baryte sphalerite chalcopyrite almandin schorl beryl aragonite halite soufre graphite limonite
 goethite serpentine olivine kaolinite cristal-de-roche citrine quartz-rose obsidienne microcline apatite epidote hornblende""".split()
 COMMUN = """aigue-marine emeraude topaze rubis saphir corindon diamant or argent cuivre grossulaire spessartine pyrope andradite rhodolite tsavorite
 demantoide hessonite uvarovite melanite dravite elbaite verdelite indicolite fluorapatite cinabre realgar orpiment stibine arsenopyrite
