@@ -18,7 +18,7 @@ const SITE = "https://jeremineralogie.fr";
 const DEFAULT_IMAGE = `${SITE}/assets/hero-specimen.jpeg`;
 const FOLDERS = { mineral: "mineraux", piece: "pieces", specimen: "specimens", article: "lire", archive: "documents", term: "glossaire", mine: "gisements", locality: "communes", department: "departements" };
 const DOMAINS = { mineralogie: "minéralogie", geologie: "géologie", cristallographie: "cristallographie" };
-const STATIC_PAGES = ["", "boutique.html", "collection.html", "articles.html", "archives.html", "carte.html", "apprendre.html", "identification.html", "reseaux.html", "contact.html", "legal.html"];
+const STATIC_PAGES = ["", "boutique.html", "collection.html", "articles.html", "archives.html", "carte.html", "apprendre.html", "identification.html", "apropos.html", "reseaux.html", "contact.html", "legal.html"];
 
 const esc = value => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const clean = value => String(value ?? "").replace(/\s+/g, " ").trim();
