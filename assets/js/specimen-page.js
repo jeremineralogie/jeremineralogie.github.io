@@ -9,6 +9,7 @@ import { specimenTitle } from "./seo-titles.js";
 import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { shareButton } from "./share-button.js";
+import { specimenAlt } from "./alt-text.js";
 import { loadOthersOfMine, loadSimilar, relatedBlock } from "./related.js";
 
 const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("id");
@@ -111,14 +112,15 @@ function renderSpecimen(specimen) {
   const gallery = root.querySelector("[data-gallery]"); const thumbs = root.querySelector("[data-thumbnails]");
   gallery.replaceChildren(); thumbs.replaceChildren();
   const photos = (specimen.photos || []).filter(Boolean);
+  const altOf = index => specimenAlt({ mineral: specimen.mineral, associated: specimen.associations, mine: specimen.provenance, locality: specimen.locality, department: specimen.department, departmentCode: specimen.departmentCode, region: specimen.region, country: specimen.country, dimensions: specimen.dimensions, weight: specimen.weight, keywords: specimen.keywords, discovery: specimen.discoveryDate }, index, photos.length);
   if (!photos.length) {
     const placeholder = document.createElement("div"); placeholder.className = "gallery-photo-placeholder"; placeholder.textContent = "Photographie à ajouter";
     gallery.append(placeholder); thumbs.hidden = true;
   } else {
     thumbs.hidden = false;
-    const main = document.createElement("img"); main.src = photos[0]; main.alt = specimen.mineral || "Spécimen"; gallery.append(main);
+    const main = document.createElement("img"); main.src = photos[0]; main.alt = altOf(0); gallery.append(main);
     photos.forEach((photo, index) => {
-      const thumb = document.createElement("img"); thumb.src = photo; thumb.alt = `${specimen.mineral || "Spécimen"} — photo ${index + 1}`;
+      const thumb = document.createElement("img"); thumb.src = photo; thumb.alt = altOf(index);
       thumb.tabIndex = 0; thumb.setAttribute("role", "button");
       const choose = () => { main.src = photo; main.alt = thumb.alt; };
       thumb.addEventListener("click", choose); thumb.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });

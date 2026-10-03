@@ -7,6 +7,7 @@ import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, renderNeighbours } from "./detail-nav.js";
 import { shareButton } from "./share-button.js";
+import { specimenAlt } from "./alt-text.js";
 import { loadOthersOfMine, loadSimilar, relatedBlock } from "./related.js";
 
 const key = new URLSearchParams(window.JM_PARAMS ?? location.search).get("ref");
@@ -17,15 +18,18 @@ function render(client, item) {
   const name = shopItemName(item);
   document.title = pieceTitle(name, item.mine?.name);
   const photos = (item.media || []).filter(media => media.bucket_id === "site-media-public").sort((a, b) => a.position - b.position);
+  const altOf = (photo, index) => specimenAlt({ mineral: item.mineral_name || item.mineral?.name, associated: (item.associations || []).map(entry => entry.mineral?.name), mine: item.mine?.name, locality: item.locality_name || item.locality?.name,
+    department: item.department_name || item.department?.name, departmentCode: item.department_code, region: item.region?.name || item.department?.region?.name, country: item.provenance !== item.mine?.name ? item.provenance : "",
+    dimensions: item.dimensions, weight: item.weight_grams == null ? "" : `${String(item.weight_grams).replace(".", ",")} g`, reference: item.reference, keywords: item.keywords, discovery: item.discovery_date_text }, index, photos.length, photo.alt_text);
   const wrap = document.createElement("div"); wrap.className = "specimen";
   const left = document.createElement("div"); const gallery = document.createElement("div"); gallery.className = "gallery-main"; left.append(gallery);
   if (!photos.length) { const placeholder = document.createElement("div"); placeholder.className = "gallery-photo-placeholder"; placeholder.textContent = "Photographie à ajouter"; gallery.append(placeholder); }
   else {
-    const main = document.createElement("img"); main.src = publicMediaUrl(client, photos[0]); main.alt = photos[0].alt_text || name; gallery.append(main);
+    const main = document.createElement("img"); main.src = publicMediaUrl(client, photos[0]); main.alt = altOf(photos[0], 0); gallery.append(main);
     if (photos.length > 1) {
       const thumbs = document.createElement("div"); thumbs.className = "thumbs";
       photos.forEach((photo, index) => {
-        const thumb = document.createElement("img"); thumb.src = publicMediaUrl(client, photo); thumb.alt = photo.alt_text || `${name} — photo ${index + 1}`;
+        const thumb = document.createElement("img"); thumb.src = publicMediaUrl(client, photo); thumb.alt = altOf(photo, index);
         thumb.tabIndex = 0; thumb.setAttribute("role", "button");
         const choose = () => { main.src = thumb.src; main.alt = thumb.alt; };
         thumb.addEventListener("click", choose); thumb.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });

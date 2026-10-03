@@ -1,3 +1,4 @@
+import { specimenAlt } from "./alt-text.js";
 import { getSupabase } from "./supabase-client.js";
 import { listPublishedSpecimens } from "./collection-repository.js";
 import { bindFilterPanel } from "./filter-panel.js";
@@ -43,7 +44,7 @@ function renderCollection() {
     card.className = "card card-specimen";
     card.href = specimenUrl({ id: specimen.id });
     if (specimen.photos.length) {
-      const image = document.createElement("img"); image.src = specimen.photos[0]; image.alt = specimen.mineral || "Spécimen"; card.append(image);
+      const image = document.createElement("img"); image.src = specimen.photos[0]; image.alt = specimenAlt({ mineral: specimen.mineral, associated: specimen.associations, mine: specimen.provenance, locality: specimen.locality, department: specimen.department, departmentCode: specimen.departmentCode, region: specimen.region, country: specimen.country, dimensions: specimen.dimensions, weight: specimen.weight, keywords: specimen.keywords, discovery: specimen.discoveryDate }); card.append(image);
     } else {
       const placeholder = document.createElement("div"); placeholder.className = "card-photo-placeholder";
       placeholder.textContent = "Photographie à ajouter"; placeholder.setAttribute("role", "img"); card.append(placeholder);

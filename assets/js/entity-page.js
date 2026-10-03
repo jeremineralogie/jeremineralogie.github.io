@@ -10,6 +10,7 @@ import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 import { loadSimilar } from "./related.js";
 import { shareButton } from "./share-button.js";
+import { mineralAlt } from "./alt-text.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
 // Fiche générique d'un minéral, d'un gisement ou d'une commune : fiche.html?type=mineral|mine|locality&id=<slug>.
@@ -88,12 +89,12 @@ async function load() {
     });
     const photos = (entity.media || []).filter(item => item.bucket_id === "site-media-public" && item.storage_path).sort((a, b) => a.position - b.position);
     const gallery = document.querySelector("#fiche-photos");
-    gallery.replaceChildren(...photos.map(item => { const image = document.createElement("img"); image.src = publicUrl(item); image.alt = item.alt_text || entity.name; image.loading = "lazy"; return image; }));
+    gallery.replaceChildren(...photos.map((item, index) => { const image = document.createElement("img"); image.src = publicUrl(item); image.alt = mineralAlt(entity, index, photos.length, item.alt_text); image.loading = "lazy"; return image; }));
     // Sans photo ajoutée dans l'admin : photo libre de Wikimedia Commons, avec son crédit.
     const commons = photos.length ? null : commonsPhoto(await loadMineralPhotos(), entity.slug);
     document.querySelector("#fiche .photo-credit")?.remove();
     if (commons) {
-      const image = document.createElement("img"); image.src = commons.src; image.alt = entity.name; image.loading = "lazy";
+      const image = document.createElement("img"); image.src = commons.src; image.alt = mineralAlt(entity); image.loading = "lazy";
       gallery.replaceChildren(image); gallery.after(creditLine(commons));
     } else if (photos.length && entity.photo_credit) {
       // Photos ajoutées dans l'admin avec un crédit / une licence.
