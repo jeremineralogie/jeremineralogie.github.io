@@ -11,6 +11,9 @@ export function pieceTitle(name, mine) {
 export function specimenTitle(name, place) {
   return `${clean(name) || "Spécimen"}${clean(place) ? ` de ${clean(place)}` : ""} — Collection Jeremineralogie`;
 }
+export function mineTitle(name, locality) { return `${clean(name)}${clean(locality) ? ` à ${clean(locality)}` : ""} : gisement et minéraux — Jeremineralogie`; }
+export function localityTitle(name, department) { return `${clean(name)}${clean(department) ? ` (${clean(department)})` : ""} : gisements et minéraux — Jeremineralogie`; }
+export function departmentTitle(name, code) { return `Minéraux et gisements : ${clean(name)}${clean(code) ? ` (${clean(code)})` : ""} — Jeremineralogie`; }
 export function articleTitle(title) { return `${clean(title)} — Jeremineralogie`; }
 export function documentTitle(title) { return `${clean(title)} — Archives Jeremineralogie`; }
 export function termTitle(term) { return `${clean(term)} : définition — Glossaire de minéralogie Jeremineralogie`; }

@@ -1,9 +1,10 @@
+import { departmentUrl } from "./clean-urls.js";
 import { shopItemName, publicMediaUrl } from "./content-repository.js";
 import { commonsPhoto, loadMineralPhotos } from "./mineral-photos.js";
 import { getSupabase } from "./supabase-client.js";
 import { normalizeName, categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
-import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
+import { pieceUrl, articleUrl, documentUrl, specimenUrl } from "./detail-nav.js";
 
 const query = (new URLSearchParams(location.search).get("q") || "").trim();
 const status = document.querySelector("#search-status");
@@ -20,7 +21,7 @@ let commons = {};
 // Sélections publiques uniquement : le RLS ne renvoie que le contenu publié.
 const sources = [
   { type: "Spécimen", table: "specimens", select: `slug,mineral_name,provenance,locality_name,department_name,country,keywords,description,mineral:minerals!specimens_mineral_id_fkey(name),${media("specimen_media")}`,
-    map: r => ({ title: r.mineral_name ?? r.mineral?.name ?? "Spécimen", meta: [r.provenance, r.locality_name, r.department_name].filter(Boolean).join(" · "), href: `specimen.html?id=${encodeURIComponent(r.slug)}`, image: firstImage(r.media), haystack: [r.mineral_name, r.mineral?.name, r.provenance, r.locality_name, r.department_name, r.country, r.keywords, r.description] }) },
+    map: r => ({ title: r.mineral_name ?? r.mineral?.name ?? "Spécimen", meta: [r.provenance, r.locality_name, r.department_name].filter(Boolean).join(" · "), href: specimenUrl({ id: r.slug }), image: firstImage(r.media), haystack: [r.mineral_name, r.mineral?.name, r.provenance, r.locality_name, r.department_name, r.country, r.keywords, r.description] }) },
   { type: "Boutique", table: "shop_items", select: `slug,reference,title,mineral_name,provenance,description,keywords,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name),${media("shop_item_media")}`, filter: q => q.eq("sale_status", "available"),
     map: r => ({ title: shopItemName(r), meta: [r.mine?.name || r.provenance, r.reference].filter(Boolean).join(" · "), href: pieceUrl(r), image: firstImage(r.media), haystack: [r.reference, r.mineral_name, r.mineral?.name, r.mine?.name, r.provenance, r.keywords, r.description] }) },
   { type: "Article", table: "articles", select: `slug,title,excerpt,category,${media("article_media")}`, wide: true,
@@ -34,7 +35,7 @@ const sources = [
   { type: "Minéral", table: "minerals", select: `name,slug,formula,${media("mineral_media")}`,
     map: r => ({ title: r.name, meta: r.formula || "", href: ficheUrl("mineral", r.slug), image: firstImage(r.media) || mineralCommons(r.slug), haystack: [r.name, r.formula] }) },
   { type: "Département", table: "departments", select: "code,name",
-    map: r => ({ title: `${r.name} (${r.code})`, meta: "", href: `departement.html?dep=${encodeURIComponent(r.code)}`, haystack: [r.name, r.code] }) },
+    map: r => ({ title: `${r.name} (${r.code})`, meta: "", href: departmentUrl(r.code), haystack: [r.name, r.code] }) },
   { type: "Région", table: "regions", select: "name",
     map: r => ({ title: r.name, meta: "", href: "departement.html", haystack: [r.name] }) }
 ];

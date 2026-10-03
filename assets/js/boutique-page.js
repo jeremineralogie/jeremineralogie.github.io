@@ -19,6 +19,8 @@ const facet = (item, key) => clean({
   locality: item.locality_name || item.locality?.name,
   mine: item.mine?.name
 }[key]);
+const sortSelect = panel.querySelector("[data-sort]");
+sortSelect?.addEventListener("change", render);
 const updatePanel = bindFilterPanel(panel, selects, render);
 const presets = new URLSearchParams(location.search);
 let presetsApplied = false;
@@ -28,7 +30,10 @@ function render() {
   if (!rows.length) { status.textContent = "Aucun spécimen n’est actuellement disponible dans la boutique."; status.hidden = false; panel.hidden = true; count.textContent = ""; empty.hidden = true; return; }
   status.hidden = true; panel.hidden = false;
   const chosen = selects.filter(select => select.value).map(select => [select.dataset.filter, select.value.toLocaleLowerCase("fr")]);
-  const visible = rows.filter(item => chosen.every(([key, value]) => facet(item, key).toLocaleLowerCase("fr") === value));
+  let visible = rows.filter(item => chosen.every(([key, value]) => facet(item, key).toLocaleLowerCase("fr") === value));
+  // Tri par prix (le tri « les plus récentes » garde l'ordre d'origine) ; à prix égal, l'ordre d'origine est conservé.
+  const order = sortSelect?.value;
+  if (order) visible = [...visible].sort((a, b) => (order === "asc" ? 1 : -1) * ((a.price_cents ?? 0) - (b.price_cents ?? 0)));
   count.textContent = `${visible.length} spécimen${visible.length === 1 ? "" : "s"}`;
   empty.hidden = visible.length > 0;
   visible.forEach(item => {

@@ -1,3 +1,4 @@
+import { setCanonical } from "./clean-urls.js";
 import { loadPublishedContent, showLoadError } from "./content-repository.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { documentUrl, renderNeighbours } from "./detail-nav.js";
@@ -44,7 +45,7 @@ try {
   const index = data.findIndex(row => row.slug === slug);
   if (!slug || index < 0) { root.replaceChildren(); status.textContent = "Ce document est introuvable ou n’est plus publié."; }
   else {
-    status.hidden = true; render(client, data[index]);
+    status.hidden = true; render(client, data[index]); setCanonical("archive", data[index].slug);
     renderNeighbours(document.querySelectorAll("[data-nav]"), data, index, documentUrl, row => row.title);
   }
 } catch (error) { showLoadError(error, status, root, "documents d’archives"); }

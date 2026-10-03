@@ -1,3 +1,4 @@
+import { setCanonical } from "./clean-urls.js";
 import { loadPublishedContent, publicMediaUrl, showLoadError } from "./content-repository.js";
 import { appendLinked, buildLinker, loadArticleLinks, loadLinkEntities } from "./entity-links.js";
 import { categoryLabel } from "./reference-resolver.js";
@@ -87,7 +88,7 @@ try {
   const index = data.findIndex(article => article.slug === slug);
   if (!slug || index < 0) { root.replaceChildren(); status.textContent = "Cet article est introuvable ou n’est plus publié."; }
   else {
-    status.hidden = true; render(client, data[index], await loadLinks(client), data);
+    status.hidden = true; render(client, data[index], await loadLinks(client), data); setCanonical("article", data[index].slug);
     renderNeighbours(document.querySelectorAll("[data-nav]"), data, index, articleUrl, article => article.title);
   }
 } catch (error) { showLoadError(error, status, root, "articles"); }

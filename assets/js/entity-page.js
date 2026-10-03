@@ -1,3 +1,5 @@
+import { departmentUrl } from "./clean-urls.js";
+import { setCanonical } from "./clean-urls.js";
 import { shopItemName } from "./content-repository.js";
 import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
@@ -64,7 +66,7 @@ async function load() {
   const subtitle = document.querySelector("#fiche-subtitle");
   subtitle.replaceChildren();
   if (kind === KINDS.mine && entity.locality) { const a = document.createElement("a"); a.className = "link"; a.href = ficheUrl("locality", entity.locality.slug); a.textContent = entity.locality.name; subtitle.append("Commune : ", a); }
-  if (kind === KINDS.locality) { subtitle.textContent = [entity.department?.name, /^(2[AB]|\d{2,3})$/i.test(entity.department_code || "") ? entity.department_code : ""].filter(Boolean).join(" · "); if (entity.department_code) { const a = document.createElement("a"); a.className = "link"; a.href = `departement.html?dep=${encodeURIComponent(entity.department_code)}`; a.textContent = "Voir le département"; subtitle.append(" · ", a); } }
+  if (kind === KINDS.locality) { subtitle.textContent = [entity.department?.name, /^(2[AB]|\d{2,3})$/i.test(entity.department_code || "") ? entity.department_code : ""].filter(Boolean).join(" · "); if (entity.department_code) { const a = document.createElement("a"); a.className = "link"; a.href = departmentUrl(entity.department_code); a.textContent = "Voir le département"; subtitle.append(" · ", a); } }
   if (kind === KINDS.mineral) subtitle.textContent = entity.formula || "";
   subtitle.hidden = !subtitle.childNodes.length;
   const science = document.querySelector("#fiche-scientific"); science.replaceChildren();
@@ -151,6 +153,7 @@ async function load() {
   if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: documentUrl(row) }))));
   if (!sectionsBox.children.length && !description && !science.children.length) { const empty = document.createElement("p"); empty.className = "meta"; empty.textContent = "Aucun contenu publié n’est encore lié à cette fiche."; sectionsBox.append(empty); }
   status.hidden = true; root.hidden = false;
+  setCanonical(kind === KINDS.mineral ? "mineral" : kind === KINDS.mine ? "mine" : "locality", entity.slug);
   document.querySelector("[data-seo]")?.remove();
   void applyGlossary(document.querySelector("#fiche-description"), [...science.querySelectorAll("dd")]);
 }

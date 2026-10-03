@@ -1,5 +1,6 @@
 // Liens automatiques vers les fiches (minéral, gisement, commune) dans les textes des articles.
-export const ficheUrl = (type, slug) => `fiche.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(slug)}`;
+import { cleanUrl, departmentUrl } from "./clean-urls.js";
+export const ficheUrl = (type, slug) => cleanUrl(type, slug) || `fiche.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(slug)}`;
 
 const isWordChar = character => Boolean(character) && /[\p{L}\p{N}]/u.test(character);
 
@@ -70,9 +71,9 @@ export async function loadArticleLinks(client) {
   const joins = [["article_minerals", "minerals", "mineral"], ["article_mines", "mines", "mine"], ["article_localities", "localities", "locality"]];
   const map = new Map();
   const extra = [
-    ["article_departments", "entity:departments(name,code)", row => ({ name: row.entity.name, href: `departement.html?dep=${encodeURIComponent(row.entity.code)}` })],
+    ["article_departments", "entity:departments(name,code)", row => ({ name: row.entity.name, href: departmentUrl(row.entity.code) })],
     ["article_regions", "entity:regions(name)", row => ({ name: row.entity.name, href: null })],
-    ["archive_articles", "entity:archive_documents(title,slug)", row => ({ name: row.entity.title, href: `document.html?slug=${encodeURIComponent(row.entity.slug)}` })]
+    ["archive_articles", "entity:archive_documents(title,slug)", row => ({ name: row.entity.title, href: cleanUrl("archive", row.entity.slug) })]
   ];
   await Promise.all(extra.map(async ([table, select, toLink]) => {
     const { data, error } = await client.from(table).select(`article_id,${select}`);

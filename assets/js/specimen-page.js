@@ -1,3 +1,5 @@
+import { departmentUrl } from "./clean-urls.js";
+import { setCanonical } from "./clean-urls.js";
 import { getSupabase } from "./supabase-client.js";
 import { getPublishedSpecimen, listPublishedSpecimens } from "./collection-repository.js";
 import { renderNeighbours, specimenUrl } from "./detail-nav.js";
@@ -74,7 +76,7 @@ function renderSpecimen(specimen) {
   const notFound = document.querySelector("#specimen-not-found");
   notFound.hidden = true;
   document.querySelector("#specimen-load-error").hidden = true;
-  root.hidden = false;
+  root.hidden = false; setCanonical("specimen", slug);
   content.hidden = false;
   document.title = specimenTitle(specimen.mineral, specimen.provenance || specimen.locality);
   document.querySelector("[data-seo]")?.remove();
@@ -100,7 +102,7 @@ function renderSpecimen(specimen) {
   linkField("[data-locality]", specimen.locality, specimen.localitySlug && ficheUrl("locality", specimen.localitySlug));
   const department = root.querySelector("[data-department]");
   department.textContent = specimen.department ? specimen.department + (specimen.departmentCode ? ` (${specimen.departmentCode})` : "") : "Non renseigné";
-  if (specimen.departmentCode) department.href = "departement.html?dep=" + encodeURIComponent(specimen.departmentCode);
+  if (specimen.departmentCode) department.href = departmentUrl(specimen.departmentCode);
   else department.removeAttribute("href");
   const gallery = root.querySelector("[data-gallery]"); const thumbs = root.querySelector("[data-thumbnails]");
   gallery.replaceChildren(); thumbs.replaceChildren();

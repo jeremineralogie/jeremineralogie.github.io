@@ -1,3 +1,5 @@
+import { departmentUrl } from "./clean-urls.js";
+import { setCanonical } from "./clean-urls.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { pieceTitle } from "./seo-titles.js";
@@ -58,7 +60,7 @@ function render(client, item) {
   }
   row("Gisement", link(mineName, item.mine?.slug && ficheUrl("mine", item.mine.slug)));
   row("Localité", link(localityName, item.locality?.slug && ficheUrl("locality", item.locality.slug)));
-  row("Département", link(departmentName && (departmentName + (item.department_code ? ` (${item.department_code})` : "")), item.department_code && `departement.html?dep=${encodeURIComponent(item.department_code)}`));
+  row("Département", link(departmentName && (departmentName + (item.department_code ? ` (${item.department_code})` : "")), item.department_code && departmentUrl(item.department_code)));
   row("Région", clean(item.region?.name || item.department?.region?.name));
   if (provenance && provenance !== mineName) row("Pays", provenance);
   row("Dimensions", clean(item.dimensions));
@@ -99,7 +101,7 @@ try {
   const index = data.findIndex(item => item.reference === key || item.slug === key);
   if (!key || index < 0) { root.replaceChildren(); status.textContent = "Cette pièce n’est plus disponible en boutique."; }
   else {
-    status.hidden = true; render(client, data[index]);
+    status.hidden = true; render(client, data[index]); setCanonical("piece", data[index].reference || data[index].slug);
     renderNeighbours(document.querySelectorAll("[data-nav]"), data, index, pieceUrl, shopItemName);
   }
 } catch (error) { showLoadError(error, status, root, "articles de la boutique"); }

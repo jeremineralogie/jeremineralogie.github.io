@@ -1,10 +1,11 @@
+import { departmentUrl } from "./clean-urls.js";
 import { getSupabase } from "./supabase-client.js";
 import { ficheUrl } from "./entity-links.js";
-import { articleUrl, documentUrl, pieceUrl } from "./detail-nav.js";
+import { articleUrl, documentUrl, pieceUrl, specimenUrl } from "./detail-nav.js";
 
 const client = getSupabase();
 const content = document.querySelector("#department-live-content");
-const code = new URLSearchParams(location.search).get("dep");
+const code = new URLSearchParams(window.JM_PARAMS ?? location.search).get("dep");
 
 function line(container, text) { const p = document.createElement("p"); p.textContent = text; container.append(p); }
 function section(title, entries) {
@@ -49,7 +50,7 @@ async function loadDirectory() {
     const group = document.createElement("section"); group.id = "supabase-department-index"; group.className = "department-region";
     const heading = document.createElement("h2"); heading.textContent = "Autres départements et provinces"; group.append(heading);
     const list = document.createElement("div"); list.className = "department-list";
-    extra.forEach(department => { const link = document.createElement("a"); link.href = `departement.html?dep=${encodeURIComponent(department.code)}`; link.dataset.department = department.code; link.textContent = `${department.name}${/^(2[AB]|\d{2,3})$/i.test(department.code) ? ` (${department.code})` : ""}${regionById.get(department.region_id) ? ` · ${regionById.get(department.region_id)}` : ""}`; list.append(link); });
+    extra.forEach(department => { const link = document.createElement("a"); link.href = departmentUrl(department.code); link.dataset.department = department.code; link.textContent = `${department.name}${/^(2[AB]|\d{2,3})$/i.test(department.code) ? ` (${department.code})` : ""}${regionById.get(department.region_id) ? ` · ${regionById.get(department.region_id)}` : ""}`; list.append(link); });
     document.querySelector(".department-regions").prepend(group); group.append(list);
   }
   if (code) {
@@ -92,7 +93,7 @@ async function loadDepartment() {
     const { data, error } = await client.from("specimens").select("slug,mineral_name,provenance,locality_name,mineral:minerals!specimens_mineral_id_fkey(name)")
       .eq("department_code", code).eq("publication_status", "published").order("created_at", { ascending: false });
     if (error) throw error;
-    return (data || []).map(row => ({ name: [row.mineral_name ?? row.mineral?.name ?? "Spécimen", row.provenance, row.locality_name].filter(Boolean).join(" — "), href: `specimen.html?id=${encodeURIComponent(row.slug)}` }));
+    return (data || []).map(row => ({ name: [row.mineral_name ?? row.mineral?.name ?? "Spécimen", row.provenance, row.locality_name].filter(Boolean).join(" — "), href: specimenUrl({ id: row.slug }) }));
   }) || [];
   const shop = await safely("boutique", async () => {
     const { data, error } = await client.from("shop_items").select("reference,slug,title").eq("department_code", code).eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });
