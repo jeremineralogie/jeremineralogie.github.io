@@ -1,21 +1,94 @@
 {
- "pierre-de-lune": [
+ "oeil-de-faucon": [
   {
-   "file": "pierre-de-lune-1.jpg",
-   "source": "Mazzaella splendens, Iridescent (or rainbow) seaweed.jpg",
-   "author": "Peter D. Tillman",
-   "license": "CC BY-SA 3.0",
-   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-   "page": "https://commons.wikimedia.org/wiki/File:Mazzaella_splendens,_Iridescent_(or_rainbow)_seaweed.jpg"
-  },
-  {
-   "file": "pierre-de-lune-2.jpg",
-   "source": "Wilson's guide to Avalon (1913) (14777091292).jpg",
+   "file": "oeil-de-faucon-1.jpg",
+   "source": "Annual report of the Board of Regents of the Smithsonian Institution (1900) (18436069225).jpg",
    "author": "Internet Archive Book Images",
    "license": "No restrictions",
    "licenseUrl": "https://www.flickr.com/commons/usage/",
-   "page": "https://commons.wikimedia.org/wiki/File:Wilson%27s_guide_to_Avalon_(1913)_(14777091292).jpg"
+   "page": "https://commons.wikimedia.org/wiki/File:Annual_report_of_the_Board_of_Regents_of_the_Smithsonian_Institution_(1900)_(18436069225).jpg"
+  },
+  {
+   "file": "oeil-de-faucon-2.jpg",
+   "source": "Tigers-Eye-Riebeckite-Hematite-214889.jpg",
+   "author": "Robert M. Lavinsky",
+   "license": "CC BY-SA 3.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Tigers-Eye-Riebeckite-Hematite-214889.jpg"
+  },
+  {
+   "file": "oeil-de-faucon-3.jpg",
+   "source": "NSRW Stones Precious.jpg",
+   "author": "C. B. Beach",
+   "license": "Public domain",
+   "licenseUrl": "",
+   "page": "https://commons.wikimedia.org/wiki/File:NSRW_Stones_Precious.jpg"
   }
  ],
- "oeil-de-faucon": []
+ "pierre-de-lune": [
+  {
+   "file": "pierre-de-lune-1.jpg",
+   "source": "Feldspar-Group-Moonstone-36971.jpg",
+   "author": "Robert M. Lavinsky",
+   "license": "CC BY-SA 3.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Feldspar-Group-Moonstone-36971.jpg"
+  },
+  {
+   "file": "pierre-de-lune-2.jpg",
+   "source": "Feldspar-Group-Moonstone-52804.jpg",
+   "author": "Robert M. Lavinsky",
+   "license": "CC BY-SA 3.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Feldspar-Group-Moonstone-52804.jpg"
+  },
+  {
+   "file": "pierre-de-lune-3.jpg",
+   "source": "Moonstone (iridescent sodic feldspar) 1.jpg",
+   "author": "James St. John",
+   "license": "CC BY 2.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Moonstone_(iridescent_sodic_feldspar)_1.jpg"
+  },
+  {
+   "file": "pierre-de-lune-4.jpg",
+   "source": "Moonstone (iridescent sodic feldspar) 2.jpg",
+   "author": "James St. John",
+   "license": "CC BY 2.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Moonstone_(iridescent_sodic_feldspar)_2.jpg"
+  },
+  {
+   "file": "pierre-de-lune-5.jpg",
+   "source": "Moonstone (iridescent sodic feldspar) 4.jpg",
+   "author": "James St. John",
+   "license": "CC BY 2.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Moonstone_(iridescent_sodic_feldspar)_4.jpg"
+  },
+  {
+   "file": "pierre-de-lune-6.jpg",
+   "source": "Moonstone NHMLA.png",
+   "author": "Eric Polk",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Moonstone_NHMLA.png"
+  },
+  {
+   "file": "pierre-de-lune-7.jpg",
+   "source": "Moonstone (iridescent sodic feldspar) 3.jpg",
+   "author": "James St. John",
+   "license": "CC BY 2.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Moonstone_(iridescent_sodic_feldspar)_3.jpg"
+  },
+  {
+   "file": "pierre-de-lune-8.jpg",
+   "source": "Moonstone (iridescent sodic feldspar) 5.jpg",
+   "author": "James St. John",
+   "license": "CC BY 2.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Moonstone_(iridescent_sodic_feldspar)_5.jpg"
+  }
+ ]
 }
