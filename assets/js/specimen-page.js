@@ -1,3 +1,4 @@
+import { departmentUrl } from "./clean-urls.js";
 import { setCanonical } from "./clean-urls.js";
 import { getSupabase } from "./supabase-client.js";
 import { getPublishedSpecimen, listPublishedSpecimens } from "./collection-repository.js";
@@ -101,7 +102,7 @@ function renderSpecimen(specimen) {
   linkField("[data-locality]", specimen.locality, specimen.localitySlug && ficheUrl("locality", specimen.localitySlug));
   const department = root.querySelector("[data-department]");
   department.textContent = specimen.department ? specimen.department + (specimen.departmentCode ? ` (${specimen.departmentCode})` : "") : "Non renseigné";
-  if (specimen.departmentCode) department.href = "departement.html?dep=" + encodeURIComponent(specimen.departmentCode);
+  if (specimen.departmentCode) department.href = departmentUrl(specimen.departmentCode);
   else department.removeAttribute("href");
   const gallery = root.querySelector("[data-gallery]"); const thumbs = root.querySelector("[data-thumbnails]");
   gallery.replaceChildren(); thumbs.replaceChildren();

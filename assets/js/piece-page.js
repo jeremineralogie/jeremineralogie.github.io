@@ -1,3 +1,4 @@
+import { departmentUrl } from "./clean-urls.js";
 import { setCanonical } from "./clean-urls.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
@@ -59,7 +60,7 @@ function render(client, item) {
   }
   row("Gisement", link(mineName, item.mine?.slug && ficheUrl("mine", item.mine.slug)));
   row("Localité", link(localityName, item.locality?.slug && ficheUrl("locality", item.locality.slug)));
-  row("Département", link(departmentName && (departmentName + (item.department_code ? ` (${item.department_code})` : "")), item.department_code && `departement.html?dep=${encodeURIComponent(item.department_code)}`));
+  row("Département", link(departmentName && (departmentName + (item.department_code ? ` (${item.department_code})` : "")), item.department_code && departmentUrl(item.department_code)));
   row("Région", clean(item.region?.name || item.department?.region?.name));
   if (provenance && provenance !== mineName) row("Pays", provenance);
   row("Dimensions", clean(item.dimensions));

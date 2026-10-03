@@ -1,3 +1,4 @@
+import { departmentUrl } from "./clean-urls.js";
 import { shopItemName, publicMediaUrl } from "./content-repository.js";
 import { commonsPhoto, loadMineralPhotos } from "./mineral-photos.js";
 import { getSupabase } from "./supabase-client.js";
@@ -34,7 +35,7 @@ const sources = [
   { type: "Minéral", table: "minerals", select: `name,slug,formula,${media("mineral_media")}`,
     map: r => ({ title: r.name, meta: r.formula || "", href: ficheUrl("mineral", r.slug), image: firstImage(r.media) || mineralCommons(r.slug), haystack: [r.name, r.formula] }) },
   { type: "Département", table: "departments", select: "code,name",
-    map: r => ({ title: `${r.name} (${r.code})`, meta: "", href: `departement.html?dep=${encodeURIComponent(r.code)}`, haystack: [r.name, r.code] }) },
+    map: r => ({ title: `${r.name} (${r.code})`, meta: "", href: departmentUrl(r.code), haystack: [r.name, r.code] }) },
   { type: "Région", table: "regions", select: "name",
     map: r => ({ title: r.name, meta: "", href: "departement.html", haystack: [r.name] }) }
 ];
