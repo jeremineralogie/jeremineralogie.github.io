@@ -9,6 +9,7 @@ import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 import { loadSimilar } from "./related.js";
+import { themeLinksOf } from "./themes.js";
 import { shareButton } from "./share-button.js";
 import { mineralAlt } from "./alt-text.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
@@ -157,6 +158,11 @@ async function load() {
   if (articles.length) section("Articles", linkList(articles.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: articleUrl(row) }))));
   if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: documentUrl(row) }))));
   if (similar.length) section("Minéraux similaires", linkList(similar.map(row => ({ title: row.name, href: ficheUrl("mineral", row.slug) }))));
+  if (kind === KINDS.mineral) {
+    const available = await safely("thèmes", async () => { const response = await fetch("/themes/index.json"); if (!response.ok) throw new Error(response.status); return response.json(); }, null);
+    const links = available ? themeLinksOf(entity, available) : [];
+    if (links.length) section("Parcourir par thème", linkList(links));
+  }
   if (!sectionsBox.children.length && !description && !science.children.length) { const empty = document.createElement("p"); empty.className = "meta"; empty.textContent = "Aucun contenu publié n’est encore lié à cette fiche."; sectionsBox.append(empty); }
   status.hidden = true; root.hidden = false;
   setCanonical(kind === KINDS.mineral ? "mineral" : kind === KINDS.mine ? "mine" : "locality", entity.slug);

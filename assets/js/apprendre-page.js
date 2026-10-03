@@ -1,4 +1,5 @@
 import { getSupabase } from "./supabase-client.js";
+import { COLORS, colorKeys, fold } from "./themes.js";
 import { ficheUrl } from "./entity-links.js";
 import { mountGames } from "./games.js";
 import { commonsPhoto, creditText, loadMineralPhotos } from "./mineral-photos.js";
@@ -9,12 +10,6 @@ const status = document.querySelector("#learn-status");
 const tabs = [...document.querySelectorAll(".learn-tabs [data-tab]")];
 const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire"), identification: document.querySelector("#panel-identification"), outils: document.querySelector("#panel-outils"), jeux: document.querySelector("#panel-jeux") };
 const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
-const COLORS = [
-  ["incolore", /incolore|limpide/], ["blanc", /blanc|argent/], ["gris", /gris|plomb|acier/], ["noir", /noir/],
-  ["rouge", /rouge|vermillon|carmin|ecarlate/], ["rose", /rose|framboise/], ["orange", /orang/], ["jaune", /jaune|or\b|miel|dore|laiton|citron/],
-  ["vert", /vert|olive|emeraude|pistache/], ["bleu", /bleu|azur|indigo|turquoise/], ["violet", /violet|pourpre|lilas|lavande|mauve/], ["brun", /brun|bronze|cuivre|ocre/]
-];
-const fold = value => String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[’`]/g, "'");
 const squash = value => fold(value).replace(/[^a-z0-9]+/g, "");
 // Formules : « CaCO3 » tapé au clavier doit trouver « CaCO₃ ».
 const plainDigits = value => String(value ?? "").replace(/[₀-₉]/g, digit => String(digit.charCodeAt(0) - 0x2080));
@@ -82,7 +77,6 @@ function grouped(items, nameOf) {
 // ----- Fiches minéraux -----
 const mPanel = panels.mineraux;
 const mFilters = bindPanel(mPanel, renderMinerals);
-function colorKeys(mineral) { const text = fold((mineral.colors || []).join(" ")); return COLORS.filter(([, pattern]) => pattern.test(text)).map(([key]) => key); }
 
 function fillMineralFilters() {
   const fill = (select, values) => { const first = select.options[0]; select.replaceChildren(first, ...values.map(value => new Option(value, value))); };
@@ -238,6 +232,13 @@ function setupIdentification() {
   COLORS.forEach(([key]) => { if (used.has(key)) colorSelect.add(new Option(key.charAt(0).toUpperCase() + key.slice(1), key)); });
   criteria.forEach(select => select.addEventListener("change", renderIdentification));
   iPanel.querySelector("#ident-reset").addEventListener("click", () => { criteria.forEach(select => { select.value = ""; }); renderIdentification(); });
+  // Liens des pages « par thème » : apprendre.html?couleur=bleu&durete=7&systeme=cubique#identification pré-remplit les critères.
+  const wanted = new URLSearchParams(location.search);
+  const preset = (id, value) => { const select = iPanel.querySelector(id); if (select && value && [...select.options].some(option => option.value === value)) select.value = value; };
+  preset("#i-color", wanted.get("couleur"));
+  const hardness = Number(wanted.get("durete")); if (hardness) preset("#i-hardness", hardness <= 2 ? "0-2.5" : hardness === 3 ? "2.5-3.5" : hardness <= 5 ? "3.5-5.5" : "5.5-10");
+  const system = { cubique: "Cubique", hexagonal: "Hexagonal|Trigonal", trigonal: "Hexagonal|Trigonal", quadratique: "Quadratique", orthorhombique: "Orthorhombique|Monoclinique|Triclinique", monoclinique: "Orthorhombique|Monoclinique|Triclinique", triclinique: "Orthorhombique|Monoclinique|Triclinique" }[wanted.get("systeme")];
+  preset("#i-system", system);
   renderIdentification();
 }
 function renderIdentification() {
