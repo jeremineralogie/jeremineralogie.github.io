@@ -1,4 +1,4 @@
-// Jeux du jour (quiz, devine le gisement) : historique, séries de jours consécutifs et badges.
+// Jeux du jour (trouve le minéral, quiz, devine le gisement) : historique, séries de jours consécutifs et badges.
 // Tout est gardé sur l'appareil du visiteur (aucun compte) ; sans mémoire disponible, les jeux restent jouables.
 const KEY = "jm-jeux";
 const DAY = 86400000;
@@ -10,7 +10,7 @@ const isFrench = code => /^(2[AB]|\d{2,3})$/i.test(String(code ?? ""));
 function read() {
   let state;
   try { state = JSON.parse(localStorage.getItem(KEY) || "null"); } catch { state = null; }
-  state = { quiz: {}, geo: {}, earned: {}, ...state };
+  state = { mineral: {}, quiz: {}, geo: {}, earned: {}, ...state };
   // Reprise du quiz déjà joué avant l'arrivée des badges.
   if (!Object.keys(state.quiz).length) {
     try {
@@ -38,11 +38,17 @@ function longestStreak(dates) {
 }
 
 function statsOf(state) {
-  const quizDays = Object.keys(state.quiz), geoDays = Object.keys(state.geo);
+  const mineralDays = Object.keys(state.mineral), quizDays = Object.keys(state.quiz), geoDays = Object.keys(state.geo);
+  const mineral = Object.values(state.mineral);
   const quiz = Object.values(state.quiz), geo = Object.values(state.geo);
   const bothDays = quizDays.filter(day => state.geo[day]);
   const rounds = geo.flatMap(game => game.rounds || []);
   return {
+    mineral: {
+      streak: currentStreak(mineralDays), longest: longestStreak(mineralDays), games: mineral.length,
+      perfect: mineral.filter(game => game.score >= game.rounds).length,
+      found: mineral.reduce((sum, game) => sum + (game.score || 0), 0)
+    },
     quiz: {
       streak: currentStreak(quizDays), longest: longestStreak(quizDays),
       correct: quiz.filter(game => game.correct).length,
@@ -62,6 +68,11 @@ function statsOf(state) {
 const SERIES = [[3, "Régulier"], [7, "Assidu"], [30, "Passionné"], [100, "Légende"]];
 const series = game => SERIES.map(([days, name]) => ({ id: `${game}-serie-${days}`, game, icon: "🔥", name, rule: `${days} jours d’affilée`, test: stats => stats[game].longest >= days }));
 export const BADGES = [
+  ...series("mineral"),
+  { id: "mineral-coup-d-oeil", game: "mineral", icon: "👁️", name: "Coup d’œil", rule: "Première partie terminée", test: stats => stats.mineral.games >= 1 },
+  { id: "mineral-sans-faute", game: "mineral", icon: "✨", name: "Sans faute", rule: "Une partie à 5 sur 5", test: stats => stats.mineral.perfect >= 1 },
+  { id: "mineral-oeil-expert", game: "mineral", icon: "🔎", name: "Œil d’expert", rule: "5 parties sans faute", test: stats => stats.mineral.perfect >= 5 },
+  { id: "mineral-collectionneur", game: "mineral", icon: "💎", name: "Collectionneur d’images", rule: "100 minéraux reconnus", test: stats => stats.mineral.found >= 100 },
   ...series("quiz"),
   { id: "quiz-premier-pas", game: "quiz", icon: "🎓", name: "Premier pas", rule: "Première bonne réponse", test: stats => stats.quiz.correct >= 1 },
   { id: "quiz-sans-filet", game: "quiz", icon: "🧠", name: "Sans filet", rule: "10 bonnes réponses sans indice", test: stats => stats.quiz.noHint >= 10 },
@@ -86,7 +97,7 @@ function award(state) {
   return fresh;
 }
 
-// Enregistre la partie du jour d'un jeu (« quiz » ou « geo »), puis annonce les nouveaux badges.
+// Enregistre la partie du jour d'un jeu (« mineral », « quiz » ou « geo »), puis annonce les nouveaux badges.
 export function recordGame(game, result) {
   const state = read();
   state[game][parisDay()] = result;
@@ -110,8 +121,8 @@ function toast(badge) {
 }
 
 // Badges de la section Jeux de l'accueil : séries en cours, badges gagnés en couleur, les autres grisés avec leur condition.
-// summary (facultatif) reçoit le décompte « n / 18 », affiché même quand la liste est repliée.
-const GROUPS = [["quiz", "Quiz du jour"], ["geo", "Devine le gisement"], ["both", "Les deux jeux"]];
+// summary (facultatif) reçoit le décompte « n / total », affiché même quand la liste est repliée.
+const GROUPS = [["mineral", "Facile · Trouve le minéral"], ["quiz", "Intermédiaire · Quiz du jour"], ["geo", "Difficile · Devine le gisement"], ["both", "Les deux jeux"]];
 export function renderBadges(container, summary = null) {
   const draw = () => {
     const state = read();

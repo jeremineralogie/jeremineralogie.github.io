@@ -1,10 +1,11 @@
-// Jeux du jour (quiz, devine le gisement) et badges : section affichée sur l'accueil et dans l'onglet « Jeux » d'Apprendre & jouer.
+// Jeux du jour (trouve le minéral, quiz, devine le gisement) et badges : section affichée sur l'accueil et dans l'onglet « Jeux » d'Apprendre & jouer.
 // Les parties sont les mêmes sur les deux pages (tirage fixé par la date) et partagent la même mémoire sur l'appareil.
 import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
 import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
 import { renderGeoGame } from "./geo-game.js";
+import { renderMineralPhotoGame } from "./mineral-photo-game.js";
 import { dateFr, sharePanel } from "./share.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
@@ -164,17 +165,23 @@ async function geoPieces(client) {
 
 // Section Jeux : les jeux toujours visibles, les badges dans un volet dépliable.
 export async function mountGames(root, { client, minerals }) {
-  const block = (title) => { const node = el("div", "home-game"); node.hidden = true; const body = el("div"); body.dataset.body = ""; node.append(el("h3", "home-game-title", title), body); return node; };
-  const quizBlock = block("Le quiz du jour"), geoBlock = block("Devine le gisement");
+  // Trois niveaux : facile (photo + 4 noms), intermédiaire (quiz à indices), difficile (localiser sur la carte).
+  const block = (title, level, levelClass) => {
+    const node = el("div", "home-game"); node.hidden = true; const body = el("div"); body.dataset.body = "";
+    const heading = el("h3", "home-game-title"); heading.append(el("span", `game-level ${levelClass}`, level), title);
+    node.append(heading, body); return node;
+  };
+  const mineralBlock = block("Trouve le minéral", "Facile", "is-easy"), quizBlock = block("Le quiz du jour", "Intermédiaire", "is-medium"), geoBlock = block("Devine le gisement", "Difficile", "is-hard");
   const badges = el("details", "home-badges");
   const summary = el("summary"); const count = el("span", "home-badges-count");
   summary.append(el("span", "home-badges-label", "Mes séries et badges"), count);
   const list = el("div", "badges");
   badges.append(summary, list);
-  root.replaceChildren(quizBlock, geoBlock, badges);
+  root.replaceChildren(mineralBlock, quizBlock, geoBlock, badges);
   const { quiz } = dailyMinerals(minerals);
   if (quiz) renderQuiz(quizBlock, quiz, minerals, client);
   renderBadges(list, count);
+  void renderMineralPhotoGame(mineralBlock, { client, minerals }).catch(error => console.error("Trouve le minéral :", error));
   try { const pieces = await geoPieces(client); if (pieces.length) await renderGeoGame(geoBlock, pieces); }
   catch (error) { console.error("Devine le gisement :", error); }
 }
