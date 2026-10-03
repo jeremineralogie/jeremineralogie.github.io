@@ -6,6 +6,8 @@ import { pieceTitle } from "./seo-titles.js";
 import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, renderNeighbours } from "./detail-nav.js";
+import { shareButton } from "./share-button.js";
+import { loadOthersOfMine, loadSimilar, relatedBlock } from "./related.js";
 
 const key = new URLSearchParams(window.JM_PARAMS ?? location.search).get("ref");
 const status = document.querySelector("#detail-status");
@@ -32,6 +34,8 @@ function render(client, item) {
       left.append(thumbs);
     }
   }
+  const sold = item.sale_status === "sold";
+  if (sold) { const ribbon = document.createElement("span"); ribbon.className = "sold-ribbon"; ribbon.textContent = "Vendu"; gallery.append(ribbon); }
   const details = document.createElement("div"); details.className = "details";
   const kicker = document.createElement("div"); kicker.className = "kicker"; kicker.textContent = "Boutique";
   const title = document.createElement("h1"); title.className = "page-title"; title.textContent = name;
@@ -69,10 +73,12 @@ function render(client, item) {
   row("Date de découverte", clean(item.discovery_date_text));
   const price = document.createElement("div"); price.className = "price";
   price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100);
-  const contact = document.createElement("a"); contact.className = "btn"; contact.href = `contact.html?reference=${encodeURIComponent(item.reference)}`; contact.textContent = "Me contacter";
+  const contact = sold ? document.createElement("p") : document.createElement("a");
+  if (sold) { contact.className = "meta sold-note"; contact.textContent = "Cette pièce a été vendue."; price.classList.add("is-sold"); }
+  else { contact.className = "btn"; contact.href = `contact.html?reference=${encodeURIComponent(item.reference)}`; contact.textContent = "Me contacter"; }
   const cover = photos[0] ? publicMediaUrl(client, photos[0]) : "";
   const favorite = favoriteButton({ type: "piece", id: item.reference || item.slug, name: shopItemName(item), href: pieceUrl(item), meta: [clean(item.mine?.name), clean(item.reference)].filter(Boolean).join(" · "), image: cover });
-  details.append(kicker, title, list, price, contact, favorite);
+  details.append(kicker, title, list, price, contact, favorite, shareButton({ title: name, text: `${name} — Jeremineralogie` }));
   wrap.append(left, details); root.replaceChildren(wrap);
   document.querySelector("[data-seo]")?.remove();
   if (item.description) {
@@ -94,6 +100,13 @@ function render(client, item) {
     const heading = document.createElement("h2"); heading.textContent = "Documentation minéralogique";
     section.append(heading, science); root.append(section);
   }
+  // Maillage : autres minéraux du même gisement, minéraux similaires.
+  const mineralSlug = item.mineral?.slug;
+  void Promise.all([loadOthersOfMine(client, item.mine?.slug, mineralSlug), loadSimilar(client, mineralSlug)]).then(([others, similar]) => {
+    root.querySelectorAll(".related-block").forEach(node => node.remove());
+    const blocks = [relatedBlock("Autres minéraux de ce gisement", others), relatedBlock("Minéraux similaires", similar)].filter(Boolean);
+    if (blocks.length) root.append(...blocks);
+  });
 }
 
 try {
