@@ -27,8 +27,8 @@ async function locateCommunes() {
     const { located, ambiguous, notFound } = await backfillLocalities(client);
     const notes = [];
     if (located.length) notes.push(`Placées sur la carte : ${located.join(", ")}.`);
-    if (ambiguous.length) notes.push(`Plusieurs communes portent le nom ${ambiguous.map(name => `« ${name} »`).join(", ")} : choisissez la bonne dans Paramètres → Référentiels → Localités (bouton « Localiser »).`);
-    if (notFound.length) notes.push(`Commune introuvable pour ${notFound.map(name => `« ${name} »`).join(", ")} : vérifiez l’orthographe ou localisez-la dans Référentiels → Localités.`);
+    if (ambiguous.length) notes.push(`Plusieurs communes portent le nom ${ambiguous.map(name => `« ${name} »`).join(", ")} : choisissez la bonne dans Paramètres → Référentiels → Communes (bouton « Localiser »).`);
+    if (notFound.length) notes.push(`Commune introuvable pour ${notFound.map(name => `« ${name} »`).join(", ")} : vérifiez l’orthographe ou localisez-la dans Référentiels → Communes.`);
     if (notes.length) message(notes.join(" "), ambiguous.length + notFound.length > 0);
   } catch (error) {
     console.error("Localisation automatique des communes :", error);

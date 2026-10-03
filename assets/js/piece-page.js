@@ -59,7 +59,7 @@ function render(client, item) {
     row("Minéraux associés", list);
   }
   row("Gisement", link(mineName, item.mine?.slug && ficheUrl("mine", item.mine.slug)));
-  row("Localité", link(localityName, item.locality?.slug && ficheUrl("locality", item.locality.slug)));
+  row("Commune", link(localityName, item.locality?.slug && ficheUrl("locality", item.locality.slug)));
   row("Département", link(departmentName && (departmentName + (item.department_code ? ` (${item.department_code})` : "")), item.department_code && departmentUrl(item.department_code)));
   row("Région", clean(item.region?.name || item.department?.region?.name));
   if (provenance && provenance !== mineName) row("Pays", provenance);
