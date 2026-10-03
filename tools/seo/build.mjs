@@ -12,7 +12,7 @@ import { categoryLabel } from "../../assets/js/reference-resolver.js";
 import { blocksToText } from "../../assets/js/article-content.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const SITE = "https://jeremineralogie.github.io";
+const SITE = "https://jeremineralogie.fr";
 const DEFAULT_IMAGE = `${SITE}/assets/hero-specimen.jpeg`;
 const FOLDERS = { mineral: "mineraux", piece: "pieces", specimen: "specimens", article: "lire", archive: "documents", term: "glossaire" };
 const DOMAINS = { mineralogie: "minéralogie", geologie: "géologie", cristallographie: "cristallographie" };

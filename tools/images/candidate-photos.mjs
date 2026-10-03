@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const DIR = path.join(ROOT, "tools/images/candidats");
-const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.github.io; photos libres des fiches minéraux)";
+const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.fr; photos libres des fiches minéraux)";
 const FREE = /^(cc0|public domain|pd\b|pd-|cc[- ]by(-sa)?[- ]?\d|cc[- ]by(-sa)?$|attribution|no restrictions|copyrighted free use)/i;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const strip = value => String(value ?? "").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, "\"").replace(/&#0?39;/g, "'").replace(/\s+/g, " ").trim();
