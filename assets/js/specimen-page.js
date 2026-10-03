@@ -8,6 +8,8 @@ import { ficheUrl } from "./entity-links.js";
 import { specimenTitle } from "./seo-titles.js";
 import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
+import { shareButton } from "./share-button.js";
+import { loadOthersOfMine, loadSimilar, relatedBlock } from "./related.js";
 
 const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("id");
 const client = getSupabase();
@@ -71,6 +73,7 @@ function showMissing() {
 }
 
 function renderSpecimen(specimen) {
+  const current = sequence;
   const root = document.querySelector("#specimen-detail");
   const content = document.querySelector("#specimen-content");
   const notFound = document.querySelector("#specimen-not-found");
@@ -90,8 +93,9 @@ function renderSpecimen(specimen) {
   put("[data-associations]", (specimen.associations || []).join(", ")); put("[data-discovery-date]", specimen.discoveryDate);
   content.querySelector("[data-description]").textContent = specimen.description || "Non renseigné";
   if (specimen.description) void applyGlossary(content.querySelector("[data-description]"));
-  root.querySelector(".fav-btn")?.remove();
+  root.querySelector(".fav-btn")?.remove(); root.querySelector(".share-btn")?.remove();
   root.querySelector("[data-location-summary]").after(favoriteButton({ type: "specimen", id: specimen.id, name: specimen.mineral || "Spécimen", href: specimenUrl({ id: specimen.id }), meta: [specimen.provenance || specimen.locality, specimen.department].filter(Boolean).join(" · "), image: (specimen.photos || [])[0] || "" }));
+  root.querySelector(".fav-btn").after(shareButton({ title: specimen.mineral || "Spécimen", text: `${specimen.mineral || "Spécimen"} — collection Jeremineralogie` }));
   const linkField = (selector, text, href) => {
     const element = root.querySelector(selector);
     if (!text || !href) return;
@@ -131,6 +135,14 @@ function renderSpecimen(specimen) {
   });
   content.querySelector("[data-scientific-section]").hidden = science.children.length === 0;
   void loadNeighbours();
+  // Maillage : autres minéraux du même gisement, minéraux similaires.
+  const shown = current;
+  void Promise.all([loadOthersOfMine(client, specimen.mineSlug, specimen.mineralSlug), loadSimilar(client, specimen.mineralSlug)]).then(([others, similar]) => {
+    if (shown !== sequence) return;
+    content.querySelectorAll(".related-block").forEach(node => node.remove());
+    const blocks = [relatedBlock("Autres minéraux de ce gisement", others), relatedBlock("Minéraux similaires", similar)].filter(Boolean);
+    if (blocks.length) content.append(...blocks);
+  });
 }
 
 void refreshSpecimen();

@@ -8,6 +8,8 @@ import { mineralTitle } from "./seo-titles.js";
 import { applyGlossary } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
+import { loadSimilar } from "./related.js";
+import { shareButton } from "./share-button.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
 // Fiche générique d'un minéral, d'un gisement ou d'une commune : fiche.html?type=mineral|mine|locality&id=<slug>.
@@ -98,15 +100,16 @@ async function load() {
       const credit = document.createElement("p"); credit.className = "photo-credit"; credit.textContent = entity.photo_credit; gallery.after(credit);
     }
     gallery.hidden = !photos.length && !commons;
-    document.querySelector("#fiche .fav-btn")?.remove();
+    document.querySelector("#fiche .fav-btn")?.remove(); document.querySelector("#fiche .share-btn")?.remove();
     subtitle.after(favoriteButton({ type: "mineral", id: entity.slug, name: entity.name, href: ficheUrl("mineral", entity.slug), meta: [entity.formula, entity.crystal_system].filter(Boolean).join(" · "), image: photos[0] ? publicUrl(photos[0]) : commons?.src || "" }));
+    document.querySelector("#fiche .fav-btn").after(shareButton({ title: entity.name, text: `${entity.name} — fiche minéral sur Jeremineralogie` }));
     const back = document.querySelector("#fiche-back");
     back.href = "apprendre.html#mineraux"; back.textContent = "← Retour aux fiches minéraux";
     const learn = document.querySelector('.nav a[href="apprendre.html"]'); if (learn) learn.setAttribute("aria-current", "page");
   }
   sectionsBox.replaceChildren();
 
-  const [specimens, shop, articles, archives, mines, family] = await Promise.all([
+  const [specimens, shop, articles, archives, mines, family, similar] = await Promise.all([
     safely("collection", async () => {
       const { data, error: e } = await client.from("specimens").select("slug,mineral_name,provenance,locality_name,mineral:minerals!specimens_mineral_id_fkey(name,slug),mine:mines!specimens_mine_id_fkey(name,slug),media:specimen_media(bucket_id,storage_path,position)")
         .eq(kind.fk, entity.id).eq("publication_status", "published").order("created_at", { ascending: false });
@@ -133,7 +136,8 @@ async function load() {
     kind === KINDS.mineral && entity.mineral_group ? safely("famille", async () => {
       const { data, error: e } = await client.from("minerals").select("name,slug").eq("mineral_group", entity.mineral_group).eq("publication_status", "published").order("name");
       if (e) throw e; return data || [];
-    }, []) : Promise.resolve([])
+    }, []) : Promise.resolve([]),
+    kind === KINDS.mineral ? loadSimilar(client, entity.slug, entity) : Promise.resolve([])
   ]);
 
   const label = row => row.mineral_name ?? row.mineral?.name ?? "Spécimen";
@@ -151,6 +155,7 @@ async function load() {
   if (kind === KINDS.mine) { const list = unique(specimens.map(row => row.mineral).filter(Boolean), "slug"); if (list.length) section("Minéraux de ce gisement dans ma collection", linkList(list.map(row => ({ title: row.name, href: ficheUrl("mineral", row.slug) })))); }
   if (articles.length) section("Articles", linkList(articles.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: articleUrl(row) }))));
   if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: documentUrl(row) }))));
+  if (similar.length) section("Minéraux similaires", linkList(similar.map(row => ({ title: row.name, href: ficheUrl("mineral", row.slug) }))));
   if (!sectionsBox.children.length && !description && !science.children.length) { const empty = document.createElement("p"); empty.className = "meta"; empty.textContent = "Aucun contenu publié n’est encore lié à cette fiche."; sectionsBox.append(empty); }
   status.hidden = true; root.hidden = false;
   setCanonical(kind === KINDS.mineral ? "mineral" : kind === KINDS.mine ? "mine" : "locality", entity.slug);

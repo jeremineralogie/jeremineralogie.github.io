@@ -8,6 +8,7 @@ import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mineralTitle, pieceTitle, specimenTitle, articleTitle, documentTitle, termTitle, mineTitle, localityTitle, departmentTitle } from "../../assets/js/seo-titles.js";
+import { similarMinerals } from "../../assets/js/related-score.js";
 import { categoryLabel } from "../../assets/js/reference-resolver.js";
 import { blocksToText } from "../../assets/js/article-content.js";
 
@@ -107,8 +108,8 @@ async function main() {
   const cfg = await config();
   const read = (name, query) => fetchRows(cfg, name, query);
   const [minerals, pieces, specimens, articles, archives, terms, mines, localities, departments, regions, occurrences, articleMines, articleLocalities, articleDepartments, archiveMines, archiveLocalities, archiveDepartments] = await Promise.all([
-    read("minerals", `minerals?select=id,slug,name,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,colors,streak,luster,transparency,cleavage,fracture,habit,fluorescence,varieties,confusions,etymology,photo_credit,mineral_group,is_group,description,formation,updated_at,media:mineral_media(${MEDIA})&publication_status=eq.published&order=slug`),
-    read("shop_items", `shop_items?select=slug,reference,title,mineral_name,mineral_id,mine_id,locality_id,department_code,provenance,price_cents,currency,description,dimensions,updated_at,mineral:minerals!shop_items_mineral_id_fkey(name,slug),mine:mines!shop_items_mine_id_fkey(name),department:departments!shop_items_department_code_fkey(name),media:shop_item_media(${MEDIA})&publication_status=eq.published&sale_status=eq.available&order=reference`),
+    read("minerals", `minerals?select=id,slug,name,rarity,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,colors,streak,luster,transparency,cleavage,fracture,habit,fluorescence,varieties,confusions,etymology,photo_credit,mineral_group,is_group,description,formation,updated_at,media:mineral_media(${MEDIA})&publication_status=eq.published&order=slug`),
+    read("shop_items", `shop_items?select=slug,reference,sale_status,title,mineral_name,mineral_id,mine_id,locality_id,department_code,provenance,price_cents,currency,description,dimensions,updated_at,mineral:minerals!shop_items_mineral_id_fkey(name,slug),mine:mines!shop_items_mine_id_fkey(name),department:departments!shop_items_department_code_fkey(name),media:shop_item_media(${MEDIA})&publication_status=eq.published&sale_status=in.(available,sold)&order=reference`),
     read("specimens", `specimens?select=slug,mineral_name,mineral_id,mine_id,locality_id,department_code,provenance,locality_name,department_name,country,description,updated_at,mineral:minerals!specimens_mineral_id_fkey(name,slug),media:specimen_media(${MEDIA})&publication_status=eq.published&order=slug`),
     read("articles", `articles?select=id,slug,title,category,excerpt,body,published_on,updated_at,media:article_media(${MEDIA})&publication_status=eq.published&order=slug`),
     read("archive_documents", `archive_documents?select=id,slug,title,category,description,summary,cover_bucket,cover_path,document_date,updated_at&publication_status=eq.published&bucket_id=eq.site-media-public&order=slug`),
@@ -133,6 +134,30 @@ async function main() {
   // Familles de minéraux (groupes) : même logique que la fiche affichée par JavaScript.
   const families = new Map();
   minerals.forEach(item => { if (item.mineral_group) { if (!families.has(item.mineral_group)) families.set(item.mineral_group, []); families.get(item.mineral_group).push(item); } });
+  // ----- Gisements, communes et départements : pages fabriquées à partir de ce qui est publié et lié (mises à jour chaque nuit) -----
+  const set = (rows, key) => new Set(rows.map(row => row[key]).filter(Boolean));
+  const byId = rows => new Map(rows.map(row => [row.id, row]));
+  const forSale = pieces.filter(row => row.sale_status !== "sold");
+  const mineralBySlug = new Map(minerals.map(row => [row.slug, row])), mineralById = byId(minerals), articleById = byId(articles), archiveById = byId(archives), localityById = byId(localities), mineById = byId(mines);
+  const regionById = new Map(regions.map(region => [region.id, region.name]));
+  const departmentByCode = new Map(departments.map(department => [department.code, department]));
+  const departmentSlug = department => slugify(department.name) || slugify(department.code);
+  const href = (type, slug) => `/${FOLDERS[type]}/${slugify(slug)}/`;
+  const nameOfPiece = row => clean(row.mineral_name || row.mineral?.name) || clean(row.title) || "Spécimen";
+  const specimenEntry = row => ({ title: clean(row.mineral_name || row.mineral?.name) || "Spécimen", meta: [row.provenance, row.locality_name].filter(Boolean).map(clean).join(" · "), href: href("specimen", row.slug) });
+  const pieceEntry = row => ({ title: nameOfPiece(row), meta: [clean(row.mine?.name), clean(row.reference)].filter(Boolean).join(" · "), href: href("piece", row.reference || row.slug) });
+  const articleEntry = row => ({ title: row.title, meta: categoryLabel(row.category), href: href("article", row.slug) });
+  const archiveEntry = row => ({ title: row.title, meta: categoryLabel(row.category), href: href("archive", row.slug) });
+  const mineralEntry = row => ({ title: row.name, meta: "", href: href("mineral", row.slug) });
+  const listBlock = (title, entries, tag = "section", heading = "h2", cls = "fiche-section", listCls = "fiche-list") => entries.length
+    ? `<${tag}${cls ? ` class="${cls}"` : ""}><${heading}>${esc(title)}</${heading}><ul${listCls ? ` class="${listCls}"` : ""}>${entries.map(entry => `<li><a class="link" href="${esc(entry.href)}">${esc(entry.title)}</a>${entry.meta ? ` — ${esc(entry.meta)}` : ""}</li>`).join("")}</ul></${tag}>` : "";
+  const uniqueBy = (rows, key) => [...new Map(rows.filter(row => row[key]).map(row => [row[key], row])).values()];
+  const mineralsOf = (specimenRows, pieceRows, occurrenceRows = []) => uniqueBy([...specimenRows.map(row => mineralById.get(row.mineral_id) || (row.mineral?.slug ? row.mineral : null)), ...pieceRows.map(row => mineralById.get(row.mineral_id) || (row.mineral?.slug ? row.mineral : null)), ...occurrenceRows.map(row => mineralById.get(row.mineral_id))].filter(Boolean), "slug").sort((a, b) => a.name.localeCompare(b.name, "fr"));
+  const articlesOf = (...linkSets) => uniqueBy(linkSets.flat().map(link => articleById.get(link.article_id)).filter(Boolean), "slug");
+  const archivesOf = (...linkSets) => uniqueBy(linkSets.flat().map(link => archiveById.get(link.archive_id)).filter(Boolean), "slug");
+  const backLink = `<p><a class="link" href="collection.html">← Retour à Ma collection</a></p>`;
+  const stripe = rows => rows.sort((a, b) => String(a.slug || a.reference || "").localeCompare(String(b.slug || b.reference || "")));
+
   const mineralLink = item => `<a class="link" href="/${FOLDERS.mineral}/${slugify(item.slug)}/">${esc(item.name)}</a>`;
   minerals.forEach(item => {
     const photo = photoUrl(cfg, item.media) || commonsUrl(item.slug);
@@ -148,7 +173,7 @@ async function main() {
       ["Couleurs", (item.colors || []).join(", ")], ["Trait", item.streak], ["Éclat", item.luster], ["Transparence", item.transparency], ["Clivage", item.cleavage], ["Cassure", item.fracture], ["Habitus", item.habit], ["Fluorescence", item.fluorescence],
       ["Formation et gisements", item.formation], ["Variétés", item.varieties], ["Confusions possibles", item.confusions], ["Étymologie", item.etymology]];
     item.visible = `<article class="seo-fiche"><div class="kicker">Minéral</div><h1 class="page-title">${esc(item.name)}</h1>${item.formula ? `<p class="meta">${esc(item.formula)}</p>` : ""}`
-      + `${photo ? `<div class="fiche-photos"><img src="${esc(photo)}" alt="${esc(item.name)}"></div>` : ""}${credit}${item.description ? `<p class="seo-desc">${esc(item.description)}</p>` : ""}${dl("scientific-details", rows)}${family ? `<div>${family}</div>` : ""}`
+      + `${photo ? `<div class="fiche-photos"><img src="${esc(photo)}" alt="${esc(item.name)}"></div>` : ""}${credit}${item.description ? `<p class="seo-desc">${esc(item.description)}</p>` : ""}${dl("scientific-details", rows)}${family ? `<div>${family}</div>` : ""}${listBlock("Minéraux similaires", similarMinerals(item, minerals).map(mineralEntry))}`
       + `<p><a class="link" href="apprendre.html#mineraux">← Retour aux fiches minéraux</a></p></article>`;
     item.properties = rows.filter(([, value]) => value).map(([name, value]) => ({ "@type": "PropertyValue", name, value }));
     const facts = [item.chemical_class, item.crystal_system && `système ${item.crystal_system.toLowerCase()}`, item.hardness != null && `dureté ${span(item.hardness, item.hardness_max)}`, item.density != null && `densité ${span(item.density, item.density_max)}`].filter(Boolean).join(", ");
@@ -168,14 +193,16 @@ async function main() {
     const where = [mine, clean(item.department?.name)].filter(Boolean).join(", ");
     const url = `${SITE}/${FOLDERS.piece}/${slugify(item.reference || item.slug)}/`;
     const image = photoUrl(cfg, item.media);
+    const sold = item.sale_status === "sold";
+    const othersOfMine = item.mine_id ? mineralsOf(specimens.filter(row => row.mine_id === item.mine_id), pieces.filter(row => row.mine_id === item.mine_id)).filter(row => row.slug !== item.mineral?.slug) : [];
     add("piece", item.reference || item.slug, {
       template: "piece", page: "piece", params: `ref=${item.reference || item.slug}`, lastmod: day(item.updated_at), image, ogType: "product",
       title: pieceTitle(name, mine), description: cut(`${name}${where ? ` de ${where}` : ""} — ${price}. ${item.description || "Spécimen disponible dans la boutique Jeremineralogie."}`),
-      visible: `<div class="specimen"><div>${image ? `<div class="gallery-main"><img src="${esc(image)}" alt="${esc(name)}"></div>` : ""}</div><div class="details"><div class="kicker">Boutique</div><h1 class="page-title">${esc(name)}</h1>`
-        + `${dl("", [["Référence", clean(item.reference)], ["Minéral", clean(item.mineral_name || item.mineral?.name)], ["Gisement", mine], ["Département", clean(item.department?.name)], ["Dimensions", clean(item.dimensions)]])}<div class="price">${esc(price)}</div></div></div>`
-        + `${item.description ? `<div class="content"><h2>Description</h2>${p(item.description)}</div>` : ""}`,
+      visible: `<div class="specimen"><div>${image ? `<div class="gallery-main"><img src="${esc(image)}" alt="${esc(name)}">${sold ? `<span class="sold-ribbon">Vendu</span>` : ""}</div>` : ""}</div><div class="details"><div class="kicker">Boutique</div><h1 class="page-title">${esc(name)}</h1>`
+        + `${dl("", [["Référence", clean(item.reference)], ["Minéral", clean(item.mineral_name || item.mineral?.name)], ["Gisement", mine], ["Département", clean(item.department?.name)], ["Dimensions", clean(item.dimensions)]])}${sold ? `<p class="meta sold-note">Cette pièce a été vendue.</p>` : `<div class="price">${esc(price)}</div>`}</div></div>`
+        + `${item.description ? `<div class="content"><h2>Description</h2>${p(item.description)}</div>` : ""}${listBlock("Autres minéraux de ce gisement", othersOfMine.map(mineralEntry), "div", "h2", "content related-block")}${listBlock("Minéraux similaires", item.mineral?.slug && mineralBySlug.get(item.mineral.slug) ? similarMinerals(mineralBySlug.get(item.mineral.slug), minerals).map(mineralEntry) : [], "div", "h2", "content related-block")}`,
       jsonld: { "@type": "Product", name: `${name}${mine ? ` — ${mine}` : ""}`, sku: item.reference || undefined, description: cut(item.description || name, 500), image: image ? [image] : undefined,
-        offers: { "@type": "Offer", price: ((item.price_cents ?? 0) / 100).toFixed(2), priceCurrency: item.currency || "EUR", availability: "https://schema.org/InStock", url, seller: { "@type": "Organization", name: "Jeremineralogie" } } },
+        offers: { "@type": "Offer", price: ((item.price_cents ?? 0) / 100).toFixed(2), priceCurrency: item.currency || "EUR", availability: sold ? "https://schema.org/SoldOut" : "https://schema.org/InStock", url, seller: { "@type": "Organization", name: "Jeremineralogie" } } },
       extra: breadcrumb(...crumbs("piece", name, url))
     });
   });
@@ -183,11 +210,13 @@ async function main() {
     const name = clean(item.mineral_name || item.mineral?.name) || "Spécimen";
     const place = clean(item.provenance || item.locality_name);
     const where = [place, clean(item.department_name), clean(item.country)].filter(Boolean).join(", ");
+    const othersOfMine = item.mine_id ? mineralsOf(specimens.filter(row => row.mine_id === item.mine_id), pieces.filter(row => row.mine_id === item.mine_id)).filter(row => row.slug !== item.mineral?.slug) : [];
     add("specimen", item.slug, {
       template: "specimen", page: "specimen", params: `id=${item.slug}`, lastmod: day(item.updated_at), image: photoUrl(cfg, item.media),
       title: specimenTitle(name, place), description: cut(`${name}${where ? ` de ${where}` : ""}. ${item.description || "Spécimen de la collection Jeremineralogie."}`),
       visible: `<div class="specimen"><div>${photoUrl(cfg, item.media) ? `<div class="gallery-main"><img src="${esc(photoUrl(cfg, item.media))}" alt="${esc(name)}"></div>` : ""}</div><div class="details"><div class="kicker">Ma collection</div><h1 class="page-title">${esc(name)}</h1>${where ? `<p class="meta">${esc(where)}</p>` : ""}</div></div>`
-        + `<div class="content section"><h2>Description du spécimen</h2>${p(item.description || "Spécimen de la collection Jeremineralogie.")}</div>`,
+        + `<div class="content section"><h2>Description du spécimen</h2>${p(item.description || "Spécimen de la collection Jeremineralogie.")}</div>`
+        + `${listBlock("Autres minéraux de ce gisement", othersOfMine.map(mineralEntry), "div", "h2", "content related-block")}${listBlock("Minéraux similaires", item.mineral?.slug && mineralBySlug.get(item.mineral.slug) ? similarMinerals(mineralBySlug.get(item.mineral.slug), minerals).map(mineralEntry) : [], "div", "h2", "content related-block")}`,
       jsonld: [{ "@type": "WebPage", name: specimenTitle(name, place), description: cut(item.description || name, 300), url: `${SITE}/${FOLDERS.specimen}/${slugify(item.slug)}/`, inLanguage: "fr", isPartOf: { "@type": "WebSite", name: "Jeremineralogie", url: `${SITE}/` },
         about: { "@type": "Thing", name: `${name}${place ? ` — ${place}` : ""}`, description: cut(item.description || name, 500), image: photoUrl(cfg, item.media) || undefined } },
         breadcrumb(...crumbs("specimen", name, `${SITE}/${FOLDERS.specimen}/${slugify(item.slug)}/`))]
@@ -214,32 +243,9 @@ async function main() {
         breadcrumb(...crumbs("archive", item.title, `${SITE}/${FOLDERS.archive}/${slugify(item.slug)}/`))]
     });
   });
-  // ----- Gisements, communes et départements : pages fabriquées à partir de ce qui est publié et lié (mises à jour chaque nuit) -----
-  const set = (rows, key) => new Set(rows.map(row => row[key]).filter(Boolean));
-  const byId = rows => new Map(rows.map(row => [row.id, row]));
-  const mineralById = byId(minerals), articleById = byId(articles), archiveById = byId(archives), localityById = byId(localities), mineById = byId(mines);
-  const regionById = new Map(regions.map(region => [region.id, region.name]));
-  const departmentByCode = new Map(departments.map(department => [department.code, department]));
-  const departmentSlug = department => slugify(department.name) || slugify(department.code);
-  const href = (type, slug) => `/${FOLDERS[type]}/${slugify(slug)}/`;
-  const nameOfPiece = row => clean(row.mineral_name || row.mineral?.name) || clean(row.title) || "Spécimen";
-  const specimenEntry = row => ({ title: clean(row.mineral_name || row.mineral?.name) || "Spécimen", meta: [row.provenance, row.locality_name].filter(Boolean).map(clean).join(" · "), href: href("specimen", row.slug) });
-  const pieceEntry = row => ({ title: nameOfPiece(row), meta: [clean(row.mine?.name), clean(row.reference)].filter(Boolean).join(" · "), href: href("piece", row.reference || row.slug) });
-  const articleEntry = row => ({ title: row.title, meta: categoryLabel(row.category), href: href("article", row.slug) });
-  const archiveEntry = row => ({ title: row.title, meta: categoryLabel(row.category), href: href("archive", row.slug) });
-  const mineralEntry = row => ({ title: row.name, meta: "", href: href("mineral", row.slug) });
-  const listBlock = (title, entries, tag = "section", heading = "h2", cls = "fiche-section", listCls = "fiche-list") => entries.length
-    ? `<${tag}${cls ? ` class="${cls}"` : ""}><${heading}>${esc(title)}</${heading}><ul${listCls ? ` class="${listCls}"` : ""}>${entries.map(entry => `<li><a class="link" href="${esc(entry.href)}">${esc(entry.title)}</a>${entry.meta ? ` — ${esc(entry.meta)}` : ""}</li>`).join("")}</ul></${tag}>` : "";
-  const uniqueBy = (rows, key) => [...new Map(rows.filter(row => row[key]).map(row => [row[key], row])).values()];
-  const mineralsOf = (specimenRows, pieceRows, occurrenceRows = []) => uniqueBy([...specimenRows.map(row => mineralById.get(row.mineral_id) || (row.mineral?.slug ? row.mineral : null)), ...pieceRows.map(row => mineralById.get(row.mineral_id) || (row.mineral?.slug ? row.mineral : null)), ...occurrenceRows.map(row => mineralById.get(row.mineral_id))].filter(Boolean), "slug").sort((a, b) => a.name.localeCompare(b.name, "fr"));
-  const articlesOf = (...linkSets) => uniqueBy(linkSets.flat().map(link => articleById.get(link.article_id)).filter(Boolean), "slug");
-  const archivesOf = (...linkSets) => uniqueBy(linkSets.flat().map(link => archiveById.get(link.archive_id)).filter(Boolean), "slug");
-  const backLink = `<p><a class="link" href="collection.html">← Retour à Ma collection</a></p>`;
-  const stripe = rows => rows.sort((a, b) => String(a.slug || a.reference || "").localeCompare(String(b.slug || b.reference || "")));
-
   mines.forEach(mine => {
     const locality = localityById.get(mine.locality_id), department = departmentByCode.get(locality?.department_code);
-    const sp = specimens.filter(row => row.mine_id === mine.id), sh = pieces.filter(row => row.mine_id === mine.id);
+    const sp = specimens.filter(row => row.mine_id === mine.id), sh = forSale.filter(row => row.mine_id === mine.id);
     const ms = mineralsOf(sp, sh), ar = articlesOf(articleMines.filter(link => link.mine_id === mine.id)), dc = archivesOf(archiveMines.filter(link => link.mine_id === mine.id));
     const place = [locality?.name, department?.name].filter(Boolean).join(", ");
     const url = `${SITE}${href("mine", mine.slug)}`;
@@ -256,7 +262,7 @@ async function main() {
   localities.forEach(locality => {
     const department = departmentByCode.get(locality.department_code);
     const lm = mines.filter(mine => mine.locality_id === locality.id), mineIds = new Set(lm.map(mine => mine.id));
-    const sp = specimens.filter(row => row.locality_id === locality.id || mineIds.has(row.mine_id)), sh = pieces.filter(row => row.locality_id === locality.id || mineIds.has(row.mine_id));
+    const sp = specimens.filter(row => row.locality_id === locality.id || mineIds.has(row.mine_id)), sh = forSale.filter(row => row.locality_id === locality.id || mineIds.has(row.mine_id));
     const ms = mineralsOf(sp, sh, occurrences.filter(row => row.locality_id === locality.id));
     const ar = articlesOf(articleLocalities.filter(link => link.locality_id === locality.id), articleMines.filter(link => mineIds.has(link.mine_id)));
     const dc = archivesOf(archiveLocalities.filter(link => link.locality_id === locality.id), archiveMines.filter(link => mineIds.has(link.mine_id)));
@@ -276,7 +282,7 @@ async function main() {
     const dl = localities.filter(locality => locality.department_code === department.code), localityIds = new Set(dl.map(locality => locality.id));
     const dm = mines.filter(mine => localityIds.has(mine.locality_id)), mineIds = new Set(dm.map(mine => mine.id));
     const sp = specimens.filter(row => row.department_code === department.code || localityIds.has(row.locality_id) || mineIds.has(row.mine_id));
-    const sh = pieces.filter(row => row.department_code === department.code || localityIds.has(row.locality_id) || mineIds.has(row.mine_id));
+    const sh = forSale.filter(row => row.department_code === department.code || localityIds.has(row.locality_id) || mineIds.has(row.mine_id));
     const ms = mineralsOf(sp, sh, occurrences.filter(row => row.department_code === department.code));
     const ar = articlesOf(articleDepartments.filter(link => link.department_code === department.code), articleLocalities.filter(link => localityIds.has(link.locality_id)), articleMines.filter(link => mineIds.has(link.mine_id)));
     const dc = archivesOf(archiveDepartments.filter(link => link.department_code === department.code), archiveLocalities.filter(link => localityIds.has(link.locality_id)), archiveMines.filter(link => mineIds.has(link.mine_id)));

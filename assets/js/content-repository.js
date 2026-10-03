@@ -5,7 +5,7 @@ export async function loadPublishedContent(section) {
   if (!client) throw new Error("La connexion à Supabase n’est pas configurée.");
   let query;
   if (section === "shop") query = client.from("shop_items").select("*,mine:mines!shop_items_mine_id_fkey(name,slug),mineral:minerals!shop_items_mineral_id_fkey(name,slug,formula,crystal_system,hardness,density,colors,luster,cleavage,habit,formation),department:departments!shop_items_department_code_fkey(name,region:regions!departments_region_id_fkey(name)),region:regions!shop_items_region_id_fkey(name),locality:localities!shop_items_locality_id_fkey(name,slug),associations:shop_item_associations(mineral:minerals(name,slug)),media:shop_item_media(id,bucket_id,storage_path,alt_text,position)")
-    .eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });
+    .eq("publication_status", "published").in("sale_status", ["available", "sold"]).order("updated_at", { ascending: false });
   else if (section === "articles") query = client.from("articles").select("*,media:article_media(id,bucket_id,storage_path,alt_text,caption,position)")
     .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("updated_at", { ascending: false });
   else if (section === "archives") query = client.from("archive_documents").select("id,slug,title,category,description,body,summary,links,cover_bucket,cover_path,document_date,rights_note,bucket_id,storage_path,publication_status,updated_at")
@@ -13,7 +13,9 @@ export async function loadPublishedContent(section) {
   else throw new Error(`Section publique inconnue : ${section}`);
   const { data, error } = await query;
   if (error) throw error;
-  return { client, data: data || [] };
+  // Boutique : les pièces vendues restent visibles mais passent après les pièces disponibles.
+  const rows = section === "shop" ? [...(data || [])].sort((a, b) => (a.sale_status === "sold") - (b.sale_status === "sold")) : (data || []);
+  return { client, data: rows };
 }
 
 export function publicMediaUrl(client, media) {
