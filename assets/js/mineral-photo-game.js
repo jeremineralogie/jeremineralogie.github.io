@@ -2,7 +2,7 @@
 // 5 manches par jour, les mêmes pour tout le monde (tirage fixé par la date) ; les erreurs ne coûtent rien, on voit tout de suite la bonne réponse.
 import { publicMediaUrl } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
-import { parisDay, recordGame, streakOf } from "./game-progress.js";
+import { parisDay, recordGame, streakOf, todayResult } from "./game-progress.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 import { dateFr, sharePanel } from "./share.js";
 
@@ -57,7 +57,14 @@ export async function renderMineralPhotoGame(panel, { client, minerals }) {
   const answers = saved?.date === today && saved.keys?.join() === keys.join() ? saved.answers : [];
   const save = () => store.set({ date: today, keys, answers });
   panel.hidden = false;
-  if (answers.length >= rounds.length) { summary(); return; }
+  // La partie compte dès la dernière réponse (pas seulement au clic sur « Voir le résultat »).
+  const record = () => {
+    if (todayResult("mineral")) return;
+    const found = answers.filter(item => item.correct).length;
+    const families = rounds.filter((round, index) => answers[index]?.correct).map(round => round.target.chemical_class).filter(Boolean);
+    recordGame("mineral", { score: found, rounds: rounds.length, families: [...new Set(families)] });
+  };
+  if (answers.length >= rounds.length) { record(); summary(); return; }
 
   const box = el("div", "pick");
   const head = el("div", "pick-head");
@@ -103,6 +110,7 @@ export async function renderMineralPhotoGame(panel, { client, minerals }) {
     score.textContent = `${right()} bonne${right() > 1 ? "s" : ""} réponse${right() > 1 ? "s" : ""}`;
     next.hidden = false;
     next.textContent = answers.length >= rounds.length ? "Voir le résultat" : "Manche suivante";
+    if (answers.length >= rounds.length) record();
   }
   next.addEventListener("click", () => {
     if (answers.length >= rounds.length) { finish(); return; }
@@ -111,8 +119,7 @@ export async function renderMineralPhotoGame(panel, { client, minerals }) {
   showRound();
 
   function finish() {
-    const families = rounds.filter((round, index) => answers[index]?.correct).map(round => round.target.chemical_class).filter(Boolean);
-    recordGame("mineral", { score: right(), rounds: rounds.length, families: [...new Set(families)] });
+    record();
     summary();
   }
 

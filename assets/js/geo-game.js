@@ -1,7 +1,7 @@
 // « Devine le gisement » (accueil) : une photo de pièce, on touche la carte là où elle a été trouvée.
 // 5 manches par jour, les mêmes pour tout le monde ; score de 0 à 1 000 par manche selon la distance.
 import { loadLeaflet } from "./leaflet-loader.js";
-import { parisDay, recordGame, streakOf } from "./game-progress.js";
+import { parisDay, recordGame, streakOf, todayResult } from "./game-progress.js";
 import { dateFr, sharePanel } from "./share.js";
 
 const ROUNDS = 5;
@@ -33,6 +33,16 @@ export function dailyPieces(pieces, day = parisDay()) {
   return [...pieces].sort((a, b) => a.key.localeCompare(b.key)).map(piece => [random(), piece]).sort((a, b) => a[0] - b[0]).map(([, piece]) => piece).slice(0, ROUNDS);
 }
 
+// Partie du jour terminée mais jamais enregistrée (dernier clic manqué, ou jouée avant l'arrivée des badges) : on l'enregistre,
+// pour que « Joué aujourd'hui », les séries et les badges en tiennent compte sans ouvrir le jeu.
+export function backfillRecord(pieces) {
+  const day = parisDay(), chosen = dailyPieces(pieces, day), saved = store.get();
+  if (!chosen.length || todayResult("geo") || saved?.date !== day || saved.keys?.join() !== chosen.map(piece => piece.key).join() || (saved.results || []).length < chosen.length) return;
+  const finalScore = saved.results.reduce((sum, result) => sum + result.points, 0);
+  if (finalScore > best.get()) best.set(finalScore);
+  recordGame("geo", { score: finalScore, rounds: saved.results.map(({ km, department, zone }) => ({ km, department, zone })) });
+}
+
 // pieces : [{ key, name, photo, href, lat, lng, place, department }]
 export async function renderGeoGame(panel, pieces) {
   const body = panel.querySelector("[data-body]");
@@ -43,7 +53,14 @@ export async function renderGeoGame(panel, pieces) {
   const results = saved?.date === today && saved.keys?.join() === chosen.map(piece => piece.key).join() ? saved.results : [];
   const save = () => store.set({ date: today, keys: chosen.map(piece => piece.key), results });
   panel.hidden = false;
-  if (results.length >= chosen.length) { summary(); return; }
+  // La partie compte dès que la dernière manche est validée (pas seulement au clic sur « Voir le résultat »).
+  const record = () => {
+    if (todayResult("geo")) return;
+    const finalScore = results.reduce((sum, result) => sum + result.points, 0);
+    if (finalScore > best.get()) best.set(finalScore);
+    recordGame("geo", { score: finalScore, rounds: results.map(({ km, department, zone }) => ({ km, department, zone })) });
+  };
+  if (results.length >= chosen.length) { record(); summary(); return; }
 
   let L;
   try { L = await loadLeaflet(); }
@@ -106,6 +123,7 @@ export async function renderGeoGame(panel, pieces) {
     score.textContent = `${total().toLocaleString("fr-FR")} points`;
     validate.hidden = true; next.hidden = false;
     next.textContent = results.length >= chosen.length ? "Voir le résultat" : "Manche suivante";
+    if (results.length >= chosen.length) record();
   });
   next.addEventListener("click", () => {
     if (results.length >= chosen.length) { map.remove(); finish(); return; }
@@ -114,9 +132,7 @@ export async function renderGeoGame(panel, pieces) {
   showRound();
 
   function finish() {
-    const finalScore = total();
-    if (finalScore > best.get()) best.set(finalScore);
-    recordGame("geo", { score: finalScore, rounds: results.map(({ km, department, zone }) => ({ km, department, zone })) });
+    record();
     summary();
   }
 

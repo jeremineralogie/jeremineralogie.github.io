@@ -4,7 +4,7 @@ import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
 import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
-import { renderGeoGame } from "./geo-game.js";
+import { backfillRecord, renderGeoGame } from "./geo-game.js";
 import { renderMineralPhotoGame } from "./mineral-photo-game.js";
 import { dateFr, sharePanel } from "./share.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
@@ -194,6 +194,7 @@ export async function mountGames(root, { client, minerals, collapsible = false }
   try {
     const pieces = await geoPieces(client);
     if (!pieces.length) return;
+    backfillRecord(pieces);
     if (!collapsible) { await renderGeoGame(geoBlock, pieces); return; }
     // La carte a besoin d'un encart ouvert pour prendre sa taille : on ne la monte qu'à la première ouverture.
     geoBlock.hidden = false;
