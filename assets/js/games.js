@@ -140,7 +140,7 @@ async function geoPieces(client) {
     rows(client.from("localities").select("id,name,latitude,longitude,department_code").not("latitude", "is", null)),
     rows(client.from("mines").select("id,name,locality_id,latitude,longitude")),
     rows(client.from("departments").select("code,name")),
-    rows(client.from("specimens").select("slug,mineral_name,locality_id,mine_id,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)").eq("publication_status", "published")),
+    rows(client.from("specimens").select("slug,mineral_name,country,locality_id,mine_id,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)").eq("publication_status", "published")),
     rows(client.from("shop_items").select("slug,reference,title,mineral_name,locality_id,mine_id,mineral:minerals!shop_items_mineral_id_fkey(name),media:shop_item_media(bucket_id,storage_path,position)").eq("publication_status", "published").neq("sale_status", "hidden"))
   ]);
   const localityById = new Map(localities.map(row => [row.id, row]));
@@ -154,7 +154,9 @@ async function geoPieces(client) {
     const department = departmentName.get(place.department_code);
     // Point du gisement s'il a été posé (plus précis), sinon celui de la commune.
     const spot = mine?.latitude != null && mine?.longitude != null ? mine : place;
-    return { key: `${type}:${row.slug}`, name, href, photo: publicMediaUrl(client, photo), lat: spot.latitude, lng: spot.longitude, department: place.department_code,
+    // Zone du badge « Tour de France » : département français, sinon pays (ou à défaut le lieu) à l'étranger.
+    const zone = place.department_code || (row.country && fold(row.country) !== "france" ? `pays:${fold(row.country)}` : `lieu:${place.id}`);
+    return { key: `${type}:${row.slug}`, name, href, photo: publicMediaUrl(client, photo), lat: spot.latitude, lng: spot.longitude, department: place.department_code, zone,
       place: [mine?.name, place.name, department].filter(Boolean).join(" · ") };
   };
   return [

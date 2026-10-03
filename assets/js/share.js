@@ -1,5 +1,7 @@
 // Partage des résultats des jeux : une image au format story (1080 × 1920) aux couleurs du site,
 // envoyée au menu de partage de l'appareil (Instagram, TikTok, Snapchat, WhatsApp…).
+import { recordShare } from "./game-progress.js";
+
 const SITE = "https://jeremineralogie.github.io/";
 const LOGO = "/assets/decor/logo-jeux.webp";
 const W = 1080, H = 1920;
@@ -124,6 +126,7 @@ export function sharePanel({ spec, text, fileName }) {
         const link = el("a"); link.href = preview.src; link.download = fileName; link.click();
         status.textContent = "Image enregistrée : vous pouvez maintenant la publier où vous voulez.";
       } else throw new Error("Partage indisponible");
+      recordShare();
     } catch (error) {
       if (error?.name !== "AbortError") status.textContent = "Le partage n’a pas fonctionné sur cet appareil.";
     }

@@ -39,52 +39,72 @@ function longestStreak(dates) {
 
 function statsOf(state) {
   const mineralDays = Object.keys(state.mineral), quizDays = Object.keys(state.quiz), geoDays = Object.keys(state.geo);
-  const mineral = Object.values(state.mineral);
-  const quiz = Object.values(state.quiz), geo = Object.values(state.geo);
-  const bothDays = quizDays.filter(day => state.geo[day]);
+  const mineral = Object.values(state.mineral), quiz = Object.values(state.quiz), geo = Object.values(state.geo);
   const rounds = geo.flatMap(game => game.rounds || []);
+  const exact = rounds.filter(round => round.km < 1);
+  const tripleDays = mineralDays.filter(day => state.quiz[day] && state.geo[day]);
+  const anyDays = new Set([...mineralDays, ...quizDays, ...geoDays]);
   return {
     mineral: {
       streak: currentStreak(mineralDays), longest: longestStreak(mineralDays), games: mineral.length,
       perfect: mineral.filter(game => game.score >= game.rounds).length,
-      found: mineral.reduce((sum, game) => sum + (game.score || 0), 0)
+      found: mineral.reduce((sum, game) => sum + (game.score || 0), 0),
+      families: new Set(mineral.flatMap(game => game.families || [])).size
     },
     quiz: {
       streak: currentStreak(quizDays), longest: longestStreak(quizDays),
       correct: quiz.filter(game => game.correct).length,
       noHint: quiz.filter(game => game.correct && game.hints === 0).length,
+      noHintLongest: longestStreak(quizDays.filter(day => state.quiz[day].correct && state.quiz[day].hints === 0)),
       families: new Set(quiz.filter(game => game.correct && game.family).map(game => game.family)).size
     },
     geo: {
       streak: currentStreak(geoDays), longest: longestStreak(geoDays), games: geo.length,
       best: Math.max(0, ...geo.map(game => game.score || 0)),
       closest: Math.min(Infinity, ...rounds.map(round => round.km)),
-      departments: new Set(rounds.map(round => round.department).filter(isFrench)).size
+      exact: exact.length,
+      // Zones (départements français, sinon pays ou lieu étranger) où une pièce a été trouvée à moins de 1 km.
+      zones: new Set(exact.map(round => round.zone || round.department).filter(Boolean)).size
     },
-    both: { days: bothDays.length, streak: currentStreak(bothDays) }
+    both: {
+      days: tripleDays.length, streak: currentStreak(tripleDays), longest: longestStreak(tripleDays),
+      played: anyDays.size, shared: Boolean(state.shared)
+    }
   };
 }
 
-const SERIES = [[3, "Régulier"], [7, "Assidu"], [30, "Passionné"], [100, "Légende"]];
-const series = game => SERIES.map(([days, name]) => ({ id: `${game}-serie-${days}`, game, icon: "🔥", name, rule: `${days} jours d’affilée`, test: stats => stats[game].longest >= days }));
+const SERIES = [[3, "🔓", "Régulier"], [7, "🎓", "Assidu"], [30, "🔥", "Passionné"], [100, "👑", "Légende"]];
+const series = game => SERIES.map(([days, icon, name]) => ({ id: `${game}-serie-${days}`, game, icon, name, rule: `${days} jours d’affilée`, test: stats => stats[game].longest >= days }));
+const badge = (id, game, icon, name, rule, test) => ({ id, game, icon, name, rule, test });
+// 36 badges : 10 par jeu (4 séries + 6 exploits) et 6 communs aux trois jeux.
 export const BADGES = [
   ...series("mineral"),
-  { id: "mineral-coup-d-oeil", game: "mineral", icon: "👁️", name: "Coup d’œil", rule: "Première partie terminée", test: stats => stats.mineral.games >= 1 },
-  { id: "mineral-sans-faute", game: "mineral", icon: "✨", name: "Sans faute", rule: "Une partie à 5 sur 5", test: stats => stats.mineral.perfect >= 1 },
-  { id: "mineral-oeil-expert", game: "mineral", icon: "🔎", name: "Œil d’expert", rule: "5 parties sans faute", test: stats => stats.mineral.perfect >= 5 },
-  { id: "mineral-collectionneur", game: "mineral", icon: "💎", name: "Collectionneur d’images", rule: "100 minéraux reconnus", test: stats => stats.mineral.found >= 100 },
+  badge("mineral-coup-d-oeil", "mineral", "👁️", "Coup d’œil", "Première partie terminée", stats => stats.mineral.games >= 1),
+  badge("mineral-sans-faute", "mineral", "💯", "Sans faute", "Une partie à 5 sur 5", stats => stats.mineral.perfect >= 1),
+  badge("mineral-oeil-expert", "mineral", "🔎", "Œil d’expert", "5 parties sans faute", stats => stats.mineral.perfect >= 5),
+  badge("mineral-collectionneur", "mineral", "💎", "Collectionneur d’images", "100 minéraux reconnus", stats => stats.mineral.found >= 100),
+  badge("mineral-familier", "mineral", "⛏️", "Familier des minéraux", "Minéraux reconnus dans 8 familles chimiques", stats => stats.mineral.families >= 8),
+  badge("mineral-oeil-maitre", "mineral", "🏆", "Œil de maître", "25 parties sans faute", stats => stats.mineral.perfect >= 25),
   ...series("quiz"),
-  { id: "quiz-premier-pas", game: "quiz", icon: "🎓", name: "Premier pas", rule: "Première bonne réponse", test: stats => stats.quiz.correct >= 1 },
-  { id: "quiz-sans-filet", game: "quiz", icon: "🧠", name: "Sans filet", rule: "10 bonnes réponses sans indice", test: stats => stats.quiz.noHint >= 10 },
-  { id: "quiz-encyclopediste", game: "quiz", icon: "📚", name: "Encyclopédiste", rule: "50 bonnes réponses au total", test: stats => stats.quiz.correct >= 50 },
-  { id: "quiz-familles", game: "quiz", icon: "💎", name: "Expert des familles", rule: "Bonne réponse dans 8 familles chimiques", test: stats => stats.quiz.families >= 8 },
+  badge("quiz-premier-pas", "quiz", "🥇", "Premier pas", "Première bonne réponse", stats => stats.quiz.correct >= 1),
+  badge("quiz-sans-filet", "quiz", "🧠", "Sans filet", "10 bonnes réponses sans indice", stats => stats.quiz.noHint >= 10),
+  badge("quiz-premier-coup", "quiz", "⚡", "Du premier coup", "Bonne réponse sans indice, 5 jours d’affilée", stats => stats.quiz.noHintLongest >= 5),
+  badge("quiz-encyclopediste", "quiz", "📚", "Encyclopédiste", "50 bonnes réponses", stats => stats.quiz.correct >= 50),
+  badge("quiz-familles", "quiz", "🧪", "Expert des familles", "Bonne réponse dans 8 familles chimiques", stats => stats.quiz.families >= 8),
+  badge("quiz-erudit", "quiz", "🎖️", "Érudit", "100 bonnes réponses", stats => stats.quiz.correct >= 100),
   ...series("geo"),
-  { id: "geo-boussole", game: "geo", icon: "🧭", name: "Boussole", rule: "Première partie terminée", test: stats => stats.geo.games >= 1 },
-  { id: "geo-oeil-de-lynx", game: "geo", icon: "🎯", name: "Œil de lynx", rule: "Une manche à moins de 5 km", test: stats => stats.geo.closest < 5 },
-  { id: "geo-cartographe", game: "geo", icon: "🗺️", name: "Cartographe", rule: "Une partie à 4 500 points ou plus", test: stats => stats.geo.best >= 4500 },
-  { id: "geo-tour-de-france", game: "geo", icon: "🏔️", name: "Tour de France", rule: "Pièces de 10 départements différents", test: stats => stats.geo.departments >= 10 },
-  { id: "both-prospecteur", game: "both", icon: "⚒️", name: "Prospecteur complet", rule: "Les deux jeux le même jour, 7 fois", test: stats => stats.both.days >= 7 },
-  { id: "both-conservateur", game: "both", icon: "👑", name: "Conservateur", rule: "Tous les autres badges", test: (stats, earned) => BADGES.every(badge => badge.id === "both-conservateur" || earned[badge.id]) }
+  badge("geo-boussole", "geo", "🧭", "Boussole", "Première partie terminée", stats => stats.geo.games >= 1),
+  badge("geo-oeil-de-lynx", "geo", "🎯", "Œil de lynx", "Une manche à moins de 5 km", stats => stats.geo.closest < 5),
+  badge("geo-pile-au-but", "geo", "📍", "Pile au but", "Une manche à moins de 1 km", stats => stats.geo.closest < 1),
+  badge("geo-cartographe", "geo", "🗺️", "Cartographe", "Une partie à 4 500 points ou plus", stats => stats.geo.best >= 4500),
+  badge("geo-tour-de-france-2", "geo", "🏔️", "Tour de France", "Pièces de 10 départements et pays différents trouvées à moins de 1 km", stats => stats.geo.zones >= 10),
+  badge("geo-grand-tour", "geo", "🏅", "Grand tour", "50 pièces trouvées à moins de 1 km", stats => stats.geo.exact >= 50),
+  badge("both-journee-parfaite", "both", "🌟", "Journée parfaite", "Les trois jeux le même jour", stats => stats.both.days >= 1),
+  badge("both-prospecteur-3", "both", "⚒️", "Prospecteur complet", "Les trois jeux le même jour, 7 fois", stats => stats.both.days >= 7),
+  badge("both-triple-serie", "both", "💡", "Triple série", "Les trois jeux 7 jours d’affilée", stats => stats.both.longest >= 7),
+  badge("both-fidele", "both", "🗓️", "Fidèle", "30 jours de jeu au total", stats => stats.both.played >= 30),
+  badge("both-ambassadeur", "both", "📲", "Ambassadeur", "Partager un résultat", stats => stats.both.shared),
+  badge("both-conservateur", "both", "🌍", "Conservateur", "Tous les autres badges", (stats, earned) => BADGES.every(item => item.id === "both-conservateur" || earned[item.id]))
 ];
 
 // Badges gagnés (gardés même si une série s'interrompt ensuite) ; renvoie ceux obtenus à l'instant.
@@ -108,6 +128,18 @@ export function recordGame(game, result) {
   return fresh;
 }
 
+// Un résultat partagé (menu de partage ouvert, ou image enregistrée) : badge « Ambassadeur ».
+export function recordShare() {
+  const state = read();
+  if (state.shared) return [];
+  state.shared = parisDay();
+  const fresh = award(state);
+  write(state);
+  fresh.forEach((item, index) => setTimeout(() => toast(item), index * 2600));
+  document.dispatchEvent(new CustomEvent("jm-progress"));
+  return fresh;
+}
+
 export const streakOf = game => statsOf(read())[game].streak;
 export const todayResult = game => read()[game][parisDay()] || null;
 
@@ -122,7 +154,7 @@ function toast(badge) {
 
 // Badges de la section Jeux de l'accueil : séries en cours, badges gagnés en couleur, les autres grisés avec leur condition.
 // summary (facultatif) reçoit le décompte « n / total », affiché même quand la liste est repliée.
-const GROUPS = [["mineral", "Facile · Trouve le minéral"], ["quiz", "Intermédiaire · Quiz du jour"], ["geo", "Difficile · Devine le gisement"], ["both", "Les deux jeux"]];
+const GROUPS = [["mineral", "Facile · Trouve le minéral"], ["quiz", "Intermédiaire · Quiz du jour"], ["geo", "Difficile · Devine le gisement"], ["both", "Les trois jeux · Badges communs"]];
 export function renderBadges(container, summary = null) {
   const draw = () => {
     const state = read();

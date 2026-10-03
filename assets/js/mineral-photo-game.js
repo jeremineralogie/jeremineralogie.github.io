@@ -111,7 +111,8 @@ export async function renderMineralPhotoGame(panel, { client, minerals }) {
   showRound();
 
   function finish() {
-    recordGame("mineral", { score: right(), rounds: rounds.length });
+    const families = rounds.filter((round, index) => answers[index]?.correct).map(round => round.target.chemical_class).filter(Boolean);
+    recordGame("mineral", { score: right(), rounds: rounds.length, families: [...new Set(families)] });
     summary();
   }
 
