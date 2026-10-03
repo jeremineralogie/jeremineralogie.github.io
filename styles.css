@@ -704,3 +704,15 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 .pick-next[hidden]{display:none}
 .pick-total{margin:0;font-family:var(--serif);font-size:clamp(1.5rem,6vw,2.1rem);color:#f3eaff;font-variant-numeric:tabular-nums}
 .pick-ok{font-size:.8rem;color:#6fe39a}.pick-ko{font-size:.8rem;color:#ff7d98}
+
+/* Accueil : chaque jeu dans son propre encart rétractable */
+.home-game.home-game-fold{display:block;padding:0;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.6)}
+.home-game-fold>.home-game-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px;padding:14px 38px 14px 14px;cursor:pointer;list-style:none;position:relative}
+.home-game-summary::-webkit-details-marker{display:none}
+.home-game-summary::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#c4a6f5;transition:transform .2s}
+.home-game-fold[open]>.home-game-summary::after{transform:translateY(-50%) rotate(180deg)}
+.home-game-summary .home-game-title{margin:0}
+.game-done{font-size:.78rem;color:#6fe39a;letter-spacing:.04em}
+.game-done[hidden]{display:none}
+.home-game-fold>[data-body]{display:grid;gap:12px;padding:4px 14px 16px}
+.home-game-fold:not([open])>[data-body]{display:none}

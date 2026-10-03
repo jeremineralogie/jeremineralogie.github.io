@@ -166,14 +166,21 @@ async function geoPieces(client) {
 }
 
 // Section Jeux : les jeux toujours visibles, les badges dans un volet dépliable.
-export async function mountGames(root, { client, minerals }) {
-  // Trois niveaux : facile (photo + 4 noms), intermédiaire (quiz à indices), difficile (localiser sur la carte).
-  const block = (title, level, levelClass) => {
-    const node = el("div", "home-game"); node.hidden = true; const body = el("div"); body.dataset.body = "";
+export async function mountGames(root, { client, minerals, collapsible = false }) {
+  // Trois niveaux, toujours dans l'ordre de difficulté : facile (photo + 4 noms), intermédiaire (quiz à indices), difficile (localiser sur la carte).
+  // Sur l'accueil (collapsible), chaque jeu est un encart rétractable, replié au départ, qui indique si la partie du jour est jouée.
+  const block = (title, level, levelClass, game) => {
+    const node = el(collapsible ? "details" : "div", `home-game${collapsible ? " home-game-fold" : ""}`); node.hidden = true;
+    const body = el("div"); body.dataset.body = "";
     const heading = el("h3", "home-game-title"); heading.append(el("span", `game-level ${levelClass}`, level), title);
-    node.append(heading, body); return node;
+    if (!collapsible) { node.append(heading, body); return node; }
+    const done = el("span", "game-done");
+    const refresh = () => { const played = Boolean(todayResult(game)); done.textContent = played ? "✓ Joué aujourd’hui" : ""; done.hidden = !played; };
+    refresh(); document.addEventListener("jm-progress", refresh);
+    const summary = el("summary", "home-game-summary"); summary.append(heading, done);
+    node.append(summary, body); return node;
   };
-  const mineralBlock = block("Trouve le minéral", "Facile", "is-easy"), quizBlock = block("Le quiz du jour", "Intermédiaire", "is-medium"), geoBlock = block("Devine le gisement", "Difficile", "is-hard");
+  const mineralBlock = block("Trouve le minéral", "Facile", "is-easy", "mineral"), quizBlock = block("Le quiz du jour", "Intermédiaire", "is-medium", "quiz"), geoBlock = block("Devine le gisement", "Difficile", "is-hard", "geo");
   const badges = el("details", "home-badges");
   const summary = el("summary"); const count = el("span", "home-badges-count");
   summary.append(el("span", "home-badges-label", "Mes séries et badges"), count);
@@ -184,6 +191,13 @@ export async function mountGames(root, { client, minerals }) {
   if (quiz) renderQuiz(quizBlock, quiz, minerals, client);
   renderBadges(list, count);
   void renderMineralPhotoGame(mineralBlock, { client, minerals }).catch(error => console.error("Trouve le minéral :", error));
-  try { const pieces = await geoPieces(client); if (pieces.length) await renderGeoGame(geoBlock, pieces); }
+  try {
+    const pieces = await geoPieces(client);
+    if (!pieces.length) return;
+    if (!collapsible) { await renderGeoGame(geoBlock, pieces); return; }
+    // La carte a besoin d'un encart ouvert pour prendre sa taille : on ne la monte qu'à la première ouverture.
+    geoBlock.hidden = false;
+    geoBlock.addEventListener("toggle", () => { if (geoBlock.open && !geoBlock.dataset.started) { geoBlock.dataset.started = "1"; void renderGeoGame(geoBlock, pieces); } });
+  }
   catch (error) { console.error("Devine le gisement :", error); }
 }

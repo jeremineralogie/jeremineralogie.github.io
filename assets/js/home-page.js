@@ -145,7 +145,7 @@ async function load() {
 
   const { daily } = dailyMinerals(minerals);
   if (daily) void renderDaily(daily);
-  void mountGames(document.querySelector("#home-games [data-games]"), { client, minerals });
+  void mountGames(document.querySelector("#home-games [data-games]"), { client, minerals, collapsible: true });
   const [specimenCount, shopCount, termCount, articleCount, archiveCount] = counts;
   const plural = (count, one, many) => count > 1 ? many : one;
   renderStats([
