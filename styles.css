@@ -707,7 +707,7 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 
 /* Accueil : chaque jeu dans son propre encart rétractable */
 .home-game.home-game-fold{display:block;padding:0;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.6)}
-.home-game-fold>.home-game-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px;padding:14px 38px 14px 14px;cursor:pointer;list-style:none;position:relative}
+.home-game-fold>.home-game-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px;padding:14px 38px;cursor:pointer;list-style:none;position:relative}
 .home-game-summary::-webkit-details-marker{display:none}
 .home-game-summary::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#c4a6f5;transition:transform .2s}
 .home-game-fold[open]>.home-game-summary::after{transform:translateY(-50%) rotate(180deg)}
@@ -716,3 +716,8 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 .game-done[hidden]{display:none}
 .home-game-fold>[data-body]{display:grid;gap:12px;padding:4px 14px 16px}
 .home-game-fold:not([open])>[data-body]{display:none}
+
+/* Titre du jeu centré, niveau centré juste en dessous */
+.home-game-title{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
+.home-game-title .game-level{margin-right:0}
+.home-game-fold>.home-game-summary{flex-direction:column;flex-wrap:nowrap;gap:6px}

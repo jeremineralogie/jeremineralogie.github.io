@@ -172,7 +172,7 @@ export async function mountGames(root, { client, minerals, collapsible = false }
   const block = (title, level, levelClass, game) => {
     const node = el(collapsible ? "details" : "div", `home-game${collapsible ? " home-game-fold" : ""}`); node.hidden = true;
     const body = el("div"); body.dataset.body = "";
-    const heading = el("h3", "home-game-title"); heading.append(el("span", `game-level ${levelClass}`, level), title);
+    const heading = el("h3", "home-game-title"); heading.append(el("span", "game-name", title), el("span", `game-level ${levelClass}`, level));
     if (!collapsible) { node.append(heading, body); return node; }
     const done = el("span", "game-done");
     const refresh = () => { const played = Boolean(todayResult(game)); done.textContent = played ? "✓ Joué aujourd’hui" : ""; done.hidden = !played; };
