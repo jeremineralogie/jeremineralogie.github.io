@@ -58,11 +58,12 @@ function render(client, article, { linker, chosen }, all = []) {
   const images = (article.media || []).filter(item => item.bucket_id === "site-media-public").sort((a, b) => a.position - b.position);
   const page = document.createElement("article"); page.className = "article-full";
   const category = document.createElement("div"); category.className = "kicker"; category.textContent = categoryLabel(article.category);
-  const title = document.createElement("h1"); title.className = "page-title"; title.textContent = article.title;
+  // Le titre et la photo de couverture ne servent qu'à la liste et à la vignette de l'article : l'article s'ouvre sur sa catégorie et sa date,
+  // puis directement sur son texte. Le titre reste dans la page pour les lecteurs d'écran et le référencement, sans être affiché.
+  const title = document.createElement("h1"); title.className = "visually-hidden"; title.textContent = article.title;
   const date = document.createElement("div"); date.className = "meta";
   date.textContent = article.published_on ? new Intl.DateTimeFormat("fr-FR").format(new Date(`${article.published_on}T00:00:00`)) : "";
-  page.append(category, title, date);
-  if (images[0]) { const image = document.createElement("img"); image.src = publicMediaUrl(client, images[0]); image.alt = images[0].alt_text || article.title; page.append(image); }
+  page.append(category, date, title);
   const blocks = renderBlocks(page, article.body, client);
   if (linker) blocks.filter(node => node.classList.contains("art-text") || node.classList.contains("art-rich")).forEach(node => linkTextNodes(node, linker, used));
   for (const media of images.slice(1)) {
