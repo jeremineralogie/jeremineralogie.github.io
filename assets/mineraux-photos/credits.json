@@ -6367,5 +6367,16 @@
   "height": 499,
   "thumb": "zeolite-mini.webp",
   "name": "Zéolite"
+ },
+ "pierre-de-lune": {
+  "photo": "pierre-de-lune.webp",
+  "thumb": "pierre-de-lune-mini.webp",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Moonstone_(iridescent_sodic_feldspar)_5.jpg",
+  "width": 640,
+  "height": 405,
+  "name": "Pierre de lune"
  }
 }
