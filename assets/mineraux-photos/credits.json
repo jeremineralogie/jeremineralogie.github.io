@@ -6378,5 +6378,16 @@
   "width": 640,
   "height": 405,
   "name": "Pierre de lune"
+ },
+ "oeil-de-faucon": {
+  "photo": "oeil-de-faucon.webp",
+  "thumb": "oeil-de-faucon-mini.webp",
+  "author": "Linas Juozėnas",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Blue_tiger_eye_-_falcon_eye.jpg",
+  "width": 640,
+  "height": 427,
+  "name": "Œil de faucon"
  }
 }
