@@ -10,7 +10,7 @@ enabled = true
 enabled = true
 [auth]
 enabled = true
-site_url = "https://jeremineralogie.github.io"
+site_url = "https://jeremineralogie.fr"
 additional_redirect_urls = ["http://localhost:5500/**", "http://127.0.0.1:5500/**"]
 [auth.email]
 enable_signup = false

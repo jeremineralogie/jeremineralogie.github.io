@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /admin/
 
-Sitemap: https://jeremineralogie.github.io/sitemap.xml
+Sitemap: https://jeremineralogie.fr/sitemap.xml

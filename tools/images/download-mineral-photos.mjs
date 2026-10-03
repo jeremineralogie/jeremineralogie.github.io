@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const DIR = path.join(ROOT, "assets/mineraux-photos");
-const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.github.io; photos libres des fiches minéraux)";
+const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.fr; photos libres des fiches minéraux)";
 const WIDTH = 640;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 

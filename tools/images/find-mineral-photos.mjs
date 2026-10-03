@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const OUT = path.join(ROOT, "tools/images");
-const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.github.io; recherche de photos libres pour fiches minéraux)";
+const UA = "JeremineralogieBot/1.0 (https://jeremineralogie.fr; recherche de photos libres pour fiches minéraux)";
 const FREE = /^(cc0|public domain|pd\b|pd-|cc[- ]by(-sa)?[- ]?\d|cc[- ]by(-sa)?$|attribution|no restrictions|copyrighted free use)/i;
 const NEW_LIST = process.env.LISTE === "nouveaux";
 const OUT_NAME = NEW_LIST ? "proposition-nouveaux" : "proposition";
