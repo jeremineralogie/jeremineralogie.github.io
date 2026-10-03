@@ -1,0 +1,77 @@
+# Lot 5 : variétés populaires manquantes et fiches de groupes (familles), puis classement de chaque minéral dans son groupe.
+# Produit supabase/migrations/20261003110000_mineral_groups.sql.
+import json
+COLS = "name, slug, formula, crystal_system, chemical_class, rarity, hardness, hardness_max, density, density_max, colors, luster, cleavage, streak, transparency, fracture, fluorescence, habit, formation, etymology, varieties, confusions, description, mineral_group, is_group, publication_status"
+SIL = "Silicates (tectosilicates)"; OX = "Oxydes et hydroxydes"
+def M(name, slug, formula, system, cls, rarity, h, hmax, d, dmax, colors, luster, cleavage, streak, transp, fracture, fluo, habit, formation, etym, varieties, confusions, desc, group, is_group=False):
+    return dict(name=name, slug=slug, formula=formula, crystal_system=system, chemical_class=cls, rarity=rarity, hardness=h, hardness_max=hmax, density=d, density_max=dmax,
+                colors=colors, luster=luster, cleavage=cleavage, streak=streak, transparency=transp, fracture=fracture, fluorescence=fluo, habit=habit, formation=formation,
+                etymology=etym, varieties=varieties, confusions=confusions, description=desc, mineral_group=group, is_group=is_group)
+ROWS = [
+ # ----- variétés populaires qui manquaient -----
+ M("Pierre de lune","pierre-de-lune","(K,Na)AlSi₃O₈","Monoclinique",SIL,"commun",6,6.5,2.55,2.61,["blanc laiteux","bleuté","gris","pêche"],"vitreux nacré","parfait","blanc","translucide","irrégulière","Parfois bleue à blanche aux UV.","Masses et cabochons à reflet bleuté mouvant (adularescence).","Pegmatites et roches métamorphiques ; Sri Lanka, Inde, Madagascar, Alpes (adulaire du Saint-Gothard).","Nommée pour sa lueur laiteuse qui évoque la lune ; « adulaire » vient du massif de l’Adula, dans les Alpes.","Pierre de lune bleue, arc-en-ciel (labradorite blanche), pêche, grise.","Opale : reflets plus colorés, plus tendre. Calcédoine laiteuse : sans adularescence.","Variété de feldspath (lamelles alternées d’orthose et d’albite) qui diffuse une lueur bleutée mouvante, l’adularescence.","feldspath"),
+ M("Rubellite","rubellite","Na(Li,Al)₃Al₆(BO₃)₃Si₆O₁₈(OH)₄","Trigonal","Silicates (cyclosilicates)","commun",7,7.5,3.02,3.1,["rose","rouge framboise","rouge violacé"],"vitreux","aucun","blanc","transparent à translucide","conchoïdale","Faible, parfois rose pâle aux UV longs.","Prismes striés à section triangulaire arrondie, souvent zonés.","Pegmatites à lithium (Brésil, Madagascar, Nigeria, Mozambique).","Du latin rubellus, rougeâtre.","Variété rose à rouge de l’elbaïte ; bicolore avec du vert, elle forme la tourmaline « melon d’eau ».","Rubis : plus dur (9), sans striures. Spinelle rose : cubique, sans pléochroïsme.","Variété rose à rouge de l’elbaïte, colorée par le manganèse, très recherchée en joaillerie.","tourmaline"),
+ M("Prasiolite","prasiolite","SiO₂","Trigonal",OX,"rare",7,7,2.65,2.65,["vert pâle","vert menthe","jaune verdâtre"],"vitreux","aucun","blanc","transparent","conchoïdale","Aucune.","Prismes hexagonaux terminés en pointe, le plus souvent taillés.","Obtenue surtout par chauffage d’améthyste brésilienne ; rare à l’état naturel (Pologne, Namibie, Arizona).","Du grec prason, le poireau, pour sa couleur vert tendre.","Souvent vendue sous le nom de « quartz vert », ou à tort d’« améthyste verte ».","Péridot : vert olive plus soutenu. Fluorite verte : bien plus tendre, clivable.","Quartz vert pâle, presque toujours produit par chauffage de l’améthyste, rare à l’état naturel.","quartz"),
+ M("Stéatite","steatite","Mg₃Si₄O₁₀(OH)₂","Monoclinique","Silicates (phyllosilicates)","commun",1,2.5,2.7,2.8,["gris","vert pâle","blanc","beige"],"gras à nacré","parfait (cristaux), massif","blanc","opaque à translucide","irrégulière","Aucune.","Masses compactes, tendres, savonneuses au toucher.","Métamorphisme de roches ultrabasiques (serpentinites, dolomies) ; Norvège, Brésil, Pyrénées (Trimouns, près de Luzenac).","Du grec stear, la graisse, pour son toucher gras.","Pierre ollaire (stéatite mêlée de chlorite), pierre de savon, craie de tailleur.","Serpentine : plus dure (3 à 5), toucher non savonneux. Pyrophyllite : très proche, analyse nécessaire.","Variété massive et compacte de talc, tendre et savonneuse, sculptée depuis l’Antiquité et utilisée comme craie de tailleur ou pierre ollaire.","talc"),
+ M("Œil de faucon","oeil-de-faucon","SiO₂ avec fibres de crocidolite","Trigonal",OX,"commun",6.5,7,2.64,2.71,["bleu-gris","gris acier","bleu-vert"],"soyeux, chatoyant","aucun","blanc","translucide à opaque","esquilleuse","Aucune.","Masses fibreuses compactes, taillées en cabochons à reflet chatoyant.","Quartz qui a englobé des fibres de crocidolite (riebeckite) ; Afrique du Sud, Namibie, Australie.","Nommé pour son reflet soyeux qui rappelle l’éclat de l’œil d’un rapace ; c’est le pendant bleu de l’œil de tigre.","Œil de tigre (jaune-brun, fibres oxydées), œil de taureau (brun-rouge, obtenu par chauffage).","Œil de chat (chrysobéryl) : cristal différent, bien plus dur.","Quartz chatoyant bleu-gris qui contient des fibres de crocidolite, version bleue de l’œil de tigre.","quartz"),
+ M("Thulite","thulite","Ca₂Al₃(SiO₄)(Si₂O₇)O(OH) (avec Mn)","Orthorhombique","Silicates (sorosilicates)","rare",6,6.5,3.2,3.4,["rose","rose saumon","rose vif"],"vitreux","parfait","blanc","translucide à opaque","irrégulière à esquilleuse","Aucune.","Masses compactes, parfois prismes, souvent veinées de blanc.","Roches métamorphiques riches en manganèse ; Norvège, Namibie, Caroline du Nord.","De Thulé, ancien nom de la Scandinavie, où elle fut découverte.","Variété rose de la zoïsite, colorée par le manganèse.","Rhodonite : rose à veinules noires, plus dense. Rhodochrosite : plus tendre, effervescente.","Zoïsite rose colorée par le manganèse, taillée en cabochons ou en objets d’ornement, surtout en Norvège.","zoisite"),
+ # ----- fiches de groupes (familles) -----
+ M("Grenat","grenat","A₃B₂(SiO₄)₃","Cubique","Silicates (nésosilicates)","tres_commun",6.5,7.5,3.5,4.3,["rouge","orange","vert","jaune","brun","noir","rose"],"vitreux à résineux","aucun","blanc","transparent à translucide","conchoïdale à irrégulière","Rare, faible chez certains grenats.","Cristaux isolés en rhombododécaèdres ou trapézoèdres, grains, masses.","Roches métamorphiques (micaschistes, gneiss), skarns, roches magmatiques et alluvions.","Du latin granatum, la grenade, pour la ressemblance avec ses pépins.","Almandin, pyrope, spessartine ; grossulaire, andradite, uvarovite ; variétés : rhodolite, hessonite, tsavorite, démantoïde, mélanite.","Rubis et spinelle : rouges mais plus durs, ou sans la teinte grenat. Tourmaline : prismes striés.","Groupe de silicates cubiques aux six espèces principales, de toutes les couleurs sauf le bleu, utilisé comme gemme et abrasif.","grenat",True),
+ M("Tourmaline","tourmaline","Na(Fe,Mg,Li,Al)₃Al₆(BO₃)₃Si₆O₁₈(OH)₄","Trigonal","Silicates (cyclosilicates)","commun",7,7.5,2.9,3.2,["noir","rose","vert","bleu","brun","incolore","bicolore"],"vitreux","aucun","blanc","transparent à opaque","conchoïdale","Aucune à faible.","Prismes striés à section triangulaire arrondie.","Pegmatites, granites et schistes métamorphiques.","Du cingalais thoramalli, nom donné aux pierres colorées de Ceylan.","Schorl (tourmaline noire), dravite (brune), uvite, liddicoatite, elbaïte et ses variétés : rubellite (rose), verdélite (verte), indicolite (bleue), melon d’eau (bicolore).","Béryl, péridot, quartz : sans striures ni section triangulaire.","Groupe de silicates de bore aux cristaux striés à section triangulaire, aux couleurs les plus variées du monde minéral ; la tourmaline noire, ou schorl, est la plus répandue.","tourmaline",True),
+ M("Feldspath","feldspath","(K,Na,Ca)(Al,Si)₄O₈","Monoclinique et triclinique",SIL,"tres_commun",6,6.5,2.55,2.76,["blanc","rose","gris","jaune","vert (amazonite)"],"vitreux à nacré","parfait (deux directions proches de 90°)","blanc","transparent à translucide","irrégulière à conchoïdale","Variable.","Cristaux prismatiques ou tabulaires, souvent maclés, et masses.","Granites, pegmatites, gneiss et roches volcaniques : le groupe le plus abondant de la croûte terrestre.","De l’allemand Feld (champ) et Spat (spath) : spath des champs.","Feldspaths potassiques : orthose, adulaire, sanidine, microcline (amazonite). Plagioclases : albite, oligoclase (pierre de soleil), andésine, labradorite, bytownite, anorthite. Pierre de lune.","Quartz : plus dur, sans clivage.","Premier groupe de minéraux de la croûte terrestre (environ 60 %), indispensable aux granites, aux céramiques et à la verrerie.","feldspath",True),
+ M("Mica","mica","X₂Y₄₋₆Z₈O₂₀(OH,F)₄","Monoclinique","Silicates (phyllosilicates)","tres_commun",2,4,2.7,3.3,["incolore","argenté","brun","noir","vert","lilas"],"vitreux nacré","parfait en lames","blanc","transparent à opaque","irrégulière","Aucune.","Lamelles hexagonales, « livres », paillettes élastiques.","Granites, pegmatites, schistes et gneiss ; sables.","Du latin micare, briller, pour l’éclat de ses paillettes.","Muscovite (mica blanc), biotite (mica noir), phlogopite, lépidolite (lilas), zinnwaldite, fuchsite (verte, au chrome), margarite.","Talc et chlorite : lamelles non élastiques. Vermiculite : gonfle à la chaleur.","Groupe de silicates en feuillets qui se clivent en lames minces, brillantes et élastiques ; leurs paillettes scintillent dans les granites et les sables.","mica",True),
+ M("Pyroxène","pyroxene","XY(Si,Al)₂O₆","Monoclinique et orthorhombique","Silicates (inosilicates)","commun",5,7,3.2,3.6,["vert","noir","brun","blanc","lilas"],"vitreux","bon, à 87° et 93°","blanc à gris verdâtre","translucide à opaque","inégale","Aucune.","Prismes courts et trapus à section carrée ou octogonale, grains, masses.","Roches magmatiques basiques (basaltes, gabbros) et métamorphiques (skarns, éclogites).","Du grec pyr (feu) et xenos (étranger) : on les croyait étrangers aux laves où on les trouve.","Augite, diopside, hédenbergite, enstatite ; jadéite et omphacite ; spodumène (kunzite, hiddénite) ; aegyrine.","Amphiboles : clivages à 56° et 124°, cristaux plus allongés.","Groupe de silicates à chaînes simples, constituants majeurs des basaltes, des gabbros et du manteau terrestre.","pyroxene",True),
+ M("Amphibole","amphibole","A₀₋₁B₂C₅T₈O₂₂(OH,F)₂","Monoclinique et orthorhombique","Silicates (inosilicates)","commun",5,6,2.9,3.6,["vert","noir","brun","blanc","bleu"],"vitreux","parfait, à 56° et 124°","blanc à gris","translucide à opaque","inégale","Aucune.","Prismes allongés, aiguilles et fibres.","Roches métamorphiques et magmatiques.","Du grec amphibolos, ambigu : elles ressemblent à beaucoup d’autres minéraux.","Hornblende, trémolite, actinote, anthophyllite, cummingtonite, glaucophane, riébeckite, pargasite ; néphrite (jade).","Pyroxènes : clivages proches de 90°.","Groupe de silicates à doubles chaînes, aux cristaux allongés ou fibreux, abondants dans les roches métamorphiques ; certains forment l’amiante ou le jade néphrite.","amphibole",True),
+ M("Zéolite","zeolite","(Na,K,Ca)ₓ(Al,Si)O₂·nH₂O","Variable",SIL,"rare",3.5,5.5,2,2.4,["blanc","incolore","rose","jaune"],"vitreux à nacré","parfait à imparfait","blanc","transparent à translucide","irrégulière","Parfois.","Cristaux fibreux, en gerbes, en rosettes, en cubes ou en aiguilles dans les géodes de basalte.","Cavités des laves basaltiques (Islande, Inde, Îles Féroé, Auvergne) et roches volcaniques altérées.","Du grec zein (bouillir) et lithos (pierre) : elles bouillonnent au chalumeau en perdant leur eau.","Natrolite, scolécite, mésolite, thomsonite, analcime, chabazite, stilbite, heulandite, laumontite, harmotome, phillipsite, mordénite, gmélinite, gismondine.","Calcite : effervescente à l’acide. Quartz : bien plus dur.","Famille d’aluminosilicates hydratés aux structures en cages, qui piègent l’eau et les ions ; ils tapissent les cavités des basaltes et servent de tamis moléculaires.","zeolite",True),
+]
+GROUPS = {
+ "quartz": "quartz cristal-de-roche amethyste citrine ametrine quartz-rose quartz-fume morion quartz-rutile aventurine oeil-de-tigre prasiolite oeil-de-faucon",
+ "calcedoine": "calcedoine agate onyx cornaline sardoine chrysoprase heliotrope jaspe silex",
+ "opale": "opale opale-noble opale-de-feu hyalite menilite",
+ "feldspath": "feldspath orthose adulaire sanidine microcline amazonite albite oligoclase andesine labradorite bytownite anorthite pierre-de-soleil pierre-de-lune",
+ "mica": "mica muscovite fuchsite biotite phlogopite lepidolite zinnwaldite margarite",
+ "grenat": "grenat almandin pyrope spessartine grossulaire andradite uvarovite rhodolite hessonite tsavorite demantoide melanite",
+ "tourmaline": "tourmaline schorl dravite elbaite liddicoatite uvite verdelite indicolite tourmaline-melon-d-eau rubellite",
+ "beryl": "beryl emeraude aigue-marine heliodore morganite goshenite bixbite",
+ "corindon": "corindon rubis saphir padparadscha",
+ "pyroxene": "pyroxene augite diopside hedenbergite enstatite jadeite omphacite spodumene kunzite hiddenite aegyrine johannsenite",
+ "amphibole": "amphibole hornblende actinote tremolite anthophyllite cummingtonite glaucophane riebeckite pargasite nephrite",
+ "zeolite": "zeolite analcime natrolite scolecite mesolite thomsonite stilbite heulandite chabazite gmelinite harmotome phillipsite laumontite mordenite gismondine",
+ "olivine": "olivine forsterite fayalite peridot",
+ "topaze": "topaze topaze-imperiale",
+ "chrysoberyl": "chrysoberyl alexandrite cymophane",
+ "serpentine": "serpentine antigorite lizardite chrysotile",
+ "talc": "talc steatite",
+ "gypse": "gypse selenite albatre",
+ "zoisite": "zoisite tanzanite thulite",
+ "calcite": "calcite spath-d-islande",
+ "azurite": "azurite chessylite",
+ "uraninite": "uraninite pechblende",
+ "sphalerite": "sphalerite cleiophane",
+ "hematite": "hematite rose-de-fer",
+ "apatite": "apatite fluorapatite hydroxylapatite",
+}
+q = lambda s: "'" + str(s).replace("'", "''") + "'"
+def val(v):
+    if v is None: return "null"
+    if isinstance(v, bool): return "true" if v else "false"
+    if isinstance(v, (int, float)): return str(v)
+    if isinstance(v, list): return "array[" + ",".join(q(x) for x in v) + "]::text[]"
+    return q(v)
+KEYS = [c.strip() for c in COLS.split(",")]
+def insert_sql():
+    out = []
+    for r in ROWS:
+        r = dict(r, publication_status="published")
+        out.append("(" + ", ".join(val(r[k]) for k in KEYS) + ")")
+    return f"insert into public.minerals ({COLS}) values\n  " + ",\n  ".join(out) + "\non conflict do nothing;"
+def group_sql():
+    return [f"update public.minerals set mineral_group = {q(g)} where slug in ({', '.join(q(s) for s in slugs.split())});" for g, slugs in GROUPS.items()]
+if __name__ == "__main__":
+    head = ["-- Groupes (familles) de minéraux : colonne mineral_group (identifiant de la fiche « parente ») et is_group (fiche de groupe sans espèce propre).",
+            "-- Ajout des variétés populaires manquantes et des fiches de groupes ; chaque fiche est classée dans son groupe. Classement : tools/minerals/lot5.py.",
+            "alter table public.minerals add column if not exists mineral_group text;",
+            "alter table public.minerals add column if not exists is_group boolean not null default false;"]
+    sql = "\n".join(head) + "\n" + insert_sql() + "\n" + "\n".join(group_sql()) + "\n"
+    open("supabase/migrations/20261003110000_mineral_groups.sql", "w").write(sql)
+    print(len(ROWS), "fiches,", sum(len(v.split()) for v in GROUPS.values()), "rattachements")

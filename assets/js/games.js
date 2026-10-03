@@ -4,13 +4,14 @@ import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
 import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
-import { renderGeoGame } from "./geo-game.js";
+import { backfillRecord, renderGeoGame } from "./geo-game.js";
 import { renderMineralPhotoGame } from "./mineral-photo-game.js";
+import { QUIZ_RARITIES, byRarity } from "./rarity.js";
+import { fold, matchAnswer } from "./answer-match.js";
 import { dateFr, sharePanel } from "./share.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
-const fold = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 const num = value => Number(value).toLocaleString("fr-FR", { maximumFractionDigits: 2 });
 const span = (min, max) => min == null ? "" : max != null && Number(max) !== Number(min) ? `${num(min)} à ${num(max)}` : num(min);
 const firstPhoto = media => (media || []).filter(item => item.bucket_id === "site-media-public" && item.storage_path).sort((a, b) => a.position - b.position)[0];
@@ -24,7 +25,8 @@ export function dailyMinerals(minerals) {
   const list = [...minerals].sort((a, b) => String(a.slug).localeCompare(String(b.slug)));
   if (!list.length) return { daily: null, quiz: null };
   const daily = list[Math.floor(seeded(`mineral-${today}`)() * list.length)];
-  const playable = list.filter(item => CLUES.filter(([, get]) => get(item)).length >= 3);
+  // Quiz (intermédiaire) : minéraux très communs, communs et rares, jamais les très rares.
+  const playable = byRarity(list.filter(item => !item.is_group && CLUES.filter(([, get]) => get(item)).length >= 3), QUIZ_RARITIES, 8);
   if (!playable.length) return { daily, quiz: null };
   let index = Math.floor(seeded(`quiz-${today}`)() * playable.length);
   if (playable[index].id === daily.id) index = (index + 1) % playable.length;
@@ -97,13 +99,18 @@ function renderQuiz(panel, mineral, minerals, client) {
   box.append(hint, form, result);
   body.replaceChildren(box); panel.hidden = false;
 
+  // Bonne réponse : le nom (ou un synonyme), le nom de la famille (« quartz » pour un quartz fumé), à une lettre près ; jamais un autre minéral.
+  const parent = minerals.find(item => item.slug === mineral.mineral_group && item.slug !== mineral.slug);
   const accepted = new Set([fold(mineral.name), ...(SYNONYMS[fold(mineral.name)] || [])]);
-  const showResult = (answer, correct) => {
+  const family = parent ? [fold(parent.name), ...(SYNONYMS[fold(parent.name)] || [])] : [];
+  const others = new Set(minerals.filter(item => item.id !== mineral.id && item.id !== parent?.id).flatMap(item => [fold(item.name), ...(SYNONYMS[fold(item.name)] || [])]));
+  for (const name of [...accepted, ...family]) others.delete(name);
+  const showResult = (answer, correct, how = "exact") => {
     input.value = answer; input.disabled = true; submit.disabled = true; hint.hidden = true;
     input.classList.toggle("is-right", correct); input.classList.toggle("is-wrong", !correct);
     result.className = `quiz-result ${correct ? "is-right" : "is-wrong"}`;
     result.replaceChildren(el("strong", "", correct ? "Bravo, bonne réponse !" : "Ce n’est pas ça…"),
-      el("span", "", correct ? ` C'était bien ${mineral.name}.` : ` La réponse était : ${mineral.name}.`));
+      el("span", "", correct ? (how === "famille" ? ` C'était plus précisément : ${mineral.name}.` : how === "orthographe" ? ` C'était bien ${mineral.name} (à une lettre près).` : ` C'était bien ${mineral.name}.`) : ` La réponse était : ${mineral.name}.`));
     const figure = el("figure", "quiz-photo"); figure.hidden = true; result.append(figure);
     void answerPhoto(mineral, client).then(photo => {
       if (!photo) return;
@@ -123,13 +130,14 @@ function renderQuiz(panel, mineral, minerals, client) {
     event.preventDefault();
     const answer = input.value.trim();
     if (!answer) { input.focus(); return; }
-    const correct = accepted.has(fold(answer));
+    const how = matchAnswer(answer, { names: accepted, family, others });
+    const correct = how !== null;
     store.set("jm-quiz", { date: today, answer, correct });
     const streak = store.get("jm-quiz-serie") || { count: 0, last: null };
     const yesterday = new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(Date.now() - 86400000));
     store.set("jm-quiz-serie", correct ? { count: streak.last === yesterday ? streak.count + 1 : 1, last: today } : { count: 0, last: today });
     recordGame("quiz", { correct, hints: hintsUsed, family: mineral.chemical_class || null });
-    showResult(answer, correct);
+    showResult(answer, correct, how);
   });
 }
 
@@ -172,7 +180,7 @@ export async function mountGames(root, { client, minerals, collapsible = false }
   const block = (title, level, levelClass, game) => {
     const node = el(collapsible ? "details" : "div", `home-game${collapsible ? " home-game-fold" : ""}`); node.hidden = true;
     const body = el("div"); body.dataset.body = "";
-    const heading = el("h3", "home-game-title"); heading.append(el("span", `game-level ${levelClass}`, level), title);
+    const heading = el("h3", "home-game-title"); heading.append(el("span", "game-name", title), el("span", `game-level ${levelClass}`, level));
     if (!collapsible) { node.append(heading, body); return node; }
     const done = el("span", "game-done");
     const refresh = () => { const played = Boolean(todayResult(game)); done.textContent = played ? "✓ Joué aujourd’hui" : ""; done.hidden = !played; };
@@ -194,6 +202,7 @@ export async function mountGames(root, { client, minerals, collapsible = false }
   try {
     const pieces = await geoPieces(client);
     if (!pieces.length) return;
+    backfillRecord(pieces);
     if (!collapsible) { await renderGeoGame(geoBlock, pieces); return; }
     // La carte a besoin d'un encart ouvert pour prendre sa taille : on ne la monte qu'à la première ouverture.
     geoBlock.hidden = false;

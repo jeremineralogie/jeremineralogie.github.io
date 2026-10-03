@@ -6246,5 +6246,148 @@
   "width": 640,
   "height": 436,
   "name": "Ténorite"
+ },
+ "rubellite": {
+  "photo": "rubellite.webp",
+  "thumb": "rubellite-mini.webp",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Rubellite_tourmaline_1.jpg",
+  "width": 640,
+  "height": 307,
+  "name": "Rubellite"
+ },
+ "prasiolite": {
+  "photo": "prasiolite.webp",
+  "thumb": "prasiolite-mini.webp",
+  "author": "Mauro Cateb",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Brazilian_prasiolite.jpg",
+  "width": 640,
+  "height": 445,
+  "name": "Prasiolite"
+ },
+ "steatite": {
+  "photo": "steatite.webp",
+  "thumb": "steatite-mini.webp",
+  "author": "Ra'ike (see also: de:Benutzer:Ra'ike)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Soapstone_(Speckstein)_-_several_colored_samples.jpg",
+  "width": 640,
+  "height": 469,
+  "name": "Stéatite"
+ },
+ "thulite": {
+  "photo": "thulite.webp",
+  "thumb": "thulite-mini.webp",
+  "author": "Shannon Heinle",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Thulite_(GeoDIL_number_-_1967).jpg",
+  "width": 640,
+  "height": 537,
+  "name": "Thulite"
+ },
+ "grenat": {
+  "photo": "grenat.webp",
+  "thumb": "grenat-mini.webp",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Almandine_garnet_1.jpg",
+  "width": 640,
+  "height": 591,
+  "name": "Grenat"
+ },
+ "tourmaline": {
+  "photo": "tourmaline.webp",
+  "thumb": "tourmaline-mini.webp",
+  "author": "W.carter",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Various_tourmaline_crystals,_including_some_watermelon_versions_2.jpg",
+  "width": 640,
+  "height": 442,
+  "name": "Tourmaline"
+ },
+ "feldspath": {
+  "photo": "feldspath.webp",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:OrthoclaseBresil.jpg",
+  "width": 640,
+  "height": 426,
+  "thumb": "feldspath-mini.webp",
+  "name": "Feldspath"
+ },
+ "mica": {
+  "photo": "mica.webp",
+  "author": "Robert M. Lavinsky",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Muscovite-Quartz-199362.jpg",
+  "width": 640,
+  "height": 579,
+  "thumb": "mica-mini.webp",
+  "name": "Mica"
+ },
+ "pyroxene": {
+  "photo": "pyroxene.webp",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Diopside_Aoste.jpg",
+  "width": 640,
+  "height": 517,
+  "thumb": "pyroxene-mini.webp",
+  "name": "Pyroxène"
+ },
+ "amphibole": {
+  "photo": "amphibole.webp",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Actinolite_Portugal.jpg",
+  "width": 640,
+  "height": 581,
+  "thumb": "amphibole-mini.webp",
+  "name": "Amphibole"
+ },
+ "zeolite": {
+  "photo": "zeolite.webp",
+  "author": "Didier Descouens",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Natroliteinde1.jpg",
+  "width": 640,
+  "height": 499,
+  "thumb": "zeolite-mini.webp",
+  "name": "Zéolite"
+ },
+ "pierre-de-lune": {
+  "photo": "pierre-de-lune.webp",
+  "thumb": "pierre-de-lune-mini.webp",
+  "author": "James St. John",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Moonstone_(iridescent_sodic_feldspar)_5.jpg",
+  "width": 640,
+  "height": 405,
+  "name": "Pierre de lune"
+ },
+ "oeil-de-faucon": {
+  "photo": "oeil-de-faucon.webp",
+  "thumb": "oeil-de-faucon-mini.webp",
+  "author": "Linas Juozėnas",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Blue_tiger_eye_-_falcon_eye.jpg",
+  "width": 640,
+  "height": 427,
+  "name": "Œil de faucon"
  }
 }
