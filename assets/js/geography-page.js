@@ -1,6 +1,6 @@
 import { getSupabase } from "./supabase-client.js";
 import { ficheUrl } from "./entity-links.js";
-import { articleUrl, documentUrl, pieceUrl } from "./detail-nav.js";
+import { articleUrl, documentUrl, pieceUrl, specimenUrl } from "./detail-nav.js";
 
 const client = getSupabase();
 const content = document.querySelector("#department-live-content");
@@ -92,7 +92,7 @@ async function loadDepartment() {
     const { data, error } = await client.from("specimens").select("slug,mineral_name,provenance,locality_name,mineral:minerals!specimens_mineral_id_fkey(name)")
       .eq("department_code", code).eq("publication_status", "published").order("created_at", { ascending: false });
     if (error) throw error;
-    return (data || []).map(row => ({ name: [row.mineral_name ?? row.mineral?.name ?? "Spécimen", row.provenance, row.locality_name].filter(Boolean).join(" — "), href: `specimen.html?id=${encodeURIComponent(row.slug)}` }));
+    return (data || []).map(row => ({ name: [row.mineral_name ?? row.mineral?.name ?? "Spécimen", row.provenance, row.locality_name].filter(Boolean).join(" — "), href: specimenUrl({ id: row.slug }) }));
   }) || [];
   const shop = await safely("boutique", async () => {
     const { data, error } = await client.from("shop_items").select("reference,slug,title").eq("department_code", code).eq("publication_status", "published").eq("sale_status", "available").order("updated_at", { ascending: false });

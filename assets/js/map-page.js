@@ -1,6 +1,6 @@
 import { getSupabase } from "./supabase-client.js";
 import { shopItemName } from "./content-repository.js";
-import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
+import { pieceUrl, articleUrl, documentUrl, specimenUrl } from "./detail-nav.js";
 
 const L = window.L;
 const status = document.querySelector("#map-status");
@@ -66,7 +66,7 @@ async function loadData(client) {
   const push = (type, title, subtitle, href, minerals, locality, mine = null) => all.push({ type, title, subtitle, href, minerals: [...new Set(minerals.filter(Boolean))], locality, mine });
   specimens.forEach(row => {
     const mineral = row.mineral_name || row.mineral?.name || "Spécimen";
-    push("collection", mineral, row.provenance || mineById.get(row.mine_id)?.name || "", `specimen.html?id=${encodeURIComponent(row.slug)}`,
+    push("collection", mineral, row.provenance || mineById.get(row.mine_id)?.name || "", specimenUrl({ id: row.slug }),
       [mineral, ...names(row.associations)], placeOf(row.locality_id, row.mine_id, row.locality_name, row.provenance), spotOf(row.mine_id, row.provenance));
   });
   shop.forEach(row => {

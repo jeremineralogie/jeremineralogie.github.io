@@ -1,3 +1,4 @@
+import { setCanonical } from "./clean-urls.js";
 import { getSupabase } from "./supabase-client.js";
 import { getPublishedSpecimen, listPublishedSpecimens } from "./collection-repository.js";
 import { renderNeighbours, specimenUrl } from "./detail-nav.js";
@@ -74,7 +75,7 @@ function renderSpecimen(specimen) {
   const notFound = document.querySelector("#specimen-not-found");
   notFound.hidden = true;
   document.querySelector("#specimen-load-error").hidden = true;
-  root.hidden = false;
+  root.hidden = false; setCanonical("specimen", slug);
   content.hidden = false;
   document.title = specimenTitle(specimen.mineral, specimen.provenance || specimen.locality);
   document.querySelector("[data-seo]")?.remove();

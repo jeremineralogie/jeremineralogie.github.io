@@ -1,3 +1,4 @@
+import { cleanUrl } from "./clean-urls.js";
 import { getSupabase } from "./supabase-client.js";
 
 // Liens automatiques vers le glossaire : dans un bloc de texte, la première occurrence de chaque terme devient
@@ -77,7 +78,7 @@ function linkNode(node, keys, used) {
     if (start < cursor) return;
     if (start > cursor) fragment.append(chars.slice(cursor, start).join(""));
     const link = document.createElement("a");
-    link.className = "gloss"; link.href = `apprendre.html?terme=${encodeURIComponent(hit.term.slug)}#glossaire`;
+    link.className = "gloss"; link.href = cleanUrl("term", hit.term.slug);
     link.textContent = chars.slice(start, end).join(""); link.dataset.slug = hit.term.slug;
     link.setAttribute("aria-haspopup", "dialog");
     fragment.append(link); cursor = end;

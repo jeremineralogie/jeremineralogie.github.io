@@ -1,8 +1,9 @@
 // Adresses des fiches détaillées (une page générique par type) et navigation précédent / suivant.
-export const pieceUrl = item => `piece.html?ref=${encodeURIComponent(item.reference || item.slug)}`;
-export const articleUrl = item => `article.html?slug=${encodeURIComponent(item.slug)}`;
-export const documentUrl = item => `document.html?slug=${encodeURIComponent(item.slug)}`;
-export const specimenUrl = item => `specimen.html?id=${encodeURIComponent(item.id)}`;
+import { cleanUrl } from "./clean-urls.js";
+export const pieceUrl = item => cleanUrl("piece", item.reference || item.slug);
+export const articleUrl = item => cleanUrl("article", item.slug);
+export const documentUrl = item => cleanUrl("archive", item.slug);
+export const specimenUrl = item => cleanUrl("specimen", item.id);
 
 // containers : éléments [data-nav] ; items : liste ordonnée comme dans l'onglet ; index : position de la fiche affichée.
 export function renderNeighbours(containers, items, index, hrefOf, titleOf) {

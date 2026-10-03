@@ -1,6 +1,7 @@
 import { getSupabase } from "./supabase-client.js";
 import { listPublishedSpecimens } from "./collection-repository.js";
 import { bindFilterPanel } from "./filter-panel.js";
+import { specimenUrl } from "./detail-nav.js";
 
 const status = document.querySelector("#collection-source-status");
 const grid = document.querySelector("#collection-grid");
@@ -40,7 +41,7 @@ function renderCollection() {
   visible.forEach(specimen => {
     const card = document.createElement("a");
     card.className = "card card-specimen";
-    card.href = "specimen.html?id=" + encodeURIComponent(specimen.id);
+    card.href = specimenUrl({ id: specimen.id });
     if (specimen.photos.length) {
       const image = document.createElement("img"); image.src = specimen.photos[0]; image.alt = specimen.mineral || "Spécimen"; card.append(image);
     } else {

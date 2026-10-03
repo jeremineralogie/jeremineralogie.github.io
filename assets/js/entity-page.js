@@ -1,3 +1,4 @@
+import { setCanonical } from "./clean-urls.js";
 import { shopItemName } from "./content-repository.js";
 import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
@@ -151,6 +152,7 @@ async function load() {
   if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: documentUrl(row) }))));
   if (!sectionsBox.children.length && !description && !science.children.length) { const empty = document.createElement("p"); empty.className = "meta"; empty.textContent = "Aucun contenu publié n’est encore lié à cette fiche."; sectionsBox.append(empty); }
   status.hidden = true; root.hidden = false;
+  if (kind === KINDS.mineral) setCanonical("mineral", entity.slug);
   document.querySelector("[data-seo]")?.remove();
   void applyGlossary(document.querySelector("#fiche-description"), [...science.querySelectorAll("dd")]);
 }
