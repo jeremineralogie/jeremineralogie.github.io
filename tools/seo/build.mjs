@@ -9,6 +9,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mineralTitle, pieceTitle, specimenTitle, articleTitle, documentTitle, termTitle, mineTitle, localityTitle, departmentTitle } from "../../assets/js/seo-titles.js";
 import { mineralAlt, specimenAlt } from "../../assets/js/alt-text.js";
+import { buildThemes, themeIntro, themePath, themeLinksOf, KINDS as THEME_KINDS } from "../../assets/js/themes.js";
 import { similarMinerals } from "../../assets/js/related-score.js";
 import { categoryLabel } from "../../assets/js/reference-resolver.js";
 import { blocksToText } from "../../assets/js/article-content.js";
@@ -16,7 +17,7 @@ import { blocksToText } from "../../assets/js/article-content.js";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SITE = "https://jeremineralogie.fr";
 const DEFAULT_IMAGE = `${SITE}/assets/hero-specimen.jpeg`;
-const FOLDERS = { mineral: "mineraux", piece: "pieces", specimen: "specimens", article: "lire", archive: "documents", term: "glossaire", mine: "gisements", locality: "communes", department: "departements" };
+const FOLDERS = { mineral: "mineraux", piece: "pieces", specimen: "specimens", article: "lire", archive: "documents", term: "glossaire", mine: "gisements", locality: "communes", department: "departements", theme: "themes" };
 const DOMAINS = { mineralogie: "minéralogie", geologie: "géologie", cristallographie: "cristallographie" };
 const STATIC_PAGES = ["", "boutique.html", "collection.html", "articles.html", "archives.html", "carte.html", "apprendre.html", "identification.html", "apropos.html", "reseaux.html", "contact.html", "legal.html"];
 
@@ -123,7 +124,7 @@ async function main() {
     read("article_mines", `article_mines?select=article_id,mine_id`), read("article_localities", `article_localities?select=article_id,locality_id`), read("article_departments", `article_departments?select=article_id,department_code`),
     read("archive_mines", `archive_mines?select=archive_id,mine_id`), read("archive_localities", `archive_localities?select=archive_id,locality_id`), read("archive_departments", `archive_departments?select=archive_id,department_code`)
   ]);
-  const templates = Object.fromEntries(await Promise.all([["fiche", "fiche.html"], ["departement", "departement.html"], ["piece", "piece.html"], ["specimen", "specimen.html"], ["article", "article.html"], ["document", "document.html"], ["apprendre", "apprendre.html"]]
+  const templates = Object.fromEntries(await Promise.all([["fiche", "fiche.html"], ["departement", "departement.html"], ["theme", "theme.html"], ["piece", "piece.html"], ["specimen", "specimen.html"], ["article", "article.html"], ["document", "document.html"], ["apprendre", "apprendre.html"]]
     .map(async ([key, file]) => [key, await readFile(path.join(ROOT, file), "utf8")])));
 
   const pages = [];
@@ -159,6 +160,9 @@ async function main() {
   const backLink = `<p><a class="link" href="collection.html">← Retour à Ma collection</a></p>`;
   const stripe = rows => rows.sort((a, b) => String(a.slug || a.reference || "").localeCompare(String(b.slug || b.reference || "")));
 
+  // Pages par thème (couleur, dureté, famille, système) : calculées d'abord, car les fiches minéraux y renvoient.
+  const themes = buildThemes(minerals);
+  const availableThemes = Object.fromEntries(Object.entries(themes).map(([kind, map]) => [kind, [...map.keys()]]));
   const mineralLink = item => `<a class="link" href="/${FOLDERS.mineral}/${slugify(item.slug)}/">${esc(item.name)}</a>`;
   minerals.forEach(item => {
     const photo = photoUrl(cfg, item.media) || commonsUrl(item.slug);
@@ -174,7 +178,7 @@ async function main() {
       ["Couleurs", (item.colors || []).join(", ")], ["Trait", item.streak], ["Éclat", item.luster], ["Transparence", item.transparency], ["Clivage", item.cleavage], ["Cassure", item.fracture], ["Habitus", item.habit], ["Fluorescence", item.fluorescence],
       ["Formation et gisements", item.formation], ["Variétés", item.varieties], ["Confusions possibles", item.confusions], ["Étymologie", item.etymology]];
     item.visible = `<article class="seo-fiche"><div class="kicker">Minéral</div><h1 class="page-title">${esc(item.name)}</h1>${item.formula ? `<p class="meta">${esc(item.formula)}</p>` : ""}`
-      + `${photo ? `<div class="fiche-photos"><img src="${esc(photo)}" alt="${esc(mineralAlt(item))}"></div>` : ""}${credit}${item.description ? `<p class="seo-desc">${esc(item.description)}</p>` : ""}${dl("scientific-details", rows)}${family ? `<div>${family}</div>` : ""}${listBlock("Minéraux similaires", similarMinerals(item, minerals).map(mineralEntry))}`
+      + `${photo ? `<div class="fiche-photos"><img src="${esc(photo)}" alt="${esc(mineralAlt(item))}"></div>` : ""}${credit}${item.description ? `<p class="seo-desc">${esc(item.description)}</p>` : ""}${dl("scientific-details", rows)}${family ? `<div>${family}</div>` : ""}${listBlock("Minéraux similaires", similarMinerals(item, minerals).map(mineralEntry))}${listBlock("Parcourir par thème", themeLinksOf(item, availableThemes))}`
       + `<p><a class="link" href="apprendre.html#mineraux">← Retour aux fiches minéraux</a></p></article>`;
     item.properties = rows.filter(([, value]) => value).map(([name, value]) => ({ "@type": "PropertyValue", name, value }));
     const facts = [item.chemical_class, item.crystal_system && `système ${item.crystal_system.toLowerCase()}`, item.hardness != null && `dureté ${span(item.hardness, item.hardness_max)}`, item.density != null && `densité ${span(item.density, item.density_max)}`].filter(Boolean).join(", ");
@@ -307,6 +311,40 @@ async function main() {
     });
   });
 
+
+  // ----- Pages par thème : /themes/ (sommaire) et /themes/<couleur|durete|famille|systeme>/<valeur>/ -----
+  const pushTheme = (folder, page) => pages.push({ type: "theme", folder: folder || "index", ...page, url: `${SITE}/themes/${folder ? `${folder}/` : ""}` });
+  const identHref = (kind, key) => ({ couleur: `/apprendre.html?couleur=${key}#identification`, durete: `/apprendre.html?durete=${key}#identification`, systeme: `/apprendre.html?systeme=${key}#identification` }[kind] || null);
+  const themeCrumbs = (...rest) => breadcrumb(["Accueil", `${SITE}/`], ["Apprendre", `${SITE}/apprendre.html`], ["Par thème", `${SITE}/themes/`], ...rest);
+  Object.entries(themes).forEach(([kind, map]) => map.forEach(entry => {
+    const folder = `${kind}/${entry.key}`, url = `${SITE}/themes/${folder}/`;
+    const sorted = [...entry.minerals].sort((a, b) => a.name.localeCompare(b.name, "fr"));
+    const intro = themeIntro(kind, entry);
+    const others = [...map.values()].filter(other => other.key !== entry.key).map(other => ({ title: kind === "durete" ? `Dureté ${other.key}` : other.label.replace(/^Minéraux (de la famille des |du système |)/, "").replace(/^./, letter => letter.toUpperCase()), href: themePath(kind, other.key) }));
+    const photo = sorted.map(item => photoUrl(cfg, item.media) || commonsUrl(item.slug)).find(Boolean);
+    pushTheme(folder, {
+      template: "theme", page: "theme", params: "", lastmod: undefined, image: photo,
+      title: `${entry.label} : liste et fiches — Jeremineralogie`,
+      description: cut(`${entry.label} : ${entry.minerals.length} fiches. ${intro[1] || ""} ${intro[2] || ""}`),
+      visible: `<article class="seo-fiche"><div class="kicker">${esc(THEME_KINDS[kind])}</div><h1 class="page-title">${esc(entry.label)}</h1>${intro.map(text => `<p class="seo-desc">${esc(text)}</p>`).join("")}`
+        + `${listBlock(`${entry.minerals.length} fiches minéraux`, sorted.map(item => ({ title: item.name, meta: item.formula || "", href: href("mineral", item.slug) })))}`
+        + `${identHref(kind, entry.key) ? `<p><a class="btn" href="${identHref(kind, entry.key)}">Affiner avec l’aide à l’identification</a></p>` : `<p><a class="btn" href="/apprendre.html#mineraux">Parcourir toutes les fiches minéraux</a></p>`}`
+        + `${listBlock(`Autres thèmes : ${THEME_KINDS[kind].toLowerCase()}`, others)}<p><a class="link" href="/themes/">← Tous les thèmes</a></p></article>`,
+      jsonld: [{ "@type": "CollectionPage", name: entry.label, description: cut(intro.join(" "), 300), url, inLanguage: "fr", isPartOf: { "@type": "WebSite", name: "Jeremineralogie", url: `${SITE}/` },
+        mainEntity: { "@type": "ItemList", numberOfItems: sorted.length, itemListElement: sorted.slice(0, 100).map((item, index) => ({ "@type": "ListItem", position: index + 1, name: item.name, url: `${SITE}${href("mineral", item.slug)}` })) } }],
+      extra: themeCrumbs([entry.label, url])
+    });
+  }));
+  pushTheme("", {
+    template: "theme", page: "theme", params: "", lastmod: undefined,
+    title: "Minéraux par thème : couleur, dureté, famille, système cristallin — Jeremineralogie",
+    description: cut(`Retrouve les fiches minéraux par couleur, par dureté (échelle de Mohs), par famille chimique ou par système cristallin : ${Object.values(themes).reduce((sum, map) => sum + map.size, 0)} thèmes à parcourir.`),
+    visible: `<article class="seo-fiche"><div class="kicker">Apprendre</div><h1 class="page-title">Les minéraux par thème</h1><p class="seo-desc">Tu cherches un minéral bleu, un minéral qui se raye à l’ongle, ou tous les carbonates ? Choisis un thème : chaque page rassemble les fiches concernées. Pour affiner avec ce que tu observes, il y a aussi l’<a class="link" href="/apprendre.html#identification">aide à l’identification</a>.</p>`
+      + Object.entries(themes).map(([kind, map]) => listBlock(`Par ${THEME_KINDS[kind].toLowerCase()}`, [...map.values()].map(entry => ({ title: entry.label, meta: `${entry.minerals.length} fiches`, href: themePath(kind, entry.key) })))).join("")
+      + `<p><a class="link" href="/apprendre.html#mineraux">← Retour aux fiches minéraux</a></p></article>`,
+    jsonld: [{ "@type": "CollectionPage", name: "Les minéraux par thème", url: `${SITE}/themes/`, inLanguage: "fr", isPartOf: { "@type": "WebSite", name: "Jeremineralogie", url: `${SITE}/` } }],
+    extra: breadcrumb(["Accueil", `${SITE}/`], ["Apprendre", `${SITE}/apprendre.html`], ["Par thème", `${SITE}/themes/`])
+  });
   terms.forEach(item => {
     add("term", item.slug, {
       template: "apprendre", page: "apprendre", params: `terme=${item.slug}`, tab: "glossaire", lastmod: day(item.updated_at),
@@ -323,10 +361,12 @@ async function main() {
 
   for (const folder of Object.values(FOLDERS)) await rm(path.join(ROOT, folder), { recursive: true, force: true });
   for (const page of unique) {
-    const dir = path.join(ROOT, FOLDERS[page.type], page.folder);
+    const dir = path.join(ROOT, FOLDERS[page.type], page.type === "theme" && page.folder === "index" ? "" : page.folder);
     await mkdir(dir, { recursive: true });
     await writeFile(path.join(dir, "index.html"), renderPage(templates[page.template], page));
   }
+  await mkdir(path.join(ROOT, FOLDERS.theme), { recursive: true });
+  await writeFile(path.join(ROOT, FOLDERS.theme, "index.json"), JSON.stringify(availableThemes));
   const urls = [...STATIC_PAGES.map(file => ({ loc: `${SITE}/${file}` })), ...unique.filter(page => !page.noindex).map(page => ({ loc: page.url, lastmod: page.lastmod }))];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(entry => `  <url><loc>${esc(entry.loc)}</loc>${entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : ""}</url>`).join("\n")}\n</urlset>\n`;
   await writeFile(path.join(ROOT, "sitemap.xml"), sitemap);
