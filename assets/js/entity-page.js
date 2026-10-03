@@ -104,7 +104,7 @@ async function load() {
   }
   sectionsBox.replaceChildren();
 
-  const [specimens, shop, articles, archives, mines] = await Promise.all([
+  const [specimens, shop, articles, archives, mines, family] = await Promise.all([
     safely("collection", async () => {
       const { data, error: e } = await client.from("specimens").select("slug,mineral_name,provenance,locality_name,mineral:minerals!specimens_mineral_id_fkey(name,slug),mine:mines!specimens_mine_id_fkey(name,slug),media:specimen_media(bucket_id,storage_path,position)")
         .eq(kind.fk, entity.id).eq("publication_status", "published").order("created_at", { ascending: false });
@@ -126,10 +126,22 @@ async function load() {
     kind === KINDS.locality ? safely("gisements", async () => {
       const { data, error: e } = await client.from("mines").select("name,slug").eq("locality_id", entity.id).order("name");
       if (e) throw e; return data || [];
+    }, []) : Promise.resolve([]),
+    // Famille (groupe) du minéral : la fiche du groupe et ses déclinaisons.
+    kind === KINDS.mineral && entity.mineral_group ? safely("famille", async () => {
+      const { data, error: e } = await client.from("minerals").select("name,slug").eq("mineral_group", entity.mineral_group).eq("publication_status", "published").order("name");
+      if (e) throw e; return data || [];
     }, []) : Promise.resolve([])
   ]);
 
   const label = row => row.mineral_name ?? row.mineral?.name ?? "Spécimen";
+  if (family.length > 1) {
+    const parent = family.find(row => row.slug === entity.mineral_group);
+    const others = family.filter(row => row.slug !== entity.slug && row.slug !== parent?.slug);
+    const link = row => ({ title: row.name, href: ficheUrl("mineral", row.slug) });
+    if (parent?.slug === entity.slug) section("Toutes les déclinaisons", linkList(others.map(link)));
+    else if (parent) section(`Famille : ${parent.name}`, linkList([parent, ...others].map(link)));
+  }
   if (specimens.length) section("Dans ma collection", cards(specimens.map(row => ({ title: label(row), meta: [row.provenance, row.locality_name].filter(Boolean).join(" · "), href: `specimen.html?id=${encodeURIComponent(row.slug)}`, photo: firstPhoto(row.media) }))));
   if (shop.length) section("Disponible en boutique", cards(shop.map(row => ({ title: shopItemName(row), meta: new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.currency || "EUR" }).format((row.price_cents ?? 0) / 100), href: pieceUrl(row), photo: firstPhoto(row.media) }))));
   if (kind === KINDS.locality && mines.length) section("Gisements de cette commune", linkList(mines.map(row => ({ title: row.name, href: ficheUrl("mine", row.slug) }))));

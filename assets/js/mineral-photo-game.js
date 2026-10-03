@@ -5,13 +5,13 @@ import { publicMediaUrl } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { parisDay, recordGame, streakOf, todayResult } from "./game-progress.js";
 import { EASY_RARITIES, byRarity } from "./rarity.js";
+import { fold } from "./answer-match.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 import { dateFr, sharePanel } from "./share.js";
 
 const ROUNDS = 5, CHOICES = 4;
 const SAVE_KEY = "jm-trouve-mineral-jour";
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
-const fold = value => String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 const firstPhoto = media => (media || []).filter(item => item.bucket_id === "site-media-public" && item.storage_path).sort((a, b) => a.position - b.position)[0];
 const store = {
   get() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); } catch { return null; } },
@@ -33,7 +33,7 @@ function photoOf(mineral, client, credits) {
 // de préférence d'autres familles chimiques, sans nom proche de la bonne réponse.
 function choicesFor(target, all, random) {
   const name = fold(target.name);
-  const close = other => { const text = fold(other.name); return text === name || text.includes(name) || name.includes(text); };
+  const close = other => { const text = fold(other.name); return text === name || text.includes(name) || name.includes(text) || (target.mineral_group && other.mineral_group === target.mineral_group); };
   const others = all.filter(other => other.id !== target.id && !close(other));
   const different = others.filter(other => !target.chemical_class || other.chemical_class !== target.chemical_class);
   const wrong = [...shuffled(different, random), ...shuffled(others.filter(other => !different.includes(other)), random)].slice(0, CHOICES - 1);
@@ -43,7 +43,7 @@ function choicesFor(target, all, random) {
 // Manches du jour : tirage identique pour tous les visiteurs.
 export function dailyRounds(minerals, credits, day = parisDay()) {
   // Niveau facile : seulement des minéraux très communs ou communs (réponses et mauvaises réponses comprises).
-  const withPhoto = minerals.filter(item => item.name && (firstPhoto(item.media) || commonsPhoto(credits, item.slug)));
+  const withPhoto = minerals.filter(item => item.name && !item.is_group && (firstPhoto(item.media) || commonsPhoto(credits, item.slug)));
   const pool = [...byRarity(withPhoto, EASY_RARITIES)].sort((a, b) => String(a.slug).localeCompare(String(b.slug)));
   if (pool.length < CHOICES) return { pool, rounds: [] };
   const random = seeded(`trouve-mineral-${day}`);

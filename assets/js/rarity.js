@@ -10,3 +10,6 @@ export function byRarity(minerals, allowed, minimum = 12) {
   const kept = minerals.filter(item => allowed.has(rarityOf(item)));
   return kept.length >= minimum ? kept : minerals;
 }
+
+// Groupes (familles) : la valeur de minerals.mineral_group est l'identifiant (slug) de la fiche parente du groupe.
+export const MINERAL_GROUPS = ["quartz", "calcedoine", "opale", "feldspath", "mica", "grenat", "tourmaline", "beryl", "corindon", "pyroxene", "amphibole", "zeolite", "olivine", "topaze", "chrysoberyl", "serpentine", "talc", "gypse", "zoisite", "calcite", "azurite", "uraninite", "sphalerite", "hematite", "apatite"];

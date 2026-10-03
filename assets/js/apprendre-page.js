@@ -347,7 +347,7 @@ async function load() {
   client = getSupabase();
   if (!client) { status.textContent = "Contenu momentanément indisponible."; return; }
   const [mineralResult, termResult, specimenResult, shopResult] = await Promise.all([
-    client.from("minerals").select("id,name,slug,photo_credit,rarity,media:mineral_media(bucket_id,storage_path,position),formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,colors,streak,luster,transparency,cleavage,fluorescence,description").eq("publication_status", "published"),
+    client.from("minerals").select("id,name,slug,photo_credit,rarity,mineral_group,is_group,media:mineral_media(bucket_id,storage_path,position),formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,colors,streak,luster,transparency,cleavage,fluorescence,description").eq("publication_status", "published"),
     client.from("glossary_terms").select("term,slug,domain,definition,see_also,related_minerals").eq("publication_status", "published"),
     client.from("specimens").select("mineral_id").eq("publication_status", "published"),
     client.from("shop_items").select("mineral_id").eq("publication_status", "published").eq("sale_status", "available")
