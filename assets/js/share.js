@@ -89,7 +89,7 @@ async function drawCard(spec, withPhotos = true) {
   }
   if (spec.streak) { ctx.fillStyle = "#f0d9a8"; ctx.font = `500 46px ${SANS}`; ctx.fillText(spec.streak, W / 2, Math.max(y + 100, 1640)); }
   ctx.fillStyle = "#e6dcf5"; ctx.font = `italic 500 54px ${SERIF}`; ctx.fillText(spec.footer || "Et vous, ferez-vous mieux ?", W / 2, 1760);
-  ctx.fillStyle = "#b48cff"; ctx.font = `600 42px ${SANS}`; ctx.fillText("jeremineralogie.fr", W / 2, 1830);
+  ctx.fillStyle = "#b48cff"; ctx.font = `600 42px ${SANS}`; ctx.fillText("Jeremineralogie.fr", W / 2, 1830);
   return canvas;
 }
 

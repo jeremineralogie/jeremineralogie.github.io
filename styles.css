@@ -733,3 +733,17 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 @media(max-width:620px){.seo-fiche .scientific-details{grid-template-columns:1fr}.seo-fiche .scientific-details dt{text-align:left;padding:9px 0 0;border-bottom:0}.seo-fiche .scientific-details dd{padding:2px 0 9px}}
 @media(min-width:1100px){.seo-fiche{max-width:1000px}}
 @media(min-width:1600px){.seo-fiche{max-width:1120px}}
+
+/* Tests et outils : chaque cadre est rétractable */
+.tool-fold{padding:0}
+.tool-fold>.tool-summary{display:block;position:relative;padding:14px 44px;cursor:pointer;list-style:none}
+.tool-summary::-webkit-details-marker{display:none}
+.tool-summary::after{content:"▾";position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#c4a6f5;transition:transform .2s}
+.tool-fold[open]>.tool-summary::after{transform:translateY(-50%) rotate(180deg)}
+.tool-fold>.tool-summary h2{margin:0}
+.tool-fold>.tool-body{padding:2px clamp(12px,3vw,20px) 16px}
+
+/* Bouton « haut de page » : petit, en haut à gauche, visible dès qu'on a défilé */
+.to-top{position:fixed;top:12px;left:12px;z-index:60;width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid #6b3fb3;border-radius:50%;background:rgba(10,4,20,.88);color:#e6dcf5;font:inherit;font-size:1.15rem;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.to-top:hover,.to-top:focus-visible{background:#2a1450;border-color:#a77bf0;outline:none}
+.to-top[hidden]{display:none}

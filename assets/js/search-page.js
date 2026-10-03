@@ -30,7 +30,7 @@ const sources = [
     map: r => ({ title: r.title, meta: categoryLabel(r.category), href: documentUrl(r), image: r.cover_path ? { src: client.storage.from(r.cover_bucket || "site-media-public").getPublicUrl(r.cover_path).data.publicUrl } : null, haystack: [r.title, r.description, r.category] }) },
   { type: "Mine / gisement", table: "mines", select: "name,slug,description,locality:localities(department_code)",
     map: r => ({ title: r.name, meta: "", href: ficheUrl("mine", r.slug), haystack: [r.name, r.description] }) },
-  { type: "Localité", table: "localities", select: "name,slug,department_code,notes",
+  { type: "Commune", table: "localities", select: "name,slug,department_code,notes",
     map: r => ({ title: r.name, meta: r.department_code || "", href: ficheUrl("locality", r.slug), haystack: [r.name, r.notes] }) },
   { type: "Minéral", table: "minerals", select: `name,slug,formula,${media("mineral_media")}`,
     map: r => ({ title: r.name, meta: r.formula || "", href: ficheUrl("mineral", r.slug), image: firstImage(r.media) || mineralCommons(r.slug), haystack: [r.name, r.formula] }) },

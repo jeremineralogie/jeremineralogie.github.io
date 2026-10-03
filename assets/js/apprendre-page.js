@@ -339,7 +339,9 @@ function setupTools() {
   tPanel.querySelectorAll("a[data-mineral]").forEach(anchor => { anchor.href = ficheUrl("mineral", anchor.dataset.mineral); });
   tPanel.querySelectorAll("a[data-jump]").forEach(anchor => anchor.addEventListener("click", event => {
     event.preventDefault();
-    tPanel.querySelector(anchor.getAttribute("href"))?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const target = tPanel.querySelector(anchor.getAttribute("href"));
+    if (target?.tagName === "DETAILS") target.open = true;
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
   }));
 }
 

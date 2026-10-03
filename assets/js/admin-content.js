@@ -685,7 +685,7 @@ function wireAutoReference(form) {
   update();
 }
 
-// Localités : recherche des coordonnées officielles, avec choix quand plusieurs communes portent le même nom.
+// Communes : recherche des coordonnées officielles, avec choix quand plusieurs communes portent le même nom.
 function addLocateTool(form) {
   const box = document.createElement("div"); box.className = "locate-tool";
   const button = document.createElement("button"); button.type = "button"; button.className = "admin-secondary"; button.textContent = "📍 Localiser la commune";
@@ -769,7 +769,7 @@ function addMinePointTool(form) {
   refresh();
 }
 
-// Fiches liées à une commune : position sur la carte posable à la main sous le champ « Localité ».
+// Fiches liées à une commune : position sur la carte posable à la main sous le champ « Commune ».
 function addPointTool(form) {
   pointTool = null;
   const single = form.elements.namedItem("locality_id");
@@ -813,7 +813,7 @@ function addPointTool(form) {
   tool.refresh();
 }
 
-// Remplissage automatique : gisement → localité → département.
+// Remplissage automatique : gisement → commune → département.
 function wireGeoAutofill(form) {
   const field = name => form.elements.namedItem(name);
   const setValue = (name, value) => {

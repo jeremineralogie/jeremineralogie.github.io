@@ -72,7 +72,7 @@ async function loadDepartment() {
   content.hidden = false;
   if (!client) throw new Error("La connexion à Supabase n’est pas configurée.");
   const sections = [];
-  const localities = await safely("localités", async () => {
+  const localities = await safely("communes", async () => {
     const { data, error } = await client.from("localities").select("id,name,slug,department_code").eq("department_code", code).eq("publication_status", "published").order("name");
     if (error) throw error; return data || [];
   }) || [];
@@ -130,7 +130,7 @@ async function loadDepartment() {
   const heading = document.createElement("h2"); heading.textContent = "Données publiées du référentiel"; content.append(heading);
   section("Spécimens de ma collection", specimens);
   section("Pièces disponibles en boutique", shop);
-  section("Localités publiées", localities.map(row => ({ name: row.name, href: ficheUrl("locality", row.slug) })));
+  section("Communes publiées", localities.map(row => ({ name: row.name, href: ficheUrl("locality", row.slug) })));
   section("Mines et gisements publiés", mines.map(row => ({ name: row.name, href: ficheUrl("mine", row.slug) })));
   section("Minéraux documentés", minerals.map(row => ({ name: row.name, href: ficheUrl("mineral", row.slug) })));
   section("Archives et documents associés", archives);

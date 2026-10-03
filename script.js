@@ -37,3 +37,5 @@ document.addEventListener('click',e=>{
  show();box.hidden=false;document.documentElement.style.overflow='hidden';box.querySelector('.lb-close').focus();
 });
 })();
+
+(()=>{const button=document.createElement('button');button.type='button';button.className='to-top';button.hidden=true;button.setAttribute('aria-label','Haut de page');button.title='Haut de page';button.textContent='↑';button.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));document.body.append(button);const update=()=>{button.hidden=window.scrollY<300};addEventListener('scroll',update,{passive:true});update()})();
