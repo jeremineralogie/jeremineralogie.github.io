@@ -721,3 +721,6 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 .home-game-title{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
 .home-game-title .game-level{margin-right:0}
 .home-game-fold>.home-game-summary{flex-direction:column;flex-wrap:nowrap;gap:6px}
+
+/* Article ouvert : catégorie et date, puis directement le texte (le titre et la photo de couverture ne servent qu'à la liste) */
+.article-full>.kicker+.meta{margin-bottom:22px}
