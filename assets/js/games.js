@@ -1,10 +1,11 @@
-// Jeux du jour (quiz, devine le gisement) et badges : section affichée sur l'accueil et dans l'onglet « Jeux » d'Apprendre & jouer.
+// Jeux du jour (trouve le minéral, quiz, devine le gisement) et badges : section affichée sur l'accueil et dans l'onglet « Jeux » d'Apprendre & jouer.
 // Les parties sont les mêmes sur les deux pages (tirage fixé par la date) et partagent la même mémoire sur l'appareil.
 import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
 import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
 import { renderGeoGame } from "./geo-game.js";
+import { renderMineralPhotoGame } from "./mineral-photo-game.js";
 import { dateFr, sharePanel } from "./share.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
@@ -139,7 +140,7 @@ async function geoPieces(client) {
     rows(client.from("localities").select("id,name,latitude,longitude,department_code").not("latitude", "is", null)),
     rows(client.from("mines").select("id,name,locality_id,latitude,longitude")),
     rows(client.from("departments").select("code,name")),
-    rows(client.from("specimens").select("slug,mineral_name,locality_id,mine_id,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)").eq("publication_status", "published")),
+    rows(client.from("specimens").select("slug,mineral_name,country,locality_id,mine_id,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)").eq("publication_status", "published")),
     rows(client.from("shop_items").select("slug,reference,title,mineral_name,locality_id,mine_id,mineral:minerals!shop_items_mineral_id_fkey(name),media:shop_item_media(bucket_id,storage_path,position)").eq("publication_status", "published").neq("sale_status", "hidden"))
   ]);
   const localityById = new Map(localities.map(row => [row.id, row]));
@@ -153,7 +154,9 @@ async function geoPieces(client) {
     const department = departmentName.get(place.department_code);
     // Point du gisement s'il a été posé (plus précis), sinon celui de la commune.
     const spot = mine?.latitude != null && mine?.longitude != null ? mine : place;
-    return { key: `${type}:${row.slug}`, name, href, photo: publicMediaUrl(client, photo), lat: spot.latitude, lng: spot.longitude, department: place.department_code,
+    // Zone du badge « Tour de France » : département français, sinon pays (ou à défaut le lieu) à l'étranger.
+    const zone = place.department_code || (row.country && fold(row.country) !== "france" ? `pays:${fold(row.country)}` : `lieu:${place.id}`);
+    return { key: `${type}:${row.slug}`, name, href, photo: publicMediaUrl(client, photo), lat: spot.latitude, lng: spot.longitude, department: place.department_code, zone,
       place: [mine?.name, place.name, department].filter(Boolean).join(" · ") };
   };
   return [
@@ -163,18 +166,38 @@ async function geoPieces(client) {
 }
 
 // Section Jeux : les jeux toujours visibles, les badges dans un volet dépliable.
-export async function mountGames(root, { client, minerals }) {
-  const block = (title) => { const node = el("div", "home-game"); node.hidden = true; const body = el("div"); body.dataset.body = ""; node.append(el("h3", "home-game-title", title), body); return node; };
-  const quizBlock = block("Le quiz du jour"), geoBlock = block("Devine le gisement");
+export async function mountGames(root, { client, minerals, collapsible = false }) {
+  // Trois niveaux, toujours dans l'ordre de difficulté : facile (photo + 4 noms), intermédiaire (quiz à indices), difficile (localiser sur la carte).
+  // Sur l'accueil (collapsible), chaque jeu est un encart rétractable, replié au départ, qui indique si la partie du jour est jouée.
+  const block = (title, level, levelClass, game) => {
+    const node = el(collapsible ? "details" : "div", `home-game${collapsible ? " home-game-fold" : ""}`); node.hidden = true;
+    const body = el("div"); body.dataset.body = "";
+    const heading = el("h3", "home-game-title"); heading.append(el("span", `game-level ${levelClass}`, level), title);
+    if (!collapsible) { node.append(heading, body); return node; }
+    const done = el("span", "game-done");
+    const refresh = () => { const played = Boolean(todayResult(game)); done.textContent = played ? "✓ Joué aujourd’hui" : ""; done.hidden = !played; };
+    refresh(); document.addEventListener("jm-progress", refresh);
+    const summary = el("summary", "home-game-summary"); summary.append(heading, done);
+    node.append(summary, body); return node;
+  };
+  const mineralBlock = block("Trouve le minéral", "Facile", "is-easy", "mineral"), quizBlock = block("Le quiz du jour", "Intermédiaire", "is-medium", "quiz"), geoBlock = block("Devine le gisement", "Difficile", "is-hard", "geo");
   const badges = el("details", "home-badges");
   const summary = el("summary"); const count = el("span", "home-badges-count");
   summary.append(el("span", "home-badges-label", "Mes séries et badges"), count);
   const list = el("div", "badges");
   badges.append(summary, list);
-  root.replaceChildren(quizBlock, geoBlock, badges);
+  root.replaceChildren(mineralBlock, quizBlock, geoBlock, badges);
   const { quiz } = dailyMinerals(minerals);
   if (quiz) renderQuiz(quizBlock, quiz, minerals, client);
   renderBadges(list, count);
-  try { const pieces = await geoPieces(client); if (pieces.length) await renderGeoGame(geoBlock, pieces); }
+  void renderMineralPhotoGame(mineralBlock, { client, minerals }).catch(error => console.error("Trouve le minéral :", error));
+  try {
+    const pieces = await geoPieces(client);
+    if (!pieces.length) return;
+    if (!collapsible) { await renderGeoGame(geoBlock, pieces); return; }
+    // La carte a besoin d'un encart ouvert pour prendre sa taille : on ne la monte qu'à la première ouverture.
+    geoBlock.hidden = false;
+    geoBlock.addEventListener("toggle", () => { if (geoBlock.open && !geoBlock.dataset.started) { geoBlock.dataset.started = "1"; void renderGeoGame(geoBlock, pieces); } });
+  }
   catch (error) { console.error("Devine le gisement :", error); }
 }

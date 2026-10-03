@@ -7,7 +7,7 @@ import { categoryLabel } from "./reference-resolver.js";
 import { dailyMinerals, mountGames } from "./games.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
-// Page d'accueil : nouveautés, minéral du jour, jeux du jour (quiz, devine le gisement) et badges, chiffres du site.
+// Page d'accueil : nouveautés, minéral du jour, jeux du jour (trouve le minéral, quiz, devine le gisement) et badges, chiffres du site.
 const client = getSupabase();
 const home = document.querySelector("#home");
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
@@ -145,7 +145,7 @@ async function load() {
 
   const { daily } = dailyMinerals(minerals);
   if (daily) void renderDaily(daily);
-  void mountGames(document.querySelector("#home-games [data-games]"), { client, minerals });
+  void mountGames(document.querySelector("#home-games [data-games]"), { client, minerals, collapsible: true });
   const [specimenCount, shopCount, termCount, articleCount, archiveCount] = counts;
   const plural = (count, one, many) => count > 1 ? many : one;
   renderStats([

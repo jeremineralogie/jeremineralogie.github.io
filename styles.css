@@ -679,3 +679,40 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
   .article-full,.doc-full,.legal,.home-panel,.fav-group,.ident-intro,.ident-form,.ident-note,form[data-message-form]{max-width:1060px}
   #fiche,.learn-letter,.learn-glossary,.ident-results{max-width:1120px}
 }
+
+/* Jeux : pastille de niveau et « Trouve le minéral » (facile) */
+.game-level{display:inline-block;margin-right:.7em;padding:.15em .6em;border:1px solid currentColor;border-radius:999px;font-family:Inter,system-ui,sans-serif;font-size:.62rem;font-weight:600;letter-spacing:.12em;vertical-align:middle}
+.game-level.is-easy{color:#6fe39a}.game-level.is-medium{color:#f0d9a8}.game-level.is-hard{color:#ff8fa5}
+.pick{display:grid;gap:12px;justify-items:center}
+.pick-head{display:flex;justify-content:space-between;gap:10px;width:100%;max-width:620px;font-size:.86rem;color:#cdb6f2}
+.pick-score{color:#f0d9a8;font-variant-numeric:tabular-nums}
+.pick-intro{margin:0;color:#d6c4f3}
+.pick-figure{display:grid;gap:4px;justify-items:center;width:100%;margin:0}
+.pick-photo{width:min(100%,420px);aspect-ratio:4/3;object-fit:contain;background:#000;border:1px solid #3a1d63}
+.pick-credit .photo-credit{margin:0}
+.pick-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;max-width:520px}
+.pick-choice{min-height:52px;padding:8px 10px;border:1px solid rgba(160,110,240,.55);border-radius:4px;background:#12091d;color:#f3eaff;font:inherit;font-family:var(--serif);font-size:1.1rem;line-height:1.2;overflow-wrap:anywhere;cursor:pointer}
+.pick-choice:hover:not(:disabled){background:#241340}
+.pick-choice:disabled{cursor:default}
+.pick-choice.is-right{border-color:#3fb86b;background:#0c2415;color:#b9f5cd}
+.pick-choice.is-wrong{border-color:#e0355e;background:#2a0a14;color:#ffc3cc}
+.pick-choice:disabled:not(.is-right):not(.is-wrong){opacity:.5}
+.pick-outcome{margin:0;max-width:520px;line-height:1.5;color:#e6dcf5}
+.pick-outcome:empty{display:none}
+.pick-outcome.is-right strong{color:#6fe39a}.pick-outcome.is-wrong strong{color:#ff7d98}
+.pick-next{cursor:pointer;background:transparent;font:inherit}
+.pick-next[hidden]{display:none}
+.pick-total{margin:0;font-family:var(--serif);font-size:clamp(1.5rem,6vw,2.1rem);color:#f3eaff;font-variant-numeric:tabular-nums}
+.pick-ok{font-size:.8rem;color:#6fe39a}.pick-ko{font-size:.8rem;color:#ff7d98}
+
+/* Accueil : chaque jeu dans son propre encart rétractable */
+.home-game.home-game-fold{display:block;padding:0;border:1px solid #3a1d63;border-radius:4px;background:rgba(20,10,34,.6)}
+.home-game-fold>.home-game-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px;padding:14px 38px 14px 14px;cursor:pointer;list-style:none;position:relative}
+.home-game-summary::-webkit-details-marker{display:none}
+.home-game-summary::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#c4a6f5;transition:transform .2s}
+.home-game-fold[open]>.home-game-summary::after{transform:translateY(-50%) rotate(180deg)}
+.home-game-summary .home-game-title{margin:0}
+.game-done{font-size:.78rem;color:#6fe39a;letter-spacing:.04em}
+.game-done[hidden]{display:none}
+.home-game-fold>[data-body]{display:grid;gap:12px;padding:4px 14px 16px}
+.home-game-fold:not([open])>[data-body]{display:none}

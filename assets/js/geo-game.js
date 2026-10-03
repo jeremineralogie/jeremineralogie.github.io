@@ -97,7 +97,7 @@ export async function renderGeoGame(panel, pieces) {
     const truth = L.latLng(piece.lat, piece.lng);
     const km = distanceKm(guess, truth);
     const points = pointsFor(km);
-    results.push({ km: Math.round(km * 10) / 10, points, department: piece.department || null });
+    results.push({ km: Math.round(km * 10) / 10, points, department: piece.department || null, zone: piece.zone || piece.department || null });
     save();
     L.polyline([guess, truth], { color: "#f0d9a8", weight: 2, dashArray: "6 6" }).addTo(layer);
     L.circleMarker(truth, { radius: 10, color: "#fff", weight: 2, fillColor: "#3fbf7f", fillOpacity: 0.95 }).addTo(layer).bindTooltip(piece.place || piece.name);
@@ -116,7 +116,7 @@ export async function renderGeoGame(panel, pieces) {
   function finish() {
     const finalScore = total();
     if (finalScore > best.get()) best.set(finalScore);
-    recordGame("geo", { score: finalScore, rounds: results.map(({ km, department }) => ({ km, department })) });
+    recordGame("geo", { score: finalScore, rounds: results.map(({ km, department, zone }) => ({ km, department, zone })) });
     summary();
   }
 
