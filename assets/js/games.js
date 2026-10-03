@@ -6,6 +6,7 @@ import { ficheUrl } from "./entity-links.js";
 import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
 import { backfillRecord, renderGeoGame } from "./geo-game.js";
 import { renderMineralPhotoGame } from "./mineral-photo-game.js";
+import { QUIZ_RARITIES, byRarity } from "./rarity.js";
 import { dateFr, sharePanel } from "./share.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
@@ -24,7 +25,8 @@ export function dailyMinerals(minerals) {
   const list = [...minerals].sort((a, b) => String(a.slug).localeCompare(String(b.slug)));
   if (!list.length) return { daily: null, quiz: null };
   const daily = list[Math.floor(seeded(`mineral-${today}`)() * list.length)];
-  const playable = list.filter(item => CLUES.filter(([, get]) => get(item)).length >= 3);
+  // Quiz (intermédiaire) : minéraux très communs, communs et rares, jamais les très rares.
+  const playable = byRarity(list.filter(item => CLUES.filter(([, get]) => get(item)).length >= 3), QUIZ_RARITIES, 8);
   if (!playable.length) return { daily, quiz: null };
   let index = Math.floor(seeded(`quiz-${today}`)() * playable.length);
   if (playable[index].id === daily.id) index = (index + 1) % playable.length;

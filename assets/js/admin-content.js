@@ -6,6 +6,7 @@ import { createContentEditor } from "./article-editor.js";
 import { blocksToText } from "./article-content.js";
 import { formatDiscoveryDate, parseDiscoveryDate, parseWeight } from "./specimen-fields.js";
 import { nextReference, referencePrefix } from "./shop-reference.js";
+import { RARITIES } from "./rarity.js";
 
 const PUBLIC_BUCKET = "site-media-public";
 const DRAFT_BUCKET = "admin-staging";
@@ -93,6 +94,7 @@ const sections = [
   { id: "minerals", label: "Minéraux", table: "minerals", title: "Référentiel minéral (fiches Apprendre)", mediaTable: "mineral_media", foreignKey: "mineral_id", path: "minerals", mediaAfter: "etymology", fields: [
     { key: "name", label: "Nom", required: true }, { key: "formula", label: "Formule chimique (ex. CaCO₃)" },
     { key: "chemical_class", label: "Famille chimique", type: "select", customOptions: true, options: MINERAL_CLASSES.map(value => [value, value]) },
+    { key: "rarity", label: "Rareté (règle la difficulté des jeux)", type: "select", options: RARITIES },
     { key: "crystal_system", label: "Système cristallin", type: "select", customOptions: true, options: CRYSTAL_SYSTEMS.map(value => [value, value]) },
     { key: "hardness", label: "Dureté minimale (Mohs)", type: "number", step: "0.01" }, { key: "hardness_max", label: "Dureté maximale (Mohs)", type: "number", step: "0.01" },
     { key: "density", label: "Densité minimale", type: "number", step: "0.001" }, { key: "density_max", label: "Densité maximale", type: "number", step: "0.001" },

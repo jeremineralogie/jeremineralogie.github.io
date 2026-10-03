@@ -127,7 +127,7 @@ async function load() {
       .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false }).limit(1)), []),
     safe("archives", () => rows(client.from("archive_documents").select("slug,title,category,document_date,summary,cover_bucket,cover_path")
       .eq("publication_status", "published").order("created_at", { ascending: false }).limit(1)), []),
-    safe("minéraux", () => rows(client.from("minerals").select("id,name,slug,photo_credit,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,streak,luster,transparency,colors,description,media:mineral_media(bucket_id,storage_path,position)")
+    safe("minéraux", () => rows(client.from("minerals").select("id,name,slug,photo_credit,rarity,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,streak,luster,transparency,colors,description,media:mineral_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").order("slug")), []),
     safe("chiffres", () => Promise.all([
       total(client.from("specimens").select("id", { count: "exact", head: true }).eq("publication_status", "published")),

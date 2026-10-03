@@ -3,6 +3,7 @@
 import { publicMediaUrl } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { parisDay, recordGame, streakOf, todayResult } from "./game-progress.js";
+import { EASY_RARITIES, byRarity } from "./rarity.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 import { dateFr, sharePanel } from "./share.js";
 
@@ -39,7 +40,9 @@ function choicesFor(target, pool, random) {
 
 // Manches du jour : tirage identique pour tous les visiteurs.
 export function dailyRounds(minerals, credits, day = parisDay()) {
-  const pool = [...minerals].filter(item => item.name && (firstPhoto(item.media) || commonsPhoto(credits, item.slug))).sort((a, b) => String(a.slug).localeCompare(String(b.slug)));
+  // Niveau facile : seulement des minéraux très communs ou communs (réponses et mauvaises réponses comprises).
+  const withPhoto = minerals.filter(item => item.name && (firstPhoto(item.media) || commonsPhoto(credits, item.slug)));
+  const pool = [...byRarity(withPhoto, EASY_RARITIES)].sort((a, b) => String(a.slug).localeCompare(String(b.slug)));
   if (pool.length < CHOICES) return { pool, rounds: [] };
   const random = seeded(`trouve-mineral-${day}`);
   const rounds = shuffled(pool, random).slice(0, ROUNDS).map(target => ({ target, choices: choicesFor(target, pool, random) }));
