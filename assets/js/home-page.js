@@ -146,6 +146,13 @@ async function load() {
   const { daily } = dailyMinerals(minerals);
   if (daily) void renderDaily(daily);
   void mountGames(document.querySelector("#home-games [data-games]"), { client, minerals, collapsible: true });
+  const quizBox = document.querySelector("#home-quiz");
+  quizBox?.addEventListener("toggle", async () => {
+    if (!quizBox.open || quizBox.dataset.ready) return;
+    quizBox.dataset.ready = "1";
+    const { mountQuiz } = await import("./quiz-mineral.js");
+    mountQuiz(quizBox.querySelector("[data-body]"));
+  });
   const [specimenCount, shopCount, termCount, articleCount, archiveCount] = counts;
   const plural = (count, one, many) => count > 1 ? many : one;
   renderStats([

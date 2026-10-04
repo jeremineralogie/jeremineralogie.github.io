@@ -552,7 +552,7 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .badge-toast-icon{font-size:1.4rem}
 .badge-toast strong{color:#f0d9a8}
 .badge-list:has(> :nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,calc(25% - 3px)));justify-content:center}
-/* Apprendre & jouer : 5 sous-onglets sur deux lignes (3 + 2) */
+/* Apprendre & identifier : 5 sous-onglets sur deux lignes (3 + 2) */
 .learn-tabs{flex-wrap:wrap}
 /* Tests et outils */
 .tools-intro{max-width:760px;margin:18px auto 10px;padding:14px 16px;background:rgba(6,2,12,.86);border:1px solid #3a1d63;border-radius:4px;text-align:center;line-height:1.55;color:#e6dcf5}
@@ -823,3 +823,21 @@ main :is(p,div)[hidden],main .meta[hidden],main .notice[hidden]{display:none!imp
 .acct-chk{display:flex;gap:10px;align-items:center;justify-content:center;margin:12px 0;color:#e6dcf5;font-size:.92rem}
 .acct-chk input{width:20px;height:20px;accent-color:#6d2fd0}
 body.acct-open{overflow:hidden}
+
+/* Quiz « Quel minéral es-tu ? » */
+.mq{display:grid;gap:12px;justify-items:center;text-align:center;width:100%}
+.mq-lead,.mq-text{max-width:560px;margin:0;line-height:1.55;color:#e6dcf5}
+.mq-start{width:auto;min-width:220px;padding:10px 22px}
+.mq-count{margin:0;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#c4a6f5}
+.mq-bar{width:100%;max-width:520px;height:6px;border-radius:3px;background:#241340;overflow:hidden}
+.mq-bar span{display:block;height:100%;background:#b48cff;transition:width .3s}
+.mq-question{margin:0;max-width:560px;font-family:var(--serif);font-size:clamp(1.25rem,5vw,1.6rem);line-height:1.3;color:#f3eaff}
+.mq-answers{display:grid;gap:8px;width:100%;max-width:520px}
+.mq-answer{text-align:left;font-size:1rem;padding:10px 14px}
+.mq-back{background:none;border:0;color:#c4a6f5;font:inherit;font-size:.85rem;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.mq-result{display:grid;gap:12px;justify-items:center;width:100%}
+.mq-kicker{margin:0;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:#c4a6f5}
+.mq-name{margin:0;font-family:var(--serif);font-size:clamp(2rem,9vw,2.8rem);color:#f3eaff}
+.mq-tagline{margin:0;font-style:italic;color:#e6dcf5}
+.mq-photo{width:100%;max-width:420px;max-height:320px;object-fit:cover;border-radius:4px;border:1px solid #3a1d63}
+.mq-fiche{font-size:.95rem}

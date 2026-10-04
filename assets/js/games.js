@@ -1,4 +1,4 @@
-// Jeux du jour (trouve le minéral, quiz, devine le gisement) et badges : section affichée sur l'accueil et dans l'onglet « Jeux » d'Apprendre & jouer.
+// Jeux du jour (trouve le minéral, quiz, devine le gisement) et badges : section affichée sur l'accueil et sur la page « Jeux & quiz ».
 // Les parties sont les mêmes sur les deux pages (tirage fixé par la date) et partagent la même mémoire sur l'appareil.
 import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, specimenUrl } from "./detail-nav.js";

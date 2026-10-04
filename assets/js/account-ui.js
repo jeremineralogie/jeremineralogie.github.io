@@ -109,7 +109,7 @@ function openMenu(anchor) {
   } else {
     const who = el("div", "acct-who", "Connecté"); who.append(el("b", "", user.name));
     menu.append(who, el("div", "acct-synced", "✓ Progression sauvegardée"), el("div", "acct-sep"),
-      item("🏅 Mes badges", () => { location.href = "/apprendre.html#jeux"; }));
+      item("🏅 Mes badges", () => { location.href = "/jeux.html#jeux"; }));
     if (!user.google) menu.append(item("Nouveau code de secours", async () => { try { const code = await regenerateRecoveryCode(); openModal(box => viewCode(box, code, false)); } catch (error) { alert(error.message); } }));
     menu.append(item("Se déconnecter", async () => { await signOut(); }));
   }
