@@ -1,3 +1,4 @@
+import { wireKeywordsAuto } from "./keywords-auto.js";
 import { ensureDepartment, ensureNamed, isFrenchDepartmentCode, normalizeName, OTHER, SITE_TYPES } from "./reference-resolver.js";
 import { enhanceCombobox, enhanceMulti } from "./combobox.js";
 import { backfillLocalities, communeLabel, communeUpdate, departmentOfCommune, findCommune, searchCommunes } from "./geo-communes.js";
@@ -43,7 +44,7 @@ const sections = [
     { key: "country", label: "Pays", suggest: ["France"] },
     { key: "site_type", label: "Type de site", type: "select", blank: "— Non renseigné —", customOptions: true, options: SITE_TYPES },
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_text", label: "Poids", help: "grammes" },
-    { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "keywords", label: "Mots-clés" },
+    { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "keywords", label: "Mots-clés (invisibles pour les visiteurs ; servent à la recherche)" },
     { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA", help: "Exemples : 2018, 09/2018 ou 29/09/2018." },
     { key: "publication_status", label: "Publication", type: "select", options: [["published", "Publié"], ["draft", "Brouillon"]] }
   ] },
@@ -60,7 +61,7 @@ const sections = [
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "price_cents", label: "Prix (euros)", type: "number", step: "0.01", required: true, euros: true },
     { key: "sale_status", label: "Disponibilité", type: "select", options: [["available", "Disponible"], ["sold", "Vendu"], ["hidden", "Masqué"]] },
     { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS },
-    { key: "keywords", label: "Mots-clés" }, { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA" }
+    { key: "keywords", label: "Mots-clés (invisibles pour les visiteurs ; servent à la recherche)" }, { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA" }
   ] },
   { id: "articles", label: "Articles", table: "articles", title: "Articles", mediaTable: "article_media", foreignKey: "article_id", path: "articles", mediaAfter: "body", singleCover: true,
     links: [["article_minerals", "mineral_id", "minerals"], ["archive_articles", "archive_id", "archive_documents"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_departments", "department_code", "departments"], ["article_regions", "region_id", "regions"]], fields: [
@@ -272,7 +273,7 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,latitude,longitude,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : "id,name";
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,latitude,longitude,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : table === "minerals" ? "id,name,formula,chemical_class,crystal_system,colors,hardness,hardness_max" : table === "regions" ? "id,name" : "id,name";
     const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" || table === "archive_documents" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
@@ -360,6 +361,7 @@ function buildEditorPanel() {
   }
   if (activeSection.autoReference && !selectedRecord) wireAutoReference(form);
   wireGeoAutofill(form);
+  if (activeSection.id === "collection" || activeSection.id === "shop") wireKeywordsAuto(form, refs);
   if (activeSection.id === "localities") addLocateTool(form);
   else if (activeSection.id === "mines") addMinePointTool(form);
   else addPointTool(form);

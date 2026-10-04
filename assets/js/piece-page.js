@@ -73,7 +73,6 @@ function render(client, item) {
   if (provenance && provenance !== mineName) row("Pays", provenance);
   row("Dimensions", clean(item.dimensions));
   row("Poids", item.weight_grams == null ? "" : `${String(item.weight_grams).replace(".", ",")} g`);
-  row("Mots-clés", clean(item.keywords));
   row("Date de découverte", clean(item.discovery_date_text));
   const price = document.createElement("div"); price.className = "price";
   price.textContent = new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format(item.price_cents / 100);
