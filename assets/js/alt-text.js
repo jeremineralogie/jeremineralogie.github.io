@@ -5,6 +5,12 @@ const uniq = list => { const seen = new Set(); return list.map(clean).filter(ite
 const MAX = 300;
 const cut = text => text.length <= MAX ? text : `${text.slice(0, MAX - 1).replace(/[\s,;—:(-]+\S*$/, "")}…`;
 
+// Mots-clés non déjà dits ailleurs dans le texte (les mots-clés automatiques répètent le minéral, le gisement, etc.).
+function extraKeywords(keywords, said) {
+  const known = said.map(item => clean(item).toLocaleLowerCase("fr")).filter(Boolean);
+  return clean(keywords).split(",").map(clean).filter(term => term && !known.some(item => item.includes(term.toLocaleLowerCase("fr")) || (term.toLocaleLowerCase("fr").includes(item) && item.length > 3))).join(", ");
+}
+
 // Un texte alternatif saisi à la main est conservé ; un nom de fichier (IMG_1087.jpeg, UUID.png…) n'en est pas un.
 export const isFileNameAlt = text => { const value = clean(text); return !value || /\.(jpe?g|png|webp|gif|avif|heic)\b/i.test(value) || /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(value); };
 const shot = (index, total) => total > 1 ? `photo ${index + 1} sur ${total}` : "";
@@ -21,7 +27,7 @@ export function specimenAlt(info, index = 0, total = 1, manual = "") {
     associated.length ? `associé à ${associated.join(", ")}` : "",
     clean(info.dimensions), clean(info.weight),
     clean(info.reference) ? `réf. ${clean(info.reference)}` : "",
-    clean(info.keywords), clean(info.discovery) ? `découvert ${clean(info.discovery)}` : "",
+    extraKeywords(info.keywords, [info.mineral, ...where, ...associated, info.dimensions, info.weight, info.reference, info.discovery]), clean(info.discovery) ? `découvert ${clean(info.discovery)}` : "",
     shot(index, total)
   ].filter(Boolean);
   return cut(parts.join(" — "));

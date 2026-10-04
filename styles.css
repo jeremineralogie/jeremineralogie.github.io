@@ -768,3 +768,6 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 /* Page À propos */
 .about-links{margin:0;padding-left:1.2em;line-height:1.7}
 .about-links li{margin:4px 0}
+
+/* Les messages de chargement masqués (« Chargement… ») ne doivent jamais rester affichés */
+main :is(p,div)[hidden],main .meta[hidden],main .notice[hidden]{display:none!important}

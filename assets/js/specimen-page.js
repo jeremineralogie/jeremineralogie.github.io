@@ -89,7 +89,7 @@ function renderSpecimen(specimen) {
   put("[data-location-summary]", [specimen.locality, specimen.department, specimen.region, specimen.country].filter(Boolean).join(" · ") || "Localisation à compléter");
   put("[data-provenance]", specimen.provenance); put("[data-locality]", specimen.locality);
   put("[data-region]", specimen.region); put("[data-country]", specimen.country);
-  put("[data-site-type]", siteTypeLabel(specimen.siteType)); put("[data-keywords]", specimen.keywords);
+  put("[data-site-type]", siteTypeLabel(specimen.siteType));
   put("[data-dimensions]", specimen.dimensions); put("[data-weight]", specimen.weight);
   put("[data-associations]", (specimen.associations || []).join(", ")); put("[data-discovery-date]", specimen.discoveryDate);
   content.querySelector("[data-description]").textContent = specimen.description || "Non renseigné";
