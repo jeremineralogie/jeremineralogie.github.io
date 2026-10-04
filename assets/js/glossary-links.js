@@ -3,19 +3,12 @@ import { getSupabase } from "./supabase-client.js";
 
 // Liens automatiques vers le glossaire : dans un bloc de texte, la première occurrence de chaque terme devient
 // cliquable et ouvre une petite bulle avec la définition et un lien vers l'onglet Apprendre.
-// Les termes trop généraux (minéral, roche, couleur…) ne sont pas reliés pour ne pas surcharger les textes.
-const GENERIC = new Set(["mineral", "roche", "cristal", "couleur", "densite", "trait", "mine", "face", "arete", "serie", "variete", "specimen",
-  "cube", "prisme", "gisement", "gite", "formule chimique", "transparent", "translucide", "opaque", "durete", "eclat", "carriere", "puits",
-  "galerie", "minerai", "croute", "manteau", "lave", "magma", "fossile", "erosion", "alteration", "symetrie", "cassure", "inclusion", "nodule",
-  "concretion", "encroutement", "fibreux", "lamellaire", "tabulaire", "prismatique", "etiquette", "nettoyage", "matrice", "affleurement",
-  "faille", "pli", "fluide", "datation", "silicate", "carbonate", "sulfure", "gemme", "synthetique", "traitement", "flexible", "elastique",
-  "groupe mineral", "espece minerale", "systeme cristallin", "cubique", "quadratique", "hexagonal", "trigonal", "orthorhombique", "monoclinique",
-  "triclinique", "amorphe", "couleur", "zonage", "calcaire", "argile", "gres", "grotte", "alluvion"]);
-const isWordChar = character => Boolean(character) && /[\p{L}\p{N}]/u.test(character);
-const foldChar = character => character.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[’`]/g, "'").replace(/-/g, " ");
-const foldText = text => [...String(text ?? "")].map(foldChar).join("");
+// Les termes trop généraux (minéral, roche, couleur…) ne sont pas reliés pour ne pas surcharger les textes (voir glossary-match.js).
+import { matcher, termHits, foldText } from "./glossary-match.js";
+export { propertyParts, PRECISE_LABELS, LABEL_TERMS } from "./glossary-match.js";
 const SKIP = "a, button, h1, h2, h3, script, style, input, textarea, select, .gloss-pop, .kicker, .meta";
 
+export const glossaryTerms = () => loadTerms();
 let termsPromise = null;
 function loadTerms() {
   if (!termsPromise) {
@@ -29,19 +22,6 @@ function loadTerms() {
   return termsPromise;
 }
 
-function matcher(terms) {
-  const keys = [];
-  terms.forEach(term => {
-    const base = foldText(term.term.trim());
-    if (base.length < 4 || GENERIC.has(base)) return;
-    const forms = new Set([base]);
-    if (!base.includes(" ")) { forms.add(`${base}s`); if (base.endsWith("al")) forms.add(`${base.slice(0, -2)}aux`); }
-    else { const [first, ...rest] = base.split(" "); forms.add([`${first}s`, ...rest].join(" ")); }
-    forms.forEach(form => keys.push({ form, term }));
-  });
-  return keys.sort((a, b) => b.form.length - a.form.length);
-}
-
 function textNodes(root) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode: node => !node.nodeValue.trim() || node.parentElement?.closest(SKIP) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
@@ -51,51 +31,43 @@ function textNodes(root) {
 }
 
 function linkNode(node, keys, used) {
-  const source = node.nodeValue;
-  let folded = ""; const map = [];
-  [...source].forEach((character, index) => { for (const piece of foldChar(character)) { folded += piece; map.push(index); } });
-  const chars = [...source];
-  const hits = [];
-  for (const { form, term } of keys) {
-    if (used.has(term.slug)) continue;
-    let from = 0;
-    while (from <= folded.length) {
-      const start = folded.indexOf(form, from);
-      if (start < 0) break;
-      const end = start + form.length;
-      if (!isWordChar(folded[start - 1]) && !isWordChar(folded[end]) && !hits.some(hit => start < hit.end && end > hit.start)) {
-        hits.push({ start, end, term }); used.add(term.slug); break;
-      }
-      from = start + 1;
-    }
-  }
+  const hits = termHits(node.nodeValue, keys, used);
   if (!hits.length) return;
-  hits.sort((a, b) => a.start - b.start);
+  const chars = hits[0].chars;
   const fragment = document.createDocumentFragment();
   let cursor = 0;
   hits.forEach(hit => {
-    const start = map[hit.start]; const end = map[hit.end - 1] + 1;
-    if (start < cursor) return;
-    if (start > cursor) fragment.append(chars.slice(cursor, start).join(""));
+    if (hit.start > cursor) fragment.append(chars.slice(cursor, hit.start).join(""));
     const link = document.createElement("a");
     link.className = "gloss"; link.href = cleanUrl("term", hit.term.slug);
-    link.textContent = chars.slice(start, end).join(""); link.dataset.slug = hit.term.slug;
+    link.textContent = chars.slice(hit.start, hit.end).join(""); link.dataset.slug = hit.term.slug;
     link.setAttribute("aria-haspopup", "dialog");
-    fragment.append(link); cursor = end;
+    fragment.append(link); cursor = hit.end;
   });
   if (cursor < chars.length) fragment.append(chars.slice(cursor).join(""));
   node.replaceWith(fragment);
 }
 
 // Relie les termes du glossaire dans les éléments donnés (une seule fois par terme sur l'ensemble).
-export async function applyGlossary(...roots) {
+// Un terme n'est relié qu'une seule fois par page, quels que soient les blocs de texte (description, propriétés, articles…) : « pageUsed » est partagé par tous les appels.
+const pageUsed = new Set();
+const skippedNames = new Set();
+export const isTermUsed = slug => pageUsed.has(slug);
+export const markTermUsed = slug => pageUsed.add(slug);
+// Noms déjà reliés à une fiche (minéral, gisement…) : le terme du glossaire qui porte le même nom n'est plus relié ailleurs sur la page.
+export function skipTermNames(names) { [...names].forEach(name => skippedNames.add(foldText(name).trim())); }
+export const applyGlossary = (...roots) => run(roots, false);
+// Même chose, mais les termes « généraux » (cube, croûte, fibreux, transparent…) sont aussi reliés : pour les champs précis d'une fiche (habitus, cassure, clivage, éclat, transparence).
+export const applyGlossaryPrecise = (...roots) => run(roots, true);
+async function run(roots, precise) {
   const targets = roots.flat().filter(Boolean);
   if (!targets.length) return;
   const terms = await loadTerms();
   if (!terms.length) return;
-  const keys = matcher(terms);
+  const keys = matcher(terms, { includeGeneric: precise });
   const bySlug = new Map(terms.map(term => [term.slug, term]));
-  const used = new Set();
+  terms.forEach(term => { if (skippedNames.has(foldText(term.term.trim()))) pageUsed.add(term.slug); });
+  const used = pageUsed;
   targets.forEach(root => textNodes(root).forEach(node => linkNode(node, keys, used)));
   bindPopover(bySlug);
 }

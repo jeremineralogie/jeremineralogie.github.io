@@ -1,4 +1,5 @@
 import { departmentUrl, setCanonical, slugOf } from "./clean-urls.js";
+import { renderCrumbs } from "./crumbs.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { pieceTitle } from "./seo-titles.js";
@@ -83,6 +84,7 @@ function render(client, item) {
   details.append(kicker, title, list, price, contact, favorite, shareButton({ title: name, text: `${name} — Jeremineralogie` }));
   wrap.append(left, details); root.replaceChildren(wrap);
   document.querySelector("[data-seo]")?.remove();
+  renderCrumbs([["Accueil", "/"], ["Boutique", "/boutique.html"], [name]]);
   if (item.description) {
     const section = document.createElement("div"); section.className = "content";
     const heading = document.createElement("h2"); heading.textContent = "Description";

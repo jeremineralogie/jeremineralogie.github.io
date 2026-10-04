@@ -359,6 +359,7 @@ async function load() {
   setupTools();
   status.hidden = true;
   document.querySelector("[data-seo]")?.remove();
+  document.querySelector("[data-seo-index]")?.remove();
   // Lien depuis une bulle du glossaire : apprendre.html?terme=<slug>#glossaire
   const wanted = new URLSearchParams(window.JM_PARAMS ?? location.search).get("terme");
   if (wanted) { showTab("glossaire"); requestAnimationFrame(() => openTerm(wanted)); }

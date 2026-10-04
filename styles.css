@@ -854,3 +854,11 @@ body.acct-open{overflow:hidden}
 .mq-feedback p{margin:0;line-height:1.5;color:#e6dcf5}
 .mq-feedback.is-right .mq-verdict strong{color:#6fe39a}.mq-feedback.is-wrong .mq-verdict strong{color:#ff7d98}
 .mq-links{font-size:.9rem}
+
+/* Fil d'Ariane (pages fiche, pièce, spécimen, article, document, thème) : petit bandeau centré, lisible sur le fond décoratif */
+.crumbs{display:flex;justify-content:center;max-width:var(--max);margin:14px auto 12px;font-size:.8rem;color:var(--muted)}
+.crumbs ol{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 0;list-style:none;margin:0;padding:6px 12px;background:rgba(6,2,12,.86);border:1px solid #3a1d63;border-radius:4px}
+.crumbs li{display:inline-flex;align-items:center;min-width:0}
+.crumbs li+li::before{content:"›";margin:0 7px;color:#8f7bb0}
+.crumbs a{color:#c4a6f5;text-decoration:underline;text-underline-offset:2px}
+.crumbs li[aria-current]{color:var(--text);overflow-wrap:anywhere}

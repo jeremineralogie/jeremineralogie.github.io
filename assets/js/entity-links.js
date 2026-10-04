@@ -48,6 +48,32 @@ export function buildLinker(entities) {
   };
 }
 
+// Liens automatiques vers les fiches dans un texte mis en forme (sans toucher aux liens existants).
+export function linkTextNodes(root, linker, used) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: node => node.parentElement?.closest("a") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node => {
+    const parts = linker(node.nodeValue, used);
+    if (!parts.some(part => part.href)) return;
+    const fragment = document.createDocumentFragment(); appendLinked(fragment, parts); node.replaceWith(fragment);
+  });
+}
+
+// Fiches liées à un document d'archive dans l'administration : [{ name, href }].
+export async function loadArchiveLinks(client, archiveId) {
+  const joins = [["archive_minerals", "minerals", "mineral"], ["archive_mines", "mines", "mine"], ["archive_localities", "localities", "locality"]];
+  const out = [];
+  await Promise.all(joins.map(async ([table, entityTable, type]) => {
+    const { data, error } = await client.from(table).select(`entity:${entityTable}(name,slug)`).eq("archive_id", archiveId);
+    if (error) { console.error(`Liens ${table} :`, error); return; }
+    (data || []).forEach(row => { if (row.entity) out.push({ name: row.entity.name, href: ficheUrl(type, row.entity.slug) }); });
+  }));
+  const { data, error } = await client.from("archive_departments").select("entity:departments(name,code)").eq("archive_id", archiveId);
+  if (error) console.error("Liens archive_departments :", error);
+  (data || []).forEach(row => { if (row.entity) out.push({ name: row.entity.name, href: departmentUrl(row.entity.code) }); });
+  return out;
+}
+
 export function appendLinked(element, parts) {
   parts.forEach(part => {
     if (!part.href) { element.append(document.createTextNode(part.text)); return; }

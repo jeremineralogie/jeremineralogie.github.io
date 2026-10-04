@@ -1,5 +1,6 @@
 import { departmentUrl } from "./clean-urls.js";
 import { setCanonical } from "./clean-urls.js";
+import { renderCrumbs } from "./crumbs.js";
 import { getSupabase } from "./supabase-client.js";
 import { getPublishedSpecimen, listPublishedSpecimens } from "./collection-repository.js";
 import { renderNeighbours, specimenUrl } from "./detail-nav.js";
@@ -84,6 +85,7 @@ function renderSpecimen(specimen) {
   content.hidden = false;
   document.title = specimenTitle(specimen.mineral, specimen.provenance || specimen.locality);
   document.querySelector("[data-seo]")?.remove();
+  renderCrumbs([["Accueil", "/"], ["Ma collection", "/collection.html"], [specimen.mineral || "Spécimen"]]);
   root.querySelectorAll("[data-mineral]").forEach(element => { element.textContent = specimen.mineral || "Spécimen"; });
   const put = (selector, value) => { const element = root.querySelector(selector); element.textContent = value || "Non renseigné"; };
   put("[data-location-summary]", [specimen.locality, specimen.department, specimen.region, specimen.country].filter(Boolean).join(" · ") || "Localisation à compléter");
