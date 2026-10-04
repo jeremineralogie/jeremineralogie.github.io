@@ -13,7 +13,7 @@ import { buildThemes, themeIntro, themePath, themeLinksOf, KINDS as THEME_KINDS 
 import { similarMinerals } from "../../assets/js/related-score.js";
 import { categoryLabel } from "../../assets/js/reference-resolver.js";
 import { blocksToText } from "../../assets/js/article-content.js";
-import { matcher, glossaryParts } from "../../assets/js/glossary-match.js";
+import { matcher, glossaryParts, foldText, propertyParts, PRECISE_LABELS, LABEL_TERMS } from "../../assets/js/glossary-match.js";
 import { buildLinker } from "../../assets/js/entity-links.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -173,28 +173,31 @@ async function main() {
   const withGlossary = (text, used, selfSlug) => glossaryParts(text, selfSlug ? glossaryKeys.filter(key => key.term.slug !== selfSlug) : glossaryKeys, used).map(part => part.term ? termLink(part.term, part.text) : esc(part.text)).join("");
   const entityLinker = buildLinker([...minerals.map(row => ({ name: row.name, href: href("mineral", row.slug) })), ...mines.map(row => ({ name: row.name, href: href("mine", row.slug) })), ...localities.map(row => ({ name: row.name, href: href("locality", row.slug) }))]);
   // Texte avec liens vers les fiches (minéraux, gisements, communes) puis vers le glossaire, comme dans les articles affichés par JavaScript.
-  const richText = (text, usedEntities, usedTerms) => entityLinker(String(text ?? ""), usedEntities).map(part => part.href ? `<a class="link" href="${esc(part.href)}">${esc(part.text)}</a>` : withGlossary(part.text, usedTerms)).join("");
+  const termSlugByName = new Map(terms.map(row => [foldText(row.term.trim()), row.slug]));
+  const richText = (text, usedEntities, usedTerms) => entityLinker(String(text ?? ""), usedEntities).map(part => {
+    if (!part.href) return withGlossary(part.text, usedTerms);
+    const sameName = termSlugByName.get(foldText(part.text.trim())); if (sameName) usedTerms.add(sameName);
+    return `<a class="link" href="${esc(part.href)}">${esc(part.text)}</a>`;
+  }).join("");
   const crumbNav = items => `<nav class="crumbs" aria-label="Fil d’Ariane"><ol>${items.map(([name, url], index) => index === items.length - 1 ? `<li aria-current="page">${esc(name)}</li>` : `<li><a href="${esc(String(url).replace(SITE, "") || "/")}">${esc(name)}</a></li>`).join("")}</ol></nav>`;
   const linkTo = (text, target) => target ? `<a class="link" href="${esc(target)}">${esc(text)}</a>` : esc(text);
   const departmentHref = code => { const department = departmentByCode.get(code); return department ? href("department", departmentSlug(department)) : null; };
   // Termes du glossaire qui citent un minéral (champ « minéraux liés » du terme).
   const termsOfMineral = new Map();
   terms.forEach(row => (row.related_minerals || []).forEach(name => { const key = slugify(name); if (!termsOfMineral.has(key)) termsOfMineral.set(key, []); termsOfMineral.get(key).push(row); }));
-  const LABEL_TERMS = { "Système cristallin": "systeme-cristallin", "Dureté (Mohs)": "echelle-de-mohs", "Densité": "densite", "Trait": "trait", "Éclat": "eclat", "Clivage": "clivage", "Cassure": "cassure", "Habitus": "habitus", "Fluorescence": "fluorescence" };
-  const LUSTERS = ["adamantin", "metallique", "nacre", "resineux", "soyeux", "vitreux"];
-  const propertyValue = (label, value, used, selfSlug) => {
+  // Propriétés d'une fiche : libellé puis valeur, chaque terme relié une seule fois sur toute la page (« used » est partagé avec la description).
+  const preciseKeys = matcher(terms, { includeGeneric: true });
+  const propertyRow = (label, value, used, selfSlug) => {
+    const labelTerm = termBySlug.get(LABEL_TERMS[label]);
+    let labelHtml;
+    if (labelTerm && !used.has(labelTerm.slug)) { used.add(labelTerm.slug); labelHtml = termLink(labelTerm, label); }
+    if (value == null || value === "") return [label, value, undefined, labelHtml];
     const text = String(value);
-    if (label === "Système cristallin") { const row = termBySlug.get(slugify(text)); return row ? termLink(row, text) : esc(text); }
-    if (label === "Éclat") {
-      const adjective = LUSTERS.find(word => slugify(text).includes(word)); const row = adjective && termBySlug.get(`eclat-${adjective}`);
-      if (!row) return esc(text);
-      const at = text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(adjective);
-      return at < 0 ? esc(text) : `${esc(text.slice(0, at))}${termLink(row, text.slice(at, at + adjective.length))}${esc(text.slice(at + adjective.length))}`;
-    }
-    if (["Clivage", "Cassure", "Habitus", "Fluorescence", "Formation et gisements", "Variétés", "Confusions possibles", "Étymologie"].includes(label)) return withGlossary(text, used, selfSlug);
-    return esc(text);
+    const keys = (PRECISE_LABELS.has(label) ? preciseKeys : glossaryKeys).filter(key => key.term.slug !== selfSlug);
+    const free = chunk => glossaryParts(chunk, keys, used).map(part => part.term ? termLink(part.term, part.text) : esc(part.text)).join("");
+    const parts = propertyParts(label, text, termBySlug, used);
+    return [label, value, parts ? parts.map(part => part.term ? termLink(part.term, part.text) : free(part.text)).join("") : free(text), labelHtml];
   };
-  const propertyLabel = label => { const row = LABEL_TERMS[label] && termBySlug.get(LABEL_TERMS[label]); return row ? termLink(row, label) : esc(label); };
   const stripe = rows => rows.sort((a, b) => String(a.slug || a.reference || "").localeCompare(String(b.slug || b.reference || "")));
 
   // Pages par thème (couleur, dureté, famille, système) : calculées d'abord, car les fiches minéraux y renvoient.
@@ -220,7 +223,7 @@ async function main() {
     const mineralArticles = articlesOf(articleMinerals.filter(link => link.mineral_id === item.id)), mineralArchives = archivesOf(archiveMinerals.filter(link => link.mineral_id === item.id));
     const glossaryOfMineral = termsOfMineral.get(slugify(item.name)) || [];
     item.visible = crumbNav(crumbs("mineral", item.name, `${SITE}/${FOLDERS.mineral}/${slugify(item.slug)}/`)) + `<article class="seo-fiche"><div class="kicker">Minéral</div><h1 class="page-title">${esc(item.name)}</h1>${item.formula ? `<p class="meta">${esc(item.formula)}</p>` : ""}`
-      + `${photo ? `<div class="fiche-photos"><img src="${esc(photo)}" alt="${esc(mineralAlt(item))}"></div>` : ""}${credit}${item.description ? `<p class="seo-desc">${withGlossary(item.description, usedTerms)}</p>` : ""}${dl("scientific-details", rows.map(([label, value]) => [label, value, value ? propertyValue(label, value, usedTerms) : undefined, propertyLabel(label)]))}${family ? `<div>${family}</div>` : ""}`
+      + `${photo ? `<div class="fiche-photos"><img src="${esc(photo)}" alt="${esc(mineralAlt(item))}"></div>` : ""}${credit}${item.description ? `<p class="seo-desc">${withGlossary(item.description, usedTerms)}</p>` : ""}${dl("scientific-details", rows.map(([label, value]) => propertyRow(label, value, usedTerms)))}${family ? `<div>${family}</div>` : ""}`
       + `${listBlock("Dans ma collection", mineralSpecimens.map(specimenEntry))}${listBlock("Disponible en boutique", mineralPieces.map(pieceEntry))}${listBlock("Gisements dans ma collection", mineralMines.map(row => ({ title: row.name, meta: "", href: href("mine", row.slug) })))}${listBlock("Articles", mineralArticles.map(articleEntry))}${listBlock("Archives & documentation", mineralArchives.map(archiveEntry))}`
       + `${listBlock("Minéraux similaires", similarMinerals(item, minerals).map(mineralEntry))}${listBlock("Dans le glossaire", glossaryOfMineral.map(row => ({ title: row.term, meta: (DOMAINS[row.domain] || "").replace(/^./, letter => letter.toUpperCase()), href: termHref(row.slug) })))}${listBlock("Parcourir par thème", themeLinksOf(item, availableThemes))}`
       + `<p><a class="link" href="apprendre.html#mineraux">← Retour aux fiches minéraux</a></p></article>`;

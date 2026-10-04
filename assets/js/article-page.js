@@ -4,7 +4,7 @@ import { appendLinked, buildLinker, linkTextNodes, loadArticleLinks, loadLinkEnt
 import { renderCrumbs } from "./crumbs.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { articleUrl, renderNeighbours } from "./detail-nav.js";
-import { applyGlossary } from "./glossary-links.js";
+import { applyGlossary, skipTermNames } from "./glossary-links.js";
 import { articleTitle } from "./seo-titles.js";
 import { renderBlocks } from "./article-content.js";
 
@@ -71,6 +71,7 @@ function render(client, article, { linker, chosen }, all = []) {
   const others = relatedArticles(article, all, chosen);
   if (others.length) page.append(readMore(others));
   root.replaceChildren(page);
+  skipTermNames(used); // un nom déjà relié à une fiche n'est plus relié au glossaire ailleurs dans l'article
   void applyGlossary([...page.querySelectorAll("p.art-text, .art-rich p, .art-rich li")]);
 }
 

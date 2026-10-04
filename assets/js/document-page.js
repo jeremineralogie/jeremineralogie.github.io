@@ -2,7 +2,7 @@ import { setCanonical } from "./clean-urls.js";
 import { loadPublishedContent, showLoadError } from "./content-repository.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { documentUrl, renderNeighbours } from "./detail-nav.js";
-import { applyGlossary } from "./glossary-links.js";
+import { applyGlossary, skipTermNames } from "./glossary-links.js";
 import { appendLinked, buildLinker, linkTextNodes, loadArchiveLinks, loadLinkEntities } from "./entity-links.js";
 import { renderCrumbs } from "./crumbs.js";
 import { documentTitle } from "./seo-titles.js";
@@ -24,8 +24,9 @@ function render(client, row) {
   page.append(category, title, meta);
   // Description mise en forme dans l'éditeur (alignement, images…) ; à défaut, l'ancien texte brut.
   const blocks = (row.body || []).length ? renderBlocks(page, row.body, client) : [];
-  if (blocks.length) blocks.filter(node => node.classList.contains("art-text") || node.classList.contains("art-rich")).forEach(node => void applyGlossary(node));
-  else if (row.description) { const description = document.createElement("p"); description.textContent = row.description; page.append(description); void applyGlossary(description); }
+  const glossaryNodes = [];
+  if (blocks.length) blocks.filter(node => node.classList.contains("art-text") || node.classList.contains("art-rich")).forEach(node => glossaryNodes.push(node));
+  else if (row.description) { const description = document.createElement("p"); description.textContent = row.description; page.append(description); glossaryNodes.push(description); }
   // Liens saisis dans l'admin : « Texte | https://… » ou simplement l'adresse.
   (row.links || []).forEach(line => {
     const [label, url] = line.includes("|") ? line.split("|").map(part => part.trim()) : [line.trim(), line.trim()];
@@ -41,14 +42,14 @@ function render(client, row) {
     else if (/\.(jpe?g|png|gif|webp|avif)$/i.test(row.storage_path)) { const image = document.createElement("img"); image.className = "doc-image"; image.src = url; image.alt = row.title; page.append(image); }
   }
   root.replaceChildren(page);
-  void linkEntities(client, row, page);
+  void linkEntities(client, row, page, glossaryNodes);
 }
 
 // Liens automatiques vers les fiches citées dans le texte, puis ligne « Fiches liées » (choisies dans l'administration).
-async function linkEntities(client, row, page) {
+async function linkEntities(client, row, page, glossaryNodes) {
+  const used = new Set();
   try {
     const [linker, chosen] = [buildLinker(await loadLinkEntities(client)), await loadArchiveLinks(client, row.id)];
-    const used = new Set();
     [...page.querySelectorAll(".art-text, .art-rich, :scope > p:not(.meta)")].forEach(node => linkTextNodes(node, linker, used));
     if (chosen.length) {
       const line = document.createElement("p"); line.className = "meta"; line.append("Fiches liées : ");
@@ -56,6 +57,9 @@ async function linkEntities(client, row, page) {
       page.append(line);
     }
   } catch (error) { console.error("Liens du document :", error); }
+  // Glossaire en un seul passage (un terme une seule fois dans tout le document), après les liens vers les fiches.
+  skipTermNames(used);
+  void applyGlossary(glossaryNodes);
 }
 
 try {

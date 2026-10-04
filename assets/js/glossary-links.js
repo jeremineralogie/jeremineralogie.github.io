@@ -4,7 +4,8 @@ import { getSupabase } from "./supabase-client.js";
 // Liens automatiques vers le glossaire : dans un bloc de texte, la première occurrence de chaque terme devient
 // cliquable et ouvre une petite bulle avec la définition et un lien vers l'onglet Apprendre.
 // Les termes trop généraux (minéral, roche, couleur…) ne sont pas reliés pour ne pas surcharger les textes (voir glossary-match.js).
-import { matcher, termHits } from "./glossary-match.js";
+import { matcher, termHits, foldText } from "./glossary-match.js";
+export { propertyParts, PRECISE_LABELS, LABEL_TERMS } from "./glossary-match.js";
 const SKIP = "a, button, h1, h2, h3, script, style, input, textarea, select, .gloss-pop, .kicker, .meta";
 
 export const glossaryTerms = () => loadTerms();
@@ -48,14 +49,25 @@ function linkNode(node, keys, used) {
 }
 
 // Relie les termes du glossaire dans les éléments donnés (une seule fois par terme sur l'ensemble).
-export async function applyGlossary(...roots) {
+// Un terme n'est relié qu'une seule fois par page, quels que soient les blocs de texte (description, propriétés, articles…) : « pageUsed » est partagé par tous les appels.
+const pageUsed = new Set();
+const skippedNames = new Set();
+export const isTermUsed = slug => pageUsed.has(slug);
+export const markTermUsed = slug => pageUsed.add(slug);
+// Noms déjà reliés à une fiche (minéral, gisement…) : le terme du glossaire qui porte le même nom n'est plus relié ailleurs sur la page.
+export function skipTermNames(names) { [...names].forEach(name => skippedNames.add(foldText(name).trim())); }
+export const applyGlossary = (...roots) => run(roots, false);
+// Même chose, mais les termes « généraux » (cube, croûte, fibreux, transparent…) sont aussi reliés : pour les champs précis d'une fiche (habitus, cassure, clivage, éclat, transparence).
+export const applyGlossaryPrecise = (...roots) => run(roots, true);
+async function run(roots, precise) {
   const targets = roots.flat().filter(Boolean);
   if (!targets.length) return;
   const terms = await loadTerms();
   if (!terms.length) return;
-  const keys = matcher(terms);
+  const keys = matcher(terms, { includeGeneric: precise });
   const bySlug = new Map(terms.map(term => [term.slug, term]));
-  const used = new Set();
+  terms.forEach(term => { if (skippedNames.has(foldText(term.term.trim()))) pageUsed.add(term.slug); });
+  const used = pageUsed;
   targets.forEach(root => textNodes(root).forEach(node => linkNode(node, keys, used)));
   bindPopover(bySlug);
 }

@@ -5,7 +5,7 @@ import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
 import { mineralTitle } from "./seo-titles.js";
-import { applyGlossary, glossaryTerms } from "./glossary-links.js";
+import { applyGlossary, applyGlossaryPrecise, glossaryTerms, isTermUsed, markTermUsed, propertyParts, PRECISE_LABELS, LABEL_TERMS } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 import { loadSimilar } from "./related.js";
@@ -178,30 +178,29 @@ async function load() {
   renderCrumbs(kind === KINDS.mineral ? [home, learn, ["Fiches minéraux", "/apprendre.html#mineraux"], [entity.name]]
     : kind === KINDS.mine ? [home, ...(entity.locality ? [[entity.locality.name, ficheUrl("locality", entity.locality.slug)]] : []), [entity.name]]
     : [home, ...(entity.department?.name && entity.department_code ? [[entity.department.name, departmentUrl(entity.department_code)]] : []), [entity.name]]);
-  await applyGlossary(document.querySelector("#fiche-description"), [...science.querySelectorAll("dd")]);
+  await applyGlossary(document.querySelector("#fiche-description"));
   if (kind === KINDS.mineral) await linkProperties(science);
+  else await applyGlossary([...science.querySelectorAll("dd")]);
 }
 
-// Libellés et valeurs précises de la fiche reliés au glossaire (système cristallin, éclat, clivage…), comme dans la page préparée pour Google.
+// Libellés et valeurs précises de la fiche reliés au glossaire (système cristallin, famille chimique, éclat, cassure, clivage…), comme dans la page préparée pour Google.
 const DOMAIN_LABELS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
-const LABEL_TERMS = { "Système cristallin": "systeme-cristallin", "Dureté (Mohs)": "echelle-de-mohs", "Densité": "densite", "Trait": "trait", "Éclat": "eclat", "Clivage": "clivage", "Cassure": "cassure", "Habitus": "habitus", "Fluorescence": "fluorescence" };
-const LUSTERS = ["adamantin", "metallique", "nacre", "resineux", "soyeux", "vitreux"];
 async function linkProperties(list) {
   const terms = new Map((await glossaryTerms()).map(row => [row.slug, row]));
-  const glossLink = (row, text) => { const a = document.createElement("a"); a.className = "gloss"; a.href = cleanUrl("term", row.slug); a.dataset.slug = row.slug; a.setAttribute("aria-haspopup", "dialog"); a.textContent = text; return a; };
-  [...list.querySelectorAll("dt")].forEach(dt => {
+  const glossLink = (row, text) => { markTermUsed(row.slug); const a = document.createElement("a"); a.className = "gloss"; a.href = cleanUrl("term", row.slug); a.dataset.slug = row.slug; a.setAttribute("aria-haspopup", "dialog"); a.textContent = text; return a; };
+  // Dans l'ordre de la page : le libellé, puis la valeur ; chaque terme une seule fois sur toute la page (les liens déjà posés dans la description comptent).
+  const used = new Set([...terms.keys()].filter(isTermUsed));
+  for (const dt of [...list.querySelectorAll("dt")]) {
     const label = dt.textContent; const value = dt.nextElementSibling;
     const labelTerm = terms.get(LABEL_TERMS[label]);
-    if (labelTerm) dt.replaceChildren(glossLink(labelTerm, label));
-    if (!value || value.querySelector("a")) return;
-    const text = value.textContent;
-    if (label === "Système cristallin" && terms.get(slugOf(text))) value.replaceChildren(glossLink(terms.get(slugOf(text)), text));
-    else if (label === "Éclat") {
-      const adjective = LUSTERS.find(word => slugOf(text).includes(word)); const row = adjective && terms.get(`eclat-${adjective}`);
-      const at = row ? text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(adjective) : -1;
-      if (at >= 0) value.replaceChildren(text.slice(0, at), glossLink(row, text.slice(at, at + adjective.length)), text.slice(at + adjective.length));
-    }
-  });
+    if (labelTerm && !used.has(labelTerm.slug)) { used.add(labelTerm.slug); dt.replaceChildren(glossLink(labelTerm, label)); }
+    if (!value) continue;
+    const parts = propertyParts(label, value.textContent, terms, used);
+    if (parts?.some(part => part.term)) value.replaceChildren(...parts.map(part => part.term ? glossLink(part.term, part.text) : part.text));
+    used.forEach(markTermUsed);
+    await (PRECISE_LABELS.has(label) ? applyGlossaryPrecise(value) : applyGlossary(value));
+    terms.forEach(row => { if (isTermUsed(row.slug)) used.add(row.slug); });
+  }
 }
 
 function notFound() { root.hidden = true; status.hidden = false; status.textContent = "Cette fiche est introuvable."; }
