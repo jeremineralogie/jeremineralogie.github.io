@@ -8,7 +8,7 @@ import { commonsPhoto, creditText, loadMineralPhotos } from "./mineral-photos.js
 // aide à l'identification, « Tests et outils » (densité, dureté, fluorescence) et « Jeux » (mêmes jeux et badges que l'accueil).
 const status = document.querySelector("#learn-status");
 const tabs = [...document.querySelectorAll(".learn-tabs [data-tab]")];
-const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire"), identification: document.querySelector("#panel-identification"), outils: document.querySelector("#panel-outils"), jeux: document.querySelector("#panel-jeux") };
+const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire"), identification: document.querySelector("#panel-identification"), outils: document.querySelector("#panel-outils"), jeux: document.querySelector("#panel-jeux"), quiz: document.querySelector("#panel-quiz") };
 const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
 const squash = value => fold(value).replace(/[^a-z0-9]+/g, "");
 // Formules : « CaCO3 » tapé au clavier doit trouver « CaCO₃ ».
@@ -31,6 +31,14 @@ function showTab(name) {
   tabs.forEach(item => { const active = item.dataset.tab === tab; item.classList.toggle("active", active); if (active) item.setAttribute("aria-current", "page"); else item.removeAttribute("aria-current"); });
   Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== tab; });
   if (tab === "jeux") mountGamesOnce();
+  if (tab === "quiz") void mountQuizOnce();
+}
+let quizMounted = false;
+async function mountQuizOnce() {
+  if (quizMounted) return;
+  quizMounted = true;
+  const { mountQuiz } = await import("./quiz-mineral.js");
+  mountQuiz(panels.quiz.querySelector("[data-quiz]"));
 }
 // Les jeux (carte, photos) ne se chargent qu'à la première ouverture de l'onglet « Jeux ».
 function mountGamesOnce() {
