@@ -1,11 +1,11 @@
-import { departmentUrl } from "./clean-urls.js";
-import { setCanonical } from "./clean-urls.js";
+import { departmentUrl, setCanonical, cleanUrl, slugOf } from "./clean-urls.js";
+import { renderCrumbs } from "./crumbs.js";
 import { shopItemName } from "./content-repository.js";
 import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
 import { mineralTitle } from "./seo-titles.js";
-import { applyGlossary } from "./glossary-links.js";
+import { applyGlossary, glossaryTerms } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 import { loadSimilar } from "./related.js";
@@ -159,6 +159,13 @@ async function load() {
   if (archives.length) section("Archives & documentation", linkList(archives.map(row => ({ title: row.title, meta: categoryLabel(row.category), href: documentUrl(row) }))));
   if (similar.length) section("Minéraux similaires", linkList(similar.map(row => ({ title: row.name, href: ficheUrl("mineral", row.slug) }))));
   if (kind === KINDS.mineral) {
+    const related = await safely("glossaire", async () => {
+      const { data, error: e } = await client.from("glossary_terms").select("term,slug,domain").contains("related_minerals", [entity.name]).eq("publication_status", "published").order("term");
+      if (e) throw e; return data || [];
+    }, []);
+    if (related.length) section("Dans le glossaire", linkList(related.map(row => ({ title: row.term, meta: DOMAIN_LABELS[row.domain] || "", href: cleanUrl("term", row.slug) }))));
+  }
+  if (kind === KINDS.mineral) {
     const available = await safely("thèmes", async () => { const response = await fetch("/themes/index.json"); if (!response.ok) throw new Error(response.status); return response.json(); }, null);
     const links = available ? themeLinksOf(entity, available) : [];
     if (links.length) section("Parcourir par thème", linkList(links));
@@ -167,7 +174,34 @@ async function load() {
   status.hidden = true; root.hidden = false;
   setCanonical(kind === KINDS.mineral ? "mineral" : kind === KINDS.mine ? "mine" : "locality", entity.slug);
   document.querySelector("[data-seo]")?.remove();
-  void applyGlossary(document.querySelector("#fiche-description"), [...science.querySelectorAll("dd")]);
+  const home = ["Accueil", "/"], learn = ["Apprendre & identifier", "/apprendre.html"];
+  renderCrumbs(kind === KINDS.mineral ? [home, learn, ["Fiches minéraux", "/apprendre.html#mineraux"], [entity.name]]
+    : kind === KINDS.mine ? [home, ...(entity.locality ? [[entity.locality.name, ficheUrl("locality", entity.locality.slug)]] : []), [entity.name]]
+    : [home, ...(entity.department?.name && entity.department_code ? [[entity.department.name, departmentUrl(entity.department_code)]] : []), [entity.name]]);
+  await applyGlossary(document.querySelector("#fiche-description"), [...science.querySelectorAll("dd")]);
+  if (kind === KINDS.mineral) await linkProperties(science);
+}
+
+// Libellés et valeurs précises de la fiche reliés au glossaire (système cristallin, éclat, clivage…), comme dans la page préparée pour Google.
+const DOMAIN_LABELS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
+const LABEL_TERMS = { "Système cristallin": "systeme-cristallin", "Dureté (Mohs)": "echelle-de-mohs", "Densité": "densite", "Trait": "trait", "Éclat": "eclat", "Clivage": "clivage", "Cassure": "cassure", "Habitus": "habitus", "Fluorescence": "fluorescence" };
+const LUSTERS = ["adamantin", "metallique", "nacre", "resineux", "soyeux", "vitreux"];
+async function linkProperties(list) {
+  const terms = new Map((await glossaryTerms()).map(row => [row.slug, row]));
+  const glossLink = (row, text) => { const a = document.createElement("a"); a.className = "gloss"; a.href = cleanUrl("term", row.slug); a.dataset.slug = row.slug; a.setAttribute("aria-haspopup", "dialog"); a.textContent = text; return a; };
+  [...list.querySelectorAll("dt")].forEach(dt => {
+    const label = dt.textContent; const value = dt.nextElementSibling;
+    const labelTerm = terms.get(LABEL_TERMS[label]);
+    if (labelTerm) dt.replaceChildren(glossLink(labelTerm, label));
+    if (!value || value.querySelector("a")) return;
+    const text = value.textContent;
+    if (label === "Système cristallin" && terms.get(slugOf(text))) value.replaceChildren(glossLink(terms.get(slugOf(text)), text));
+    else if (label === "Éclat") {
+      const adjective = LUSTERS.find(word => slugOf(text).includes(word)); const row = adjective && terms.get(`eclat-${adjective}`);
+      const at = row ? text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(adjective) : -1;
+      if (at >= 0) value.replaceChildren(text.slice(0, at), glossLink(row, text.slice(at, at + adjective.length)), text.slice(at + adjective.length));
+    }
+  });
 }
 
 function notFound() { root.hidden = true; status.hidden = false; status.textContent = "Cette fiche est introuvable."; }

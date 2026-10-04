@@ -3,6 +3,8 @@ import { loadPublishedContent, showLoadError } from "./content-repository.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { documentUrl, renderNeighbours } from "./detail-nav.js";
 import { applyGlossary } from "./glossary-links.js";
+import { appendLinked, buildLinker, linkTextNodes, loadArchiveLinks, loadLinkEntities } from "./entity-links.js";
+import { renderCrumbs } from "./crumbs.js";
 import { documentTitle } from "./seo-titles.js";
 import { renderBlocks } from "./article-content.js";
 
@@ -13,6 +15,7 @@ const root = document.querySelector("#detail");
 function render(client, row) {
   document.title = documentTitle(row.title);
   document.querySelector("[data-seo]")?.remove();
+  renderCrumbs([["Accueil", "/"], ["Archives & documentation", "/archives.html"], [row.title]]);
   const page = document.createElement("article"); page.className = "content doc-full";
   const category = document.createElement("div"); category.className = "kicker"; category.textContent = categoryLabel(row.category);
   const title = document.createElement("h1"); title.className = "page-title"; title.textContent = row.title;
@@ -38,6 +41,21 @@ function render(client, row) {
     else if (/\.(jpe?g|png|gif|webp|avif)$/i.test(row.storage_path)) { const image = document.createElement("img"); image.className = "doc-image"; image.src = url; image.alt = row.title; page.append(image); }
   }
   root.replaceChildren(page);
+  void linkEntities(client, row, page);
+}
+
+// Liens automatiques vers les fiches citées dans le texte, puis ligne « Fiches liées » (choisies dans l'administration).
+async function linkEntities(client, row, page) {
+  try {
+    const [linker, chosen] = [buildLinker(await loadLinkEntities(client)), await loadArchiveLinks(client, row.id)];
+    const used = new Set();
+    [...page.querySelectorAll(".art-text, .art-rich, :scope > p:not(.meta)")].forEach(node => linkTextNodes(node, linker, used));
+    if (chosen.length) {
+      const line = document.createElement("p"); line.className = "meta"; line.append("Fiches liées : ");
+      chosen.forEach((item, index) => { if (index) line.append(" · "); appendLinked(line, [{ text: item.name, href: item.href }]); });
+      page.append(line);
+    }
+  } catch (error) { console.error("Liens du document :", error); }
 }
 
 try {

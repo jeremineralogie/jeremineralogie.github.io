@@ -1,6 +1,7 @@
 import { setCanonical } from "./clean-urls.js";
 import { loadPublishedContent, publicMediaUrl, showLoadError } from "./content-repository.js";
-import { appendLinked, buildLinker, loadArticleLinks, loadLinkEntities } from "./entity-links.js";
+import { appendLinked, buildLinker, linkTextNodes, loadArticleLinks, loadLinkEntities } from "./entity-links.js";
+import { renderCrumbs } from "./crumbs.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { articleUrl, renderNeighbours } from "./detail-nav.js";
 import { applyGlossary } from "./glossary-links.js";
@@ -41,20 +42,10 @@ function readMore(articles) {
   return box;
 }
 
-// Liens automatiques vers les fiches dans un texte mis en forme (sans toucher aux liens existants).
-function linkTextNodes(root, linker, used) {
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: node => node.parentElement?.closest("a") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
-  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
-  nodes.forEach(node => {
-    const parts = linker(node.nodeValue, used);
-    if (!parts.some(part => part.href)) return;
-    const fragment = document.createDocumentFragment(); appendLinked(fragment, parts); node.replaceWith(fragment);
-  });
-}
-
 function render(client, article, { linker, chosen }, all = []) {
   document.title = articleTitle(article.title);
   document.querySelector("[data-seo]")?.remove();
+  renderCrumbs([["Accueil", "/"], ["Articles", "/articles.html"], [article.title]]);
   const used = new Set();
   const images = (article.media || []).filter(item => item.bucket_id === "site-media-public").sort((a, b) => a.position - b.position);
   const page = document.createElement("article"); page.className = "article-full";
