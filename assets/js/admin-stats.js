@@ -6,7 +6,7 @@ const PAGE_LABELS = {
   index: "Accueil", boutique: "Boutique", piece: "Fiches boutique", collection: "Ma collection", specimen: "Fiches collection",
   articles: "Articles (liste)", article: "Articles (lecture)", archives: "Archives & documentation", document: "Documents d’archive",
   carte: "Carte", recherche: "Recherche", fiche: "Fiches minéral / gisement / commune", departement: "Départements",
-  apprendre: "Apprendre & jouer", favoris: "Mes favoris", introuvable: "Page introuvable (lien cassé)", contact: "Contact", identification: "Identification", reseaux: "Mes réseaux", legal: "Informations légales"
+  apprendre: "Apprendre & identifier", jeux: "Jeux & quiz", favoris: "Mes favoris", introuvable: "Page introuvable (lien cassé)", contact: "Contact", identification: "Identification", reseaux: "Mes réseaux", legal: "Informations légales"
 };
 const TYPE_LABELS = { specimen: "Collection", piece: "Boutique", mineral: "Minéral", mine: "Gisement", locality: "Commune", article: "Article", archive: "Archive", departement: "Département" };
 const DEVICE_LABELS = { mobile: "Téléphone", tablette: "Tablette", ordinateur: "Ordinateur" };

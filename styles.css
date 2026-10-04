@@ -552,7 +552,7 @@ a.gloss:hover{color:#fff;text-decoration-color:#c9a9f5}
 .badge-toast-icon{font-size:1.4rem}
 .badge-toast strong{color:#f0d9a8}
 .badge-list:has(> :nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,calc(25% - 3px)));justify-content:center}
-/* Apprendre & jouer : 5 sous-onglets sur deux lignes (3 + 2) */
+/* Apprendre & identifier : 5 sous-onglets sur deux lignes (3 + 2) */
 .learn-tabs{flex-wrap:wrap}
 /* Tests et outils */
 .tools-intro{max-width:760px;margin:18px auto 10px;padding:14px 16px;background:rgba(6,2,12,.86);border:1px solid #3a1d63;border-radius:4px;text-align:center;line-height:1.55;color:#e6dcf5}

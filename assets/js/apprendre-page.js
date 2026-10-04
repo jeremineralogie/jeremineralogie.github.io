@@ -1,14 +1,13 @@
 import { getSupabase } from "./supabase-client.js";
 import { COLORS, colorKeys, fold } from "./themes.js";
 import { ficheUrl } from "./entity-links.js";
-import { mountGames } from "./games.js";
 import { commonsPhoto, creditText, loadMineralPhotos } from "./mineral-photos.js";
 
-// Onglet « Apprendre & jouer » : fiches minéraux (référentiel minerals) et glossaire (glossary_terms), avec filtres et index A–Z,
-// aide à l'identification, « Tests et outils » (densité, dureté, fluorescence) et « Jeux » (mêmes jeux et badges que l'accueil).
+// Page « Apprendre & identifier » : fiches minéraux (référentiel minerals) et glossaire (glossary_terms), avec filtres et index A–Z,
+// aide à l'identification et « Tests et outils » (densité, dureté, fluorescence). Les jeux et quiz sont sur la page « Jeux & quiz ».
 const status = document.querySelector("#learn-status");
 const tabs = [...document.querySelectorAll(".learn-tabs [data-tab]")];
-const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire"), identification: document.querySelector("#panel-identification"), outils: document.querySelector("#panel-outils"), jeux: document.querySelector("#panel-jeux"), quiz: document.querySelector("#panel-quiz") };
+const panels = { mineraux: document.querySelector("#panel-mineraux"), glossaire: document.querySelector("#panel-glossaire"), identification: document.querySelector("#panel-identification"), outils: document.querySelector("#panel-outils") };
 const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
 const squash = value => fold(value).replace(/[^a-z0-9]+/g, "");
 // Formules : « CaCO3 » tapé au clavier doit trouver « CaCO₃ ».
@@ -22,7 +21,6 @@ const link = (href, text, className = "link") => { const a = element("a", classN
 let minerals = [];
 let photoCredits = {};
 let client = null;
-let gamesMounted = false;
 let terms = [];
 const presence = new Map(); // mineral id → { collection, boutique }
 
@@ -30,21 +28,6 @@ function showTab(name) {
   const tab = panels[name] ? name : "mineraux";
   tabs.forEach(item => { const active = item.dataset.tab === tab; item.classList.toggle("active", active); if (active) item.setAttribute("aria-current", "page"); else item.removeAttribute("aria-current"); });
   Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== tab; });
-  if (tab === "jeux") mountGamesOnce();
-  if (tab === "quiz") void mountQuizOnce();
-}
-let quizMounted = false;
-async function mountQuizOnce() {
-  if (quizMounted) return;
-  quizMounted = true;
-  const { mountQuiz } = await import("./quiz-mineral.js");
-  mountQuiz(panels.quiz.querySelector("[data-quiz]"));
-}
-// Les jeux (carte, photos) ne se chargent qu'à la première ouverture de l'onglet « Jeux ».
-function mountGamesOnce() {
-  if (gamesMounted || !client || !minerals.length) return;
-  gamesMounted = true;
-  void mountGames(panels.jeux.querySelector("[data-games]"), { client, minerals });
 }
 window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
 // Sous-onglets : changement sans quitter la page (y compris depuis les pages préparées pour Google, dont les liens partent de la racine).
@@ -374,7 +357,6 @@ async function load() {
   renderGlossary();
   setupIdentification();
   setupTools();
-  if (!panels.jeux.hidden) mountGamesOnce();
   status.hidden = true;
   document.querySelector("[data-seo]")?.remove();
   // Lien depuis une bulle du glossaire : apprendre.html?terme=<slug>#glossaire
@@ -382,6 +364,8 @@ async function load() {
   if (wanted) { showTab("glossaire"); requestAnimationFrame(() => openTerm(wanted)); }
 }
 
+// Anciens liens apprendre.html#jeux et #quiz : ces onglets ont déménagé vers « Jeux & quiz ».
+if (["jeux", "quiz"].includes(location.hash.slice(1))) location.replace(`jeux.html${location.hash}`);
 showTab(location.hash.slice(1) || window.JM_TAB || "");
 try { await load(); }
 catch (error) { console.error("Chargement de l'onglet Apprendre :", error); status.textContent = "Impossible de charger le contenu pour le moment. Réessayez dans quelques instants."; }
