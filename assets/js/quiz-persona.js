@@ -2,6 +2,7 @@
 // 10 questions, réponses chiffrées sur plusieurs axes, profil le plus proche (corrigé d'un biais d'équilibrage), un seul passage par joueur.
 import { getPersona, recordPersona } from "./game-progress.js";
 import { sharePanel, dateFr } from "./share.js";
+import { track } from "./track.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 
@@ -26,7 +27,7 @@ export function mountPersonaQuiz(container, { kind, data, lead, kicker, shareTit
   let step = 0; const answers = [];
 
   const intro = () => {
-    box.replaceChildren(el("p", "mq-lead", lead), Object.assign(el("button", "pick-choice mq-start", "Commencer le quiz"), { type: "button", onclick: () => { step = 0; answers.length = 0; question(); } }));
+    box.replaceChildren(el("p", "mq-lead", lead), Object.assign(el("button", "pick-choice mq-start", "Commencer le quiz"), { type: "button", onclick: () => { step = 0; answers.length = 0; track("start", `persona-${kind}`); question(); } }));
   };
 
   const question = () => {
@@ -50,7 +51,7 @@ export function mountPersonaQuiz(container, { kind, data, lead, kicker, shareTit
 
   const result = async (saved = null) => {
     const item = saved || personaResult(data, answers);
-    if (!saved) recordPersona(kind, item.slug);
+    if (!saved) { recordPersona(kind, item.slug); track("end", `persona-${kind}`, item.slug); }
     box.replaceChildren();
     const card = el("div", "mq-result");
     card.append(el("p", "mq-kicker", kicker), el("h3", "mq-name", item.name), el("p", "mq-tagline", item.tagline));

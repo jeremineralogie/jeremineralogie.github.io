@@ -1,4 +1,5 @@
 // Jeux du jour (trouve le minéral, quiz, devine le gisement) : historique, séries de jours consécutifs et badges.
+import { track } from "./track.js";
 // Tout est gardé sur l'appareil du visiteur (aucun compte) ; sans mémoire disponible, les jeux restent jouables.
 const KEY = "jm-jeux";
 const DAY = 86400000;
@@ -121,6 +122,7 @@ function award(state) {
 export function recordGame(game, result) {
   const state = read();
   state[game][parisDay()] = result;
+  track("end", game, null, Number(result?.score ?? result?.points ?? (result?.correct ? 1 : 0)));
   const fresh = award(state);
   write(state);
   fresh.forEach((badge, index) => setTimeout(() => toast(badge), index * 2600));

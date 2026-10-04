@@ -1,4 +1,5 @@
-// Tableau de bord des visites (Paramètres → Statistiques). Données : table page_views, agrégées par admin_page_stats().
+// Tableau de bord des visites (Paramètres → Statistiques). Données : tables page_views et site_events (agrégats SQL admin_page_stats, admin_more_stats, admin_event_stats, admin_account_stats) ; blocs détaillés dans admin-stats-more.js.
+import { extraBlocks, loadResultNames } from "./admin-stats-more.js";
 const $ = selector => document.querySelector(selector);
 const SVG = "http://www.w3.org/2000/svg";
 const COLORS = { views: "#9b6cf0", visits: "#b8842c" };
@@ -20,6 +21,7 @@ let days = 30;
 let entityFilter = "";
 let lastData = null;
 let names = new Map();
+let extra = null; // statistiques détaillées ; null tant que la mise à jour SQL n’est pas appliquée
 
 export async function openStats(supabase) {
   client = supabase;
@@ -35,6 +37,7 @@ export async function openStats(supabase) {
     // Purge des données de plus de 13 mois (durée maximale recommandée par la CNIL).
     const limit = new Date(); limit.setMonth(limit.getMonth() - 13);
     void client.from("page_views").delete().lt("created_at", limit.toISOString()).then(({ error }) => { if (error) console.error("Purge des statistiques :", error); });
+    void client.from("site_events").delete().lt("created_at", limit.toISOString()).then(({ error }) => { if (error) console.error("Purge des événements :", error); });
   }
   await load();
 }
@@ -60,7 +63,16 @@ async function load() {
   ]);
   if (current.error) { status.textContent = `Impossible de charger les statistiques : ${current.error.message}`; body.hidden = true; return; }
   lastData = { data: current.data, previous: previous.data?.totals || null, from, to, bucket };
-  names = await resolveNames(current.data.entities || []);
+  // Détails : si les fonctions SQL ne sont pas encore créées, le tableau de bord de base reste affiché.
+  const range = { p_from: from.toISOString(), p_to: to.toISOString() };
+  const [more, events, accounts] = await Promise.all([client.rpc("admin_more_stats", range), client.rpc("admin_event_stats", range), client.rpc("admin_account_stats", range)]);
+  extra = more.error ? null : { more: more.data, events: events.error ? null : events.data, accounts: accounts.error ? null : accounts.data };
+  if (more.error) console.warn("Statistiques détaillées indisponibles :", more.error.message);
+  const wanted = [...(current.data.entities || [])];
+  (extra?.more.entries || []).forEach(row => { if (row.type && row.slug) wanted.push({ type: row.type, slug: row.slug }); });
+  (extra?.events?.reads || []).forEach(row => wanted.push({ type: "article", slug: row.slug }));
+  (extra?.events?.clicks || []).forEach(row => { if (row.name === "contact-piece" && row.detail) wanted.push({ type: "piece", slug: row.detail }); });
+  [names] = await Promise.all([resolveNames(wanted), loadResultNames()]);
   status.textContent = current.data.totals.views ? "" : "Aucune visite enregistrée sur cette période pour le moment.";
   render();
 }
@@ -107,7 +119,7 @@ function render() {
       data.referrers.length ? detailsList("Sites exacts", data.referrers.map(row => `${row.host} — ${number(row.visits)}`)) : null),
     card("Appareils utilisés", barList(data.devices.map(row => ({ label: DEVICE_LABELS[row.device] || row.device, value: row.visits })), "visite", true)),
     card("Recherches tapées sur le site", data.searches.length ? barList(data.searches.map(row => ({ label: `« ${row.query} »`, value: row.count })), "fois") : element("p", "admin-empty", "Aucune recherche sur cette période."))
-  ));
+  ), ...extraBlocks({ extra, from, to, names, ui: { element, card, grid, barList, number, PAGE_LABELS, TYPE_LABELS } }));
 }
 
 function tiles(totals, previous, devices) {
@@ -252,7 +264,7 @@ function barList(rows, unit, percent = false) {
     const name = row.href ? element("a", "stats-bar-label link", row.label) : element("span", "stats-bar-label", row.label);
     if (row.href) { name.href = row.href; name.target = "_blank"; name.rel = "noopener"; }
     if (row.tag) head.append(element("span", "stats-bar-tag", row.tag));
-    head.append(name, element("span", "stats-bar-value", percent && total ? `${number(row.value)} · ${Math.round((row.value / total) * 100)} %` : `${number(row.value)} ${unit}${row.value > 1 && unit !== "fois" ? "s" : ""}`));
+    head.append(name, element("span", "stats-bar-value", unit === "%" ? `${number(row.value)} %` : percent && total ? `${number(row.value)} · ${Math.round((row.value / total) * 100)} %` : `${number(row.value)} ${unit}${row.value > 1 && unit !== "fois" ? "s" : ""}`));
     const track = element("div", "stats-bar-track"); const fill = element("div", "stats-bar-fill"); fill.style.width = `${Math.max(2, (row.value / max) * 100)}%`; track.append(fill);
     item.append(head, track);
     if (row.note) item.append(element("span", "stats-bar-note", row.note));
