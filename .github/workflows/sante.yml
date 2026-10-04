@@ -1,0 +1,21 @@
+# Surveillance : toutes les 6 heures, vérifie que le site et la base de données répondent. Un échec envoie un e-mail GitHub à l'administrateur.
+name: Surveillance du site
+
+on:
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sante:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Vérifier le site et la base de données
+        run: node tools/health-check.mjs

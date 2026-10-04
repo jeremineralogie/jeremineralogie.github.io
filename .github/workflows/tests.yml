@@ -1,0 +1,24 @@
+# Tests automatiques : à chaque modification du code (et chaque nuit avec la régénération), vérifie les quiz, les liens du glossaire, le générateur de pages pour Google et les liens internes.
+name: Tests automatiques
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths-ignore: ["mineraux/**", "pieces/**", "specimens/**", "lire/**", "documents/**", "glossaire/**", "communes/**", "gisements/**", "departements/**", "themes/**", "sitemap.xml"]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tests (quiz, glossaire, générateur, structure)
+        run: node --test tests/*.test.mjs
+      - name: Liens internes de toutes les pages
+        run: node tools/check-links.mjs
