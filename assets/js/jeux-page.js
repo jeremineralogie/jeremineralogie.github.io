@@ -1,8 +1,8 @@
 import { getSupabase } from "./supabase-client.js";
 import { mountGames } from "./games.js";
-import { mountQuiz } from "./quiz-mineral.js";
+import { mountQuizzes } from "./quiz-hub.js";
 
-// Page « Jeux & quiz » : jeux du jour et badges (onglet « Jeux »), quiz de personnalité (onglet « Quiz »).
+// Page « Jeux & quiz » : jeux du jour et badges (onglet « Jeux »), quiz (onglet « Quiz »).
 const status = document.querySelector("#learn-status");
 const tabs = [...document.querySelectorAll(".learn-tabs [data-tab]")];
 const panels = { jeux: document.querySelector("#panel-jeux"), quiz: document.querySelector("#panel-quiz") };
@@ -16,7 +16,7 @@ function showTab(name) {
   tabs.forEach(item => { const active = item.dataset.tab === tab; item.classList.toggle("active", active); if (active) item.setAttribute("aria-current", "page"); else item.removeAttribute("aria-current"); });
   Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== tab; });
   if (tab === "jeux") mountGamesOnce();
-  if (tab === "quiz" && !quizMounted) { quizMounted = true; mountQuiz(panels.quiz.querySelector("[data-quiz]")); }
+  if (tab === "quiz" && !quizMounted) { quizMounted = true; mountQuizzes(panels.quiz.querySelector("[data-quizzes]"), { client: getSupabase() }); }
 }
 function mountGamesOnce() {
   if (gamesMounted || !client || !minerals.length) return;

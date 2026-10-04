@@ -140,15 +140,16 @@ export function recordShare() {
   return fresh;
 }
 
-// Quiz « Quel minéral es-tu ? » : un seul résultat par joueur, gardé avec la progression (et donc avec le compte).
-export const getPersona = () => read().persona || null;
-export function recordPersona(slug) {
+// Quiz de personnalité (« mineral », « prospecteur »…) : un seul résultat par joueur et par quiz, gardé avec la progression (et donc avec le compte).
+export const getPersona = kind => read().personas?.[kind] || null;
+export function recordPersona(kind, slug) {
   const state = read();
-  if (state.persona) return state.persona;
-  state.persona = { slug, date: parisDay() };
+  state.personas = { ...state.personas };
+  if (state.personas[kind]) return state.personas[kind];
+  state.personas[kind] = { slug, date: parisDay() };
   write(state);
   document.dispatchEvent(new CustomEvent("jm-progress"));
-  return state.persona;
+  return state.personas[kind];
 }
 
 // ----- Synchronisation avec le compte joueur (voir account.js) -----
@@ -169,7 +170,11 @@ export function mergeProgress(a, b) {
     out.earned[id] = dates[0];
   }
   const shared = [a?.shared, b?.shared].filter(Boolean).sort()[0]; if (shared) out.shared = shared;
-  const persona = [a?.persona, b?.persona].filter(Boolean).sort((x, y) => String(x.date).localeCompare(String(y.date)))[0]; if (persona) out.persona = persona;
+  out.personas = {};
+  for (const kind of new Set([...Object.keys(a?.personas || {}), ...Object.keys(b?.personas || {})])) {
+    const first = [a?.personas?.[kind], b?.personas?.[kind]].filter(Boolean).sort((x, y) => String(x.date).localeCompare(String(y.date)))[0];
+    if (first) out.personas[kind] = first;
+  }
   return out;
 }
 // Remplace la progression locale par celle du compte (sans relancer d'envoi au serveur).

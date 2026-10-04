@@ -842,3 +842,15 @@ body.acct-open{overflow:hidden}
 .mq-photo{width:100%;max-width:420px;max-height:320px;object-fit:cover;border-radius:4px;border:1px solid #3a1d63}
 .mq-fiche{font-size:.95rem}
 .mq-once{margin:0;font-size:.85rem;color:#c4a6f5}
+.home-quizzes{margin-top:12px}
+.mq-definition{margin:0;max-width:560px;font-family:var(--serif);font-size:clamp(1.1rem,4.4vw,1.35rem);line-height:1.45;color:#f3eaff}
+.mq-yesno{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mq-yesno .mq-answer{text-align:center;font-size:1.15rem}
+.mq-answer:disabled{opacity:.75}
+.mq-answer.is-good{border-color:#6fe39a;background:rgba(40,120,80,.35);opacity:1}
+.mq-answer.is-bad{border-color:#ff7d98;background:rgba(150,40,70,.35);opacity:1}
+.mq-feedback{display:grid;gap:10px;justify-items:center;width:100%;max-width:560px}
+.mq-feedback:empty{display:none}
+.mq-feedback p{margin:0;line-height:1.5;color:#e6dcf5}
+.mq-feedback.is-right .mq-verdict strong{color:#6fe39a}.mq-feedback.is-wrong .mq-verdict strong{color:#ff7d98}
+.mq-links{font-size:.9rem}
