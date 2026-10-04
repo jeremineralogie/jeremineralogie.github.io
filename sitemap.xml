@@ -386,7 +386,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/obsidienne/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/oeil-de-faucon/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/oeil-de-tigre/</loc><lastmod>2026-10-03</lastmod></url>
-  <url><loc>https://jeremineralogie.fr/mineraux/oeuf-de-dinosaure/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/oeuf-de-dinosaure/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/okenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/oligoclase/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/olivenite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -597,14 +597,23 @@
   <url><loc>https://jeremineralogie.fr/mineraux/zippeite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/zircon/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/zoisite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmarar1/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmazlc1/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmbalr1/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmcaan1/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmcesml1/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmflblm1/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmflcl1/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmflcl2/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmfllb1/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmfllb2/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmfllb3/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmflpr1/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmluda1/</loc><lastmod>2026-10-02</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmprdi1/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmpylf1/</loc><lastmod>2026-10-02</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmpylf2/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/pieces/jmpyno1/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmquec1/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmscma1/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/amethyste-les-isserts/</loc><lastmod>2026-10-01</lastmod></url>
@@ -629,10 +638,14 @@
   <url><loc>https://jeremineralogie.fr/documents/mineralogie-de-la-france-1-par-lacroix/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/documents/mineralogie-de-la-france-2-par-lacroix/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/documents/mineralogie-de-la-france-4-par-lacroix/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/anduze/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/arrigas/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/buxieres-les-mines/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/chavaniac-lafayette/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/crozant/</loc><lastmod>2026-09-30</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/dallet/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/dauzat/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/diakon/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/echassieres/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/epy/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/four-la-brouque/</loc><lastmod>2026-10-01</lastmod></url>
@@ -641,13 +654,22 @@
   <url><loc>https://jeremineralogie.fr/gisements/les-cedres/</loc><lastmod>2026-10-02</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/les-farges/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/les-isserts/</loc><lastmod>2026-10-02</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/les-redoutieres/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/les-vieux-travaux/</loc><lastmod>2026-10-02</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/meze/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/minglanilla/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/montebras/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/nontron/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/pratclaux/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/sainte-marguerite-lafigere/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/san-timoteo/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/venachat/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/anduze/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/arrigas/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/boufalabe/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/buxieres-les-mines/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/carthagene/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/chaillac/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/chavaniac-lafayette/</loc><lastmod>2026-09-30</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/crozant/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/dallet/</loc><lastmod>2026-10-01</lastmod></url>
@@ -658,20 +680,26 @@
   <url><loc>https://jeremineralogie.fr/communes/minglanilla/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/montebras/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/moutier-d-ahun/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/nontron/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/olby/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/prassigout/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/pratclaux/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/saint-babel/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/saint-jacques-d-ambur/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/saint-laurent-le-minier/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/sainte-marguerite-lafigere/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/ussel/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/valzergues/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/venachat/</loc><lastmod>2026-09-30</lastmod></url>
   <url><loc>https://jeremineralogie.fr/departements/allier/</loc></url>
+  <url><loc>https://jeremineralogie.fr/departements/ardeche/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/aveyron/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/correze/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/creuse/</loc></url>
+  <url><loc>https://jeremineralogie.fr/departements/dordogne/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/gard/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/herault/</loc></url>
+  <url><loc>https://jeremineralogie.fr/departements/indre/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/haute-loire/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/puy-de-dome/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/la-union/</loc></url>
