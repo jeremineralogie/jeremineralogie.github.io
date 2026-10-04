@@ -1,5 +1,4 @@
-import { departmentUrl } from "./clean-urls.js";
-import { setCanonical } from "./clean-urls.js";
+import { departmentUrl, setCanonical, slugOf } from "./clean-urls.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { pieceTitle } from "./seo-titles.js";
@@ -114,7 +113,9 @@ function render(client, item) {
 
 try {
   const { client, data } = await loadPublishedContent("shop");
-  const index = data.findIndex(item => item.reference === key || item.slug === key);
+  // L'adresse propre met la référence en minuscules (/pieces/jmfllb3/) : la comparaison ignore donc la casse et les accents.
+  const wanted = slugOf(key);
+  const index = data.findIndex(item => item.reference === key || item.slug === key || (wanted && (slugOf(item.reference) === wanted || slugOf(item.slug) === wanted)));
   if (!key || index < 0) { root.replaceChildren(); status.textContent = "Cette pièce n’est plus disponible en boutique."; }
   else {
     status.hidden = true; render(client, data[index]); setCanonical("piece", data[index].reference || data[index].slug);

@@ -1,6 +1,7 @@
 import { fitCardText } from "./card-fit.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError, watchContent } from "./content-repository.js";
 import { pieceUrl } from "./detail-nav.js";
+import { slugOf } from "./clean-urls.js";
 import { specimenAlt } from "./alt-text.js";
 import { bindFilterPanel, fillFilterOptions } from "./filter-panel.js";
 
@@ -78,5 +79,5 @@ async function refresh() {
 }
 await refresh();
 // Anciens liens boutique.html#RÉFÉRENCE : ouvrent directement la fiche.
-if (location.hash) { const wanted = decodeURIComponent(location.hash.slice(1)); const hit = rows.find(item => item.reference === wanted || item.slug === wanted); if (hit) location.replace(pieceUrl(hit)); }
+if (location.hash) { const wanted = decodeURIComponent(location.hash.slice(1)); const hit = rows.find(item => item.reference === wanted || item.slug === wanted || slugOf(item.reference) === slugOf(wanted) || slugOf(item.slug) === slugOf(wanted)); if (hit) location.replace(pieceUrl(hit)); }
 if (client) watchContent(client, "shop", refresh);
