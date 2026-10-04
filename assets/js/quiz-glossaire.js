@@ -12,10 +12,12 @@ const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallog
 
 // Racines à masquer : chaque mot du terme (4 lettres et plus), sans ses deux dernières lettres (pluriel, féminin, dérivés).
 const stemsOf = term => { const words = fold(term).split(/[^a-z0-9]+/).filter(Boolean); const long = words.filter(word => word.length >= 4); return (long.length ? long : words).map(word => word.slice(0, Math.max(4, word.length - 2))); };
+// Mots entiers du terme (6 lettres et plus) : un mot qui les contient (« anisotropes » pour « isotrope ») est aussi masqué.
+const wholeWordsOf = term => fold(term).split(/[^a-z0-9]+/).filter(word => word.length >= 6);
 export function maskDefinition(definition, term) {
-  const stems = stemsOf(term);
+  const stems = stemsOf(term), wholes = wholeWordsOf(term);
   let masked = false;
-  const text = String(definition).replace(/[\p{L}\p{N}]+/gu, word => { const folded = fold(word); if (stems.some(stem => folded.startsWith(stem))) { masked = true; return "_____"; } return word; });
+  const text = String(definition).replace(/[\p{L}\p{N}]+/gu, word => { const folded = fold(word); if (stems.some(stem => folded.startsWith(stem)) || wholes.some(whole => folded.includes(whole))) { masked = true; return "_____"; } return word; });
   return { text, masked };
 }
 const similar = (a, b) => stemsOf(a).some(stem => fold(b).includes(stem)) || stemsOf(b).some(stem => fold(a).includes(stem));

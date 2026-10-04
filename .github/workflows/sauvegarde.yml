@@ -1,0 +1,26 @@
+# Copie de secours hebdomadaire du contenu public (JSON), conservée 90 jours. À télécharger depuis l'onglet Actions → ce workflow → Artifacts.
+name: Sauvegarde du contenu public
+
+on:
+  schedule:
+    - cron: "41 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sauvegarde:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Exporter le contenu public
+        run: node tools/backup-content.mjs sauvegarde
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sauvegarde-contenu-public
+          path: sauvegarde/
+          retention-days: 90

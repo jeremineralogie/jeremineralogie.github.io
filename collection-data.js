@@ -1,1 +1,0 @@
-window.collectionSpecimens=[{id:"fluorite-mine-de-la-barre-2018",mineral:"Fluorite",provenance:"mine de la Barre",locality:"",department:"Puy-de-Dôme",departmentCode:"63",region:"",dimensions:"",weight:"",associations:["quartz"],description:"découverte en 2018.",discoveryDate:"2018",photos:["assets/fluorite-mine-de-la-barre-2018.jpeg"],scientific:{}}];

@@ -1,0 +1,26 @@
+-- Index sur les clés étrangères signalées par l'audit de performance Supabase (aucun effet visible ; accélère les jointures et les suppressions).
+create index if not exists archive_articles_article_id_idx on public.archive_articles(article_id);
+create index if not exists archive_departments_department_code_idx on public.archive_departments(department_code);
+create index if not exists archive_localities_locality_id_idx on public.archive_localities(locality_id);
+create index if not exists archive_minerals_mineral_id_idx on public.archive_minerals(mineral_id);
+create index if not exists archive_mines_mine_id_idx on public.archive_mines(mine_id);
+create index if not exists archive_regions_region_id_idx on public.archive_regions(region_id);
+create index if not exists archive_specimens_specimen_id_idx on public.archive_specimens(specimen_id);
+create index if not exists article_departments_department_code_idx on public.article_departments(department_code);
+create index if not exists article_localities_locality_id_idx on public.article_localities(locality_id);
+create index if not exists article_media_article_id_idx on public.article_media(article_id);
+create index if not exists article_minerals_mineral_id_idx on public.article_minerals(mineral_id);
+create index if not exists article_mines_mine_id_idx on public.article_mines(mine_id);
+create index if not exists article_regions_region_id_idx on public.article_regions(region_id);
+create index if not exists article_specimens_specimen_id_idx on public.article_specimens(specimen_id);
+create index if not exists departments_region_id_idx on public.departments(region_id);
+create index if not exists mineral_occurrences_department_code_idx on public.mineral_occurrences(department_code);
+create index if not exists mineral_occurrences_locality_id_idx on public.mineral_occurrences(locality_id);
+create index if not exists mines_locality_id_idx on public.mines(locality_id);
+create index if not exists shop_item_associations_mineral_id_idx on public.shop_item_associations(mineral_id);
+create index if not exists shop_item_media_shop_item_id_idx on public.shop_item_media(shop_item_id);
+create index if not exists shop_items_department_code_idx on public.shop_items(department_code);
+create index if not exists shop_items_region_id_idx on public.shop_items(region_id);
+create index if not exists specimen_associations_mineral_id_idx on public.specimen_associations(mineral_id);
+create index if not exists specimen_media_specimen_id_idx on public.specimen_media(specimen_id);
+create index if not exists specimens_department_code_idx on public.specimens(department_code);
