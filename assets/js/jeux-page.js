@@ -21,7 +21,7 @@ function showTab(name) {
 function mountGamesOnce() {
   if (gamesMounted || !client || !minerals.length) return;
   gamesMounted = true;
-  void mountGames(panels.jeux.querySelector("[data-games]"), { client, minerals });
+  void mountGames(panels.jeux.querySelector("[data-games]"), { client, minerals, collapsible: true });
 }
 window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
 tabs.forEach(tab => tab.addEventListener("click", event => { event.preventDefault(); showTab(tab.dataset.tab); history.replaceState(null, "", `${location.pathname}#${tab.dataset.tab}`); }));

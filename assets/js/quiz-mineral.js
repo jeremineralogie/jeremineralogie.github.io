@@ -2,6 +2,7 @@
 import { QUIZ } from "./quiz-data.js";
 import { ficheUrl } from "./entity-links.js";
 import { sharePanel, dateFr } from "./share.js";
+import { getPersona, recordPersona } from "./game-progress.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
@@ -53,8 +54,9 @@ export function mountQuiz(container) {
     }
   };
 
-  const result = async () => {
-    const mineral = quizResult(answers);
+  const result = async (saved = null) => {
+    const mineral = saved || quizResult(answers);
+    if (!saved) recordPersona(mineral.slug);
     box.replaceChildren();
     const photo = commonsPhoto(await credits, mineral.slug);
     const card = el("div", "mq-result");
@@ -71,11 +73,12 @@ export function mountQuiz(container) {
       text: `Je suis ${mineral.name} ! Et toi, quel minéral es-tu ?`,
       fileName: `mineral-${mineral.slug}.png`
     }));
-    const again = el("button", "pick-choice mq-start", "Refaire le test"); again.type = "button";
-    again.addEventListener("click", () => { step = 0; answers.length = 0; question(); });
-    card.append(again);
+    card.append(el("p", "mq-once", "Le test ne se passe qu’une fois : ce minéral est le tien."));
     box.append(card);
   };
 
-  intro();
+  // Test déjà passé : on affiche directement le minéral du joueur (conservé avec sa progression et son compte).
+  const done = getPersona();
+  const known = done && QUIZ.minerals.find(item => item.slug === done.slug);
+  if (known) void result(known); else intro();
 }
