@@ -51,8 +51,12 @@ async function drawCard(spec, withPhotos = true) {
   if (logo) { const width = 640, height = width * logo.height / logo.width; ctx.drawImage(logo, (W - width) / 2, 110, width, height); }
 
   ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = "#f3eaff"; ctx.font = `500 76px ${SERIF}`;
-  spaced(ctx, spec.title.toUpperCase(), W / 2, 870, 6);
+  ctx.fillStyle = "#f3eaff";
+  // Titre long (« Vrai ou faux minéralogique ») : la taille diminue jusqu'à tenir dans la largeur de l'image.
+  const title = spec.title.toUpperCase();
+  let titleSize = 76;
+  do { ctx.font = `500 ${titleSize}px ${SERIF}`; titleSize -= 2; } while (ctx.measureText(title).width + 6 * (title.length - 1) > 940 && titleSize > 36);
+  spaced(ctx, title, W / 2, 870, 6);
   ctx.fillStyle = "#b9a5d8"; ctx.font = `400 40px ${SANS}`; ctx.fillText(spec.date, W / 2, 940);
   let y = 1110;
   ctx.fillStyle = "#f0d9a8"; fitText(ctx, spec.big, W - 200, 170, SERIF, "600"); ctx.fillText(spec.big, W / 2, y);
