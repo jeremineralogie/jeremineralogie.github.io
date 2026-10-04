@@ -771,3 +771,55 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 
 /* Les messages de chargement masqués (« Chargement… ») ne doivent jamais rester affichés */
 main :is(p,div)[hidden],main .meta[hidden],main .notice[hidden]{display:none!important}
+
+/* ===== Compte joueur : pastille, encart discret au-dessus des jeux, fenêtre de connexion ===== */
+.acct-pill{position:fixed;top:18px;right:14px;z-index:95;width:42px;height:42px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,#4a2390,#1d0a3d);border:1px solid #a077ee;box-shadow:0 4px 14px rgba(0,0,0,.55),0 0 0 3px rgba(138,77,224,.18);color:#efe4ff;font:700 1.05rem Inter,system-ui,sans-serif;cursor:pointer}
+.acct-pill svg{width:22px;height:22px}
+.acct-dot{position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;background:#3fbf7f;border:2px solid #070312}
+.acct-menu{position:fixed;top:68px;right:12px;z-index:96;width:min(240px,calc(100vw - 24px));background:#0b0612;border:1px solid #6b3fb3;border-radius:8px;box-shadow:0 16px 40px rgba(0,0,0,.7);padding:8px;text-align:left}
+.acct-item{display:block;width:100%;padding:11px 12px;border:0;border-radius:5px;background:transparent;color:#e6dcf5;font:inherit;font-size:.92rem;text-align:left;cursor:pointer}
+.acct-item:hover,.acct-item:focus-visible{background:#1d0f36;outline:none}
+.acct-item.hl{background:linear-gradient(180deg,#5a24b0,#38136f);color:#fff}
+.acct-sep{height:1px;background:#2a1546;margin:6px 4px}
+.acct-who{padding:8px 12px 4px;color:#a48bc9;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}
+.acct-who b{display:block;color:#fff;font-size:1.05rem;letter-spacing:0;text-transform:none;margin-top:2px}
+.acct-synced{padding:0 12px 6px;color:#6fe39a;font-size:.8rem}
+.acct-banner{max-width:560px;margin:0 auto}
+.acct-line{display:flex;gap:8px;justify-content:center;align-items:stretch;margin:6px auto 10px;max-width:460px}
+.acct-line .btn{padding:10px 14px;font-size:.72rem;letter-spacing:.1em;flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.acct-gmini,.acct-google{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:#1f1f1f;border:0;border-radius:4px;font:600 .82rem Inter,system-ui,sans-serif;padding:9px 10px;cursor:pointer}
+.acct-gmini{flex:1}
+.acct-google{width:100%;font-size:.95rem;padding:12px}
+.acct-gmini svg,.acct-google svg{width:17px;height:17px;flex:0 0 auto}
+.acct-google svg{width:20px;height:20px}
+.acct-more{margin:0 auto 10px;text-align:center}
+.acct-more summary{list-style:none;cursor:pointer;color:#a48bc9;font-size:.82rem;letter-spacing:.04em;text-decoration:underline;text-underline-offset:3px}
+.acct-more summary::-webkit-details-marker{display:none}
+.acct-inner{margin-top:8px;padding:12px 14px;border:1px solid #3a1d63;border-radius:6px;background:rgba(6,2,12,.88);color:#d6c4f3;font-size:.88rem;line-height:1.55;text-align:left}
+.acct-inner b{color:#f3eaff}.acct-inner ul{margin:6px 0 0;padding-left:1.1em}
+.acct-connected{margin:6px 0 10px;color:#6fe39a;font-size:.84rem}
+.acct-back{position:fixed;inset:0;z-index:100;background:rgba(2,1,6,.78);display:flex;align-items:flex-start;justify-content:center;padding:70px 14px 20px;overflow-y:auto}
+.acct-modal{width:100%;max-width:420px;background:#0b0612;border:1px solid #6b3fb3;border-radius:8px;padding:20px 18px 18px;box-shadow:0 20px 60px rgba(0,0,0,.7);position:relative;text-align:center}
+.acct-x{position:absolute;right:10px;top:6px;border:0;background:transparent;font-size:1.7rem;color:#a48bc9;line-height:1;cursor:pointer;padding:4px 8px}
+.acct-modal h3{margin:0 0 10px;font-family:var(--serif);font-weight:600;font-size:1.6rem;color:#f3eaff;letter-spacing:.03em}
+.acct-lead{margin:0 0 10px;color:#d6c4f3;font-size:.95rem;line-height:1.5}
+.acct-tabs{display:flex;gap:6px;margin:0 0 14px}
+.acct-tabs button{flex:1;padding:10px 6px;border:1px solid #3a1d63;border-radius:4px;background:transparent;color:#a48bc9;font:inherit;font-size:.84rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.acct-tabs button.on{background:linear-gradient(180deg,#5a24b0,#38136f);border-color:#a077ee;color:#fff}
+.acct-or{display:flex;align-items:center;gap:10px;margin:14px 0;color:#7e6aa3;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+.acct-or::before,.acct-or::after{content:"";flex:1;height:1px;background:#2a1546}
+.acct-f{margin:0 0 10px;text-align:left}.acct-f label{display:block;margin:0 0 5px;font-size:.84rem;color:#d6c4f3}
+.acct-f input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #3a1d63;border-radius:4px;background:#05020a;color:#f4ecff;font:1rem Inter,system-ui,sans-serif;min-height:46px}
+.acct-f small{display:block;margin-top:4px;color:#8c72b3;font-size:.78rem}
+.acct-warn{margin:12px 0;padding:10px 12px;border:1px solid #b8842c;border-radius:4px;background:rgba(30,18,4,.7);color:#f0d9a8;font-size:.86rem;line-height:1.45;text-align:left}
+.acct-error{margin:0 0 10px;padding:9px 12px;border:1px solid #e0557e;border-radius:4px;background:rgba(60,8,24,.6);color:#ffd0dc;font-size:.88rem;text-align:left}
+.acct-submit{display:block;width:100%;margin-top:6px;cursor:pointer}.acct-submit:disabled{opacity:.55;cursor:default}
+.acct-link{display:block;margin:12px auto 0;border:0;background:transparent;color:#c4a6f5;text-decoration:underline;font:inherit;font-size:.9rem;cursor:pointer}
+.acct-code{margin:12px auto;padding:16px 8px;border:1px dashed #c4a6f5;border-radius:6px;background:#05020a;font:700 1.25rem "Courier New",monospace;letter-spacing:.08em;color:#fff;word-break:break-all;user-select:all}
+.acct-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.acct-ghost{background:transparent;border:1px solid #a077ee;border-radius:4px;color:#e6dcf5;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;padding:11px 16px;font-family:inherit;cursor:pointer}
+.acct-small{margin:8px 0;color:#a48bc9;font-size:.82rem}
+.acct-ok{display:inline-block;padding:3px 10px;border:1px solid #3fbf7f;border-radius:99px;color:#6fe39a;font-size:.8rem;letter-spacing:.04em;margin-bottom:8px}
+.acct-chk{display:flex;gap:10px;align-items:center;justify-content:center;margin:12px 0;color:#e6dcf5;font-size:.92rem}
+.acct-chk input{width:20px;height:20px;accent-color:#6d2fd0}
+body.acct-open{overflow:hidden}

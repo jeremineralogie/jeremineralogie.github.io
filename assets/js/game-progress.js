@@ -140,6 +140,32 @@ export function recordShare() {
   return fresh;
 }
 
+// ----- Synchronisation avec le compte joueur (voir account.js) -----
+export const getProgress = () => read();
+// Fusion de deux progressions : toutes les parties des deux côtés sont gardées (à égalité de jour, la meilleure), badges réunis.
+export function mergeProgress(a, b) {
+  const out = { ...b, ...a, mineral: {}, quiz: {}, geo: {}, earned: {} };
+  const better = (x, y) => {
+    const score = item => Number(item?.score ?? item?.points ?? (item?.correct ? 1 : 0)) || 0;
+    return score(y) > score(x) ? y : x;
+  };
+  for (const key of ["mineral", "quiz", "geo"]) {
+    const left = a?.[key] || {}, right = b?.[key] || {};
+    for (const day of new Set([...Object.keys(left), ...Object.keys(right)])) out[key][day] = day in left && day in right ? better(left[day], right[day]) : (left[day] ?? right[day]);
+  }
+  for (const id of new Set([...Object.keys(a?.earned || {}), ...Object.keys(b?.earned || {})])) {
+    const dates = [a?.earned?.[id], b?.earned?.[id]].filter(Boolean).sort();
+    out.earned[id] = dates[0];
+  }
+  const shared = [a?.shared, b?.shared].filter(Boolean).sort()[0]; if (shared) out.shared = shared;
+  return out;
+}
+// Remplace la progression locale par celle du compte (sans relancer d'envoi au serveur).
+export function replaceProgress(state) {
+  write(state);
+  document.dispatchEvent(new CustomEvent("jm-progress", { detail: { remote: true } }));
+}
+
 export const streakOf = game => statsOf(read())[game].streak;
 export const todayResult = game => read()[game][parisDay()] || null;
 
