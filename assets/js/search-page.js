@@ -86,6 +86,7 @@ async function run() {
   failed.forEach(item => console.error("Recherche — source indisponible :", item.reason));
   const results = settled.flatMap(item => item.status === "fulfilled" ? item.value : []);
   grid.replaceChildren(...results.map(card));
+  if (!results.length && !failed.length) window.jmTrack?.("empty_search", null, query);
   status.textContent = (results.length ? `${results.length} résultat${results.length > 1 ? "s" : ""}.` : "Aucun résultat pour cette recherche.")
     + (failed.length ? " Certaines sources n’ont pas pu être interrogées." : "");
 }

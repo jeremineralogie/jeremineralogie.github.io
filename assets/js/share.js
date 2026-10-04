@@ -1,6 +1,7 @@
 // Partage des résultats des jeux : une image au format story (1080 × 1920) aux couleurs du site,
 // envoyée au menu de partage de l'appareil (Instagram, TikTok, Snapchat, WhatsApp…).
 import { recordShare } from "./game-progress.js";
+import { track } from "./track.js";
 
 const SITE = "https://jeremineralogie.fr/";
 const LOGO = "/assets/decor/logo-jeux.webp";
@@ -130,6 +131,7 @@ export function sharePanel({ spec, text, fileName }) {
         const link = el("a"); link.href = preview.src; link.download = fileName; link.click();
         status.textContent = "Image enregistrée : vous pouvez maintenant la publier où vous voulez.";
       } else throw new Error("Partage indisponible");
+      track("share", fileName.replace(/\.png$/, ""));
       recordShare();
     } catch (error) {
       if (error?.name !== "AbortError") status.textContent = "Le partage n’a pas fonctionné sur cet appareil.";

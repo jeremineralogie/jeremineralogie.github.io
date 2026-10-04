@@ -3,6 +3,7 @@
 import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
+import { track } from "./track.js";
 import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
 import { backfillRecord, renderGeoGame } from "./geo-game.js";
 import { renderMineralPhotoGame } from "./mineral-photo-game.js";
@@ -186,6 +187,7 @@ export async function mountGames(root, { client, minerals, collapsible = false }
     const refresh = () => { const played = Boolean(todayResult(game)); done.textContent = played ? "✓ Joué aujourd’hui" : ""; done.hidden = !played; };
     refresh(); document.addEventListener("jm-progress", refresh);
     const summary = el("summary", "home-game-summary"); summary.append(heading, done);
+    node.addEventListener("toggle", () => { if (node.open && !node.dataset.tracked) { node.dataset.tracked = "1"; track("start", game); } });
     node.append(summary, body); return node;
   };
   const mineralBlock = block("Trouve le minéral", "Facile", "is-easy", "mineral"), quizBlock = block("Le quiz du jour", "Intermédiaire", "is-medium", "quiz"), geoBlock = block("Devine le gisement", "Difficile", "is-hard", "geo");
