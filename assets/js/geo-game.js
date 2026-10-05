@@ -158,7 +158,7 @@ export async function renderGeoGame(panel, pieces) {
     const squares = results.map(result => square(result.points));
     const streak = streakOf("geo");
     const share = sharePanel({
-      fileName: `devine-le-gisement-${today}.png`,
+      fileName: `devine-le-gisement-${today}.png`, remember: "geo",
       text: `🗺️ Devine le gisement — ${new Intl.DateTimeFormat("fr-FR").format(new Date(`${today}T12:00:00`))}\n${squares.join("")} ${finalScore}/${max}\nEt vous, ferez-vous mieux ?`,
       spec: { title: "Devine le gisement", date: dateFr(today), big: finalScore.toLocaleString("fr-FR"), bigSub: `sur ${max.toLocaleString("fr-FR")} points`, squares,
         photos: chosen.slice(0, results.length).map(piece => piece.photo), streak: streak > 1 ? `🔥 Série de ${streak} jours` : "" }

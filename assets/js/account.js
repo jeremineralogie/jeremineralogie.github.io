@@ -1,6 +1,6 @@
 // Compte joueur : identifiant + mot de passe (adresse fictive en coulisses) ou Google ; la progression des jeux est enregistrée sur le serveur.
 import { getSupabase } from "./supabase-client.js";
-import { getProgress, mergeProgress, replaceProgress } from "./game-progress.js";
+import { getProgress, mergeProgress, replaceProgress, recordLogin } from "./game-progress.js";
 
 const DOMAIN = "joueurs.jeremineralogie.fr";
 export const USERNAME_RULE = /^[a-z0-9][a-z0-9_-]{2,19}$/;
@@ -61,11 +61,11 @@ export async function initAccount() {
   const { data } = await client.auth.getSession(); session = data.session || null;
   client.auth.onAuthStateChange((event, next) => {
     const was = session?.user?.id; session = next || null;
-    if (session && session.user.id !== was) setTimeout(() => { void syncNow(); }, 0);
+    if (session && session.user.id !== was) { recordLogin(); setTimeout(() => { void syncNow(); }, 0); }
     emit();
   });
   document.addEventListener("jm-progress", event => { if (!event.detail?.remote) scheduleSync(); });
-  if (session) void syncNow();
+  if (session) { recordLogin(); void syncNow(); }
   emit();
   return true;
 }

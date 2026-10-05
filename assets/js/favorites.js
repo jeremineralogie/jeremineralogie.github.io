@@ -1,4 +1,5 @@
 // Favoris du visiteur, mémorisés sur son appareil (localStorage), sans compte.
+import { recordFavoritePieces } from "./game-progress.js";
 // Élément : { type: "piece" | "specimen" | "mineral", id, name, href, meta, image }
 const KEY = "jm-favoris";
 
@@ -16,7 +17,9 @@ export function toggleFavorite(item) {
   const list = getFavorites();
   const present = list.some(entry => same(entry, item));
   const next = present ? list.filter(entry => !same(entry, item)) : [{ ...item, addedAt: new Date().toISOString() }, ...list];
-  return save(next) ? !present : present;
+  const saved = save(next);
+  if (saved && !present && item.type === "piece") recordFavoritePieces(next.filter(entry => entry.type === "piece").length); // badges du carnet de terrain
+  return saved ? !present : present;
 }
 
 // Bouton cœur à placer sur une fiche.

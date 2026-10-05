@@ -1,10 +1,10 @@
-// Jeux du jour (trouve le minéral, quiz, devine le gisement) et badges : section affichée sur l'accueil et sur la page « Jeux & quiz ».
+// Jeux du jour (trouve le minéral, quiz, devine le gisement) : section affichée sur l'accueil et sur la page « Jeux & quiz ». Les badges sont dans le carnet de terrain.
 // Les parties sont les mêmes sur les deux pages (tirage fixé par la date) et partagent la même mémoire sur l'appareil.
 import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
 import { track } from "./track.js";
-import { recordGame, renderBadges, streakOf, todayResult } from "./game-progress.js";
+import { recordGame, streakOf, todayResult } from "./game-progress.js";
 import { backfillRecord, renderGeoGame } from "./geo-game.js";
 import { renderMineralPhotoGame } from "./mineral-photo-game.js";
 import { QUIZ_RARITIES, byRarity } from "./rarity.js";
@@ -59,7 +59,7 @@ function quizShare(correct) {
   const detail = !correct ? "pas trouvé cette fois" : hints === 0 ? "sans aucun indice" : hints ? `avec ${hints} indice${hints > 1 ? "s" : ""} en plus` : "";
   const streak = streakOf("quiz");
   return sharePanel({
-    fileName: `quiz-du-jour-${today}.png`,
+    fileName: `quiz-du-jour-${today}.png`, remember: "quiz",
     text: `🧪 Quiz du jour Jeremineralogie — ${new Intl.DateTimeFormat("fr-FR").format(new Date(`${today}T12:00:00`))}\n${correct ? "✅ Trouvé" : "❌ Raté"}${detail && correct ? ` ${detail}` : ""}\nSaurez-vous trouver le minéral mystère ?`,
     spec: { title: "Le quiz du jour", date: dateFr(today), big: correct ? "Trouvé !" : "Raté…", bigSub: detail, note: "Le minéral reste secret : à vous de jouer !", mystery: true,
       streak: streak > 1 ? `🔥 Série de ${streak} jours` : "", footer: "Saurez-vous le trouver ?" }
@@ -174,7 +174,7 @@ async function geoPieces(client) {
   ].filter(Boolean);
 }
 
-// Section Jeux : les jeux toujours visibles, les badges dans un volet dépliable.
+// Section Jeux : les trois jeux du jour, chacun dans son cadre.
 export async function mountGames(root, { client, minerals, collapsible = false }) {
   // Trois niveaux, toujours dans l'ordre de difficulté : facile (photo + 4 noms), intermédiaire (quiz à indices), difficile (localiser sur la carte).
   // Sur l'accueil (collapsible), chaque jeu est un encart rétractable, replié au départ, qui indique si la partie du jour est jouée.
@@ -191,15 +191,9 @@ export async function mountGames(root, { client, minerals, collapsible = false }
     node.append(summary, body); return node;
   };
   const mineralBlock = block("Trouve le minéral", "Facile", "is-easy", "mineral"), quizBlock = block("Le quiz du jour", "Intermédiaire", "is-medium", "quiz"), geoBlock = block("Devine le gisement", "Difficile", "is-hard", "geo");
-  const badges = el("details", "home-badges");
-  const summary = el("summary"); const count = el("span", "home-badges-count");
-  summary.append(el("span", "home-badges-label", "Mes séries et badges"), count);
-  const list = el("div", "badges");
-  badges.append(summary, list);
-  root.replaceChildren(mineralBlock, quizBlock, geoBlock, badges);
+  root.replaceChildren(mineralBlock, quizBlock, geoBlock);
   const { quiz } = dailyMinerals(minerals);
   if (quiz) renderQuiz(quizBlock, quiz, minerals, client);
-  renderBadges(list, count);
   void renderMineralPhotoGame(mineralBlock, { client, minerals }).catch(error => console.error("Trouve le minéral :", error));
   try {
     const pieces = await geoPieces(client);

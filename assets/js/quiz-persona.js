@@ -62,7 +62,7 @@ export function mountPersonaQuiz(container, { kind, data, lead, kicker, shareTit
     card.append(sharePanel({
       spec: { title: shareTitle, date: dateFr(new Date().toISOString().slice(0, 10)), big: item.name, bigSub: item.tagline, photos: more?.photos || [], footer: shareFooter },
       text: shareText(item),
-      fileName: `${kind}-${item.slug}.png`
+      fileName: `${kind}-${item.slug}.png`, remember: `persona-${kind}`, rememberOnce: true
     }));
     card.append(el("p", "mq-once", "Le test ne se passe qu’une fois : ce résultat est le tien."));
     box.append(card);

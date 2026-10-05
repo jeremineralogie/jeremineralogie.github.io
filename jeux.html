@@ -1,17 +1,21 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jeux &amp; quiz de minéralogie — Jeremineralogie</title><meta name="description" content="Les jeux du jour (trouve le minéral, quiz à indices, devine le gisement) et le quiz « Quel minéral es-tu ? » : amuse-toi, gagne des badges et partage tes résultats."><link rel="canonical" href="https://jeremineralogie.fr/jeux.html"><meta property="og:site_name" content="Jeremineralogie"><meta property="og:locale" content="fr_FR"><meta property="og:type" content="website"><meta property="og:title" content="Jeux &amp; quiz de minéralogie — Jeremineralogie"><meta property="og:description" content="Les jeux du jour (trouve le minéral, quiz à indices, devine le gisement) et le quiz « Quel minéral es-tu ? » : amuse-toi, gagne des badges et partage tes résultats."><meta property="og:url" content="https://jeremineralogie.fr/jeux.html"><meta property="og:image" content="https://jeremineralogie.fr/assets/hero-specimen.jpeg"><meta name="twitter:card" content="summary_large_image"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://nolmmbztvfyyjvllvvjb.supabase.co" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap"><link rel="stylesheet" href="styles.css"></head><body>
 <header class="site-header"><div class="header-inner"><div class="brand-row"><a class="brand" href="index.html">Jeremineralogie</a><div class="search">⌕ <input data-search placeholder="Minéral, commune, gisement" aria-label="Rechercher un minéral, une commune ou un gisement"></div></div><nav class="nav"><a href="boutique.html">Boutique</a><a href="articles.html">Articles</a><a href="archives.html">Archives & Documentation</a><a href="collection.html">Ma collection</a><a href="carte.html">Carte</a><a href="apprendre.html">Apprendre &amp; identifier</a><a href="jeux.html" aria-current="page">Jeux &amp; quiz</a></nav></div></header>
-<main><h1 class="page-title">Jeux &amp; quiz</h1><p class="lead">Les jeux du jour, les badges et les quiz de minéralogie.</p>
-<nav class="learn-tabs" aria-label="Rubriques"><a href="#jeux" data-tab="jeux">Jeux</a><a href="#quiz" data-tab="quiz">Quiz</a></nav>
+<main><h1 class="page-title">Jeux &amp; quiz</h1><p class="lead">Les jeux du jour, les quiz de minéralogie et ton carnet de terrain.</p>
+<nav class="learn-tabs" aria-label="Rubriques"><a href="#jeux" data-tab="jeux">Jeux</a><a href="#quiz" data-tab="quiz">Quiz</a><a href="#carnet" data-tab="carnet">Carnet de terrain</a></nav>
 <p class="meta" id="learn-status" role="status" aria-live="polite">Chargement…</p>
 
 <section id="panel-jeux" class="learn-panel" aria-label="Jeux" hidden>
-<div class="tools-intro"><p>Chaque jour, trois jeux de difficulté croissante : « Trouve le minéral » (facile), le quiz à indices (intermédiaire) et « Devine le gisement » (difficile). Enchaînez les jours pour faire grandir vos séries et gagner des badges.</p></div>
+<div class="tools-intro"><p>Chaque jour, trois jeux de difficulté croissante : « Trouve le minéral » (facile), le quiz à indices (intermédiaire) et « Devine le gisement » (difficile). Enchaînez les jours pour faire grandir vos séries.</p></div>
 <div class="home-panel home-games learn-games"><div class="home-games-body" data-games></div></div>
 </section>
 <section id="panel-quiz" class="learn-panel" aria-label="Quiz" hidden>
 <div class="tools-intro"><p>Des quiz pour s’amuser et tester tes connaissances : deux quiz de personnalité (à passer une seule fois), un vrai ou faux et un défi sur le glossaire (à rejouer autant que tu veux).</p></div>
 <div class="home-panel home-games learn-games"><div class="home-games-body" data-quizzes></div></div>
+</section>
+<section id="panel-carnet" class="learn-panel" aria-label="Carnet de terrain" hidden>
+<div class="tools-intro"><p>Ton carnet de terrain : ta série de connexion, tes derniers résultats (à partager quand tu veux) et tes badges. Il se remplit en jouant et en explorant le site.</p></div>
+<div class="carnet" data-carnet></div>
 </section>
 </main>
 <footer class="footer"><div class="footer-inner"><div class="footer-links"><a href="identification.html">Identification</a><a href="apropos.html">À propos</a><a href="reseaux.html">Mes réseaux</a><a href="contact.html">Contact</a><a href="legal.html">Informations légales</a><a href="favoris.html">Mes favoris</a></div><div>© Jeremineralogie — Minéraux français, spécimens de collection et patrimoine minier.</div></div></footer>
