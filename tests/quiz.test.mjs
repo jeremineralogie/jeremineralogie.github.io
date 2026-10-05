@@ -6,6 +6,8 @@ import { existsSync } from "node:fs";
 import { QUIZ } from "../assets/js/quiz-data.js";
 import { QUIZ_PROSPECTEUR } from "../assets/js/quiz-prospecteur-data.js";
 import { QUIZ_OUTIL } from "../assets/js/quiz-outil-data.js";
+import { QUIZ_COLLECTIONNEUR } from "../assets/js/quiz-collectionneur-data.js";
+import { QUIZ_FORME } from "../assets/js/quiz-forme-data.js";
 import { personaResult } from "../assets/js/quiz-persona.js";
 import { buildStatements } from "../assets/js/quiz-vrai-faux.js";
 import { buildQuestions, maskDefinition } from "../assets/js/quiz-glossaire.js";
@@ -36,6 +38,29 @@ function personaChecks(name, data, results, runs) {
 personaChecks("Quel minéral es-tu", QUIZ, QUIZ.minerals, 30000);
 personaChecks("Quel prospecteur es-tu", QUIZ_PROSPECTEUR, QUIZ_PROSPECTEUR.profiles, 20000);
 personaChecks("Quel outil de prospecteur es-tu", QUIZ_OUTIL, QUIZ_OUTIL.profiles, 20000);
+personaChecks("Quel collectionneur es-tu", QUIZ_COLLECTIONNEUR, QUIZ_COLLECTIONNEUR.profiles, 20000);
+personaChecks("Quelle forme cristalline es-tu", QUIZ_FORME, QUIZ_FORME.profiles, 20000);
+// Répondre « dans le sens » d'un résultat (une réponse sur ce résultat quand la question en propose une, au hasard sinon) doit le donner dans la grande majorité des cas.
+function coherenceChecks(name, quiz) {
+  test(`${name} : des réponses cohérentes avec un résultat donnent ce résultat`, () => {
+    const data = { ...quiz, results: quiz.profiles };
+    let seed = 4242; const random = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+    quiz.axes.forEach((profile, axis) => {
+      const available = quiz.questions.filter(question => question.answers.some(answer => answer.v[axis])).length;
+      if (available < 4) return;
+      let hits = 0; const runs = 400;
+      for (let run = 0; run < runs; run += 1) {
+        const answers = quiz.questions.map(question => { const own = question.answers.findIndex(answer => answer.v[axis]); return own >= 0 ? own : Math.floor(random() * 4); });
+        if (personaResult(data, answers).slug === quiz.profiles[axis].slug) hits += 1;
+      }
+      assert.ok(hits / runs >= 0.7, `${profile} : ${(hits / runs * 100).toFixed(0)} %`);
+    });
+    quiz.profiles.forEach(item => assert.equal(item.mineral.length, 3, item.name));
+  });
+}
+coherenceChecks("Quel collectionneur es-tu", QUIZ_COLLECTIONNEUR);
+coherenceChecks("Quelle forme cristalline es-tu", QUIZ_FORME);
+
 test("Quel outil de prospecteur es-tu : répondre toujours dans le sens d'un outil donne cet outil", () => {
   const data = { ...QUIZ_OUTIL, results: QUIZ_OUTIL.profiles };
   QUIZ_OUTIL.axes.forEach((tool, axis) => {
@@ -114,4 +139,19 @@ test("Fiche de partage du glossaire en défi : illustration du jeu", async () =>
   const game = await readFile(new URL("../assets/js/quiz-glossaire.js", import.meta.url), "utf8");
   assert.match(game, /logo: "\/assets\/decor\/logo-glossaire\.webp"/);
   assert.ok(existsSync(new URL("../assets/decor/logo-glossaire.webp", import.meta.url)));
+});
+
+test("Fiches de partage : l'illustration de chaque jeu ou résultat remplace la carte ; la carte au repère est réservée à Devine le gisement", async () => {
+  const text = async name => readFile(new URL(`../assets/js/${name}`, import.meta.url), "utf8");
+  const share = await text("share.js");
+  assert.doesNotMatch(share, /const LOGO\b/, "plus de carte par défaut");
+  assert.match(await text("geo-game.js"), /logo: "\/assets\/decor\/logo-jeux\.webp"/);
+  for (const name of ["quiz-prospecteur.js", "quiz-outil.js", "quiz-collectionneur.js"]) assert.match(await text(name), /logo: src/, name);
+  assert.match(await text("quiz-mineral.js"), /logo: url/);
+  assert.match(await text("quiz-persona.js"), /logo: more\?\.logo/);
+});
+
+test("Quiz de personnalité : chaque résultat a son médaillon (collectionneur, forme cristalline)", () => {
+  QUIZ_COLLECTIONNEUR.profiles.forEach(item => assert.ok(existsSync(new URL(`../assets/collectionneurs/${item.slug}.webp`, import.meta.url)), item.name));
+  QUIZ_FORME.profiles.forEach(item => assert.ok(existsSync(new URL(`../assets/formes/${item.slug}.webp`, import.meta.url)), item.name));
 });

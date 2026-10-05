@@ -4,6 +4,8 @@ const QUIZZES = [
   { id: "mineral", kind: "quiz", title: "Quel minéral es-tu ?", load: () => import("./quiz-mineral.js").then(module => (box, ctx) => module.mountQuiz(box, ctx)) },
   { id: "prospecteur", kind: "quiz", title: "Quel prospecteur es-tu ?", load: () => import("./quiz-prospecteur.js").then(module => (box, ctx) => module.mountProspecteur(box, ctx)) },
   { id: "outil", kind: "quiz", title: "Quel outil de prospecteur es-tu ?", load: () => import("./quiz-outil.js").then(module => (box, ctx) => module.mountOutil(box, ctx)) },
+  { id: "collectionneur", kind: "quiz", title: "Quel collectionneur es-tu ?", load: () => import("./quiz-collectionneur.js").then(module => (box, ctx) => module.mountCollectionneur(box, ctx)) },
+  { id: "forme", kind: "quiz", title: "Quelle forme cristalline es-tu ?", load: () => import("./quiz-forme.js").then(module => (box, ctx) => module.mountForme(box, ctx)) },
   { id: "vrai-faux", kind: "jeu", title: "Vrai ou faux minéralogique", load: () => import("./quiz-vrai-faux.js").then(module => (box, ctx) => module.mountVraiFaux(box, ctx)) },
   { id: "glossaire", kind: "jeu", title: "Le glossaire en défi", load: () => import("./quiz-glossaire.js").then(module => (box, ctx) => module.mountGlossaire(box, ctx)) }
 ];

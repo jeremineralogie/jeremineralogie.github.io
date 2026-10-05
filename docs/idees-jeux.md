@@ -2,9 +2,9 @@
 
 Toutes ces idées sont validées. On les fait une par une, en commençant par la première.
 
-1. **Quel outil de prospecteur es-tu ?** (en cours) — quiz de personnalité, 10 questions, 8 outils.
-2. **Quel collectionneur es-tu ?** — esthète, systématique, chasseur de régions, micromonteur, collectionneur de curiosités…
-3. **Quelle forme cristalline es-tu ?** — cubique, hexagonale, monoclinique… avec renvois vers le glossaire et des minéraux.
+1. **Quel outil de prospecteur es-tu ?** (fait) — quiz de personnalité, 10 questions, 8 outils.
+2. **Quel collectionneur es-tu ?** (fait) — esthète, systématique, chasseur de régions, micromonteur, collectionneur de curiosités…
+3. **Quelle forme cristalline es-tu ?** (fait) — cubique, hexagonale, monoclinique… avec renvois vers le glossaire et des minéraux.
 4. **Quel gisement français es-tu ?** — le résultat est un vrai gisement de la base, avec sa position sur la carte.
 5. **Plus dur ou moins dur ?** — deviner lequel de deux minéraux est le plus dur (variante : densité).
 6. **Le pendu minéralogique** — mot du glossaire, définition en indice.

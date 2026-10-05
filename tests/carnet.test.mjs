@@ -36,7 +36,7 @@ test("jeux : première partie, trois jeux, séries de 7 et 30 jours sur chaque j
   assert.ok(earned({ mineral: games(30), quiz: games(30), geo: games(30) }).includes("jeux-serie-30"));
 });
 test("quiz : tous les quiz, partages, et 10 parties de chaque", () => {
-  const base = { personas: { mineral: { slug: "or" }, prospecteur: { slug: "x" }, outil: { slug: "y" } }, quizzes: { "vrai-faux": { plays: 1 }, glossaire: { plays: 1 } } };
+  const base = { personas: { mineral: { slug: "or" }, prospecteur: { slug: "x" }, outil: { slug: "y" }, collectionneur: { slug: "z" }, forme: { slug: "w" } }, quizzes: { "vrai-faux": { plays: 1 }, glossaire: { plays: 1 } } };
   assert.ok(earned({ ...base }).includes("quiz-tous"));
   assert.ok(!earned({ personas: base.personas, quizzes: { "vrai-faux": { plays: 3 } } }).includes("quiz-tous"), "glossaire jamais joué");
   assert.ok(!earned({ ...base }).includes("quiz-dix-fois"));

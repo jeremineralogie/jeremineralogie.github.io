@@ -16,7 +16,7 @@ export function mountProspecteur(container) {
     extras: async item => {
       const src = `/assets/prospecteurs/${item.slug}.webp`;
       const icon = el("img", "mq-icon"); icon.src = src; icon.alt = item.name; icon.width = 180; icon.height = 180;
-      return { before: [icon], after: [], photos: [new URL(src, location.origin).href] };
+      return { before: [icon], after: [], logo: src, logoWidth: 700, photos: [] };
     }
   });
 }

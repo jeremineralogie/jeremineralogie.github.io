@@ -4,7 +4,6 @@ import { recordShare, rememberCard } from "./game-progress.js";
 import { track } from "./track.js";
 
 const SITE = "https://jeremineralogie.fr/";
-const LOGO = "/assets/decor/logo-jeux.webp";
 const W = 1080, H = 1920;
 const SERIF = '"Cormorant Garamond", Georgia, "Times New Roman", serif';
 const SANS = 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif';
@@ -33,7 +32,7 @@ function spaced(ctx, text, x, y, spacing) {
   ctx.textAlign = "center";
 }
 
-// spec : { title, date, big, bigSub, note, squares: ["🟩"…], photos: [url…], mystery (médaillon « ? »), streak, footer, logo (illustration propre au jeu, à la place de la carte), logoWidth }
+// spec : { title, date, big, bigSub, note, squares: ["🟩"…], photos: [url…], mystery (médaillon « ? »), streak, footer, logo (illustration propre au jeu), logoWidth, logoFrame (cadre arrondi, pour une photo) }
 async function drawCard(spec, withPhotos = true) {
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
@@ -48,13 +47,16 @@ async function drawCard(spec, withPhotos = true) {
   ctx.strokeStyle = "rgba(160,110,240,.55)"; ctx.lineWidth = 3; roundRect(ctx, 44, 44, W - 88, H - 88, 28); ctx.stroke();
   ctx.strokeStyle = "rgba(160,110,240,.2)"; ctx.lineWidth = 1.5; roundRect(ctx, 60, 60, W - 120, H - 120, 20); ctx.stroke();
 
-  // Illustration du haut : celle du jeu si elle est fournie (centrée dans la zone du haut), sinon la carte de France.
-  const own = spec.logo ? await loadImage(spec.logo, false) : null;
-  const logo = own || await loadImage(LOGO, false);
+  // Illustration du haut : celle du jeu ou du résultat (centrée dans la zone du haut). La carte de France avec son repère est réservée à « Devine le gisement » (elle y est fournie comme logo).
+  // Une image d'un autre site (photo de minéral) est chargée avec CORS ; si elle empêche l'export, l'image est refaite sans elle.
+  const external = spec.logo && new URL(spec.logo, location.href).origin !== location.origin;
+  const logo = spec.logo && (withPhotos || !external) ? await loadImage(spec.logo, Boolean(external)) : null;
   if (logo) {
-    const custom = Boolean(own);
-    const width = custom ? (spec.logoWidth || 640) : 640, height = width * logo.height / logo.width;
-    ctx.drawImage(logo, (W - width) / 2, custom ? Math.max(70, 110 + (640 - height) / 2) : 110, width, height);
+    const width = spec.logoWidth || 640, height = width * logo.height / logo.width, left = (W - width) / 2, top = Math.max(70, 110 + (640 - height) / 2);
+    if (spec.logoFrame) {
+      ctx.save(); roundRect(ctx, left, top, width, height, 28); ctx.clip(); ctx.drawImage(logo, left, top, width, height); ctx.restore();
+      ctx.strokeStyle = "rgba(160,110,240,.7)"; ctx.lineWidth = 4; roundRect(ctx, left, top, width, height, 28); ctx.stroke();
+    } else ctx.drawImage(logo, left, top, width, height);
   }
 
   ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
