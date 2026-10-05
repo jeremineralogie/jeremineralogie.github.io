@@ -3,7 +3,7 @@ import { renderCrumbs } from "./crumbs.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { pieceTitle } from "./seo-titles.js";
-import { applyGlossary } from "./glossary-links.js";
+import { applyGlossary, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, renderNeighbours } from "./detail-nav.js";
 import { shareButton } from "./share-button.js";
@@ -81,7 +81,7 @@ function render(client, item) {
   else { contact.className = "btn"; contact.href = `contact.html?reference=${encodeURIComponent(item.reference)}`; contact.textContent = "Me contacter"; }
   const cover = photos[0] ? publicMediaUrl(client, photos[0]) : "";
   const favorite = favoriteButton({ type: "piece", id: item.reference || item.slug, name: shopItemName(item), href: pieceUrl(item), meta: [clean(item.mine?.name), clean(item.reference)].filter(Boolean).join(" · "), image: cover });
-  details.append(kicker, title, list, price, contact, favorite, shareButton({ title: name, text: `${name} — Jeremineralogie` }));
+  details.append(kicker, title, list, price, contact, favorite, shareButton({ title: name, text: `${name} — Jeremineralogie`, label: "Partager cette pièce", copyPrompt: "Copiez le lien de cette pièce :" }));
   wrap.append(left, details); root.replaceChildren(wrap);
   document.querySelector("[data-seo]")?.remove();
   renderCrumbs([["Accueil", "/"], ["Boutique", "/boutique.html"], [name]]);
@@ -103,6 +103,7 @@ function render(client, item) {
     const section = document.createElement("div"); section.className = "content";
     const heading = document.createElement("h2"); heading.textContent = "Documentation minéralogique";
     section.append(heading, science); root.append(section);
+    void linkProperties(science);
   }
   // Maillage : autres minéraux du même gisement, minéraux similaires.
   const mineralSlug = item.mineral?.slug;

@@ -938,3 +938,4 @@ body.acct-open{overflow:hidden}
 .cl-arrows{display:grid;gap:4px}
 .cl-arrows button{width:34px;height:28px;border:1px solid rgba(160,110,240,.55);border-radius:4px;background:#1a0f2b;color:#f3eaff;cursor:pointer}
 .cl-arrows button:disabled{opacity:.3;cursor:default}
+.article-share{display:flex;justify-content:center;margin:26px 0 8px}

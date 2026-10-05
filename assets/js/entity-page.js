@@ -5,7 +5,7 @@ import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
 import { mineralTitle } from "./seo-titles.js";
-import { applyGlossary, applyGlossaryPrecise, glossaryTerms, isTermUsed, markTermUsed, propertyParts, PRECISE_LABELS, LABEL_TERMS } from "./glossary-links.js";
+import { applyGlossary, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 import { loadSimilar } from "./related.js";
@@ -185,24 +185,6 @@ async function load() {
 
 // Libellés et valeurs précises de la fiche reliés au glossaire (système cristallin, famille chimique, éclat, cassure, clivage…), comme dans la page préparée pour Google.
 const DOMAIN_LABELS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
-async function linkProperties(list) {
-  const terms = new Map((await glossaryTerms()).map(row => [row.slug, row]));
-  const glossLink = (row, text) => { markTermUsed(row.slug); const a = document.createElement("a"); a.className = "gloss"; a.href = cleanUrl("term", row.slug); a.dataset.slug = row.slug; a.setAttribute("aria-haspopup", "dialog"); a.textContent = text; return a; };
-  // Dans l'ordre de la page : le libellé, puis la valeur ; chaque terme une seule fois sur toute la page (les liens déjà posés dans la description comptent).
-  const used = new Set([...terms.keys()].filter(isTermUsed));
-  for (const dt of [...list.querySelectorAll("dt")]) {
-    const label = dt.textContent; const value = dt.nextElementSibling;
-    const labelTerm = terms.get(LABEL_TERMS[label]);
-    if (labelTerm && !used.has(labelTerm.slug)) { used.add(labelTerm.slug); dt.replaceChildren(glossLink(labelTerm, label)); }
-    if (!value) continue;
-    const parts = propertyParts(label, value.textContent, terms, used);
-    if (parts?.some(part => part.term)) value.replaceChildren(...parts.map(part => part.term ? glossLink(part.term, part.text) : part.text));
-    used.forEach(markTermUsed);
-    await (PRECISE_LABELS.has(label) ? applyGlossaryPrecise(value) : applyGlossary(value));
-    terms.forEach(row => { if (isTermUsed(row.slug)) used.add(row.slug); });
-  }
-}
-
 function notFound() { root.hidden = true; status.hidden = false; status.textContent = "Cette fiche est introuvable."; }
 
 try { await load(); }

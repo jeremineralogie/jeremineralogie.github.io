@@ -7,6 +7,7 @@ import { articleUrl, renderNeighbours } from "./detail-nav.js";
 import { applyGlossary, skipTermNames } from "./glossary-links.js";
 import { articleTitle } from "./seo-titles.js";
 import { renderBlocks } from "./article-content.js";
+import { shareButton } from "./share-button.js";
 
 const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("slug");
 const status = document.querySelector("#detail-status");
@@ -68,6 +69,10 @@ function render(client, article, { linker, chosen }, all = []) {
     related.forEach((item, index) => { if (index) line.append(" · "); appendLinked(line, [{ text: item.name, href: item.href }]); });
     page.append(line);
   }
+  // Partage : menu de partage de l'appareil (réseaux, messages…) ou, à défaut, copie du lien de l'article.
+  const share = document.createElement("div"); share.className = "article-share";
+  share.append(shareButton({ title: article.title, text: `${article.title} — Jeremineralogie`, label: "Partager cet article", copyPrompt: "Copiez le lien de cet article :" }));
+  page.append(share);
   const others = relatedArticles(article, all, chosen);
   if (others.length) page.append(readMore(others));
   root.replaceChildren(page);

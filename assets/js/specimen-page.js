@@ -7,7 +7,7 @@ import { renderNeighbours, specimenUrl } from "./detail-nav.js";
 import { siteTypeLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
 import { specimenTitle } from "./seo-titles.js";
-import { applyGlossary } from "./glossary-links.js";
+import { applyGlossary, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { shareButton } from "./share-button.js";
 import { specimenAlt } from "./alt-text.js";
@@ -98,7 +98,7 @@ function renderSpecimen(specimen) {
   if (specimen.description) void applyGlossary(content.querySelector("[data-description]"));
   root.querySelector(".fav-btn")?.remove(); root.querySelector(".share-btn")?.remove();
   root.querySelector("[data-location-summary]").after(favoriteButton({ type: "specimen", id: specimen.id, name: specimen.mineral || "Spécimen", href: specimenUrl({ id: specimen.id }), meta: [specimen.provenance || specimen.locality, specimen.department].filter(Boolean).join(" · "), image: (specimen.photos || [])[0] || "" }));
-  root.querySelector(".fav-btn").after(shareButton({ title: specimen.mineral || "Spécimen", text: `${specimen.mineral || "Spécimen"} — collection Jeremineralogie` }));
+  root.querySelector(".fav-btn").after(shareButton({ title: specimen.mineral || "Spécimen", text: `${specimen.mineral || "Spécimen"} — collection Jeremineralogie`, label: "Partager cette pièce", copyPrompt: "Copiez le lien de cette pièce :" }));
   const linkField = (selector, text, href) => {
     const element = root.querySelector(selector);
     if (!text || !href) return;
@@ -138,6 +138,7 @@ function renderSpecimen(specimen) {
     science.append(term, description);
   });
   content.querySelector("[data-scientific-section]").hidden = science.children.length === 0;
+  if (science.children.length) void linkProperties(science); // termes techniques (système cristallin, dureté, éclat…) cliquables : petite fenêtre de définition
   void loadNeighbours();
   // Maillage : autres minéraux du même gisement, minéraux similaires.
   const shown = current;
