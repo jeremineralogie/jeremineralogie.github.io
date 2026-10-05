@@ -1,6 +1,7 @@
 // Compte joueur : identifiant + mot de passe (adresse fictive en coulisses) ou Google ; la progression des jeux est enregistrée sur le serveur.
 import { getSupabase } from "./supabase-client.js";
-import { getProgress, mergeProgress, replaceProgress, recordLogin } from "./game-progress.js";
+import { getProgress, mergeProgress, replaceProgress, recordLogin, setLoggedIn } from "./game-progress.js";
+import { rawFavorites, replaceFavorites, mergeFavorites } from "./favorites.js";
 
 const DOMAIN = "joueurs.jeremineralogie.fr";
 export const USERNAME_RULE = /^[a-z0-9][a-z0-9_-]{2,19}$/;
@@ -38,14 +39,19 @@ async function push(state) {
   const { error } = await client.from("player_progress").upsert({ user_id: session.user.id, data: state, updated_at: new Date().toISOString() });
   if (error) throw error;
 }
+// Ce qui est enregistré sur le compte : la progression des jeux et du carnet, et les favoris.
+const snapshot = () => ({ ...getProgress(), favorites: rawFavorites() });
+const withoutFavorites = ({ favorites, ...rest }) => rest;
+const combine = (local, remote) => ({ ...mergeProgress(withoutFavorites(local), withoutFavorites(remote)), favorites: mergeFavorites(local.favorites, remote.favorites) });
 // À la connexion : on fusionne ce qui est sur l'appareil et ce qui est sur le compte, puis on enregistre le résultat des deux côtés.
 export async function syncNow() {
   if (!client || !session || syncing) return;
   syncing = true;
   try {
-    const remote = await pull(); const local = getProgress();
-    const merged = remote ? mergeProgress(local, remote) : local;
-    if (JSON.stringify(merged) !== JSON.stringify(local)) replaceProgress(merged);
+    const remote = await pull(); const local = snapshot();
+    const merged = remote ? combine(local, remote) : local;
+    if (JSON.stringify(withoutFavorites(merged)) !== JSON.stringify(withoutFavorites(local))) replaceProgress(withoutFavorites(merged));
+    if (JSON.stringify(merged.favorites) !== JSON.stringify(local.favorites)) replaceFavorites(merged.favorites);
     if (!remote || JSON.stringify(merged) !== JSON.stringify(remote)) await push(merged);
   } catch (error) { console.error("Synchronisation de la progression :", error); }
   finally { syncing = false; }
@@ -53,14 +59,14 @@ export async function syncNow() {
 function scheduleSync() {
   if (!session) return;
   clearTimeout(pushTimer);
-  pushTimer = setTimeout(async () => { try { await push(getProgress()); } catch (error) { console.error("Enregistrement de la progression :", error); } }, 1500);
+  pushTimer = setTimeout(async () => { try { await push(snapshot()); } catch (error) { console.error("Enregistrement de la progression :", error); } }, 1500);
 }
 
 export async function initAccount() {
   client = getSupabase(); if (!client) return false;
-  const { data } = await client.auth.getSession(); session = data.session || null;
+  const { data } = await client.auth.getSession(); session = data.session || null; setLoggedIn(Boolean(session));
   client.auth.onAuthStateChange((event, next) => {
-    const was = session?.user?.id; session = next || null;
+    const was = session?.user?.id; session = next || null; setLoggedIn(Boolean(session));
     if (session && session.user.id !== was) { recordLogin(); setTimeout(() => { void syncNow(); }, 0); }
     emit();
   });

@@ -35,7 +35,7 @@ function connectionCard(state, stats) {
 
 function resultsCard(state) {
   const card = el("section", "carnet-card");
-  card.append(el("h3", "carnet-title", "Mes résultats"), el("p", "carnet-note", "Le dernier résultat de chaque jeu et de chaque quiz, à partager quand tu veux."));
+  card.append(el("h3", "carnet-title", "Mes résultats"), el("p", "carnet-note", "Le dernier résultat de chaque jeu et de chaque quiz, à partager quand tu veux. Chaque résultat est gardé 7 jours, puis supprimé."));
   const list = el("ul", "carnet-results");
   for (const [key, name, icon, link] of RESULTS) {
     const saved = state.cards?.[key];

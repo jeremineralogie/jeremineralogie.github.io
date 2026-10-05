@@ -182,13 +182,17 @@ export async function mountGames(root, { client, minerals, collapsible = false }
     const node = el(collapsible ? "details" : "div", `home-game${collapsible ? " home-game-fold" : ""}`); node.hidden = true;
     const body = el("div"); body.dataset.body = "";
     const heading = el("h3", "home-game-title"); heading.append(el("span", "game-name", title), el("span", `game-level ${levelClass}`, level));
-    if (!collapsible) { node.append(heading, body); return node; }
+    // Série discrète : jours consécutifs jusqu'à aujourd'hui (ou hier, tant que la partie du jour n'est pas jouée).
+    const streakBar = el("p", "game-streak");
+    const drawStreak = () => { const days = streakOf(game); streakBar.textContent = days > 0 ? `🔥 Série de ${days} jour${days > 1 ? "s" : ""}` : "🔥 Aucune série en cours"; streakBar.classList.toggle("is-zero", days === 0); };
+    drawStreak(); document.addEventListener("jm-progress", drawStreak);
+    if (!collapsible) { node.append(heading, streakBar, body); return node; }
     const done = el("span", "game-done");
     const refresh = () => { const played = Boolean(todayResult(game)); done.textContent = played ? "✓ Joué aujourd’hui" : ""; done.hidden = !played; };
     refresh(); document.addEventListener("jm-progress", refresh);
     const summary = el("summary", "home-game-summary"); summary.append(heading, done);
     node.addEventListener("toggle", () => { if (node.open && !node.dataset.tracked) { node.dataset.tracked = "1"; track("start", game); } });
-    node.append(summary, body); return node;
+    node.append(summary, streakBar, body); return node;
   };
   const mineralBlock = block("Trouve le minéral", "Facile", "is-easy", "mineral"), quizBlock = block("Le quiz du jour", "Intermédiaire", "is-medium", "quiz"), geoBlock = block("Devine le gisement", "Difficile", "is-hard", "geo");
   root.replaceChildren(mineralBlock, quizBlock, geoBlock);

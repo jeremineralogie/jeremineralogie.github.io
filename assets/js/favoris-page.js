@@ -1,7 +1,7 @@
 import { getSupabase } from "./supabase-client.js";
 import { getFavorites, removeFavorite } from "./favorites.js";
 
-// Page « Mes favoris » : favoris enregistrés sur l'appareil, regroupés par type.
+// Page « Mes favoris » : favoris enregistrés sur l'appareil (et sur le compte du joueur connecté), regroupés par type.
 const GROUPS = [["piece", "Boutique"], ["specimen", "Ma collection"], ["mineral", "Fiches minéraux"]];
 const list = document.querySelector("#fav-list");
 const count = document.querySelector("#fav-count");
@@ -51,3 +51,5 @@ async function checkPieces() {
 
 render();
 void checkPieces();
+// Liste remplacée par celle du compte (connexion, autre appareil) : on redessine.
+document.addEventListener("jm-favorites", () => { render(); void checkPieces(); });

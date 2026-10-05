@@ -1,10 +1,14 @@
 // Progression du joueur : parties des jeux du jour, quiz, séries, carnet de terrain (connexions, pages consultées, favoris) et badges.
 // Tout est gardé sur l'appareil du visiteur ; avec un compte joueur, la même progression est synchronisée (voir account.js). Sans mémoire disponible, les jeux restent jouables.
 import { track } from "./track.js";
-import { BADGES, awardBadges, statsOf, parisDay } from "./badges.js";
+import { BADGES, awardBadges, statsOf, parisDay, shift } from "./badges.js";
 export { parisDay };
 const KEY = "jm-jeux";
 const MAX_VISITS = 400, MAX_PAGES = 60, MAX_MINERALS = 120;
+const CARD_DAYS = 7; // les résultats restent 7 jours dans le carnet de terrain, puis disparaissent
+// Les badges ne se gagnent qu'avec un compte : account.js indique si un joueur est connecté.
+let loggedIn = false;
+export const setLoggedIn = value => { loggedIn = Boolean(value); };
 
 function read() {
   let state;
@@ -12,6 +16,8 @@ function read() {
   state = { mineral: {}, quiz: {}, geo: {}, ...state };
   // Anciens badges (système remplacé par le carnet de terrain) : abandonnés.
   delete state.earned; delete state.shared;
+  // Résultats du carnet : 7 jours.
+  if (state.cards) { const limit = shift(parisDay(), -CARD_DAYS); state.cards = Object.fromEntries(Object.entries(state.cards).filter(([, card]) => card?.date >= limit)); }
   // Reprise du quiz déjà joué avant l'arrivée des séries.
   if (!Object.keys(state.quiz).length) {
     try {
@@ -28,11 +34,12 @@ function change(update, { always = false } = {}) {
   const state = read();
   const before = JSON.stringify(state);
   update(state);
-  awardBadges(state);
+  const fresh = loggedIn ? awardBadges(state) : [];
   const after = JSON.stringify(state);
   if (after === before && !always) return state;
   write(state);
   document.dispatchEvent(new CustomEvent("jm-progress"));
+  if (fresh.length) document.dispatchEvent(new CustomEvent("jm-badges", { detail: { badges: fresh } })); // fenêtre de félicitations (badge-popup.js)
   return state;
 }
 const addUnique = (list = [], value, max) => (value && !list.includes(value) && list.length < max ? [...list, value] : list);
@@ -132,8 +139,12 @@ export function mergeProgress(a, b) {
 }
 // Remplace la progression locale par celle du compte (sans relancer d'envoi au serveur).
 export function replaceProgress(state) {
+  const known = read().badges || {};
   write(state);
   document.dispatchEvent(new CustomEvent("jm-progress", { detail: { remote: true } }));
+  // Badges gagnés à l'instant grâce à la fusion (et pas déjà connus de l'appareil).
+  const fresh = BADGES.filter(badge => state.badges?.[badge.id] === parisDay() && !known[badge.id]);
+  if (fresh.length) document.dispatchEvent(new CustomEvent("jm-badges", { detail: { badges: fresh } }));
 }
 
 export const streakOf = game => statsOf(read())[game].streak;

@@ -34,6 +34,18 @@ document.querySelectorAll("form[data-message-form]").forEach(form => {
   const reference = new URLSearchParams(location.search).get("reference");
   if (reference && form.elements.reference) form.elements.reference.value = reference.slice(0, 100);
 
+  // Joueur connecté : nom et adresse e-mail repris du dernier message envoyé depuis son compte (modifiables).
+  void (async () => {
+    try {
+      const client = getSupabase(); if (!client) return;
+      const { data: { session } = {} } = await client.auth.getSession(); if (!session) return;
+      const { data } = await client.from("messages").select("name,email").eq("user_id", session.user.id).order("created_at", { ascending: false }).limit(1);
+      const last = data?.[0]; if (!last) return;
+      if (form.elements.name && !form.elements.name.value) form.elements.name.value = last.name;
+      if (form.elements.email && !form.elements.email.value) form.elements.email.value = last.email;
+    } catch { /* préremplissage facultatif */ }
+  })();
+
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const value = name => (form.elements[name]?.value || "").trim();
@@ -58,6 +70,8 @@ document.querySelectorAll("form[data-message-form]").forEach(form => {
         if (error) throw error;
         photoPaths.push(path);
       }
+      // Joueur connecté : le message est rattaché à son compte (historique dans « Mon espace »).
+      const { data: { session } = {} } = await client.auth.getSession();
       const details = {};
       form.querySelectorAll("[data-detail]").forEach(field => { if (field.value.trim()) details[field.dataset.detail] = field.value.trim(); });
       const { error } = await client.from("messages").insert({
@@ -68,7 +82,8 @@ document.querySelectorAll("form[data-message-form]").forEach(form => {
         reference: value("reference"),
         details,
         body: value("body"),
-        photo_paths: photoPaths
+        photo_paths: photoPaths,
+        user_id: session?.user?.id ?? null
       });
       if (error) throw error;
       form.reset();

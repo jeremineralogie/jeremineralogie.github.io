@@ -871,3 +871,21 @@ body.acct-open{overflow:hidden}
 .carnet .badge-name{font-size:.92rem}
 .carnet .badge-rule{font-size:.74rem}
 @media(min-width:700px){.carnet .badge-list{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* Fenêtre de badge, série discrète au-dessus des jeux, Mon espace */
+.badge-pop{position:fixed;right:16px;bottom:16px;z-index:120;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;max-width:min(320px,calc(100vw - 32px));padding:14px 36px 14px 14px;background:#0b0612;border:1px solid #d6a84f;border-radius:10px;box-shadow:0 16px 40px rgba(0,0,0,.7);opacity:0;transform:translateY(14px);transition:opacity .35s,transform .35s}
+.badge-pop.on{opacity:1;transform:none}
+.badge-pop-icon{grid-row:1/4;font-size:2.2rem;line-height:1}
+.badge-pop-kicker{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#d6a84f}
+.badge-pop-name{font-family:"Cormorant Garamond",serif;font-size:1.25rem;color:#fff}
+.badge-pop-who{font-size:.85rem;color:#c9b8e6}
+.badge-pop-x{position:absolute;top:4px;right:6px;background:none;border:0;color:#c9b8e6;font-size:1.3rem;cursor:pointer;padding:2px 8px}
+.game-streak{margin:0 0 10px;font-size:.78rem;color:#b9a6d8}
+.game-streak.is-zero{color:#8f7db0}
+.space{display:grid;gap:14px;max-width:760px}
+.space-card{border:1px solid #3d2a63;border-radius:10px;padding:16px;background:rgba(255,255,255,.03)}
+.space-title{margin:0 0 8px;font-size:1.15rem}
+.space-note{margin:0 0 8px;color:#c9b8e6}
+.space-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.space-item{display:grid;gap:2px;padding:8px 0;border-top:1px solid #2a1c47}
+.space-meta{font-size:.82rem;color:#a995c9}
