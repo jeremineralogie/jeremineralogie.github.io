@@ -29,6 +29,18 @@ test("les pages HTML du site ont langue, titre, description et adaptation mobile
   }
 });
 
+test("toutes les pages déclarent l'icône du site (favicon) et les fichiers existent", async () => {
+  const { existsSync } = await import("node:fs");
+  for (const file of ["favicon.ico", "apple-touch-icon.png", "assets/icons/icon-48.png", "assets/icons/icon-96.png", "assets/icons/icon-192.png"]) assert.ok(existsSync(path.join(REPO, file)), file);
+  const pages = (await readdir(REPO)).filter(name => name.endsWith(".html"));
+  for (const page of pages) {
+    const html = await readFile(path.join(REPO, page), "utf8");
+    assert.match(html, /<link rel="icon" href="\/favicon\.ico"/, page);
+    assert.match(html, /rel="icon" type="image\/png" sizes="48x48" href="\/assets\/icons\/icon-48\.png"/, page);
+    assert.match(html, /<link rel="apple-touch-icon" href="\/apple-touch-icon\.png"/, page);
+  }
+});
+
 test("aucune clé secrète ou mot de passe dans le code public", async () => {
   const files = (await readdir(path.join(REPO, "assets/js"))).filter(name => name.endsWith(".js"));
   for (const file of files) {
