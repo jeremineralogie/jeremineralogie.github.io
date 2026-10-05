@@ -11,7 +11,7 @@ const GOALS = [7, 30, 90];
 const RESULTS = [
   ["mineral", "Trouve le minéral", "💎", "/jeux.html#jeux"], ["quiz", "Le quiz du jour", "🧪", "/jeux.html#jeux"], ["geo", "Devine le gisement", "🗺️", "/jeux.html#jeux"],
   ["persona-mineral", "Quel minéral es-tu ?", "🪨", "/jeux.html#quiz"], ["persona-prospecteur", "Quel prospecteur es-tu ?", "⛏️", "/jeux.html#quiz"], ["persona-outil", "Quel outil de prospecteur es-tu ?", "🔨", "/jeux.html#quiz"], ["persona-collectionneur", "Quel collectionneur es-tu ?", "🗃️", "/jeux.html#quiz"], ["persona-forme", "Quelle forme cristalline es-tu ?", "💎", "/jeux.html#quiz"],
-  ["vrai-faux", "Vrai ou faux minéralogique", "✅", "/jeux.html#jeux"], ["plus-dur", "Plus dur ou moins dur ?", "⚖️", "/jeux.html#jeux"], ["pendu", "Le pendu minéralogique", "🔤", "/jeux.html#jeux"], ["glossaire", "Le glossaire en défi", "📖", "/jeux.html#jeux"]
+  ["vrai-faux", "Vrai ou faux minéralogique", "✅", "/jeux.html#jeux"], ["plus-dur", "Plus dur ou moins dur ?", "⚖️", "/jeux.html#jeux"], ["pendu", "Le pendu minéralogique", "🔤", "/jeux.html#jeux"], ["classe-les", "Classe-les !", "📶", "/jeux.html#jeux"], ["glossaire", "Le glossaire en défi", "📖", "/jeux.html#jeux"]
 ];
 
 function connectionCard(state, stats) {
