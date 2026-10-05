@@ -25,7 +25,8 @@ export function mountQuiz(container) {
         before.push(image, creditLine(photo));
       }
       const link = el("a", "link mq-fiche", `Voir la fiche : ${item.name} →`); link.href = ficheUrl("mineral", item.slug);
-      return { before, after: [link], photos: photo ? [new URL(photo.src, location.origin).href] : [] };
+      const url = photo ? new URL(photo.src, location.origin).href : null;
+      return { before, after: [link], logo: url, logoWidth: 760, logoFrame: true, photos: [] };
     }
   });
 }

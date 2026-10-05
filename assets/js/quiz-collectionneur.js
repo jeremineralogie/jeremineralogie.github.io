@@ -21,7 +21,7 @@ export function mountCollectionneur(container) {
       const [slug, name, why] = item.mineral;
       const note = el("p", "mq-mineral"); note.append(`Ton minéral : ${name}. ${why} `);
       const link = el("a", "link mq-fiche", `Voir la fiche : ${name} →`); link.href = ficheUrl("mineral", slug);
-      return { before: [icon], after: [note, link], photos: [new URL(src, location.origin).href] };
+      return { before: [icon], after: [note, link], logo: src, logoWidth: 700, photos: [] };
     }
   });
 }

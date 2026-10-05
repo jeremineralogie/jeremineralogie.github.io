@@ -126,3 +126,13 @@ test("Fiche de partage du glossaire en défi : illustration du jeu", async () =>
   assert.match(game, /logo: "\/assets\/decor\/logo-glossaire\.webp"/);
   assert.ok(existsSync(new URL("../assets/decor/logo-glossaire.webp", import.meta.url)));
 });
+
+test("Fiches de partage : l'illustration de chaque jeu ou résultat remplace la carte ; la carte au repère est réservée à Devine le gisement", async () => {
+  const text = async name => readFile(new URL(`../assets/js/${name}`, import.meta.url), "utf8");
+  const share = await text("share.js");
+  assert.doesNotMatch(share, /const LOGO\b/, "plus de carte par défaut");
+  assert.match(await text("geo-game.js"), /logo: "\/assets\/decor\/logo-jeux\.webp"/);
+  for (const name of ["quiz-prospecteur.js", "quiz-outil.js", "quiz-collectionneur.js"]) assert.match(await text(name), /logo: src/, name);
+  assert.match(await text("quiz-mineral.js"), /logo: url/);
+  assert.match(await text("quiz-persona.js"), /logo: more\?\.logo/);
+});

@@ -60,7 +60,7 @@ export function mountPersonaQuiz(container, { kind, data, lead, kicker, shareTit
     card.append(el("p", "mq-text", item.text));
     if (more) card.append(...more.after || []);
     card.append(sharePanel({
-      spec: { title: shareTitle, date: dateFr(new Date().toISOString().slice(0, 10)), big: item.name, bigSub: item.tagline, photos: more?.photos || [], footer: shareFooter },
+      spec: { title: shareTitle, date: dateFr(new Date().toISOString().slice(0, 10)), big: item.name, bigSub: item.tagline, photos: more?.photos || [], logo: more?.logo, logoWidth: more?.logoWidth, logoFrame: more?.logoFrame, footer: shareFooter },
       text: shareText(item),
       fileName: `${kind}-${item.slug}.png`, remember: `persona-${kind}`, rememberOnce: true
     }));
