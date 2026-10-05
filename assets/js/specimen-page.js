@@ -98,7 +98,7 @@ function renderSpecimen(specimen) {
   if (specimen.description) void applyGlossary(content.querySelector("[data-description]"));
   root.querySelector(".fav-btn")?.remove(); root.querySelector(".share-btn")?.remove();
   root.querySelector("[data-location-summary]").after(favoriteButton({ type: "specimen", id: specimen.id, name: specimen.mineral || "Spécimen", href: specimenUrl({ id: specimen.id }), meta: [specimen.provenance || specimen.locality, specimen.department].filter(Boolean).join(" · "), image: (specimen.photos || [])[0] || "" }));
-  root.querySelector(".fav-btn").after(shareButton({ title: specimen.mineral || "Spécimen", text: `${specimen.mineral || "Spécimen"} — collection Jeremineralogie` }));
+  root.querySelector(".fav-btn").after(shareButton({ title: specimen.mineral || "Spécimen", text: `${specimen.mineral || "Spécimen"} — collection Jeremineralogie`, label: "Partager cette pièce", copyPrompt: "Copiez le lien de cette pièce :" }));
   const linkField = (selector, text, href) => {
     const element = root.querySelector(selector);
     if (!text || !href) return;

@@ -81,7 +81,7 @@ function render(client, item) {
   else { contact.className = "btn"; contact.href = `contact.html?reference=${encodeURIComponent(item.reference)}`; contact.textContent = "Me contacter"; }
   const cover = photos[0] ? publicMediaUrl(client, photos[0]) : "";
   const favorite = favoriteButton({ type: "piece", id: item.reference || item.slug, name: shopItemName(item), href: pieceUrl(item), meta: [clean(item.mine?.name), clean(item.reference)].filter(Boolean).join(" · "), image: cover });
-  details.append(kicker, title, list, price, contact, favorite, shareButton({ title: name, text: `${name} — Jeremineralogie` }));
+  details.append(kicker, title, list, price, contact, favorite, shareButton({ title: name, text: `${name} — Jeremineralogie`, label: "Partager cette pièce", copyPrompt: "Copiez le lien de cette pièce :" }));
   wrap.append(left, details); root.replaceChildren(wrap);
   document.querySelector("[data-seo]")?.remove();
   renderCrumbs([["Accueil", "/"], ["Boutique", "/boutique.html"], [name]]);
