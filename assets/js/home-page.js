@@ -146,8 +146,12 @@ async function load() {
   const { daily } = dailyMinerals(minerals);
   if (daily) void renderDaily(daily);
   void mountGames(document.querySelector("#home-games [data-games]"), { client, minerals, collapsible: true });
-  const quizzes = document.querySelector("#home-quiz");
-  if (quizzes) { const { mountQuizzes } = await import("./quiz-hub.js"); mountQuizzes(quizzes, { client }); }
+  const replay = document.querySelector("#home-replay"), quizzes = document.querySelector("#home-quiz");
+  if (replay || quizzes) {
+    const { mountQuizzes } = await import("./quiz-hub.js");
+    if (replay) mountQuizzes(replay, { client }, "jeu");
+    if (quizzes) mountQuizzes(quizzes, { client }, "quiz");
+  }
   const [specimenCount, shopCount, termCount, articleCount, archiveCount] = counts;
   const plural = (count, one, many) => count > 1 ? many : one;
   renderStats([

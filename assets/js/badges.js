@@ -19,8 +19,8 @@ export function longestStreak(dates) {
 }
 
 export const DAILY_GAMES = ["mineral", "quiz", "geo"];
-// Les quatre quiz du site : deux de personnalité (un seul passage) et deux rejouables.
-export const QUIZ_KEYS = ["persona-mineral", "persona-prospecteur", "vrai-faux", "glossaire"];
+// Les cinq quiz du site : trois de personnalité (un seul passage) et deux rejouables.
+export const QUIZ_KEYS = ["persona-mineral", "persona-prospecteur", "persona-outil", "vrai-faux", "glossaire"];
 export const REPLAY_QUIZZES = ["vrai-faux", "glossaire"];
 
 export function statsOf(state, today = parisDay()) {
@@ -33,11 +33,11 @@ export function statsOf(state, today = parisDay()) {
     stats[game] = { games: days.length, streak: currentStreak(days, today), longest: longestStreak(days) };
     stats.games.any += days.length;
   }
-  const done = { "persona-mineral": Boolean(state.personas?.mineral), "persona-prospecteur": Boolean(state.personas?.prospecteur) };
+  const done = { "persona-mineral": Boolean(state.personas?.mineral), "persona-prospecteur": Boolean(state.personas?.prospecteur), "persona-outil": Boolean(state.personas?.outil) };
   const plays = kind => Number(state.quizzes?.[kind]?.plays) || 0;
   REPLAY_QUIZZES.forEach(kind => { done[kind] = plays(kind) >= 1; });
   stats.quizzes = { done, all: QUIZ_KEYS.every(kind => done[kind]), plays: Object.fromEntries(REPLAY_QUIZZES.map(kind => [kind, plays(kind)])), shared: { mineral: Boolean(state.shares?.["persona-mineral"]), prospecteur: Boolean(state.shares?.["persona-prospecteur"]) } };
-  stats.quizzes.tenTimes = stats.quizzes.done["persona-mineral"] && stats.quizzes.done["persona-prospecteur"] && REPLAY_QUIZZES.every(kind => plays(kind) >= 10);
+  stats.quizzes.tenTimes = stats.quizzes.done["persona-mineral"] && stats.quizzes.done["persona-prospecteur"] && stats.quizzes.done["persona-outil"] && REPLAY_QUIZZES.every(kind => plays(kind) >= 10);
   stats.nav = { pages: (state.nav?.pages || []).length, minerals: (state.nav?.minerals || []).length, favorites: Number(state.nav?.favMax) || 0 };
   return stats;
 }
@@ -57,11 +57,11 @@ export const BADGES = [
   badge("jeux-serie-7", "jeux", "🕹️", "Accro aux jeux", "7 jours d’affilée sur chacun des trois jeux", stats => eachGame(stats, "longest", 7), stats => [minOf(stats, "longest"), 7]),
   badge("jeux-serie-30", "jeux", "👑", "Game master", "30 jours d’affilée sur chacun des trois jeux", stats => eachGame(stats, "longest", 30), stats => [minOf(stats, "longest"), 30]),
 
-  badge("quiz-tous", "quiz", "❓", "Encore une question ?", "Faire les quatre quiz", stats => stats.quizzes.all, stats => [QUIZ_KEYS.filter(kind => stats.quizzes.done[kind]).length, 4]),
+  badge("quiz-tous", "quiz", "❓", "Encore une question ?", "Faire les cinq quiz", stats => stats.quizzes.all, stats => [QUIZ_KEYS.filter(kind => stats.quizzes.done[kind]).length, QUIZ_KEYS.length]),
   badge("quiz-partage-mineral", "quiz", "🪞", "J’assume en public", "Partager « Quel minéral es-tu ? »", stats => stats.quizzes.shared.mineral),
   badge("quiz-partage-prospecteur", "quiz", "🤝", "Merci du partage", "Partager « Quel prospecteur es-tu ? »", stats => stats.quizzes.shared.prospecteur),
-  badge("quiz-dix-fois", "quiz", "🏆", "Champion(ne)", "Faire chaque quiz : les deux quiz de personnalité, et 10 parties du vrai ou faux et du glossaire", stats => stats.quizzes.tenTimes,
-    stats => [Math.min(10, stats.quizzes.plays["vrai-faux"]) + Math.min(10, stats.quizzes.plays.glossaire) + (stats.quizzes.done["persona-mineral"] ? 1 : 0) + (stats.quizzes.done["persona-prospecteur"] ? 1 : 0), 22]),
+  badge("quiz-dix-fois", "quiz", "🏆", "Champion(ne)", "Faire chaque quiz : les trois quiz de personnalité, et 10 parties du vrai ou faux et du glossaire", stats => stats.quizzes.tenTimes,
+    stats => [Math.min(10, stats.quizzes.plays["vrai-faux"]) + Math.min(10, stats.quizzes.plays.glossaire) + (stats.quizzes.done["persona-mineral"] ? 1 : 0) + (stats.quizzes.done["persona-prospecteur"] ? 1 : 0) + (stats.quizzes.done["persona-outil"] ? 1 : 0), 23]),
 
   badge("nav-pages", "navigation", "👀", "Curieux(se)", "Explorer 10 pages du site", stats => stats.nav.pages >= 10, stats => [stats.nav.pages, 10]),
   badge("nav-fiches", "navigation", "🎓", "Le savoir !", "Consulter 50 fiches minéraux", stats => stats.nav.minerals >= 50, stats => [stats.nav.minerals, 50]),

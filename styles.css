@@ -892,3 +892,5 @@ body.acct-open{overflow:hidden}
 .space-meta{font-size:.82rem;color:#a995c9}
 .link-pop-line{color:#c4a6f5;font-size:.82rem}
 .gloss-pop .link{justify-self:start}
+.mq-icon{display:block;width:min(180px,60vw);height:auto;aspect-ratio:1;filter:drop-shadow(0 8px 18px rgba(120,60,200,.45))}
+.mq-mineral{margin:0;max-width:520px;font-size:.95rem;color:#e6dcf5}
