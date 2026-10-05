@@ -103,3 +103,9 @@ test("Fiche de partage du quiz du jour : illustration du jeu, sans second point 
   assert.doesNotMatch(games, /mystery: true/);
   assert.ok(existsSync(new URL("../assets/decor/logo-quiz-du-jour.webp", import.meta.url)));
 });
+
+test("Fiche de partage du vrai ou faux : illustration du jeu", async () => {
+  const game = await readFile(new URL("../assets/js/quiz-vrai-faux.js", import.meta.url), "utf8");
+  assert.match(game, /logo: "\/assets\/decor\/logo-vrai-faux\.webp"/);
+  assert.ok(existsSync(new URL("../assets/decor/logo-vrai-faux.webp", import.meta.url)));
+});
