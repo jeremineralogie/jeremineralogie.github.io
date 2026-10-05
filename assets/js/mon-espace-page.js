@@ -12,7 +12,7 @@ const KINDS = { identification: "Demande d’identification", contact: "Message"
 const STATUS = { nouveau: "Envoyé", lu: "Lu", traite: "Traité", archive: "Archivé" };
 const dateFr = iso => new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Paris" });
 
-function card(title, ...nodes) { const node = el("section", "space-card"); node.append(el("h2", "space-title", title), ...nodes); return node; }
+function card(title, ...nodes) { const node = el("section", "space-card"); node.append(el("h3", "space-title", title), ...nodes); return node; }
 function link(href, label) { const a = el("a", "link", label); a.href = href; return a; }
 
 async function messagesCard(user) {
@@ -35,18 +35,21 @@ async function messagesCard(user) {
   return node;
 }
 
+let drawing = 0;
 async function draw() {
+  const turn = ++drawing; // plusieurs dessins peuvent se croiser (connexion, synchronisation) : seul le dernier est affiché
   const user = currentUser();
-  root.replaceChildren();
+  const cards = [];
   if (!user) {
-    root.append(card("Un compte pour quoi faire ?", el("p", "space-note", "Un compte gratuit (sans adresse e-mail) garde pour toi, sur tous tes appareils : ta progression aux jeux et tes badges, tes favoris, et l’historique de tes messages et demandes d’identification."), el("p", "space-note", "Utilise la pastille en haut à droite pour te connecter ou créer ton compte.")));
-    return;
+    cards.push(card("Un compte pour quoi faire ?", el("p", "space-note", "Un compte gratuit (sans adresse e-mail) garde pour toi, sur tous tes appareils : ta progression aux jeux et tes badges, tes favoris, et l’historique de tes messages et demandes d’identification."), el("p", "space-note", "Utilise la pastille en haut à droite pour te connecter ou créer ton compte.")));
+  } else {
+    const favorites = getFavorites(), state = getProgress(), badges = BADGES.filter(badge => state.badges?.[badge.id]).length;
+    cards.push(card(`Bonjour ${user.name}`, el("p", "space-note", "Ton compte est connecté : tout ce qui suit est sauvegardé automatiquement.")));
+    cards.push(card("Mes favoris", el("p", "space-note", favorites.length ? `${plural(favorites.length, "favori enregistré", "favoris enregistrés")}, retrouvés sur tous tes appareils.` : "Aucun favori pour l’instant."), link("favoris.html", "Voir mes favoris →")));
+    cards.push(card("Mon carnet de terrain", el("p", "space-note", `${badges} badge${badges > 1 ? "s" : ""} sur ${BADGES.length} · résultats des jeux gardés 7 jours.`), link("jeux.html#carnet", "Ouvrir mon carnet →")));
+    cards.push(await messagesCard(user));
   }
-  const favorites = getFavorites(), state = getProgress(), badges = BADGES.filter(badge => state.badges?.[badge.id]).length;
-  root.append(card(`Bonjour ${user.name}`, el("p", "space-note", "Ton compte est connecté : tout ce qui suit est sauvegardé automatiquement.")));
-  root.append(card("Mes favoris", el("p", "space-note", favorites.length ? `${plural(favorites.length, "favori enregistré", "favoris enregistrés")}, retrouvés sur tous tes appareils.` : "Aucun favori pour l’instant."), link("favoris.html", "Voir mes favoris →")));
-  root.append(card("Mon carnet de terrain", el("p", "space-note", `${badges} badge${badges > 1 ? "s" : ""} sur ${BADGES.length} · résultats des jeux gardés 7 jours.`), link("jeux.html#carnet", "Ouvrir mon carnet →")));
-  root.append(await messagesCard(user));
+  if (turn === drawing) root.replaceChildren(...cards);
 }
 
 if (root) { void initAccount().then(() => { void draw(); onAccountChange(() => void draw()); }); }
