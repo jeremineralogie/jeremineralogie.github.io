@@ -19,10 +19,10 @@ export function longestStreak(dates) {
 }
 
 export const DAILY_GAMES = ["mineral", "quiz", "geo"];
-// Les quiz de personnalité (un seul passage) : pour en ajouter un, l'ajouter ici. Les jeux rejouables (vrai ou faux, glossaire) sont comptés à part.
+// Les quiz de personnalité (un seul passage) : pour en ajouter un, l'ajouter ici. Les jeux rejouables (vrai ou faux, glossaire, plus dur ou moins dur, pendu) sont comptés à part.
 export const PERSONAS = ["mineral", "prospecteur", "outil", "collectionneur", "forme"];
-export const QUIZ_KEYS = [...PERSONAS.map(kind => `persona-${kind}`), "vrai-faux", "glossaire"];
-export const REPLAY_QUIZZES = ["vrai-faux", "glossaire"];
+export const REPLAY_QUIZZES = ["vrai-faux", "glossaire", "plus-dur", "pendu"];
+export const QUIZ_KEYS = [...PERSONAS.map(kind => `persona-${kind}`), ...REPLAY_QUIZZES];
 
 export function statsOf(state, today = parisDay()) {
   const stats = {
@@ -61,8 +61,8 @@ export const BADGES = [
   badge("quiz-tous", "quiz", "❓", "Encore une question ?", `Faire les ${["", "un", "deux", "trois", "quatre", "cinq", "six", "sept"][QUIZ_KEYS.length] || QUIZ_KEYS.length} quiz`, stats => stats.quizzes.all, stats => [QUIZ_KEYS.filter(kind => stats.quizzes.done[kind]).length, QUIZ_KEYS.length]),
   badge("quiz-partage-mineral", "quiz", "🪞", "J’assume en public", "Partager « Quel minéral es-tu ? »", stats => stats.quizzes.shared.mineral),
   badge("quiz-partage-prospecteur", "quiz", "🤝", "Merci du partage", "Partager « Quel prospecteur es-tu ? »", stats => stats.quizzes.shared.prospecteur),
-  badge("quiz-dix-fois", "quiz", "🏆", "Champion(ne)", "Faire chaque quiz : tous les quiz de personnalité, et 10 parties du vrai ou faux et du glossaire", stats => stats.quizzes.tenTimes,
-    stats => [Math.min(10, stats.quizzes.plays["vrai-faux"]) + Math.min(10, stats.quizzes.plays.glossaire) + PERSONAS.filter(kind => stats.quizzes.done[`persona-${kind}`]).length, 20 + PERSONAS.length]),
+  badge("quiz-dix-fois", "quiz", "🏆", "Champion(ne)", "Faire chaque quiz : tous les quiz de personnalité, et 10 parties du vrai ou faux, du glossaire, de « Plus dur ou moins dur ? » et du pendu", stats => stats.quizzes.tenTimes,
+    stats => [REPLAY_QUIZZES.reduce((total, kind) => total + Math.min(10, stats.quizzes.plays[kind]), 0) + PERSONAS.filter(kind => stats.quizzes.done[`persona-${kind}`]).length, 10 * REPLAY_QUIZZES.length + PERSONAS.length]),
 
   badge("nav-pages", "navigation", "👀", "Curieux(se)", "Explorer 10 pages du site", stats => stats.nav.pages >= 10, stats => [stats.nav.pages, 10]),
   badge("nav-fiches", "navigation", "🎓", "Le savoir !", "Consulter 50 fiches minéraux", stats => stats.nav.minerals >= 50, stats => [stats.nav.minerals, 50]),

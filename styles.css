@@ -213,7 +213,7 @@ body{touch-action:pan-y pinch-zoom}
 /* Recherche : texte centré dans le cadre */
 .search{padding:0 21% 1% 21%!important}
 /* Photos des fiches : ouverture en plein écran */
-main img:not(.card img):not(.thumbs img):not(a[href] img){cursor:zoom-in}
+main img:not(.card img):not(.thumbs img):not(a[href] img):not(button img){cursor:zoom-in}
 .lb{position:fixed;inset:0;z-index:1000;background:rgba(2,0,5,.96);display:flex;align-items:center;justify-content:center;touch-action:pinch-zoom}
 .lb[hidden]{display:none}
 .lb-img{max-width:100vw;max-height:100vh;max-height:100dvh;width:auto;height:auto;object-fit:contain;cursor:default}
@@ -894,3 +894,32 @@ body.acct-open{overflow:hidden}
 .gloss-pop .link{justify-self:start}
 .mq-icon{display:block;width:min(180px,60vw);height:auto;aspect-ratio:1;filter:drop-shadow(0 8px 18px rgba(120,60,200,.45))}
 .mq-mineral{margin:0;max-width:520px;font-size:.95rem;color:#e6dcf5}
+
+/* Plus dur ou moins dur ? */
+.pd-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:560px}
+.pd-card{display:grid;gap:8px;justify-items:center;align-content:start;padding:10px;border:1px solid rgba(160,110,240,.55);border-radius:6px;background:#12091d;color:#f3eaff;font:inherit;cursor:pointer}
+.pd-card:hover:not(:disabled){background:#241340}
+.pd-card:disabled{cursor:default}
+.pd-photo{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;background:#000}
+.pd-name{font-family:var(--serif);font-size:1.15rem;line-height:1.2}
+.pd-value{font-size:.82rem;color:#e6dcf5}
+.pd-card.is-good{border-color:#3fb86b;background:#0c2415}
+.pd-card.is-bad{border-color:#e0355e;background:#2a0a14}
+.pd-credits{display:grid;gap:2px;max-width:560px;font-size:.72rem}
+
+/* Le pendu minéralogique */
+.pendu-gems{display:flex;gap:8px;justify-content:center;font-size:1.6rem;line-height:1}
+.pendu-gem{color:#b48cff;text-shadow:0 0 10px rgba(180,140,255,.7)}
+.pendu-gem.is-off{color:#3a2a55;text-shadow:none}
+.pendu-clue{margin:0;max-width:560px;line-height:1.5;color:#e6dcf5}
+.pendu-domain{display:inline-block;padding:.1em .6em;border:1px solid #6a37b6;border-radius:999px;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#c4a6f5}
+.pendu-word{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:4px 0;font-family:var(--serif);font-size:1.6rem}
+.pendu-char{display:inline-block;min-width:1.2em;padding-bottom:.1em;border-bottom:2px solid #b48cff;text-align:center;color:#f0d9a8}
+.pendu-char.is-sep{border-bottom-color:transparent;min-width:.6em}
+.pendu-char.is-missed{color:#ff8fa5}
+.pendu-keys{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;width:100%;max-width:420px}
+.pendu-key{padding:9px 0;border:1px solid rgba(160,110,240,.55);border-radius:4px;background:#12091d;color:#f3eaff;font:inherit;cursor:pointer}
+.pendu-key:hover:not(:disabled){background:#241340}
+.pendu-key:disabled{cursor:default;opacity:.55}
+.pendu-key.is-hit{border-color:#3fb86b;background:#0c2415;opacity:1}
+.pendu-key.is-miss{border-color:#e0355e;background:#2a0a14}

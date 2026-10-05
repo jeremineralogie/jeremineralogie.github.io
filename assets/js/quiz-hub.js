@@ -7,6 +7,8 @@ const QUIZZES = [
   { id: "collectionneur", kind: "quiz", title: "Quel collectionneur es-tu ?", load: () => import("./quiz-collectionneur.js").then(module => (box, ctx) => module.mountCollectionneur(box, ctx)) },
   { id: "forme", kind: "quiz", title: "Quelle forme cristalline es-tu ?", load: () => import("./quiz-forme.js").then(module => (box, ctx) => module.mountForme(box, ctx)) },
   { id: "vrai-faux", kind: "jeu", title: "Vrai ou faux minéralogique", load: () => import("./quiz-vrai-faux.js").then(module => (box, ctx) => module.mountVraiFaux(box, ctx)) },
+  { id: "pendu", kind: "jeu", title: "Le pendu minéralogique", load: () => import("./pendu.js").then(module => (box, ctx) => module.mountPendu(box, ctx)) },
+  { id: "plus-dur", kind: "jeu", title: "Plus dur ou moins dur ?", load: () => import("./plus-dur.js").then(module => (box, ctx) => module.mountPlusDur(box, ctx)) },
   { id: "glossaire", kind: "jeu", title: "Le glossaire en défi", load: () => import("./quiz-glossaire.js").then(module => (box, ctx) => module.mountGlossaire(box, ctx)) }
 ];
 
