@@ -51,7 +51,7 @@ function render(client, item) {
     if (value instanceof Node) description.append(value); else description.textContent = value;
     list.append(term, description);
   };
-  const link = (text, href) => { if (!text) return ""; if (!href) return text; const anchor = document.createElement("a"); anchor.className = "link"; anchor.href = href; anchor.textContent = text; return anchor; };
+  const link = (text, href) => { if (!text) return ""; if (!href) return text; const anchor = document.createElement("a"); anchor.className = "link"; anchor.dataset.fiche = ""; anchor.href = href; anchor.textContent = text; return anchor; };
   const clean = value => String(value ?? "").trim();
   const mineralName = clean(item.mineral_name || item.mineral?.name);
   const mineName = clean(item.mine?.name);

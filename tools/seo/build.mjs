@@ -177,10 +177,10 @@ async function main() {
   const richText = (text, usedEntities, usedTerms) => entityLinker(String(text ?? ""), usedEntities).map(part => {
     if (!part.href) return withGlossary(part.text, usedTerms);
     const sameName = termSlugByName.get(foldText(part.text.trim())); if (sameName) usedTerms.add(sameName);
-    return `<a class="link" href="${esc(part.href)}">${esc(part.text)}</a>`;
+    return `<a class="link" data-fiche href="${esc(part.href)}">${esc(part.text)}</a>`;
   }).join("");
   const crumbNav = items => `<nav class="crumbs" aria-label="Fil d’Ariane"><ol>${items.map(([name, url], index) => index === items.length - 1 ? `<li aria-current="page">${esc(name)}</li>` : `<li><a href="${esc(String(url).replace(SITE, "") || "/")}">${esc(name)}</a></li>`).join("")}</ol></nav>`;
-  const linkTo = (text, target) => target ? `<a class="link" href="${esc(target)}">${esc(text)}</a>` : esc(text);
+  const linkTo = (text, target) => target ? `<a class="link" data-fiche href="${esc(target)}">${esc(text)}</a>` : esc(text);
   const departmentHref = code => { const department = departmentByCode.get(code); return department ? href("department", departmentSlug(department)) : null; };
   // Termes du glossaire qui citent un minéral (champ « minéraux liés » du terme).
   const termsOfMineral = new Map();
@@ -203,7 +203,7 @@ async function main() {
   // Pages par thème (couleur, dureté, famille, système) : calculées d'abord, car les fiches minéraux y renvoient.
   const themes = buildThemes(minerals);
   const availableThemes = Object.fromEntries(Object.entries(themes).map(([kind, map]) => [kind, [...map.keys()]]));
-  const mineralLink = item => `<a class="link" href="/${FOLDERS.mineral}/${slugify(item.slug)}/">${esc(item.name)}</a>`;
+  const mineralLink = item => `<a class="link" data-fiche href="/${FOLDERS.mineral}/${slugify(item.slug)}/">${esc(item.name)}</a>`;
   minerals.forEach(item => {
     const photo = photoUrl(cfg, item.media) || commonsUrl(item.slug);
     const credit = photoUrl(cfg, item.media) ? (item.photo_credit ? `<p class="photo-credit">${esc(item.photo_credit)}</p>` : "")

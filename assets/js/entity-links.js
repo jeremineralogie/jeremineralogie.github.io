@@ -77,7 +77,7 @@ export async function loadArchiveLinks(client, archiveId) {
 export function appendLinked(element, parts) {
   parts.forEach(part => {
     if (!part.href) { element.append(document.createTextNode(part.text)); return; }
-    const link = document.createElement("a"); link.className = "link"; link.href = part.href; link.textContent = part.text; element.append(link);
+    const link = document.createElement("a"); link.className = "link"; link.dataset.fiche = ""; link.href = part.href; link.textContent = part.text; element.append(link);
   });
 }
 

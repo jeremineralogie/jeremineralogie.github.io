@@ -95,7 +95,7 @@ function bindPopover(bySlug) {
     const term = bySlug.get(link.dataset.slug);
     if (!term) return;
     event.preventDefault();
-    close();
+    close(); document.querySelectorAll(".link-pop").forEach(node => node.remove());
     popover = document.createElement("div"); popover.className = "gloss-pop"; popover.setAttribute("role", "dialog"); popover.setAttribute("aria-label", term.term);
     const head = document.createElement("div"); head.className = "gloss-pop-head";
     const title = document.createElement("strong"); title.textContent = term.term;
