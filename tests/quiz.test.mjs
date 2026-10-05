@@ -43,6 +43,7 @@ test("Quel outil de prospecteur es-tu : répondre toujours dans le sens d'un out
     const withTool = QUIZ_OUTIL.questions.filter(question => question.answers.some(answer => answer.v[axis])).length;
     if (withTool >= 4) assert.equal(personaResult(data, answers).icon, tool, tool);
   });
+  QUIZ_PROSPECTEUR.profiles.forEach(item => assert.ok(existsSync(new URL(`../assets/prospecteurs/${item.slug}.webp`, import.meta.url)), `image de ${item.name}`));
   QUIZ_OUTIL.profiles.forEach(item => { assert.equal(item.mineral.length, 3, item.name); assert.ok(item.icon, item.name); assert.ok(existsSync(new URL(`../assets/outils/${item.icon}.webp`, import.meta.url)), `image de ${item.name}`); });
 });
 
@@ -86,4 +87,31 @@ test("Jeux & quiz : jeux rejouables dans « Jeux », quiz de personnalité dans 
   const index = await readFile(new URL("../index.html", import.meta.url), "utf8");
   assert.match(index, /id="home-games-title">Jeux</);
   assert.match(index, /id="home-quizzes-title">Quiz</);
+});
+
+test("Fiche de partage de « Trouve le minéral » : illustration du jeu à la place de la carte", async () => {
+  const game = await readFile(new URL("../assets/js/mineral-photo-game.js", import.meta.url), "utf8");
+  assert.match(game, /logo: "\/assets\/decor\/logo-trouve-mineral\.webp"/);
+  assert.ok(existsSync(new URL("../assets/decor/logo-trouve-mineral.webp", import.meta.url)));
+  const share = await readFile(new URL("../assets/js/share.js", import.meta.url), "utf8");
+  assert.match(share, /spec\.logo/);
+});
+
+test("Fiche de partage du quiz du jour : illustration du jeu, sans second point d'interrogation", async () => {
+  const games = await readFile(new URL("../assets/js/games.js", import.meta.url), "utf8");
+  assert.match(games, /logo: "\/assets\/decor\/logo-quiz-du-jour\.webp"/);
+  assert.doesNotMatch(games, /mystery: true/);
+  assert.ok(existsSync(new URL("../assets/decor/logo-quiz-du-jour.webp", import.meta.url)));
+});
+
+test("Fiche de partage du vrai ou faux : illustration du jeu", async () => {
+  const game = await readFile(new URL("../assets/js/quiz-vrai-faux.js", import.meta.url), "utf8");
+  assert.match(game, /logo: "\/assets\/decor\/logo-vrai-faux\.webp"/);
+  assert.ok(existsSync(new URL("../assets/decor/logo-vrai-faux.webp", import.meta.url)));
+});
+
+test("Fiche de partage du glossaire en défi : illustration du jeu", async () => {
+  const game = await readFile(new URL("../assets/js/quiz-glossaire.js", import.meta.url), "utf8");
+  assert.match(game, /logo: "\/assets\/decor\/logo-glossaire\.webp"/);
+  assert.ok(existsSync(new URL("../assets/decor/logo-glossaire.webp", import.meta.url)));
 });

@@ -150,7 +150,7 @@ export async function renderMineralPhotoGame(panel, { client, minerals }) {
     end.append(sharePanel({
       fileName: `trouve-le-mineral-${today}.png`, remember: "mineral",
       text: `💎 Trouve le minéral — ${dateFr(today)}\n${squares.join("")} ${total}/${rounds.length}\nSaurez-vous faire mieux ?`,
-      spec: { title: "Trouve le minéral", date: dateFr(today), big: `${total} / ${rounds.length}`, bigSub: "minéraux trouvés", squares,
+      spec: { title: "Trouve le minéral", logo: "/assets/decor/logo-trouve-mineral.webp", logoWidth: 780, date: dateFr(today), big: `${total} / ${rounds.length}`, bigSub: "minéraux trouvés", squares,
         photos: rounds.map(round => photoOf(round.target, client, credits).src), streak: streak > 1 ? `🔥 Série de ${streak} jours` : "", footer: "Saurez-vous faire mieux ?" }
     }));
     end.append(el("p", "geo-next-day", "De nouveaux minéraux à reconnaître demain."));

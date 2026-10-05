@@ -146,7 +146,7 @@ export function mountVraiFaux(container, { client }) {
     recordQuizPlay("vrai-faux", score, total);
     const message = score === total ? "Sans faute !" : score >= 8 ? "Excellent !" : score >= 6 ? "Bien joué !" : score >= 4 ? "Pas mal, tu progresses !" : "Les fiches n’attendent que toi !";
     box.replaceChildren(el("p", "mq-kicker", "Ton score"), el("h3", "mq-name", `${score} / ${total}`), el("p", "mq-tagline", message),
-      sharePanel({ spec: { title: "Vrai ou faux minéralogique", date: dateFr(new Date().toISOString().slice(0, 10)), big: `${score} / ${total}`, bigSub: message, photos: [], footer: "Et toi, combien feras-tu ?" },
+      sharePanel({ spec: { title: "Vrai ou faux minéralogique", logo: "/assets/decor/logo-vrai-faux.webp", logoWidth: 900, date: dateFr(new Date().toISOString().slice(0, 10)), big: `${score} / ${total}`, bigSub: message, photos: [], footer: "Et toi, combien feras-tu ?" },
         text: `J’ai fait ${score}/${total} au vrai ou faux minéralogique ! Et toi ?`, fileName: "vrai-faux-mineralogique.png", remember: "vrai-faux" }),
       Object.assign(el("button", "pick-choice mq-start", "Rejouer"), { type: "button", onclick: () => void start() }));
   };

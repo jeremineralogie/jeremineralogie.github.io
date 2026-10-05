@@ -33,7 +33,7 @@ function spaced(ctx, text, x, y, spacing) {
   ctx.textAlign = "center";
 }
 
-// spec : { title, date, big, bigSub, note, squares: ["🟩"…], photos: [url…], mystery (médaillon « ? »), streak, footer }
+// spec : { title, date, big, bigSub, note, squares: ["🟩"…], photos: [url…], mystery (médaillon « ? »), streak, footer, logo (illustration propre au jeu, à la place de la carte), logoWidth }
 async function drawCard(spec, withPhotos = true) {
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
@@ -48,8 +48,14 @@ async function drawCard(spec, withPhotos = true) {
   ctx.strokeStyle = "rgba(160,110,240,.55)"; ctx.lineWidth = 3; roundRect(ctx, 44, 44, W - 88, H - 88, 28); ctx.stroke();
   ctx.strokeStyle = "rgba(160,110,240,.2)"; ctx.lineWidth = 1.5; roundRect(ctx, 60, 60, W - 120, H - 120, 20); ctx.stroke();
 
-  const logo = await loadImage(LOGO, false);
-  if (logo) { const width = 640, height = width * logo.height / logo.width; ctx.drawImage(logo, (W - width) / 2, 110, width, height); }
+  // Illustration du haut : celle du jeu si elle est fournie (centrée dans la zone du haut), sinon la carte de France.
+  const own = spec.logo ? await loadImage(spec.logo, false) : null;
+  const logo = own || await loadImage(LOGO, false);
+  if (logo) {
+    const custom = Boolean(own);
+    const width = custom ? (spec.logoWidth || 640) : 640, height = width * logo.height / logo.width;
+    ctx.drawImage(logo, (W - width) / 2, custom ? Math.max(70, 110 + (640 - height) / 2) : 110, width, height);
+  }
 
   ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
   ctx.fillStyle = "#f3eaff";
