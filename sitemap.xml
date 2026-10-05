@@ -14,6 +14,7 @@
   <url><loc>https://jeremineralogie.fr/contact.html</loc></url>
   <url><loc>https://jeremineralogie.fr/legal.html</loc></url>
   <url><loc>https://jeremineralogie.fr/mineraux/acanthite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/achroite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/actinote/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/adamite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/adulaire/</loc><lastmod>2026-10-03</lastmod></url>
@@ -21,6 +22,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/agate/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/aigue-marine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/aikinite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/ajoite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/alabandite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/albatre/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/albite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -39,14 +41,17 @@
   <url><loc>https://jeremineralogie.fr/mineraux/amphibole/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/analcime/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/anatase/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/ancylite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/andalousite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/andesine/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/andorite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/andradite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/anglesite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/anhydrite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/ankerite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/annabergite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/anorthite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/anorthoclase/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/anthophyllite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/antigorite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/antimoine/</loc><lastmod>2026-10-03</lastmod></url>
@@ -54,11 +59,14 @@
   <url><loc>https://jeremineralogie.fr/mineraux/apatite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/apophyllite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/aragonite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/arfvedsonite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/argent/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/argyrodite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/arsenic/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/arsenolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/arsenopyrite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/artinite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/astrophyllite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/atacamite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/augelite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/augite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -68,6 +76,8 @@
   <url><loc>https://jeremineralogie.fr/mineraux/aventurine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/axinite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/azurite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/babingtonite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/baddeleyite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/baryte/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/barytocalcite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/bassetite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -81,6 +91,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/berthierite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/bertrandite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/beryl/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/beryllonite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/beudantite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/biotite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/bischofite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -89,7 +100,10 @@
   <url><loc>https://jeremineralogie.fr/mineraux/bismuthinite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/bixbite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/bixbyite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/bloedite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/boehmite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/bois-silicifie/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/boleite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/boracite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/borax/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/bornite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -102,9 +116,11 @@
   <url><loc>https://jeremineralogie.fr/mineraux/bromargyrite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/brookite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/brucite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/brushite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/bustamite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/bytownite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cacoxenite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/calaverite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/calcedoine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/calciovolborthite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/calcite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -119,6 +135,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/cavansite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/celadonite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/celestine/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/celsian/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cerusite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cervantite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/chabazite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -133,6 +150,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/childrenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/chlorargyrite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/chloritoide/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/chondrodite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/chromite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/chrysoberyl/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/chrysocolle/</loc><lastmod>2026-10-03</lastmod></url>
@@ -144,6 +162,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/clinochlore/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/clinoclase/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/clinohumite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/clinoptilolite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/clinozoisite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cobaltite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/coffinite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -171,6 +190,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/cryptomelane/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cubanite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cuivre/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/cumengeite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cummingtonite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cuprite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/cuprosklodowskite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -186,9 +206,11 @@
   <url><loc>https://jeremineralogie.fr/mineraux/descloizite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/devilline/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/diamant/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/diaphorite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/diaspore/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/digenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/diopside/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/diopside-chromifere/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/dioptase/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/dipyre/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/disthene/</loc><lastmod>2026-10-03</lastmod></url>
@@ -199,6 +221,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/duftite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/dumortierite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/dyscrasite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/edingtonite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/elbaite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/electrum/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/emeraude/</loc><lastmod>2026-10-03</lastmod></url>
@@ -206,18 +229,23 @@
   <url><loc>https://jeremineralogie.fr/mineraux/enargite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/enstatite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/eosphorite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/epididymite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/epidote/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/epistilbite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/epsomite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/erythrite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/ettringite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/euchroite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/euclase/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/eucryptite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/eudialyte/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/fairfieldite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/fayalite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/feldspath/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/fer-natif/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/ferberite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/fergusonite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/florencite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/fluorapatite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/fluorite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/forsterite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -227,6 +255,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/franklinite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/freibergite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/fuchsite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/gadolinite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/gahnite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/galene/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/galenobismutite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -246,16 +275,21 @@
   <url><loc>https://jeremineralogie.fr/mineraux/goshenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/goslarite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/goyazite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/grandidierite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/graphite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/greenockite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/greigite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/grenat/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/grossulaire/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/gypse/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/gyrolite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/hackmanite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/halite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/halloysite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/halotrichite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hambergite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hanksite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/hardystonite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/harmotome/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hausmannite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hauyne/</loc><lastmod>2026-10-03</lastmod></url>
@@ -265,25 +299,34 @@
   <url><loc>https://jeremineralogie.fr/mineraux/hematite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hemimorphite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hercynite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/herderite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/hessite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hessonite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/heterogenite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/heterosite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/heulandite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hiddenite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/hollandite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hopeite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hornblende/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/howlite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hubnerite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/humite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/huntite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hureaulite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hyalite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/hyalophane/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hydroboracite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hydrocerussite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hydromagnesite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hydroxylapatite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/hydrozincite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/ikaite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/ilmenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/ilvaite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/indicolite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/inesite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/inyoite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/iodargyrite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/iolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/jacobsite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -292,10 +335,12 @@
   <url><loc>https://jeremineralogie.fr/mineraux/jamesonite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/jarosite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/jaspe/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/jeremejevite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/johannite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/johannsenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/jordanite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/kainite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/kamacite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/kammererite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/kaolinite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/kasolite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -308,6 +353,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/kutnohorite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/labradorite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/lanarkite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/langbeinite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/langite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/lapis-lazuli/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/larimar/</loc><lastmod>2026-10-03</lastmod></url>
@@ -321,6 +367,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/lepidocrocite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/lepidolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/leucite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/levyne/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/libethenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/liddicoatite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/liebigite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -328,11 +375,16 @@
   <url><loc>https://jeremineralogie.fr/mineraux/limonite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/linarite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/linnaeite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/liroconite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/lithiophilite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/lithiophorite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/livingstonite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/lizardite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/lollingite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/lonsdaleite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/lorandite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/ludlamite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/ludwigite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/lussatite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/luzonite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/magnesite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -380,8 +432,10 @@
   <url><loc>https://jeremineralogie.fr/mineraux/nantokite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/natrojarosite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/natrolite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/natron/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/nepheline/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/nephrite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/neptunite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/nickeline/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/nosean/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/obsidienne/</loc><lastmod>2026-10-03</lastmod></url>
@@ -402,10 +456,13 @@
   <url><loc>https://jeremineralogie.fr/mineraux/orthose/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/otavite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/padparadscha/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/painite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/palygorskite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/paragonite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/paratacamite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pargasite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/parisite-ce/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/pearceite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pechblende/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pectolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pentagonite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -414,6 +471,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/peridot/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/perovskite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/petalite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/petzite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pharmacolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pharmacosiderite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/phenakite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -425,6 +483,8 @@
   <url><loc>https://jeremineralogie.fr/mineraux/piemontite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pierre-de-lune/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pierre-de-soleil/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/pirssonite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/plagionite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/plancheite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/platine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/plattnerite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -437,6 +497,8 @@
   <url><loc>https://jeremineralogie.fr/mineraux/powellite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/prasiolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/prehnite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/priceite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/probertite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/proustite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pseudobrookite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pseudomalachite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -452,6 +514,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/pyrophyllite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pyrostilpnite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pyroxene/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/pyroxmangite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/pyrrhotite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/quartz/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/quartz-fume/</loc><lastmod>2026-10-03</lastmod></url>
@@ -459,6 +522,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/quartz-rutile/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/quincyte/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/rammelsbergite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/raspite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/realgar/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/rhodochrosite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/rhodolite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -476,25 +540,32 @@
   <url><loc>https://jeremineralogie.fr/mineraux/sabugalite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sal-ammoniac/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/saleeite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/samarskite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sanidine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/saphir/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sapphirine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sardoine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sartorite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/sassolite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/scapolite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/scheelite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/schoepite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/schorl/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/schreibersite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/scolecite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/scorodite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/scorzalite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/selenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sellaite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/senarmontite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sepiolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/serandite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/serendibite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/serpentine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/serpierite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/shattuckite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/siderite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/siegenite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/silex/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sillimanite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sinhalite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -504,6 +575,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/sodalite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/soddyite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/soufre/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/spangolite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/spath-d-islande/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/spessartine/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sphaerocobaltite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -516,19 +588,27 @@
   <url><loc>https://jeremineralogie.fr/mineraux/stephanite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/stibiconite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/stibine/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/stichtite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/stilbite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/stolzite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/strengite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/stromeyerite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/strontianite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/struvite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sugilite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/sylvanite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/sylvite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/symplesite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/synchysite/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/syngenite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/szaibelyite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/szomolnokite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/taaffeite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/taenite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/talc/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tantalite-fe/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tanzanite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/tapiolite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tarbuttite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/teallite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tellure/</loc><lastmod>2026-10-03</lastmod></url>
@@ -542,17 +622,21 @@
   <url><loc>https://jeremineralogie.fr/mineraux/thomsonite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/thorianite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/thorite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/thortveitite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/thulite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/titanite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/tobermorite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/topaze/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/topaze-imperiale/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/torbernite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tourmaline/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tourmaline-melon-d-eau/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/tourmaline-paraiba/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tremolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tridymite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/triphylite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/triplite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/troilite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/trona/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tsavorite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/tugtupite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -576,12 +660,15 @@
   <url><loc>https://jeremineralogie.fr/mineraux/vauxite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/verdelite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/vermiculite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/verre-du-desert-de-libye/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/vesuvianite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/violarite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/vivianite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/volborthite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/voltaite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/wardite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/wavellite/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/whitlockite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/willemite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/witherite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/wittichenite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -590,6 +677,7 @@
   <url><loc>https://jeremineralogie.fr/mineraux/wulfenite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/wurtzite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/xenotime/</loc><lastmod>2026-10-03</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/mineraux/xonotlite/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/zeolite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/zeunerite/</loc><lastmod>2026-10-03</lastmod></url>
   <url><loc>https://jeremineralogie.fr/mineraux/zincite/</loc><lastmod>2026-10-03</lastmod></url>
@@ -625,16 +713,21 @@
   <url><loc>https://jeremineralogie.fr/pieces/jmqusa1/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/pieces/jmscma1/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/amethyste-les-isserts/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/amethyste-vaux-vallieres/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/analcime-epy-moutier-d-ahun/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/apatite-montebras-soumans/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/aragonite-minglanilla-minglanilla/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/azurite-le-pradet-cap-garonne/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/baryte-four-la-brouque-saint-babel/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/baryte-le-liauzun-olloix/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/beryl-beauchaud-saint-pierre-la-bourlonne/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/calcedoine-crozant/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/fluorite-la-barre-saint-jacques-d-ambur/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/fluorite-la-barre-saint-jacques-d-ambur-2/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/fluorite-la-barre-saint-jacques-d-ambur-3/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/fluorite-la-barre-saint-jacques-d-ambur-4/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/fluorite-la-ramade-flayat/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/fluorite-le-four-herment/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/fluorite-mine-de-la-barre-2018/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/fluorite-saint-peray-saint-peray/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/fluorite-valzergues/</loc><lastmod>2026-10-04</lastmod></url>
@@ -645,8 +738,13 @@
   <url><loc>https://jeremineralogie.fr/specimens/oeuf-de-dinosaure-meze-meze/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/opale-dauzat-dauzat-sur-vodable/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/pyrite-les-vieux-travaux-saint-laurent-le-minier/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/pyrite-navajun-navajun/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/pyrite-saint-denis-d-orques-saint-denis-d-orques/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/pyromorphite-aspriere-aspriere/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/pyromorphite-les-farges-ussel/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/quartz-fume-venachat-prassigout/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/rubis-pont-de-la-rode-la-viala-du-tarn/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/specimens/saphir-col-d-urdach-issor/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/saphir-la-sioule-olby/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/specimens/torbernite-montebras-montebras/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/lire/chaine-des-puys-comment-80-volcans-sont-nes-d-un-continent-qui-se-dechire/</loc><lastmod>2026-10-05</lastmod></url>
@@ -663,9 +761,12 @@
   <url><loc>https://jeremineralogie.fr/gisements/adelaide/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/anduze/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/arrigas/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/aspriere/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/beauchaud/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/berbes/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/buxieres-les-mines/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/chavaniac-lafayette/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/col-d-urdach/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/crozant/</loc><lastmod>2026-09-30</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/curbourse/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/dallet/</loc><lastmod>2026-10-04</lastmod></url>
@@ -677,6 +778,8 @@
   <url><loc>https://jeremineralogie.fr/gisements/la-barre/</loc><lastmod>2026-10-02</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/la-ramade/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/la-sioule/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/le-four/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/le-liauzun/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/le-pradet/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/les-cedres/</loc><lastmod>2026-10-02</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/les-farges/</loc><lastmod>2026-10-04</lastmod></url>
@@ -686,18 +789,23 @@
   <url><loc>https://jeremineralogie.fr/gisements/meze/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/minglanilla/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/montebras/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/navajun/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/nijar/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/nontron/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/pont-de-la-rode/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/pratclaux/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/royat/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/saint-denis-d-orques/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/saint-peray/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/sainte-marguerite-lafigere/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/san-timoteo/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/sannegrande/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/gisements/vaux/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/gisements/venachat/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/adelaide/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/anduze/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/arrigas/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/aspriere/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/berbes/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/boufalabe/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/buxieres-les-mines/</loc><lastmod>2026-10-04</lastmod></url>
@@ -710,30 +818,39 @@
   <url><loc>https://jeremineralogie.fr/communes/dauzat-sur-vodable/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/echassieres/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/flayat/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/herment/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/issor/</loc><lastmod>2026-10-05</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/la-viala-du-tarn/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/maharashtra/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/meze/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/minglanilla/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/montebras/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/moutier-d-ahun/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/navajun/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/nijar/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/nontron/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/olby/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/olloix/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/prassigout/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/pratclaux/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/royat/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/saint-babel/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/saint-denis-d-orques/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/saint-jacques-d-ambur/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/saint-laurent-le-minier/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/saint-peray/</loc><lastmod>2026-10-04</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/saint-pierre-la-bourlonne/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/saint-sylvain-bellegarde/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/sainte-marguerite-lafigere/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/soumans/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/ussel/</loc><lastmod>2026-10-01</lastmod></url>
+  <url><loc>https://jeremineralogie.fr/communes/vallieres/</loc><lastmod>2026-10-05</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/valzergues/</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/venachat/</loc><lastmod>2026-09-30</lastmod></url>
   <url><loc>https://jeremineralogie.fr/communes/vic-sur-cere/</loc><lastmod>2026-10-04</lastmod></url>
   <url><loc>https://jeremineralogie.fr/departements/allier/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/ardeche/</loc></url>
+  <url><loc>https://jeremineralogie.fr/departements/aube/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/aveyron/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/cantal/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/correze/</loc></url>
@@ -744,6 +861,9 @@
   <url><loc>https://jeremineralogie.fr/departements/indre/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/haute-loire/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/puy-de-dome/</loc></url>
+  <url><loc>https://jeremineralogie.fr/departements/pyrenees-atlantiques/</loc></url>
+  <url><loc>https://jeremineralogie.fr/departements/sarthe/</loc></url>
+  <url><loc>https://jeremineralogie.fr/departements/tarn/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/var/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/haute-vienne/</loc></url>
   <url><loc>https://jeremineralogie.fr/departements/la-union/</loc></url>
@@ -781,8 +901,8 @@
   <url><loc>https://jeremineralogie.fr/themes/famille/silicates-cyclosilicates/</loc></url>
   <url><loc>https://jeremineralogie.fr/themes/famille/halogenures/</loc></url>
   <url><loc>https://jeremineralogie.fr/themes/famille/elements-natifs/</loc></url>
-  <url><loc>https://jeremineralogie.fr/themes/famille/silicates-sorosilicates/</loc></url>
   <url><loc>https://jeremineralogie.fr/themes/famille/borates/</loc></url>
+  <url><loc>https://jeremineralogie.fr/themes/famille/silicates-sorosilicates/</loc></url>
   <url><loc>https://jeremineralogie.fr/themes/systeme/cubique/</loc></url>
   <url><loc>https://jeremineralogie.fr/themes/systeme/quadratique/</loc></url>
   <url><loc>https://jeremineralogie.fr/themes/systeme/hexagonal/</loc></url>
