@@ -1,14 +1,15 @@
-// Liste des quiz : chacun dans son cadre rétractable, monté à la première ouverture (page « Jeux & quiz » et accueil).
+// Liste des quiz et des jeux à rejouer : chacun dans son cadre rétractable, monté à la première ouverture (page « Jeux & quiz » et accueil).
+// kind « quiz » : quiz de personnalité, à passer une seule fois (onglet Quiz) ; kind « jeu » : jeux rejouables à volonté (onglet Jeux).
 const QUIZZES = [
-  { id: "mineral", title: "Quel minéral es-tu ?", load: () => import("./quiz-mineral.js").then(module => (box, ctx) => module.mountQuiz(box, ctx)) },
-  { id: "prospecteur", title: "Quel prospecteur es-tu ?", load: () => import("./quiz-prospecteur.js").then(module => (box, ctx) => module.mountProspecteur(box, ctx)) },
-  { id: "outil", title: "Quel outil de prospecteur es-tu ?", load: () => import("./quiz-outil.js").then(module => (box, ctx) => module.mountOutil(box, ctx)) },
-  { id: "vrai-faux", title: "Vrai ou faux minéralogique", load: () => import("./quiz-vrai-faux.js").then(module => (box, ctx) => module.mountVraiFaux(box, ctx)) },
-  { id: "glossaire", title: "Le glossaire en défi", load: () => import("./quiz-glossaire.js").then(module => (box, ctx) => module.mountGlossaire(box, ctx)) }
+  { id: "mineral", kind: "quiz", title: "Quel minéral es-tu ?", load: () => import("./quiz-mineral.js").then(module => (box, ctx) => module.mountQuiz(box, ctx)) },
+  { id: "prospecteur", kind: "quiz", title: "Quel prospecteur es-tu ?", load: () => import("./quiz-prospecteur.js").then(module => (box, ctx) => module.mountProspecteur(box, ctx)) },
+  { id: "outil", kind: "quiz", title: "Quel outil de prospecteur es-tu ?", load: () => import("./quiz-outil.js").then(module => (box, ctx) => module.mountOutil(box, ctx)) },
+  { id: "vrai-faux", kind: "jeu", title: "Vrai ou faux minéralogique", load: () => import("./quiz-vrai-faux.js").then(module => (box, ctx) => module.mountVraiFaux(box, ctx)) },
+  { id: "glossaire", kind: "jeu", title: "Le glossaire en défi", load: () => import("./quiz-glossaire.js").then(module => (box, ctx) => module.mountGlossaire(box, ctx)) }
 ];
 
-export function mountQuizzes(root, ctx) {
-  root.replaceChildren(...QUIZZES.map(quiz => {
+export function mountQuizzes(root, ctx, kind = "quiz") {
+  root.replaceChildren(...QUIZZES.filter(quiz => quiz.kind === kind).map(quiz => {
     const node = document.createElement("details"); node.className = "home-game home-game-fold"; node.id = `quiz-${quiz.id}`;
     const summary = document.createElement("summary"); summary.className = "home-game-summary";
     const title = document.createElement("span"); title.className = "home-game-title"; title.textContent = quiz.title;

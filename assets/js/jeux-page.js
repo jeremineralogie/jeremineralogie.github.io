@@ -2,7 +2,7 @@ import { getSupabase } from "./supabase-client.js";
 import { mountGames } from "./games.js";
 import { mountQuizzes } from "./quiz-hub.js";
 
-// Page « Jeux & quiz » : jeux du jour (onglet « Jeux »), quiz (onglet « Quiz »), série de connexion, résultats et badges (onglet « Carnet de terrain »).
+// Page « Jeux & quiz » : jeux du jour et jeux rejouables (onglet « Jeux »), quiz de personnalité (onglet « Quiz »), série de connexion, résultats et badges (onglet « Carnet de terrain »).
 const status = document.querySelector("#learn-status");
 const tabs = [...document.querySelectorAll(".learn-tabs [data-tab]")];
 const panels = { jeux: document.querySelector("#panel-jeux"), quiz: document.querySelector("#panel-quiz"), carnet: document.querySelector("#panel-carnet") };
@@ -10,20 +10,27 @@ let minerals = [];
 let client = null;
 let gamesMounted = false;
 let quizMounted = false;
+let replayMounted = false;
 let carnetMounted = false;
 
 function showTab(name) {
   const tab = panels[name] ? name : "jeux";
   tabs.forEach(item => { const active = item.dataset.tab === tab; item.classList.toggle("active", active); if (active) item.setAttribute("aria-current", "page"); else item.removeAttribute("aria-current"); });
   Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== tab; });
-  if (tab === "jeux") mountGamesOnce();
+  if (tab === "jeux") { mountGamesOnce(); mountReplayOnce(); }
   if (tab === "carnet" && !carnetMounted) { carnetMounted = true; void import("./carnet-page.js").then(module => module.mountCarnet(panels.carnet.querySelector("[data-carnet]"))); }
-  if (tab === "quiz" && !quizMounted) { quizMounted = true; mountQuizzes(panels.quiz.querySelector("[data-quizzes]"), { client: getSupabase() }); }
+  if (tab === "quiz" && !quizMounted) { quizMounted = true; mountQuizzes(panels.quiz.querySelector("[data-quizzes]"), { client: getSupabase() }, "quiz"); }
 }
 function mountGamesOnce() {
   if (gamesMounted || !client || !minerals.length) return;
   gamesMounted = true;
   void mountGames(panels.jeux.querySelector("[data-games]"), { client, minerals, collapsible: true });
+}
+// Jeux rejouables (vrai ou faux, glossaire en défi) : sous les jeux du jour, dans l'onglet Jeux.
+function mountReplayOnce() {
+  if (replayMounted || !client) return;
+  replayMounted = true;
+  mountQuizzes(panels.jeux.querySelector("[data-replay]"), { client }, "jeu");
 }
 window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
 tabs.forEach(tab => tab.addEventListener("click", event => { event.preventDefault(); showTab(tab.dataset.tab); history.replaceState(null, "", `${location.pathname}#${tab.dataset.tab}`); }));
@@ -35,6 +42,7 @@ async function load() {
   if (error) throw error;
   minerals = data || [];
   mountGamesOnce();
+  if (!panels.jeux.hidden) mountReplayOnce();
   status.hidden = true;
 }
 

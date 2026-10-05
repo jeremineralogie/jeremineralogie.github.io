@@ -75,3 +75,15 @@ test("Glossaire en défi : le terme cherché est masqué et les propositions son
   }
   assert.equal(maskDefinition("Le clivage est parfait, les clivages aussi.", "Clivage").text, "Le _____ est parfait, les _____ aussi.");
 });
+
+test("Jeux & quiz : jeux rejouables dans « Jeux », quiz de personnalité dans « Quiz », sur la page et sur l'accueil", async () => {
+  const hub = await readFile(new URL("../assets/js/quiz-hub.js", import.meta.url), "utf8");
+  const kindOf = id => hub.match(new RegExp(`id: "${id}", kind: "(\\w+)"`))?.[1];
+  ["mineral", "prospecteur", "outil"].forEach(id => assert.equal(kindOf(id), "quiz", id));
+  ["vrai-faux", "glossaire"].forEach(id => assert.equal(kindOf(id), "jeu", id));
+  const jeux = await readFile(new URL("../jeux.html", import.meta.url), "utf8");
+  assert.match(jeux, /data-replay/);
+  const index = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  assert.match(index, /id="home-games-title">Jeux</);
+  assert.match(index, /id="home-quizzes-title">Quiz</);
+});
