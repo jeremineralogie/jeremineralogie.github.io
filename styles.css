@@ -657,6 +657,7 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
   .learn-az{max-width:620px}
   .lead,.tagline{max-width:880px}
   .fiche-photos img{width:min(100%,520px)}
+  #articles-grid>.card.card-wide,#archives-grid>.card.card-wide{flex:0 1 min(100%,780px);max-width:780px}
 }
 @media(min-width:1600px){
   html{font-size:112.5%}
