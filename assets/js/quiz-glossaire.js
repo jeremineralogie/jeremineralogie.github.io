@@ -96,7 +96,7 @@ export function mountGlossaire(container, { client }) {
     recordQuizPlay("glossaire", score, total);
     const message = score === total ? "Sans faute !" : score >= 8 ? "Excellent !" : score >= 6 ? "Bien joué !" : score >= 4 ? "Pas mal, tu progresses !" : "Le glossaire t’attend !";
     box.replaceChildren(el("p", "mq-kicker", "Ton score"), el("h3", "mq-name", `${score} / ${total}`), el("p", "mq-tagline", message),
-      sharePanel({ spec: { title: "Le glossaire en défi", date: dateFr(new Date().toISOString().slice(0, 10)), big: `${score} / ${total}`, bigSub: message, photos: [], footer: "Et toi, combien feras-tu ?" },
+      sharePanel({ spec: { title: "Le glossaire en défi", logo: "/assets/decor/logo-glossaire.webp", logoWidth: 820, date: dateFr(new Date().toISOString().slice(0, 10)), big: `${score} / ${total}`, bigSub: message, photos: [], footer: "Et toi, combien feras-tu ?" },
         text: `J’ai fait ${score}/${total} au glossaire en défi ! Et toi ?`, fileName: "glossaire-en-defi.png", remember: "glossaire" }),
       Object.assign(el("button", "pick-choice mq-start", "Rejouer"), { type: "button", onclick: () => void start() }));
   };

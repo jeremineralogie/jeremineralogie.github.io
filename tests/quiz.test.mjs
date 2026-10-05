@@ -109,3 +109,9 @@ test("Fiche de partage du vrai ou faux : illustration du jeu", async () => {
   assert.match(game, /logo: "\/assets\/decor\/logo-vrai-faux\.webp"/);
   assert.ok(existsSync(new URL("../assets/decor/logo-vrai-faux.webp", import.meta.url)));
 });
+
+test("Fiche de partage du glossaire en défi : illustration du jeu", async () => {
+  const game = await readFile(new URL("../assets/js/quiz-glossaire.js", import.meta.url), "utf8");
+  assert.match(game, /logo: "\/assets\/decor\/logo-glossaire\.webp"/);
+  assert.ok(existsSync(new URL("../assets/decor/logo-glossaire.webp", import.meta.url)));
+});
