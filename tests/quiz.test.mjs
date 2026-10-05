@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { QUIZ } from "../assets/js/quiz-data.js";
 import { QUIZ_PROSPECTEUR } from "../assets/js/quiz-prospecteur-data.js";
+import { QUIZ_OUTIL } from "../assets/js/quiz-outil-data.js";
 import { personaResult } from "../assets/js/quiz-persona.js";
 import { buildStatements } from "../assets/js/quiz-vrai-faux.js";
 import { buildQuestions, maskDefinition } from "../assets/js/quiz-glossaire.js";
@@ -33,6 +34,16 @@ function personaChecks(name, data, results, runs) {
 }
 personaChecks("Quel minéral es-tu", QUIZ, QUIZ.minerals, 30000);
 personaChecks("Quel prospecteur es-tu", QUIZ_PROSPECTEUR, QUIZ_PROSPECTEUR.profiles, 20000);
+personaChecks("Quel outil de prospecteur es-tu", QUIZ_OUTIL, QUIZ_OUTIL.profiles, 20000);
+test("Quel outil de prospecteur es-tu : répondre toujours dans le sens d'un outil donne cet outil", () => {
+  const data = { ...QUIZ_OUTIL, results: QUIZ_OUTIL.profiles };
+  QUIZ_OUTIL.axes.forEach((tool, axis) => {
+    const answers = QUIZ_OUTIL.questions.map(question => Math.max(0, question.answers.findIndex(answer => answer.v[axis])));
+    const withTool = QUIZ_OUTIL.questions.filter(question => question.answers.some(answer => answer.v[axis])).length;
+    if (withTool >= 4) assert.equal(personaResult(data, answers).icon, tool, tool);
+  });
+  QUIZ_OUTIL.profiles.forEach(item => { assert.equal(item.mineral.length, 3, item.name); assert.ok(item.icon, item.name); });
+});
 
 test("Vrai ou faux : 10 affirmations, 5 vraies, jamais deux fois le même minéral", async () => {
   const rows = await json("quiz-minerals.json");

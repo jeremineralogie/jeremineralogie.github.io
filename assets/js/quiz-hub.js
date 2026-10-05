@@ -2,6 +2,7 @@
 const QUIZZES = [
   { id: "mineral", title: "Quel minéral es-tu ?", load: () => import("./quiz-mineral.js").then(module => (box, ctx) => module.mountQuiz(box, ctx)) },
   { id: "prospecteur", title: "Quel prospecteur es-tu ?", load: () => import("./quiz-prospecteur.js").then(module => (box, ctx) => module.mountProspecteur(box, ctx)) },
+  { id: "outil", title: "Quel outil de prospecteur es-tu ?", load: () => import("./quiz-outil.js").then(module => (box, ctx) => module.mountOutil(box, ctx)) },
   { id: "vrai-faux", title: "Vrai ou faux minéralogique", load: () => import("./quiz-vrai-faux.js").then(module => (box, ctx) => module.mountVraiFaux(box, ctx)) },
   { id: "glossaire", title: "Le glossaire en défi", load: () => import("./quiz-glossaire.js").then(module => (box, ctx) => module.mountGlossaire(box, ctx)) }
 ];
