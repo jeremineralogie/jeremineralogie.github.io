@@ -43,6 +43,7 @@ test("Quel outil de prospecteur es-tu : répondre toujours dans le sens d'un out
     const withTool = QUIZ_OUTIL.questions.filter(question => question.answers.some(answer => answer.v[axis])).length;
     if (withTool >= 4) assert.equal(personaResult(data, answers).icon, tool, tool);
   });
+  QUIZ_PROSPECTEUR.profiles.forEach(item => assert.ok(existsSync(new URL(`../assets/prospecteurs/${item.slug}.webp`, import.meta.url)), `image de ${item.name}`));
   QUIZ_OUTIL.profiles.forEach(item => { assert.equal(item.mineral.length, 3, item.name); assert.ok(item.icon, item.name); assert.ok(existsSync(new URL(`../assets/outils/${item.icon}.webp`, import.meta.url)), `image de ${item.name}`); });
 });
 
