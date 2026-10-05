@@ -11,7 +11,7 @@ const GOALS = [7, 30, 90];
 const RESULTS = [
   ["mineral", "Trouve le minéral", "💎", "/jeux.html#jeux"], ["quiz", "Le quiz du jour", "🧪", "/jeux.html#jeux"], ["geo", "Devine le gisement", "🗺️", "/jeux.html#jeux"],
   ["persona-mineral", "Quel minéral es-tu ?", "🪨", "/jeux.html#quiz"], ["persona-prospecteur", "Quel prospecteur es-tu ?", "⛏️", "/jeux.html#quiz"], ["persona-outil", "Quel outil de prospecteur es-tu ?", "🔨", "/jeux.html#quiz"], ["persona-collectionneur", "Quel collectionneur es-tu ?", "🗃️", "/jeux.html#quiz"], ["persona-forme", "Quelle forme cristalline es-tu ?", "💎", "/jeux.html#quiz"],
-  ["vrai-faux", "Vrai ou faux minéralogique", "✅", "/jeux.html#jeux"], ["glossaire", "Le glossaire en défi", "📖", "/jeux.html#jeux"]
+  ["vrai-faux", "Vrai ou faux minéralogique", "✅", "/jeux.html#jeux"], ["plus-dur", "Plus dur ou moins dur ?", "⚖️", "/jeux.html#jeux"], ["glossaire", "Le glossaire en défi", "📖", "/jeux.html#jeux"]
 ];
 
 function connectionCard(state, stats) {
@@ -44,7 +44,7 @@ function resultsCard(state) {
     item.append(head);
     if (!saved) { const play = el("a", "link", "Pas encore joué : jouer →"); play.href = link; item.append(play); list.append(item); continue; }
     const quiz = state.quizzes?.[key];
-    const detail = [saved.spec?.big && `${saved.spec.big}${saved.spec.bigSub ? ` — ${saved.spec.bigSub}` : ""}`, saved.date && dateFr(saved.date), quiz && `${plural(quiz.plays, "partie", "parties")}${quiz.best ? ` · meilleur score ${quiz.best.score} / ${quiz.best.total}` : ""}`].filter(Boolean);
+    const detail = [saved.spec?.big && `${saved.spec.big}${saved.spec.bigSub ? ` — ${saved.spec.bigSub}` : ""}`, saved.date && dateFr(saved.date), quiz && `${plural(quiz.plays, "partie", "parties")}${quiz.best ? (quiz.best.streak ? ` · meilleure série ${quiz.best.score}` : ` · meilleur score ${quiz.best.score} / ${quiz.best.total}`) : ""}`].filter(Boolean);
     item.append(el("p", "carnet-result-detail", detail.join(" · ")));
     const share = el("details", "carnet-share"); share.append(el("summary", "", "Partager ce résultat"));
     const body = el("div", "carnet-share-body"); share.append(body);

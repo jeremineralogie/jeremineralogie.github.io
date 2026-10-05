@@ -76,6 +76,15 @@ export function recordQuizPlay(kind, score, total) {
     state.quizzes = { ...state.quizzes, [kind]: { plays: (old.plays || 0) + 1, last: { score, total, date }, best } };
   }, { always: true });
 }
+// Partie d'un jeu en série (« plus-dur ») : nombre de parties, dernière série et meilleure série (total = 1, pour que les comparaisons par score restent valables).
+export function recordSeriesPlay(kind, score) {
+  const date = parisDay();
+  change(state => {
+    const old = state.quizzes?.[kind] || {};
+    const best = old.best && old.best.score >= score ? old.best : { score, total: 1, streak: true, date };
+    state.quizzes = { ...state.quizzes, [kind]: { plays: (old.plays || 0) + 1, last: { score, total: 1, streak: true, date }, best } };
+  }, { always: true });
+}
 // Un résultat partagé (menu de partage ouvert, ou image enregistrée) : jeu ou quiz concerné.
 export function recordShare(key) {
   if (!key) return;

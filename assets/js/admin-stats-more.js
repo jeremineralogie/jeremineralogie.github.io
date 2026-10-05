@@ -1,6 +1,6 @@
 // Tableau de bord Statistiques : blocs détaillés (fréquentation jour par jour, jeux et quiz, comptes joueurs, clics utiles).
 // Les fonctions de dessin (cartes, barres) viennent de admin-stats.js ; les données de admin_more_stats(), admin_event_stats() et admin_account_stats().
-const GAME_LABELS = { mineral: "Trouve le minéral", quiz: "Le quiz du jour", geo: "Devine le gisement", "persona-mineral": "Quel minéral es-tu ?", "persona-prospecteur": "Quel prospecteur es-tu ?", "persona-outil": "Quel outil de prospecteur es-tu ?", "persona-collectionneur": "Quel collectionneur es-tu ?", "persona-forme": "Quelle forme cristalline es-tu ?", "vrai-faux": "Vrai ou faux minéralogique", glossaire: "Le glossaire en défi" };
+const GAME_LABELS = { mineral: "Trouve le minéral", quiz: "Le quiz du jour", geo: "Devine le gisement", "persona-mineral": "Quel minéral es-tu ?", "persona-prospecteur": "Quel prospecteur es-tu ?", "persona-outil": "Quel outil de prospecteur es-tu ?", "persona-collectionneur": "Quel collectionneur es-tu ?", "persona-forme": "Quelle forme cristalline es-tu ?", "vrai-faux": "Vrai ou faux minéralogique", "plus-dur": "Plus dur ou moins dur ?", glossaire: "Le glossaire en défi" };
 const WEEKDAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 const resultNames = new Map();
 
@@ -83,7 +83,7 @@ export function extraBlocks({ extra, from, to, names, ui }) {
   )];
 
   // Jeux et quiz
-  const shareLabel = file => ({ "vrai-faux-mineralogique": "Vrai ou faux minéralogique", "glossaire-en-defi": "Le glossaire en défi" }[file] || (file.startsWith("mineral-") ? "Quel minéral es-tu ?" : file.startsWith("prospecteur-") ? "Quel prospecteur es-tu ?" : file.startsWith("outil-") ? "Quel outil de prospecteur es-tu ?" : file.startsWith("collectionneur-") ? "Quel collectionneur es-tu ?" : file.startsWith("forme-") ? "Quelle forme cristalline es-tu ?" : "Jeux du jour"));
+  const shareLabel = file => ({ "vrai-faux-mineralogique": "Vrai ou faux minéralogique", "glossaire-en-defi": "Le glossaire en défi", "plus-dur-ou-moins-dur": "Plus dur ou moins dur ?" }[file] || (file.startsWith("mineral-") ? "Quel minéral es-tu ?" : file.startsWith("prospecteur-") ? "Quel prospecteur es-tu ?" : file.startsWith("outil-") ? "Quel outil de prospecteur es-tu ?" : file.startsWith("collectionneur-") ? "Quel collectionneur es-tu ?" : file.startsWith("forme-") ? "Quelle forme cristalline es-tu ?" : "Jeux du jour"));
   const gamesBlock = () => {
     const wrap = element("div");
     const games = events.games.map(row => ({ label: GAME_LABELS[row.name] || row.name, value: row.ends, note: `${plural(row.starts, "partie commencée", "parties commencées")} · ${plural(row.ends, "terminée", "terminées")}${row.avg != null && !row.name.startsWith("persona-") ? ` · moyenne ${Number(row.avg).toLocaleString("fr-FR", { maximumFractionDigits: 1 })}` : ""} · ${plural(row.players, "joueur", "joueurs")}` }));
