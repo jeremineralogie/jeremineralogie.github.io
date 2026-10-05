@@ -88,3 +88,11 @@ test("Jeux & quiz : jeux rejouables dans « Jeux », quiz de personnalité dans 
   assert.match(index, /id="home-games-title">Jeux</);
   assert.match(index, /id="home-quizzes-title">Quiz</);
 });
+
+test("Fiche de partage de « Trouve le minéral » : illustration du jeu à la place de la carte", async () => {
+  const game = await readFile(new URL("../assets/js/mineral-photo-game.js", import.meta.url), "utf8");
+  assert.match(game, /logo: "\/assets\/decor\/logo-trouve-mineral\.webp"/);
+  assert.ok(existsSync(new URL("../assets/decor/logo-trouve-mineral.webp", import.meta.url)));
+  const share = await readFile(new URL("../assets/js/share.js", import.meta.url), "utf8");
+  assert.match(share, /spec\.logo/);
+});
