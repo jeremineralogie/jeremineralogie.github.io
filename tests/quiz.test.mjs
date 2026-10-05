@@ -96,3 +96,10 @@ test("Fiche de partage de « Trouve le minéral » : illustration du jeu à la p
   const share = await readFile(new URL("../assets/js/share.js", import.meta.url), "utf8");
   assert.match(share, /spec\.logo/);
 });
+
+test("Fiche de partage du quiz du jour : illustration du jeu, sans second point d'interrogation", async () => {
+  const games = await readFile(new URL("../assets/js/games.js", import.meta.url), "utf8");
+  assert.match(games, /logo: "\/assets\/decor\/logo-quiz-du-jour\.webp"/);
+  assert.doesNotMatch(games, /mystery: true/);
+  assert.ok(existsSync(new URL("../assets/decor/logo-quiz-du-jour.webp", import.meta.url)));
+});

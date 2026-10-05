@@ -61,7 +61,7 @@ function quizShare(correct) {
   return sharePanel({
     fileName: `quiz-du-jour-${today}.png`, remember: "quiz",
     text: `🧪 Quiz du jour Jeremineralogie — ${new Intl.DateTimeFormat("fr-FR").format(new Date(`${today}T12:00:00`))}\n${correct ? "✅ Trouvé" : "❌ Raté"}${detail && correct ? ` ${detail}` : ""}\nSaurez-vous trouver le minéral mystère ?`,
-    spec: { title: "Le quiz du jour", date: dateFr(today), big: correct ? "Trouvé !" : "Raté…", bigSub: detail, note: "Le minéral reste secret : à vous de jouer !", mystery: true,
+    spec: { title: "Le quiz du jour", logo: "/assets/decor/logo-quiz-du-jour.webp", logoWidth: 820, date: dateFr(today), big: correct ? "Trouvé !" : "Raté…", bigSub: detail, note: "Le minéral reste secret : à vous de jouer !",
       streak: streak > 1 ? `🔥 Série de ${streak} jours` : "", footer: "Saurez-vous le trouver ?" }
   });
 }
