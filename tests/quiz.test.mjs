@@ -2,6 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { QUIZ } from "../assets/js/quiz-data.js";
 import { QUIZ_PROSPECTEUR } from "../assets/js/quiz-prospecteur-data.js";
 import { QUIZ_OUTIL } from "../assets/js/quiz-outil-data.js";
@@ -42,7 +43,7 @@ test("Quel outil de prospecteur es-tu : répondre toujours dans le sens d'un out
     const withTool = QUIZ_OUTIL.questions.filter(question => question.answers.some(answer => answer.v[axis])).length;
     if (withTool >= 4) assert.equal(personaResult(data, answers).icon, tool, tool);
   });
-  QUIZ_OUTIL.profiles.forEach(item => { assert.equal(item.mineral.length, 3, item.name); assert.ok(item.icon, item.name); });
+  QUIZ_OUTIL.profiles.forEach(item => { assert.equal(item.mineral.length, 3, item.name); assert.ok(item.icon, item.name); assert.ok(existsSync(new URL(`../assets/outils/${item.icon}.webp`, import.meta.url)), `image de ${item.name}`); });
 });
 
 test("Vrai ou faux : 10 affirmations, 5 vraies, jamais deux fois le même minéral", async () => {
