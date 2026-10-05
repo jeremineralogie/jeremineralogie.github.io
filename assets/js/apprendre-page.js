@@ -148,7 +148,7 @@ function renderGlossary() {
       const related = (item.related_minerals || []).map(name => byName.get(fold(name))).filter(Boolean);
       if (related.length) {
         const row = element("p", "learn-term-row"); row.append(element("span", "learn-term-label", "Minéraux : "));
-        related.forEach((mineral, index) => { if (index) row.append(", "); row.append(link(ficheUrl("mineral", mineral.slug), mineral.name)); });
+        related.forEach((mineral, index) => { if (index) row.append(", "); { const a = link(ficheUrl("mineral", mineral.slug), mineral.name); a.dataset.fiche = ""; row.append(a); } });
         entry.append(row);
       }
       // Liens vers la collection et la boutique pour les minéraux cités qui y sont présents.

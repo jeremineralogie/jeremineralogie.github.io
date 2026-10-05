@@ -102,7 +102,7 @@ function renderSpecimen(specimen) {
   const linkField = (selector, text, href) => {
     const element = root.querySelector(selector);
     if (!text || !href) return;
-    const link = document.createElement("a"); link.className = "link"; link.href = href; link.textContent = text; element.replaceChildren(link);
+    const link = document.createElement("a"); link.className = "link"; link.dataset.fiche = ""; link.href = href; link.textContent = text; element.replaceChildren(link);
   };
   linkField("dd[data-mineral]", specimen.mineral, specimen.mineralSlug && ficheUrl("mineral", specimen.mineralSlug));
   linkField("[data-provenance]", specimen.provenance, specimen.mineSlug && ficheUrl("mine", specimen.mineSlug));

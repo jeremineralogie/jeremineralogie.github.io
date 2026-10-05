@@ -40,4 +40,5 @@ document.addEventListener('click',e=>{
 
 (()=>{const button=document.createElement('button');button.type='button';button.className='to-top';button.hidden=true;button.setAttribute('aria-label','Haut de page');button.title='Haut de page';button.textContent='↑';button.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));document.body.append(button);const update=()=>{button.hidden=window.scrollY<300};addEventListener('scroll',update,{passive:true});update()})();
 
+window.addEventListener("load",()=>{if(window.JEREMINERALOGIE_SUPABASE&&!/\/admin\//.test(location.pathname))import("/assets/js/link-pop.js").catch(error=>console.error("Aperçu des fiches :",error))});
 window.addEventListener('load',()=>{if(!window.JEREMINERALOGIE_SUPABASE||/\/admin\//.test(location.pathname))return;import('/assets/js/account-ui.js').then(m=>m.startAccountUi()).catch(error=>console.error('Compte joueur :',error))});
