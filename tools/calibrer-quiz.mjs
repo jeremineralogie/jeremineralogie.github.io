@@ -22,10 +22,11 @@ const data = { axes, questions, mu, sd, results: profiles.map(item => ({ ...item
 
 // Biais : on corrige chaque outil selon l'écart entre sa fréquence et la fréquence idéale.
 const batch = Array.from({ length: 30000 }, draw);
-for (let step = 0; step < 80; step += 1) {
+for (let step = 0; step < 600; step += 1) {
+  const rate = 0.5 / (1 + step / 200);
   const counts = new Map();
   batch.forEach(answers => { const slug = personaResult(data, answers).slug; counts.set(slug, (counts.get(slug) || 0) + 1); });
-  data.results.forEach(item => { item.bias -= ((counts.get(item.slug) || 0) / batch.length - 1 / profiles.length) * 1.2; });
+  data.results.forEach(item => { item.bias -= ((counts.get(item.slug) || 0) / batch.length - 1 / profiles.length) * rate; });
 }
 const counts = new Map(); batch.forEach(answers => { const slug = personaResult(data, answers).slug; counts.set(slug, (counts.get(slug) || 0) + 1); });
 console.log([...counts].map(([slug, count]) => `${slug} ${(count / batch.length * 100).toFixed(1)} %`).join(" · "));

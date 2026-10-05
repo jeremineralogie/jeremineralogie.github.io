@@ -20,7 +20,7 @@ export function longestStreak(dates) {
 
 export const DAILY_GAMES = ["mineral", "quiz", "geo"];
 // Les quiz de personnalité (un seul passage) : pour en ajouter un, l'ajouter ici. Les jeux rejouables (vrai ou faux, glossaire) sont comptés à part.
-export const PERSONAS = ["mineral", "prospecteur", "outil", "collectionneur"];
+export const PERSONAS = ["mineral", "prospecteur", "outil", "collectionneur", "forme"];
 export const QUIZ_KEYS = [...PERSONAS.map(kind => `persona-${kind}`), "vrai-faux", "glossaire"];
 export const REPLAY_QUIZZES = ["vrai-faux", "glossaire"];
 
