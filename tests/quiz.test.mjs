@@ -6,6 +6,7 @@ import { existsSync } from "node:fs";
 import { QUIZ } from "../assets/js/quiz-data.js";
 import { QUIZ_PROSPECTEUR } from "../assets/js/quiz-prospecteur-data.js";
 import { QUIZ_OUTIL } from "../assets/js/quiz-outil-data.js";
+import { QUIZ_COLLECTIONNEUR } from "../assets/js/quiz-collectionneur-data.js";
 import { personaResult } from "../assets/js/quiz-persona.js";
 import { buildStatements } from "../assets/js/quiz-vrai-faux.js";
 import { buildQuestions, maskDefinition } from "../assets/js/quiz-glossaire.js";
@@ -36,6 +37,16 @@ function personaChecks(name, data, results, runs) {
 personaChecks("Quel minéral es-tu", QUIZ, QUIZ.minerals, 30000);
 personaChecks("Quel prospecteur es-tu", QUIZ_PROSPECTEUR, QUIZ_PROSPECTEUR.profiles, 20000);
 personaChecks("Quel outil de prospecteur es-tu", QUIZ_OUTIL, QUIZ_OUTIL.profiles, 20000);
+personaChecks("Quel collectionneur es-tu", QUIZ_COLLECTIONNEUR, QUIZ_COLLECTIONNEUR.profiles, 20000);
+test("Quel collectionneur es-tu : répondre toujours dans le sens d'un profil donne ce profil, minéral conseillé renseigné", () => {
+  const data = { ...QUIZ_COLLECTIONNEUR, results: QUIZ_COLLECTIONNEUR.profiles };
+  QUIZ_COLLECTIONNEUR.axes.forEach((profile, axis) => {
+    const withProfile = QUIZ_COLLECTIONNEUR.questions.filter(question => question.answers.some(answer => answer.v[axis])).length;
+    const answers = QUIZ_COLLECTIONNEUR.questions.map(question => Math.max(0, question.answers.findIndex(answer => answer.v[axis])));
+    if (withProfile >= 4) assert.equal(personaResult(data, answers).slug, profile, profile);
+  });
+  QUIZ_COLLECTIONNEUR.profiles.forEach(item => assert.equal(item.mineral.length, 3, item.name));
+});
 test("Quel outil de prospecteur es-tu : répondre toujours dans le sens d'un outil donne cet outil", () => {
   const data = { ...QUIZ_OUTIL, results: QUIZ_OUTIL.profiles };
   QUIZ_OUTIL.axes.forEach((tool, axis) => {

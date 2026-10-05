@@ -1,16 +1,17 @@
 // Tableau de bord Statistiques : blocs détaillés (fréquentation jour par jour, jeux et quiz, comptes joueurs, clics utiles).
 // Les fonctions de dessin (cartes, barres) viennent de admin-stats.js ; les données de admin_more_stats(), admin_event_stats() et admin_account_stats().
-const GAME_LABELS = { mineral: "Trouve le minéral", quiz: "Le quiz du jour", geo: "Devine le gisement", "persona-mineral": "Quel minéral es-tu ?", "persona-prospecteur": "Quel prospecteur es-tu ?", "persona-outil": "Quel outil de prospecteur es-tu ?", "vrai-faux": "Vrai ou faux minéralogique", glossaire: "Le glossaire en défi" };
+const GAME_LABELS = { mineral: "Trouve le minéral", quiz: "Le quiz du jour", geo: "Devine le gisement", "persona-mineral": "Quel minéral es-tu ?", "persona-prospecteur": "Quel prospecteur es-tu ?", "persona-outil": "Quel outil de prospecteur es-tu ?", "persona-collectionneur": "Quel collectionneur es-tu ?", "vrai-faux": "Vrai ou faux minéralogique", glossaire: "Le glossaire en défi" };
 const WEEKDAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 const resultNames = new Map();
 
 export async function loadResultNames() {
   if (resultNames.size) return;
   try {
-    const [{ QUIZ }, { QUIZ_PROSPECTEUR }, { QUIZ_OUTIL }] = await Promise.all([import("./quiz-data.js"), import("./quiz-prospecteur-data.js"), import("./quiz-outil-data.js")]);
+    const [{ QUIZ }, { QUIZ_PROSPECTEUR }, { QUIZ_OUTIL }, { QUIZ_COLLECTIONNEUR }] = await Promise.all([import("./quiz-data.js"), import("./quiz-prospecteur-data.js"), import("./quiz-outil-data.js"), import("./quiz-collectionneur-data.js")]);
     QUIZ.minerals.forEach(item => resultNames.set(`persona-mineral:${item.slug}`, item.name));
     QUIZ_PROSPECTEUR.profiles.forEach(item => resultNames.set(`persona-prospecteur:${item.slug}`, item.name));
     QUIZ_OUTIL.profiles.forEach(item => resultNames.set(`persona-outil:${item.slug}`, item.name));
+    QUIZ_COLLECTIONNEUR.profiles.forEach(item => resultNames.set(`persona-collectionneur:${item.slug}`, item.name));
   } catch (error) { console.error("Noms des résultats de quiz :", error); }
 }
 
@@ -81,11 +82,11 @@ export function extraBlocks({ extra, from, to, names, ui }) {
   )];
 
   // Jeux et quiz
-  const shareLabel = file => ({ "vrai-faux-mineralogique": "Vrai ou faux minéralogique", "glossaire-en-defi": "Le glossaire en défi" }[file] || (file.startsWith("mineral-") ? "Quel minéral es-tu ?" : file.startsWith("prospecteur-") ? "Quel prospecteur es-tu ?" : file.startsWith("outil-") ? "Quel outil de prospecteur es-tu ?" : "Jeux du jour"));
+  const shareLabel = file => ({ "vrai-faux-mineralogique": "Vrai ou faux minéralogique", "glossaire-en-defi": "Le glossaire en défi" }[file] || (file.startsWith("mineral-") ? "Quel minéral es-tu ?" : file.startsWith("prospecteur-") ? "Quel prospecteur es-tu ?" : file.startsWith("outil-") ? "Quel outil de prospecteur es-tu ?" : file.startsWith("collectionneur-") ? "Quel collectionneur es-tu ?" : "Jeux du jour"));
   const gamesBlock = () => {
     const wrap = element("div");
     const games = events.games.map(row => ({ label: GAME_LABELS[row.name] || row.name, value: row.ends, note: `${plural(row.starts, "partie commencée", "parties commencées")} · ${plural(row.ends, "terminée", "terminées")}${row.avg != null && !row.name.startsWith("persona-") ? ` · moyenne ${Number(row.avg).toLocaleString("fr-FR", { maximumFractionDigits: 1 })}` : ""} · ${plural(row.players, "joueur", "joueurs")}` }));
-    const personas = ["persona-mineral", "persona-prospecteur", "persona-outil"].map(name => {
+    const personas = ["persona-mineral", "persona-prospecteur", "persona-outil", "persona-collectionneur"].map(name => {
       const rows = events.results.filter(row => row.name === name);
       return card(`Résultats : ${GAME_LABELS[name]}`, rows.length ? barList(rows.slice(0, 12).map(row => ({ label: resultNames.get(`${name}:${row.detail}`) || row.detail, value: row.n })), "fois") : emptyNote("Pas encore de résultats."));
     });

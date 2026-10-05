@@ -1,13 +1,15 @@
-// Calibre le quiz « Quel outil de prospecteur es-tu ? » : centrage (mu, sd) puis biais d'équilibrage,
-// pour que chaque outil sorte à peu près aussi souvent quand on répond au hasard. Écrit les valeurs dans assets/js/quiz-outil-data.js.
-// Usage : node tools/calibrer-quiz-outil.mjs
+// Calibre un quiz de personnalité à un axe par résultat (« outil », « collectionneur »…) : centrage (mu, sd) puis biais d'équilibrage,
+// pour que chaque résultat sorte à peu près aussi souvent quand on répond au hasard. Écrit les valeurs dans assets/js/quiz-<nom>-data.js.
+// Usage : node tools/calibrer-quiz.mjs outil   (ou : collectionneur)
 import { readFileSync, writeFileSync } from "node:fs";
 import { personaResult } from "../assets/js/quiz-persona.js";
-import { QUIZ_OUTIL } from "../assets/js/quiz-outil-data.js";
 globalThis.document ??= {};
 
-const file = new URL("../assets/js/quiz-outil-data.js", import.meta.url);
-const { axes, questions, profiles } = QUIZ_OUTIL;
+const name = process.argv[2];
+if (!name) { console.error("Usage : node tools/calibrer-quiz.mjs <nom du quiz>"); process.exit(1); }
+const file = new URL(`../assets/js/quiz-${name}-data.js`, import.meta.url);
+const module = await import(file);
+const { axes, questions, profiles } = module[`QUIZ_${name.toUpperCase()}`];
 let seed = 987654321; const random = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
 const draw = () => Array.from({ length: questions.length }, () => Math.floor(random() * 4));
 
