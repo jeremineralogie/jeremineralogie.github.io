@@ -55,3 +55,8 @@ test("messages : rattachés au compte et visibles dans Mon espace", () => {
   const space = readFileSync(new URL("../assets/js/mon-espace-page.js", import.meta.url), "utf8");
   assert.match(space, /from\("messages"\)[\s\S]*eq\("user_id"/);
 });
+test("Mon espace : un seul dessin affiché même si plusieurs se croisent", () => {
+  const space = readFileSync(new URL("../assets/js/mon-espace-page.js", import.meta.url), "utf8");
+  assert.match(space, /turn === drawing/);
+  assert.doesNotMatch(space, /root\.append\(/);
+});
