@@ -36,11 +36,11 @@ test("jeux : première partie, trois jeux, séries de 7 et 30 jours sur chaque j
   assert.ok(earned({ mineral: games(30), quiz: games(30), geo: games(30) }).includes("jeux-serie-30"));
 });
 test("quiz : tous les quiz, partages, et 10 parties de chaque", () => {
-  const base = { personas: { mineral: { slug: "or" }, prospecteur: { slug: "x" }, outil: { slug: "y" }, collectionneur: { slug: "z" }, forme: { slug: "w" } }, quizzes: { "vrai-faux": { plays: 1 }, glossaire: { plays: 1 }, "plus-dur": { plays: 1 }, pendu: { plays: 1 } } };
+  const base = { personas: { mineral: { slug: "or" }, prospecteur: { slug: "x" }, outil: { slug: "y" }, collectionneur: { slug: "z" }, forme: { slug: "w" } }, quizzes: { "vrai-faux": { plays: 1 }, glossaire: { plays: 1 }, "plus-dur": { plays: 1 }, pendu: { plays: 1 }, "classe-les": { plays: 1 } } };
   assert.ok(earned({ ...base }).includes("quiz-tous"));
   assert.ok(!earned({ personas: base.personas, quizzes: { "vrai-faux": { plays: 3 } } }).includes("quiz-tous"), "glossaire et plus dur jamais joués");
   assert.ok(!earned({ ...base }).includes("quiz-dix-fois"));
-  assert.ok(earned({ personas: base.personas, quizzes: { "vrai-faux": { plays: 10 }, glossaire: { plays: 12 }, "plus-dur": { plays: 10 }, pendu: { plays: 10 } } }).includes("quiz-dix-fois"));
+  assert.ok(earned({ personas: base.personas, quizzes: { "vrai-faux": { plays: 10 }, glossaire: { plays: 12 }, "plus-dur": { plays: 10 }, pendu: { plays: 10 }, "classe-les": { plays: 10 } } }).includes("quiz-dix-fois"));
   assert.deepEqual(earned({ shares: { "persona-mineral": TODAY } }), ["quiz-partage-mineral"]);
   assert.deepEqual(earned({ shares: { "persona-prospecteur": TODAY } }), ["quiz-partage-prospecteur"]);
   assert.deepEqual(earned({ shares: { mineral: TODAY } }), [], "le partage d'un jeu du jour ne donne pas ces badges");

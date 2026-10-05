@@ -8,7 +8,7 @@ Toutes ces idées sont validées. On les fait une par une, en commençant par la
 4. **Quel gisement français es-tu ?** — le résultat est un vrai gisement de la base, avec sa position sur la carte.
 5. **Plus dur ou moins dur ?** (fait : série sans faute) — deviner lequel de deux minéraux est le plus dur (variante : densité).
 6. **Le pendu minéralogique** (fait : série de mots, 6 cristaux) — mot du glossaire, définition en indice.
-7. **Classe-les !** — ordonner cinq minéraux (dureté de Mohs, densité, date de découverte) par glisser-déposer.
+7. **Classe-les !** (fait : série de manches, dureté et densité) — ordonner cinq minéraux (dureté de Mohs, densité, date de découverte) par glisser-déposer.
 8. **Qui suis-je ?** — minéral à deviner indice par indice ; moins d'indices = plus de points.
 9. **Associe la formule** — relier le nom d'un minéral à sa formule chimique.
 
