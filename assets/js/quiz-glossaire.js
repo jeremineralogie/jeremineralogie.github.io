@@ -4,6 +4,7 @@ import { cleanUrl } from "./clean-urls.js";
 import { ficheUrl } from "./entity-links.js";
 import { sharePanel, dateFr } from "./share.js";
 import { track } from "./track.js";
+import { recordQuizPlay } from "./game-progress.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const shuffle = list => { const copy = [...list]; for (let i = copy.length - 1; i > 0; i -= 1) { const j = Math.floor(Math.random() * (i + 1)); [copy[i], copy[j]] = [copy[j], copy[i]]; } return copy; };
@@ -92,10 +93,11 @@ export function mountGlossaire(container, { client }) {
 
   const finish = (score, total) => {
     track("end", "glossaire", null, score);
+    recordQuizPlay("glossaire", score, total);
     const message = score === total ? "Sans faute !" : score >= 8 ? "Excellent !" : score >= 6 ? "Bien joué !" : score >= 4 ? "Pas mal, tu progresses !" : "Le glossaire t’attend !";
     box.replaceChildren(el("p", "mq-kicker", "Ton score"), el("h3", "mq-name", `${score} / ${total}`), el("p", "mq-tagline", message),
       sharePanel({ spec: { title: "Le glossaire en défi", date: dateFr(new Date().toISOString().slice(0, 10)), big: `${score} / ${total}`, bigSub: message, photos: [], footer: "Et toi, combien feras-tu ?" },
-        text: `J’ai fait ${score}/${total} au glossaire en défi ! Et toi ?`, fileName: "glossaire-en-defi.png" }),
+        text: `J’ai fait ${score}/${total} au glossaire en défi ! Et toi ?`, fileName: "glossaire-en-defi.png", remember: "glossaire" }),
       Object.assign(el("button", "pick-choice mq-start", "Rejouer"), { type: "button", onclick: () => void start() }));
   };
 

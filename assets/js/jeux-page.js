@@ -2,20 +2,22 @@ import { getSupabase } from "./supabase-client.js";
 import { mountGames } from "./games.js";
 import { mountQuizzes } from "./quiz-hub.js";
 
-// Page « Jeux & quiz » : jeux du jour et badges (onglet « Jeux »), quiz (onglet « Quiz »).
+// Page « Jeux & quiz » : jeux du jour (onglet « Jeux »), quiz (onglet « Quiz »), série de connexion, résultats et badges (onglet « Carnet de terrain »).
 const status = document.querySelector("#learn-status");
 const tabs = [...document.querySelectorAll(".learn-tabs [data-tab]")];
-const panels = { jeux: document.querySelector("#panel-jeux"), quiz: document.querySelector("#panel-quiz") };
+const panels = { jeux: document.querySelector("#panel-jeux"), quiz: document.querySelector("#panel-quiz"), carnet: document.querySelector("#panel-carnet") };
 let minerals = [];
 let client = null;
 let gamesMounted = false;
 let quizMounted = false;
+let carnetMounted = false;
 
 function showTab(name) {
   const tab = panels[name] ? name : "jeux";
   tabs.forEach(item => { const active = item.dataset.tab === tab; item.classList.toggle("active", active); if (active) item.setAttribute("aria-current", "page"); else item.removeAttribute("aria-current"); });
   Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== tab; });
   if (tab === "jeux") mountGamesOnce();
+  if (tab === "carnet" && !carnetMounted) { carnetMounted = true; void import("./carnet-page.js").then(module => module.mountCarnet(panels.carnet.querySelector("[data-carnet]"))); }
   if (tab === "quiz" && !quizMounted) { quizMounted = true; mountQuizzes(panels.quiz.querySelector("[data-quizzes]"), { client: getSupabase() }); }
 }
 function mountGamesOnce() {

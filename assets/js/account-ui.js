@@ -1,4 +1,6 @@
 // Interface du compte joueur : pastille en haut à droite, encart discret au-dessus des jeux, fenêtre de connexion / création de compte.
+import { recordCurrentPage } from "./page-visit.js";
+import { startBadgePopup } from "./badge-popup.js";
 import { createAccount, currentUser, initAccount, onAccountChange, regenerateRecoveryCode, resetWithCode, signIn, signInGoogle, signOut } from "./account.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
@@ -108,8 +110,8 @@ function openMenu(anchor) {
     menu.append(el("div", "acct-who", "Compte joueur"), item("Se connecter", () => openModal(viewLogin), "hl"), item("Créer un compte", () => openModal(viewCreate)), el("div", "acct-sep"), item("Continuer sans compte", () => {}));
   } else {
     const who = el("div", "acct-who", "Connecté"); who.append(el("b", "", user.name));
-    menu.append(who, el("div", "acct-synced", "✓ Progression sauvegardée"), el("div", "acct-sep"),
-      item("🏅 Mes badges", () => { location.href = "/jeux.html#jeux"; }));
+    menu.append(who, el("div", "acct-synced", "✓ Progression, favoris et messages sauvegardés"), el("div", "acct-sep"),
+      item("🗂️ Mon espace", () => { location.href = "/mon-espace.html"; }), item("📓 Mon carnet de terrain", () => { location.href = "/jeux.html#carnet"; }));
     if (!user.google) menu.append(item("Nouveau code de secours", async () => { try { const code = await regenerateRecoveryCode(); openModal(box => viewCode(box, code, false)); } catch (error) { alert(error.message); } }));
     menu.append(item("Se déconnecter", async () => { await signOut(); }));
   }
@@ -132,19 +134,20 @@ function drawBanners() {
     let bar = games.previousElementSibling?.classList.contains("acct-banner") ? games.previousElementSibling : null;
     if (!bar) { bar = el("div", "acct-banner"); games.before(bar); }
     bar.replaceChildren();
-    if (user) { bar.append(el("p", "acct-connected", `✓ Connecté : ${user.name} · progression sauvegardée`)); return; }
+    if (user) { bar.append(el("p", "acct-connected", `✓ Connecté : ${user.name} · progression et favoris sauvegardés`)); return; }
     const line = el("div", "acct-line");
     const create = el("button", "btn", "Créer un compte"); create.type = "button"; create.addEventListener("click", () => openModal(viewCreate));
     const google = el("button", "acct-gmini"); google.type = "button"; google.innerHTML = `${GOOGLE}<span>Connexion Google</span>`;
     google.addEventListener("click", async () => { try { await signInGoogle(); } catch (error) { openModal(box => { box.append(el("h3", "", "Connexion Google"), el("p", "acct-error", error.message)); }); } });
     line.append(create, google);
     const more = el("details", "acct-more"); more.append(el("summary", "", "Pourquoi un compte ?"));
-    const inner = el("div", "acct-inner"); inner.innerHTML = "<b>Garde ta progression partout.</b><ul><li>Tes badges, tes séries et tes scores te suivent sur tous tes appareils.</li><li>Gratuit, <b>sans adresse e-mail</b> : un identifiant et un mot de passe suffisent.</li><li>Tu reçois un code de secours pour retrouver ton compte.</li><li>Tu peux aussi continuer sans compte : ta progression reste alors sur cet appareil.</li></ul>";
+    const inner = el("div", "acct-inner"); inner.innerHTML = "<b>Garde ta progression partout.</b><ul><li>Ton carnet de terrain (séries, résultats, badges) et tes favoris te suivent sur tous tes appareils.</li><li>Tes messages et demandes d’identification sont retrouvés dans « Mon espace ».</li><li>Gratuit, <b>sans adresse e-mail</b> : un identifiant et un mot de passe suffisent.</li><li>Tu reçois un code de secours pour retrouver ton compte.</li><li>Tu peux aussi continuer sans compte : ta progression reste alors sur cet appareil.</li></ul>";
     more.append(inner); bar.append(line, more);
   });
 }
 
 export async function startAccountUi() {
+  recordCurrentPage(); startBadgePopup();
   if (!await initAccount()) return;
   const refresh = () => { drawPastille(); drawBanners(); if (menu) { closeMenu(); } };
   onAccountChange(refresh); refresh();

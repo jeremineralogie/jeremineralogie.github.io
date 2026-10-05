@@ -1,6 +1,6 @@
 // Partage des résultats des jeux : une image au format story (1080 × 1920) aux couleurs du site,
 // envoyée au menu de partage de l'appareil (Instagram, TikTok, Snapchat, WhatsApp…).
-import { recordShare } from "./game-progress.js";
+import { recordShare, rememberCard } from "./game-progress.js";
 import { track } from "./track.js";
 
 const SITE = "https://jeremineralogie.fr/";
@@ -108,7 +108,9 @@ export async function makeCardBlob(spec) {
 // Bloc de partage : aperçu de l'image et un seul bouton « Partager les résultats ».
 // Le menu de partage de l'appareil propose ensuite toutes les applications (Instagram, TikTok, WhatsApp…) et l'enregistrement de l'image.
 // Sans menu de partage (certains ordinateurs), l'image est téléchargée.
-export function sharePanel({ spec, text, fileName }) {
+// remember : clé sous laquelle ce résultat est gardé dans le carnet de terrain (rememberOnce : seulement la première fois) ; shareKey : clé du partage compté pour les badges (par défaut remember).
+export function sharePanel({ spec, text, fileName, remember = null, rememberOnce = false, shareKey = remember }) {
+  if (remember) rememberCard(remember, { spec, text, fileName }, rememberOnce);
   const box = el("div", "share");
   const preview = el("img", "share-preview"); preview.alt = "Image de votre résultat à partager"; preview.hidden = true;
   const button = el("button", "share-btn is-primary", "📲 Partager les résultats"); button.type = "button";
@@ -132,7 +134,7 @@ export function sharePanel({ spec, text, fileName }) {
         status.textContent = "Image enregistrée : vous pouvez maintenant la publier où vous voulez.";
       } else throw new Error("Partage indisponible");
       track("share", fileName.replace(/\.png$/, ""));
-      recordShare();
+      recordShare(shareKey);
     } catch (error) {
       if (error?.name !== "AbortError") status.textContent = "Le partage n’a pas fonctionné sur cet appareil.";
     }

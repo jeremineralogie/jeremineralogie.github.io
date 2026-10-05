@@ -7,7 +7,7 @@ import { categoryLabel } from "./reference-resolver.js";
 import { dailyMinerals, mountGames } from "./games.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
-// Page d'accueil : nouveautés, minéral du jour, jeux du jour (trouve le minéral, quiz, devine le gisement) et badges, chiffres du site.
+// Page d'accueil : nouveautés, minéral du jour, jeux du jour (trouve le minéral, quiz, devine le gisement), chiffres du site.
 const client = getSupabase();
 const home = document.querySelector("#home");
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };

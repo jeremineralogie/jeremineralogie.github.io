@@ -3,6 +3,7 @@
 import { ficheUrl } from "./entity-links.js";
 import { sharePanel, dateFr } from "./share.js";
 import { track } from "./track.js";
+import { recordQuizPlay } from "./game-progress.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const pick = list => list[Math.floor(Math.random() * list.length)];
@@ -142,10 +143,11 @@ export function mountVraiFaux(container, { client }) {
 
   const finish = (score, total) => {
     track("end", "vrai-faux", null, score);
+    recordQuizPlay("vrai-faux", score, total);
     const message = score === total ? "Sans faute !" : score >= 8 ? "Excellent !" : score >= 6 ? "Bien joué !" : score >= 4 ? "Pas mal, tu progresses !" : "Les fiches n’attendent que toi !";
     box.replaceChildren(el("p", "mq-kicker", "Ton score"), el("h3", "mq-name", `${score} / ${total}`), el("p", "mq-tagline", message),
       sharePanel({ spec: { title: "Vrai ou faux minéralogique", date: dateFr(new Date().toISOString().slice(0, 10)), big: `${score} / ${total}`, bigSub: message, photos: [], footer: "Et toi, combien feras-tu ?" },
-        text: `J’ai fait ${score}/${total} au vrai ou faux minéralogique ! Et toi ?`, fileName: "vrai-faux-mineralogique.png" }),
+        text: `J’ai fait ${score}/${total} au vrai ou faux minéralogique ! Et toi ?`, fileName: "vrai-faux-mineralogique.png", remember: "vrai-faux" }),
       Object.assign(el("button", "pick-choice mq-start", "Rejouer"), { type: "button", onclick: () => void start() }));
   };
 
