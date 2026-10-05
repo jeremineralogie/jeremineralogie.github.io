@@ -45,7 +45,7 @@ test("Quel collectionneur es-tu : répondre toujours dans le sens d'un profil do
     const answers = QUIZ_COLLECTIONNEUR.questions.map(question => Math.max(0, question.answers.findIndex(answer => answer.v[axis])));
     if (withProfile >= 4) assert.equal(personaResult(data, answers).slug, profile, profile);
   });
-  QUIZ_COLLECTIONNEUR.profiles.forEach(item => assert.equal(item.mineral.length, 3, item.name));
+  QUIZ_COLLECTIONNEUR.profiles.forEach(item => { assert.equal(item.mineral.length, 3, item.name); assert.ok(existsSync(new URL(`../assets/collectionneurs/${item.slug}.webp`, import.meta.url)), `image de ${item.name}`); });
 });
 test("Quel outil de prospecteur es-tu : répondre toujours dans le sens d'un outil donne cet outil", () => {
   const data = { ...QUIZ_OUTIL, results: QUIZ_OUTIL.profiles };
