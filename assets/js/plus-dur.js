@@ -97,7 +97,7 @@ export function mountPlusDur(container, { client }) {
     const record = score > previous;
     const message = exhausted ? "Tu as épuisé tous les minéraux !" : score >= 15 ? "Un vrai minéralogiste !" : score >= 10 ? "Excellent !" : score >= 5 ? "Bien joué !" : "La prochaine série sera la bonne !";
     box.replaceChildren(el("p", "mq-kicker", "Ta série"), el("h3", "mq-name", `${score} d’affilée`), el("p", "mq-tagline", record && score > 0 ? `${message} Nouveau record !` : message),
-      sharePanel({ spec: { title: "Plus dur ou moins dur ?", logo: "/assets/decor/logo-plus-dur.webp", logoWidth: 780, date: dateFr(new Date().toISOString().slice(0, 10)), big: String(score), bigSub: score > 1 ? "bonnes réponses d’affilée" : "bonne réponse d’affilée", note: record && score > 0 ? "Nouveau record !" : "", photos: [], footer: "Et toi, jusqu’où iras-tu ?" },
+      sharePanel({ spec: { title: "Plus dur ou moins dur ?", logo: "/assets/decor/logo-plus-dur.webp", logoWidth: 900, date: dateFr(new Date().toISOString().slice(0, 10)), big: String(score), bigSub: score > 1 ? "bonnes réponses d’affilée" : "bonne réponse d’affilée", note: record && score > 0 ? "Nouveau record !" : "", photos: [], footer: "Et toi, jusqu’où iras-tu ?" },
         text: `J’ai enchaîné ${score} bonne${score > 1 ? "s" : ""} réponse${score > 1 ? "s" : ""} à « Plus dur ou moins dur ? » ! Et toi ?`, fileName: "plus-dur-ou-moins-dur.png", remember: "plus-dur" }),
       Object.assign(el("button", "pick-choice mq-start", "Rejouer"), { type: "button", onclick: () => void start() }));
   };

@@ -39,3 +39,10 @@ test("série enregistrée : record conservé, fusion appareil / compte par meill
   const merged = mergeProgress({ quizzes: { "plus-dur": { plays: 2, best: { score: 7, total: 1, streak: true }, last: { score: 3, total: 1, date: "2026-10-05" } } } }, { quizzes: { "plus-dur": { plays: 5, best: { score: 12, total: 1, streak: true }, last: { score: 1, total: 1, date: "2026-10-04" } } } });
   assert.equal(merged.quizzes["plus-dur"].best.score, 12); assert.equal(merged.quizzes["plus-dur"].plays, 5);
 });
+
+test("fiche de partage : l'illustration du jeu existe", async () => {
+  const { existsSync } = await import("node:fs");
+  assert.ok(existsSync(new URL("../assets/decor/logo-plus-dur.webp", import.meta.url)));
+  const game = await readFile(new URL("../assets/js/plus-dur.js", import.meta.url), "utf8");
+  assert.match(game, /logo: "\/assets\/decor\/logo-plus-dur\.webp"/);
+});
