@@ -637,7 +637,7 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 
 /* ===== Affichage ordinateur (≥ 1100 px) : le téléphone n'est pas touché, tout ce bloc est réservé aux grands écrans ===== */
 @media(min-width:1100px){
-  html{font-size:112.5%}
+  html{font-size:106%}
   main,.header-inner,.footer-inner{max-width:1180px}
   .search{width:min(760px,100%)}
   .search input{font-size:.82rem;letter-spacing:0}
@@ -659,7 +659,7 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
   .fiche-photos img{width:min(100%,520px)}
 }
 @media(min-width:1600px){
-  html{font-size:125%}
+  html{font-size:112.5%}
   main,.header-inner,.footer-inner{max-width:1360px}
   .article-full,.doc-full,.legal,.home-panel,.fav-group,.ident-intro,.ident-form,.ident-note,form[data-message-form]{max-width:1060px}
   #fiche,.learn-letter,.learn-glossary,.ident-results{max-width:1120px}
