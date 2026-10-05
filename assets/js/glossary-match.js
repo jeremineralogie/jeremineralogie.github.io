@@ -62,7 +62,7 @@ export function glossaryParts(source, keys, used) {
 
 // ----- Propriétés d'une fiche minéral : libellés et valeurs précises reliés à leur terme (même règle dans la page affichée et dans la page pour Google) -----
 const slugOfText = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-export const LABEL_TERMS = { "Système cristallin": "systeme-cristallin", "Dureté (Mohs)": "echelle-de-mohs", "Densité": "densite", "Trait": "trait", "Éclat": "eclat", "Clivage": "clivage", "Cassure": "cassure", "Habitus": "habitus", "Fluorescence": "fluorescence" };
+export const LABEL_TERMS = { "Système cristallin": "systeme-cristallin", "Dureté (Mohs)": "echelle-de-mohs", "Dureté": "echelle-de-mohs", "Densité": "densite", "Trait": "trait", "Éclat": "eclat", "Clivage": "clivage", "Cassure": "cassure", "Habitus": "habitus", "Fluorescence": "fluorescence" };
 // Famille chimique -> terme (« Silicates (nésosilicates) » -> nésosilicate, « Oxydes et hydroxydes » -> oxyde et hydroxyde…).
 const FAMILY_SLUGS = [["nesosilicate", "nesosilicate"], ["sorosilicate", "sorosilicate"], ["cyclosilicate", "cyclosilicate"], ["inosilicate", "inosilicate"], ["phyllosilicate", "phyllosilicate"], ["tectosilicate", "tectosilicate"], ["carbonate", "carbonate"], ["sulfure", "sulfure"], ["oxyde", "oxyde-et-hydroxyde"], ["sulfate", "sulfate"], ["phosphate", "phosphate"], ["halogenure", "halogenure"], ["element natif", "element-natif"], ["borate", "borate"], ["compose organique", "compose-organique"]];
 // Qualités reconnues dans un champ (mot replié -> terme) ; le plus précis d'abord.

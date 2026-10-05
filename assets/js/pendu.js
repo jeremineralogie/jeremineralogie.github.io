@@ -1,6 +1,6 @@
 // « Le pendu minéralogique » : un terme du glossaire à deviner lettre par lettre, sa définition en indice. 6 cristaux = 6 erreurs permises.
 // Série de mots : on enchaîne jusqu'au premier mot raté ; le score est le nombre de mots trouvés.
-import { cleanUrl } from "./clean-urls.js";
+import { glossLink } from "./glossary-links.js";
 import { recordSeriesPlay, getProgress } from "./game-progress.js";
 import { dateFr, sharePanel } from "./share.js";
 import { track } from "./track.js";
@@ -72,7 +72,7 @@ export function mountPendu(container, { client }) {
       buttons.forEach(button => { button.disabled = true; }); hintButton.hidden = true;
       feedback.className = `mq-feedback ${won ? "is-right" : "is-wrong"}`;
       const verdict = el("p", "mq-verdict", won ? "Bien vu ! " : "Raté… "); verdict.append(el("strong", "", `C’était « ${word.term} ».`));
-      const link = el("a", "link", "Voir le terme dans le glossaire"); link.href = cleanUrl("term", word.slug);
+      const link = glossLink(word.slug, "En savoir plus sur ce terme");
       const next = el("button", "pick-choice mq-start", won ? "Mot suivant" : "Voir ma série"); next.type = "button";
       next.addEventListener("click", () => won ? play(round + 1, used) : finish(round, false));
       feedback.append(verdict, el("p", "mq-explain", word.definition), el("p", "mq-links", ""), next);

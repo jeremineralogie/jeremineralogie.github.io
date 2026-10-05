@@ -3,7 +3,7 @@ import { renderCrumbs } from "./crumbs.js";
 import { loadPublishedContent, publicMediaUrl, shopItemName, showLoadError } from "./content-repository.js";
 import { ficheUrl } from "./entity-links.js";
 import { pieceTitle } from "./seo-titles.js";
-import { applyGlossary } from "./glossary-links.js";
+import { applyGlossary, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, renderNeighbours } from "./detail-nav.js";
 import { shareButton } from "./share-button.js";
@@ -103,6 +103,7 @@ function render(client, item) {
     const section = document.createElement("div"); section.className = "content";
     const heading = document.createElement("h2"); heading.textContent = "Documentation minéralogique";
     section.append(heading, science); root.append(section);
+    void linkProperties(science);
   }
   // Maillage : autres minéraux du même gisement, minéraux similaires.
   const mineralSlug = item.mineral?.slug;

@@ -7,7 +7,7 @@ import { renderNeighbours, specimenUrl } from "./detail-nav.js";
 import { siteTypeLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
 import { specimenTitle } from "./seo-titles.js";
-import { applyGlossary } from "./glossary-links.js";
+import { applyGlossary, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { shareButton } from "./share-button.js";
 import { specimenAlt } from "./alt-text.js";
@@ -138,6 +138,7 @@ function renderSpecimen(specimen) {
     science.append(term, description);
   });
   content.querySelector("[data-scientific-section]").hidden = science.children.length === 0;
+  if (science.children.length) void linkProperties(science); // termes techniques (système cristallin, dureté, éclat…) cliquables : petite fenêtre de définition
   void loadNeighbours();
   // Maillage : autres minéraux du même gisement, minéraux similaires.
   const shown = current;

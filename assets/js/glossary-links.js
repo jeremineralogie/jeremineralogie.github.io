@@ -5,7 +5,8 @@ import { getSupabase } from "./supabase-client.js";
 // cliquable et ouvre une petite bulle avec la définition et un lien vers l'onglet Apprendre.
 // Les termes trop généraux (minéral, roche, couleur…) ne sont pas reliés pour ne pas surcharger les textes (voir glossary-match.js).
 import { matcher, termHits, foldText } from "./glossary-match.js";
-export { propertyParts, PRECISE_LABELS, LABEL_TERMS } from "./glossary-match.js";
+import { propertyParts, PRECISE_LABELS, LABEL_TERMS } from "./glossary-match.js";
+export { propertyParts, PRECISE_LABELS, LABEL_TERMS };
 const SKIP = "a, button, h1, h2, h3, script, style, input, textarea, select, .gloss-pop, .kicker, .meta";
 
 export const glossaryTerms = () => loadTerms();
@@ -70,6 +71,36 @@ async function run(roots, precise) {
   const used = pageUsed;
   targets.forEach(root => textNodes(root).forEach(node => linkNode(node, keys, used)));
   bindPopover(bySlug);
+}
+
+// Active la petite fenêtre sur les liens « a.gloss[data-slug] » ajoutés à la main (quiz, jeux) : un clic affiche la définition au lieu d'ouvrir le glossaire.
+export async function enablePopovers() {
+  const terms = await loadTerms();
+  if (terms.length) bindPopover(new Map(terms.map(term => [term.slug, term])));
+}
+// Lien vers un terme du glossaire qui s'ouvre dans la petite fenêtre (bouton « Voir dans le glossaire » à l'intérieur).
+export function glossLink(slug, text, className = "gloss") {
+  const link = document.createElement("a"); link.className = className; link.href = cleanUrl("term", slug); link.dataset.slug = slug;
+  link.setAttribute("aria-haspopup", "dialog"); link.textContent = text; void enablePopovers();
+  return link;
+}
+// Libellés et valeurs d'une liste de propriétés (dt / dd) reliés au glossaire : système cristallin, famille chimique, éclat, cassure, clivage…
+// Chaque terme n'est relié qu'une seule fois sur la page (les liens déjà posés ailleurs comptent).
+export async function linkProperties(list) {
+  const terms = new Map((await loadTerms()).map(row => [row.slug, row]));
+  const used = new Set([...terms.keys()].filter(isTermUsed));
+  for (const dt of [...list.querySelectorAll("dt")]) {
+    const label = dt.textContent; const value = dt.nextElementSibling;
+    const labelTerm = terms.get(LABEL_TERMS[label]);
+    if (labelTerm && !used.has(labelTerm.slug)) { used.add(labelTerm.slug); markTermUsed(labelTerm.slug); dt.replaceChildren(glossLink(labelTerm.slug, label)); }
+    if (!value) continue;
+    const parts = propertyParts(label, value.textContent, terms, used);
+    if (parts?.some(part => part.term)) value.replaceChildren(...parts.map(part => part.term ? glossLink(part.term.slug, part.text) : part.text));
+    used.forEach(markTermUsed);
+    await (PRECISE_LABELS.has(label) ? applyGlossaryPrecise(value) : applyGlossary(value));
+    terms.forEach(row => { if (isTermUsed(row.slug)) used.add(row.slug); });
+  }
+  await enablePopovers();
 }
 
 const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };

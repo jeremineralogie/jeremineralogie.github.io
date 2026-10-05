@@ -79,8 +79,9 @@ export function mountGlossaire(container, { client }) {
         feedback.className = `mq-feedback ${right ? "is-right" : "is-wrong"}`;
         feedback.append(verdict, el("p", "mq-explain", item.definition));
         const links = el("p", "mq-links");
-        const termPage = cleanUrl("term", item.slug);
-        const termLink = el("a", "link", `Voir « ${item.term} » dans le glossaire`); termLink.href = termPage || `apprendre.html?terme=${encodeURIComponent(item.slug)}#glossaire`; links.append(termLink);
+        // Petite fenêtre de définition (avec un bouton vers le glossaire) plutôt qu'un renvoi direct.
+        const termLink = el("a", "gloss", `En savoir plus sur « ${item.term} »`); termLink.href = cleanUrl("term", item.slug) || `apprendre.html?terme=${encodeURIComponent(item.slug)}#glossaire`; termLink.dataset.slug = item.slug; termLink.setAttribute("aria-haspopup", "dialog");
+        links.append(termLink); void import("./glossary-links.js").then(module => module.enablePopovers()).catch(error => console.error("Fenêtre du glossaire :", error));
         (item.related_minerals || []).slice(0, 3).forEach(name => { links.append(" · "); const link = el("a", "link", `Fiche ${name}`); link.href = ficheUrl("mineral", name); links.append(link); });
         const next = el("button", "pick-choice mq-start", index + 1 < questions.length ? "Définition suivante" : "Voir mon score"); next.type = "button";
         next.addEventListener("click", () => index + 1 < questions.length ? play(questions, index + 1, score + (right ? 1 : 0)) : finish(score + (right ? 1 : 0), questions.length));

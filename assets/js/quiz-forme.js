@@ -1,7 +1,7 @@
 // Quiz « Quelle forme cristalline es-tu ? » : 10 questions, 8 résultats (les sept systèmes cristallins et l'amorphe).
 import { QUIZ_FORME } from "./quiz-forme-data.js";
 import { ficheUrl } from "./entity-links.js";
-import { cleanUrl } from "./clean-urls.js";
+import { glossLink } from "./glossary-links.js";
 import { mountPersonaQuiz } from "./quiz-persona.js";
 
 const data = { ...QUIZ_FORME, results: QUIZ_FORME.profiles };
@@ -21,7 +21,7 @@ export function mountForme(container) {
       const [slug, name, why] = item.mineral;
       const note = el("p", "mq-mineral"); note.append(`Ton minéral : ${name}. ${why} `);
       const link = el("a", "link mq-fiche", `Voir la fiche : ${name} →`); link.href = ficheUrl("mineral", slug);
-      const glossary = el("a", "gloss mq-fiche", "Comprendre les systèmes cristallins →"); glossary.href = cleanUrl("term", "systeme-cristallin");
+      const glossary = glossLink("systeme-cristallin", "Comprendre les systèmes cristallins →", "gloss mq-fiche");
       return { before: [icon], after: [note, link, glossary], logo: src, logoWidth: 700, photos: [] };
     }
   });
