@@ -7,7 +7,7 @@ import { articleUrl, renderNeighbours } from "./detail-nav.js";
 import { applyGlossary, skipTermNames } from "./glossary-links.js";
 import { articleTitle } from "./seo-titles.js";
 import { renderBlocks } from "./article-content.js";
-import { shareButton } from "./share-button.js";
+import { dateFr, pageLink, sharePanel } from "./share.js";
 
 const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("slug");
 const status = document.querySelector("#detail-status");
@@ -69,10 +69,13 @@ function render(client, article, { linker, chosen }, all = []) {
     related.forEach((item, index) => { if (index) line.append(" · "); appendLinked(line, [{ text: item.name, href: item.href }]); });
     page.append(line);
   }
-  // Partage : menu de partage de l'appareil (réseaux, messages…) ou, à défaut, copie du lien de l'article.
+  // Partage : même carte image et même menu de partage de l'appareil que les jeux, avec la photo de l'article et le lien vers l'article.
   const share = document.createElement("div"); share.className = "article-share";
   const shareImage = images[0] ? publicMediaUrl(client, images[0]) : page.querySelector("img.art-img, .art-image img")?.src || "";
-  share.append(shareButton({ title: article.title, text: `${article.title} — Jeremineralogie`, image: shareImage, label: "Partager cet article", copyPrompt: "Copiez le lien de cet article :" }));
+  share.append(sharePanel({
+    spec: { title: article.title, wrapTitle: true, date: [categoryLabel(article.category), article.published_on && dateFr(article.published_on)].filter(Boolean).join(" · "), note: "", logo: shareImage || "/assets/decor/logo-jeux.webp", logoWidth: 880, logoMaxHeight: 960, logoFrame: Boolean(shareImage), footer: "À lire sur Jeremineralogie" },
+    text: `${article.title} — Jeremineralogie`, url: pageLink(), fileName: `article-${article.slug || "jeremineralogie"}.png`, label: "📲 Partager cet article", previewAlt: "Image de l'article à partager"
+  }));
   page.append(share);
   const others = relatedArticles(article, all, chosen);
   if (others.length) page.append(readMore(others));

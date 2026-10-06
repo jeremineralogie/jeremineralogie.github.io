@@ -24,6 +24,17 @@ function fitText(ctx, text, maxWidth, size, family, weight = "500") {
   let current = size;
   do { ctx.font = `${weight} ${current}px ${family}`; current -= 2; } while (ctx.measureText(text).width > maxWidth && current > 20);
 }
+// Coupe un texte en lignes de largeur donnée (au plus « max » lignes, la dernière finit par « … » si le texte est trop long).
+function wrapLines(ctx, text, maxWidth, max) {
+  const lines = []; let line = "";
+  for (const word of String(text).split(/\s+/)) {
+    const next = line ? `${line} ${word}` : word;
+    if (line && ctx.measureText(next).width > maxWidth) { lines.push(line); line = word; } else line = next;
+  }
+  if (line) lines.push(line);
+  if (lines.length > max) { const kept = lines.slice(0, max); kept[max - 1] = `${kept[max - 1].replace(/[\s,;:.]+$/, "")}…`; return kept; }
+  return lines;
+}
 function spaced(ctx, text, x, y, spacing) {
   const chars = [...text]; const total = chars.reduce((sum, char) => sum + ctx.measureText(char).width, 0) + spacing * (chars.length - 1);
   let cursor = x - total / 2;
@@ -32,7 +43,7 @@ function spaced(ctx, text, x, y, spacing) {
   ctx.textAlign = "center";
 }
 
-// spec : { title, date, big, bigSub, note, squares: ["🟩"…], photos: [url…], mystery (médaillon « ? »), streak, footer, logo (illustration propre au jeu), logoWidth, logoFrame (cadre arrondi, pour une photo) }
+// spec : { title, wrapTitle (titre long sur plusieurs lignes), date, big, bigSub, note, squares: ["🟩"…], photos: [url…], mystery (médaillon « ? »), streak, footer, logo (illustration propre au jeu), logoWidth, logoMaxHeight (photo haute réduite), logoFrame (cadre arrondi, pour une photo) }
 async function drawCard(spec, withPhotos = true) {
   const canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
@@ -52,7 +63,9 @@ async function drawCard(spec, withPhotos = true) {
   const external = spec.logo && new URL(spec.logo, location.href).origin !== location.origin;
   const logo = spec.logo && (withPhotos || !external) ? await loadImage(spec.logo, Boolean(external)) : null;
   if (logo) {
-    const width = spec.logoWidth || 640, height = width * logo.height / logo.width, left = (W - width) / 2, top = Math.max(70, 110 + (640 - height) / 2);
+    let width = spec.logoWidth || 640, height = width * logo.height / logo.width;
+    if (spec.logoMaxHeight && height > spec.logoMaxHeight) { height = spec.logoMaxHeight; width = height * logo.width / logo.height; }
+    const left = (W - width) / 2, top = spec.logoMaxHeight ? 110 + (spec.logoMaxHeight - height) / 2 : Math.max(70, 110 + (640 - height) / 2);
     if (spec.logoFrame) {
       ctx.save(); roundRect(ctx, left, top, width, height, 28); ctx.clip(); ctx.drawImage(logo, left, top, width, height); ctx.restore();
       ctx.strokeStyle = "rgba(160,110,240,.7)"; ctx.lineWidth = 4; roundRect(ctx, left, top, width, height, 28); ctx.stroke();
@@ -62,13 +75,22 @@ async function drawCard(spec, withPhotos = true) {
   ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
   ctx.fillStyle = "#f3eaff";
   // Titre long (« Vrai ou faux minéralogique ») : la taille diminue jusqu'à tenir dans la largeur de l'image.
-  const title = spec.title.toUpperCase();
-  let titleSize = 76;
-  do { ctx.font = `500 ${titleSize}px ${SERIF}`; titleSize -= 2; } while (ctx.measureText(title).width + 6 * (title.length - 1) > 940 && titleSize > 36);
-  spaced(ctx, title, W / 2, 870, 6);
-  ctx.fillStyle = "#b9a5d8"; ctx.font = `400 40px ${SANS}`; ctx.fillText(spec.date, W / 2, 940);
-  let y = 1110;
-  ctx.fillStyle = "#f0d9a8"; fitText(ctx, spec.big, W - 200, 170, SERIF, "600"); ctx.fillText(spec.big, W / 2, y);
+  let dateY = 940;
+  if (spec.wrapTitle) {
+    // Titre d'article ou de pièce : en minuscules, sur deux ou trois lignes.
+    ctx.font = `500 58px ${SERIF}`;
+    const lines = wrapLines(ctx, spec.title, 940, 3);
+    lines.forEach((line, index) => ctx.fillText(line, W / 2, 1150 + index * 66));
+    dateY = 1150 + (lines.length - 1) * 66 + 76;
+  } else {
+    const title = spec.title.toUpperCase();
+    let titleSize = 76;
+    do { ctx.font = `500 ${titleSize}px ${SERIF}`; titleSize -= 2; } while (ctx.measureText(title).width + 6 * (title.length - 1) > 940 && titleSize > 36);
+    spaced(ctx, title, W / 2, 870, 6);
+  }
+  ctx.fillStyle = "#b9a5d8"; ctx.font = `400 40px ${SANS}`; ctx.fillText(spec.date, W / 2, dateY);
+  let y = spec.wrapTitle ? dateY + 20 : 1110;
+  if (spec.big) { ctx.fillStyle = "#f0d9a8"; fitText(ctx, spec.big, W - 200, 170, SERIF, "600"); ctx.fillText(spec.big, W / 2, y); }
   if (spec.bigSub) { y += 80; ctx.fillStyle = "#e6dcf5"; ctx.font = `400 50px ${SANS}`; ctx.fillText(spec.bigSub, W / 2, y); }
   if (spec.squares?.length) {
     y += 60; const size = 96, gap = 22, total = spec.squares.length * size + (spec.squares.length - 1) * gap;
@@ -117,14 +139,14 @@ export async function makeCardBlob(spec) {
 // Le menu de partage de l'appareil propose ensuite toutes les applications (Instagram, TikTok, WhatsApp…) et l'enregistrement de l'image.
 // Sans menu de partage (certains ordinateurs), l'image est téléchargée.
 // remember : clé sous laquelle ce résultat est gardé dans le carnet de terrain (rememberOnce : seulement la première fois) ; shareKey : clé du partage compté pour les badges (par défaut remember).
-export function sharePanel({ spec, text, fileName, remember = null, rememberOnce = false, shareKey = remember }) {
+export function sharePanel({ spec, text, fileName, remember = null, rememberOnce = false, shareKey = remember, url = SITE, label = "📲 Partager les résultats", previewAlt = "Image de votre résultat à partager" }) {
   if (remember) rememberCard(remember, { spec, text, fileName }, rememberOnce);
   const box = el("div", "share");
-  const preview = el("img", "share-preview"); preview.alt = "Image de votre résultat à partager"; preview.hidden = true;
-  const button = el("button", "share-btn is-primary", "📲 Partager les résultats"); button.type = "button";
+  const preview = el("img", "share-preview"); preview.alt = previewAlt; preview.hidden = true;
+  const button = el("button", "share-btn is-primary", label); button.type = "button";
   const status = el("p", "share-status"); status.setAttribute("aria-live", "polite");
   box.append(preview, button, status);
-  const message = `${text}\n${SITE}`;
+  const message = `${text}\n${url}`;
   let blob = null;
   const ready = makeCardBlob(spec).then(result => { blob = result; preview.src = URL.createObjectURL(blob); preview.hidden = false; })
     .catch(error => console.error("Image de partage :", error));
@@ -149,5 +171,8 @@ export function sharePanel({ spec, text, fileName, remember = null, rememberOnce
   });
   return box;
 }
+
+// Adresse à partager pour la page ouverte (adresse canonique de la page déjà remplie pour le référencement, sinon adresse actuelle).
+export const pageLink = () => document.querySelector('link[rel="canonical"]')?.href || location.href;
 
 export const dateFr = day => new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${day}T12:00:00`));

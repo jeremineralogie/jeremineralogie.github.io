@@ -750,14 +750,6 @@ main :is(h1,h2,h3,.lead,.tagline,.kicker,p.meta,.photo-credit,.home-more,.legal-
 .share-icon{font-size:1rem;line-height:1}
 #fiche .share-btn,.details .share-btn{margin-left:auto;margin-right:auto}
 .details .share-btn{display:flex;width:fit-content}
-/* Menu de partage : réseaux, appareil, image, lien */
-.share-wrap{position:relative;display:inline-block;margin-top:10px}
-.share-wrap .share-btn{margin-top:0}
-#fiche .share-wrap,.details .share-wrap{display:block;width:fit-content;margin-left:auto;margin-right:auto}
-.share-menu{position:absolute;z-index:30;top:calc(100% + 8px);left:50%;transform:translateX(-50%);display:grid;gap:2px;width:min(260px,86vw);padding:8px;border:1px solid rgba(160,110,240,.55);border-radius:14px;background:#120a22;box-shadow:0 14px 36px rgba(0,0,0,.55)}
-.share-menu[hidden]{display:none}
-.share-item{display:block;width:100%;padding:11px 14px;border:0;border-radius:9px;background:transparent;color:#dccbf7;font:inherit;font-size:.92rem;text-align:left;text-decoration:none;cursor:pointer}
-.share-item:hover,.share-item:focus-visible{background:#3a1d63;color:#fff;outline:none}
 
 /* Page À propos */
 .about-links{margin:0;padding-left:1.2em;line-height:1.7}
