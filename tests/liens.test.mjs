@@ -28,3 +28,9 @@ test("les pages publiques des pièces affichent les articles et les archives li�
     assert.match(source, /pagesBlock\("Articles liés"/); assert.match(source, /pagesBlock\("Archives liées"/);
   }
 });
+
+test("la recherche couvre aussi les termes du glossaire", async () => {
+  const source = await readFile(new URL("../assets/js/search-page.js", import.meta.url), "utf8");
+  assert.match(source, /type: "Glossaire", table: "glossary_terms"/);
+  assert.match(source, /cleanUrl\("term", r\.slug\)/);
+});

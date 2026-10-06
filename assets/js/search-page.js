@@ -1,4 +1,4 @@
-import { departmentUrl } from "./clean-urls.js";
+import { cleanUrl, departmentUrl } from "./clean-urls.js";
 import { shopItemName, publicMediaUrl } from "./content-repository.js";
 import { commonsPhoto, loadMineralPhotos } from "./mineral-photos.js";
 import { getSupabase } from "./supabase-client.js";
@@ -17,6 +17,7 @@ const firstImage = rows => {
   return image ? { src: publicMediaUrl(client, image), alt: image.alt_text } : null;
 };
 let commons = {};
+const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
 
 // Sélections publiques uniquement : le RLS ne renvoie que le contenu publié.
 const sources = [
@@ -34,6 +35,8 @@ const sources = [
     map: r => ({ title: r.name, meta: r.department_code || "", href: ficheUrl("locality", r.slug), haystack: [r.name, r.notes] }) },
   { type: "Minéral", table: "minerals", select: `name,slug,formula,${media("mineral_media")}`,
     map: r => ({ title: r.name, meta: r.formula || "", href: ficheUrl("mineral", r.slug), image: firstImage(r.media) || mineralCommons(r.slug), haystack: [r.name, r.formula] }) },
+  { type: "Glossaire", table: "glossary_terms", select: "slug,term,domain,definition", wide: true,
+    map: r => ({ title: r.term, meta: DOMAINS[r.domain] || r.domain || "", href: cleanUrl("term", r.slug), haystack: [r.term, r.definition] }) },
   { type: "Département", table: "departments", select: "code,name",
     map: r => ({ title: `${r.name} (${r.code})`, meta: "", href: departmentUrl(r.code), haystack: [r.name, r.code] }) },
   { type: "Région", table: "regions", select: "name",
