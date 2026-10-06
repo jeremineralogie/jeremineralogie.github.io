@@ -71,7 +71,8 @@ function render(client, article, { linker, chosen }, all = []) {
   }
   // Partage : menu de partage de l'appareil (réseaux, messages…) ou, à défaut, copie du lien de l'article.
   const share = document.createElement("div"); share.className = "article-share";
-  share.append(shareButton({ title: article.title, text: `${article.title} — Jeremineralogie`, label: "Partager cet article", copyPrompt: "Copiez le lien de cet article :" }));
+  const shareImage = images[0] ? publicMediaUrl(client, images[0]) : page.querySelector("img.art-img, .art-image img")?.src || "";
+  share.append(shareButton({ title: article.title, text: `${article.title} — Jeremineralogie`, image: shareImage, label: "Partager cet article", copyPrompt: "Copiez le lien de cet article :" }));
   page.append(share);
   const others = relatedArticles(article, all, chosen);
   if (others.length) page.append(readMore(others));

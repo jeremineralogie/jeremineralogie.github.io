@@ -57,6 +57,20 @@ function photoUrl({ url }, media) {
   if (!first) return null;
   return `${url}/storage/v1/object/public/${first.bucket_id}/${first.storage_path.split("/").map(encodeURIComponent).join("/")}`;
 }
+// Première image placée dans le texte d'un article (bloc image ou image du texte libre), pour l'aperçu de partage quand l'article n'a pas de photo de couverture.
+function bodyImageUrl({ url }, body) {
+  const publicUrl = (bucket, path) => `${url}/storage/v1/object/public/${bucket}/${String(path).split("/").map(encodeURIComponent).join("/")}`;
+  for (const block of Array.isArray(body) ? body : []) {
+    if (block?.type === "image" && block.path && (block.bucket || "site-media-public") === "site-media-public") return publicUrl("site-media-public", block.path);
+    if (block?.type === "rich" && typeof block.html === "string") {
+      for (const tag of block.html.match(/<img\b[^>]*>/gi) || []) {
+        const path = tag.match(/data-path="([^"]+)"/i)?.[1], bucket = tag.match(/data-bucket="([^"]+)"/i)?.[1] || "site-media-public";
+        if (path && bucket === "site-media-public") return publicUrl(bucket, path.replace(/&amp;/g, "&"));
+      }
+    }
+  }
+  return null;
+}
 const jsonLd = data => `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", ...data }).replace(/</g, "\\u003c")}</script>`;
 
 // Copie d'une page modèle avec titre, description, aperçus de partage et paramètres de la fiche.
@@ -304,7 +318,7 @@ async function main() {
   articles.forEach(item => {
     const paragraphs = blocksToText(item.body);
     const usedEntities = new Set(), usedTerms = new Set();
-    const image = photoUrl(cfg, item.media);
+    const image = photoUrl(cfg, item.media) || bodyImageUrl(cfg, item.body);
     add("article", item.slug, {
       template: "article", page: "article", params: `slug=${item.slug}`, lastmod: day(item.updated_at), image, ogType: "article",
       title: articleTitle(item.title), description: cut(item.excerpt || paragraphs[0] || item.title),
