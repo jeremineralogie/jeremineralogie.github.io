@@ -12,8 +12,8 @@ const source = await readFile(path.join(ROOT, "assets/js/supabase-config.js"), "
 const SUPABASE = process.env.SUPABASE_URL || /url:\s*"([^"]+)"/.exec(source)?.[1];
 const KEY = process.env.SUPABASE_KEY || /publishableKey:\s*"([^"]+)"/.exec(source)?.[1];
 const TABLES = ["minerals", "mineral_media", "mineral_occurrences", "glossary_terms", "mines", "localities", "departments", "regions", "specimens", "specimen_media", "specimen_associations",
-  "shop_items", "shop_item_media", "shop_item_associations", "articles", "article_media", "article_minerals", "article_mines", "article_localities", "article_departments", "article_regions", "article_specimens",
-  "archive_documents", "archive_minerals", "archive_mines", "archive_localities", "archive_departments", "archive_regions", "archive_specimens", "archive_articles", "site_settings"];
+  "shop_items", "shop_item_media", "shop_item_associations", "articles", "article_media", "article_minerals", "article_mines", "article_localities", "article_departments", "article_regions", "article_specimens", "article_shop_items",
+  "archive_documents", "archive_minerals", "archive_mines", "archive_localities", "archive_departments", "archive_regions", "archive_specimens", "archive_shop_items", "archive_articles", "site_settings"];
 const PAGE = 1000;
 
 async function readAll(table) {

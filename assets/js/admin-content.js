@@ -31,7 +31,7 @@ const PUBLICATION_OPTIONS = [["draft", "Brouillon"], ["published", "Publié"]];
 // Champs : ref (liste liée à une table), multi, options, blank (choix vide), customOptions, help (aide sous le champ), suggest (propositions de saisie)…
 const sections = [
   { id: "collection", label: "Ma collection", table: "specimens", title: "Ma collection", mediaTable: "specimen_media", foreignKey: "specimen_id", path: "collection", mediaFirst: true,
-    links: [["specimen_associations", "mineral_id", "minerals"]], linkOwner: "specimen_id", linkPrefix: "specimen_", linkExclude: { link_associations: "mineral_id" }, countryField: "country",
+    links: [["specimen_associations", "mineral_id", "minerals"], ["article_specimens", "article_id", "articles", "link_articles"], ["archive_specimens", "archive_id", "archive_documents", "link_archives"]], linkOwner: "specimen_id", linkPrefix: "specimen_", linkExclude: { link_associations: "mineral_id" }, countryField: "country",
     duplicate: { title: "Nouveau spécimen (copie)", fields: ["mineral_id", "mine_id", "locality_id", "department_code", "region_id", "country", "site_type"] },
     listLabel: record => `${record.title || record.mineral_name || "Spécimen"} — ${record.slug}`,
     prepare: prepareSpecimen, complete: completeSpecimen,
@@ -46,10 +46,11 @@ const sections = [
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_text", label: "Poids", help: "grammes" },
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "keywords", label: "Mots-clés (invisibles pour les visiteurs ; servent à la recherche)" },
     { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA", help: "Exemples : 2018, 09/2018 ou 29/09/2018." },
+    { key: "link_articles", label: "Articles liés", ref: "articles", display: "title", multi: true }, { key: "link_archives", label: "Archives liées", ref: "archive_documents", display: "title", multi: true },
     { key: "publication_status", label: "Publication", type: "select", options: [["published", "Publié"], ["draft", "Brouillon"]] }
   ] },
   { id: "shop", label: "Boutique", table: "shop_items", title: "Boutique", mediaTable: "shop_item_media", foreignKey: "shop_item_id", path: "shop", mediaFirst: true,
-    links: [["shop_item_associations", "mineral_id", "minerals"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", countryField: "provenance",
+    links: [["shop_item_associations", "mineral_id", "minerals"], ["article_shop_items", "article_id", "articles", "link_articles"], ["archive_shop_items", "archive_id", "archive_documents", "link_archives"]], linkOwner: "shop_item_id", linkPrefix: "shop_item_", countryField: "provenance",
     duplicate: { title: "Nouveau produit (copie)", fields: ["mineral_id", "provenance", "mine_id", "locality_id", "department_code", "region_id"] }, autoReference: true, fields: [
     { key: "title", label: "Titre (visible seulement dans l’admin)" },
     { key: "reference", label: "Référence (créée automatiquement)", required: true, help: "JM + 2 lettres du minéral + lettres du gisement (à défaut : commune, département, région, pays) + numéro, ex. JMFLLB1. Modifiable si besoin." },
@@ -59,16 +60,18 @@ const sections = [
     { key: "provenance", label: "Pays", notNull: true },
     { key: "dimensions", label: "Dimensions", notNull: true }, { key: "weight_grams", label: "Poids (g)", type: "number", step: "0.001" },
     { key: "description", label: "Description", type: "textarea", notNull: true }, { key: "price_cents", label: "Prix (euros)", type: "number", step: "0.01", required: true, euros: true },
+    { key: "link_articles", label: "Articles liés", ref: "articles", display: "title", multi: true }, { key: "link_archives", label: "Archives liées", ref: "archive_documents", display: "title", multi: true },
     { key: "sale_status", label: "Disponibilité", type: "select", options: [["available", "Disponible"], ["sold", "Vendu"], ["hidden", "Masqué"]] },
     { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS },
     { key: "keywords", label: "Mots-clés (invisibles pour les visiteurs ; servent à la recherche)" }, { key: "discovery_date_text", label: "Date de découverte", placeholder: "AAAA, MM/AAAA ou JJ/MM/AAAA" }
   ] },
   { id: "articles", label: "Articles", table: "articles", title: "Articles", mediaTable: "article_media", foreignKey: "article_id", path: "articles", mediaAfter: "body", singleCover: true,
-    links: [["article_minerals", "mineral_id", "minerals"], ["archive_articles", "archive_id", "archive_documents"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_departments", "department_code", "departments"], ["article_regions", "region_id", "regions"]], fields: [
+    links: [["article_minerals", "mineral_id", "minerals"], ["archive_articles", "archive_id", "archive_documents"], ["article_mines", "mine_id", "mines"], ["article_localities", "locality_id", "localities"], ["article_departments", "department_code", "departments"], ["article_regions", "region_id", "regions"], ["article_specimens", "specimen_id", "specimens", "link_specimens"], ["article_shop_items", "shop_item_id", "shop_items", "link_shop_items"]], fields: [
     { key: "title", label: "Titre", required: true },
     { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["autre", "Autre"], ["mineralogie", "Minéralogie"], ["geologie", "Géologie"], ["cristallographie", "Cristallographie"], ["mines-histoire", "Mines & histoire"], ["decouvertes", "Découvertes"], ["identification", "Identification"], ["collection", "Collection"], ["pedagogie", "Pédagogie"]] },
     { key: "body", label: "Contenu", richBody: true, notNull: true },
     { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }, { key: "link_archive_articles", label: "Archives liées", ref: "archive_documents", display: "title", multi: true },
+    { key: "link_specimens", label: "Pièces de ma collection liées", ref: "specimens", display: "label", multi: true }, { key: "link_shop_items", label: "Pièces de la boutique liées", ref: "shop_items", display: "label", multi: true },
     { key: "link_mines", label: "Gisements liés", ref: "mines", display: "name", multi: true },
     { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true },
     { key: "link_departments", label: "Départements liés", ref: "departments", display: "name", value: "code", multi: true }, { key: "link_regions", label: "Régions liées", ref: "regions", display: "name", multi: true },
@@ -76,12 +79,13 @@ const sections = [
     { key: "published_on", label: "Date de publication", type: "date" }, { key: "publication_status", label: "Publication", type: "select", options: PUBLICATION_OPTIONS }
   ] },
   { id: "archives", label: "Archives & Documentation", table: "archive_documents", title: "Archives & Documentation", singleFile: true, path: "archives", mediaAfter: "cover_path",
-    links: [["archive_minerals", "mineral_id", "minerals"], ["archive_articles", "article_id", "articles"], ["archive_mines", "mine_id", "mines"], ["archive_localities", "locality_id", "localities"], ["archive_departments", "department_code", "departments"], ["archive_regions", "region_id", "regions"]], fields: [
+    links: [["archive_minerals", "mineral_id", "minerals"], ["archive_articles", "article_id", "articles"], ["archive_mines", "mine_id", "mines"], ["archive_localities", "locality_id", "localities"], ["archive_departments", "department_code", "departments"], ["archive_regions", "region_id", "regions"], ["archive_specimens", "specimen_id", "specimens", "link_specimens"], ["archive_shop_items", "shop_item_id", "shop_items", "link_shop_items"]], fields: [
     { key: "title", label: "Titre", required: true },
     { key: "category", label: "Catégorie", required: true, type: "select", customOptions: true, options: [["autre", "Autre"], ["mine-gisement", "Mine / gisement"], ["archive-historique", "Archive historique"], ["plan-carte", "Plan / carte"], ["histoire-exploitation", "Histoire de l’exploitation"], ["publication-scientifique", "Publication scientifique"], ["catalogue", "Catalogue"], ["bibliographie", "Bibliographie"], ["photographie-ancienne", "Photographie ancienne"]] },
     { key: "cover_path", label: "Image de fiche (illustration de la carte côté public)", cover: true },
     { key: "body", label: "Description", richBody: true, notNull: true, plainText: "description" },
     { key: "link_minerals", label: "Minéraux liés", ref: "minerals", display: "name", multi: true }, { key: "link_articles", label: "Articles liés", ref: "articles", display: "title", multi: true },
+    { key: "link_specimens", label: "Pièces de ma collection liées", ref: "specimens", display: "label", multi: true }, { key: "link_shop_items", label: "Pièces de la boutique liées", ref: "shop_items", display: "label", multi: true },
     { key: "link_mines", label: "Gisements liés", ref: "mines", display: "name", multi: true }, { key: "link_localities", label: "Communes liées", ref: "localities", display: "name", multi: true },
     { key: "link_departments", label: "Départements liés", ref: "departments", display: "name", value: "code", multi: true }, { key: "link_regions", label: "Régions liées", ref: "regions", display: "name", multi: true },
     { key: "summary", label: "Résumé", type: "textarea", notNull: true }, { key: "rights_note", label: "Droits et crédits", type: "textarea", notNull: true },
@@ -273,11 +277,16 @@ async function loadReferences(section) {
   refs = {};
   const tables = [...new Set(section.fields.filter(field => field.ref).map(field => field.ref))];
   for (const table of tables) {
-    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,latitude,longitude,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : table === "minerals" ? "id,name,formula,chemical_class,crystal_system,colors,hardness,hardness_max" : table === "regions" ? "id,name" : "id,name";
-    const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "articles" || table === "archive_documents" ? "title" : "name");
+    const select = table === "departments" ? "code,name,region_id" : table === "specimens" ? "id,slug,title,mineral_name,locality_name" : table === "shop_items" ? "id,reference,title,mineral_name,locality_name" : table === "articles" || table === "archive_documents" ? "id,title" : table === "mines" ? "id,name,locality_id,latitude,longitude,locality:localities(name)" : table === "localities" ? "id,name,department_code,postal_code,latitude,longitude" : table === "minerals" ? "id,name,formula,chemical_class,crystal_system,colors,hardness,hardness_max" : table === "regions" ? "id,name" : "id,name";
+    const { data, error } = await client.from(table).select(select).order(table === "departments" ? "name" : table === "specimens" ? "slug" : table === "shop_items" ? "reference" : table === "articles" || table === "archive_documents" ? "title" : "name");
     if (error) throw error;
     refs[table] = data || [];
   }
+  // Pièces : libellé « Minéral — commune (référence) » ; le titre interne passe devant s'il existe.
+  for (const [table, key] of [["specimens", "slug"], ["shop_items", "reference"]]) (refs[table] || []).forEach(item => {
+    const name = item.title || item.mineral_name || "Pièce";
+    item.label = `${name}${item.locality_name && !item.title ? ` — ${item.locality_name}` : ""} (${item[key]})`;
+  });
   if (refs.localities) disambiguate(refs.localities, item => item.postal_code || item.department_code);
   if (refs.mines) {
     const communeName = id => (refs.localities || []).find(item => String(item.id) === String(id))?.plainName;
@@ -535,10 +544,10 @@ async function selectRecord(record) {
   try {
     if (activeSection.links) {
       selectedRecord._links = {};
-      for (const [table, column] of activeSection.links) {
+      for (const [table, column, , explicitKey] of activeSection.links) {
         const { data, error } = await client.from(table).select(column).eq(linkOwner(activeSection), record.id);
         if (error) throw error;
-        const fieldKey = `link_${table.replace(linkPrefix(activeSection), "")}`;
+        const fieldKey = explicitKey || `link_${table.replace(linkPrefix(activeSection), "")}`;
         selectedRecord._links[fieldKey] = (data || []).map(row => String(row[column]));
       }
     }
@@ -921,9 +930,9 @@ function linkOwner(section) { return section.linkOwner || (section.id === "artic
 function linkPrefix(section) { return section.linkPrefix || (section.id === "articles" ? "article_" : "archive_"); }
 
 async function saveLinks(parent, form) {
-  for (const [table, column] of activeSection.links) {
+  for (const [table, column, , explicitKey] of activeSection.links) {
     const ownerColumn = linkOwner(activeSection);
-    const fieldKey = `link_${table.replace(linkPrefix(activeSection), "")}`;
+    const fieldKey = explicitKey || `link_${table.replace(linkPrefix(activeSection), "")}`;
     const linkField = form.elements.namedItem(fieldKey);
     if (!linkField) throw new Error(`Le champ de relations « ${fieldKey} » est introuvable.`);
     const excluded = activeSection.linkExclude?.[fieldKey];

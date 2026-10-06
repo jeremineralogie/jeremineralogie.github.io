@@ -1,5 +1,11 @@
 // Liens automatiques vers les fiches (minéral, gisement, commune) dans les textes des articles.
 import { cleanUrl, departmentUrl } from "./clean-urls.js";
+
+// Pièces liées : nom public (minéral et commune, jamais le titre interne) et adresse de la page de la pièce.
+const pieceName = row => [row.mineral_name, row.locality_name].filter(Boolean).join(" — ") || "Pièce";
+const specimenLink = row => ({ name: pieceName(row), href: cleanUrl("specimen", row.slug) });
+const shopLink = row => ({ name: pieceName(row), href: cleanUrl("piece", row.reference || row.slug) });
+const SPECIMEN_COLUMNS = "entity:specimens(slug,mineral_name,locality_name)", SHOP_COLUMNS = "entity:shop_items(reference,slug,mineral_name,locality_name)";
 export const ficheUrl = (type, slug) => cleanUrl(type, slug) || `fiche.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(slug)}`;
 
 const isWordChar = character => Boolean(character) && /[\p{L}\p{N}]/u.test(character);
@@ -71,6 +77,14 @@ export async function loadArchiveLinks(client, archiveId) {
   const { data, error } = await client.from("archive_departments").select("entity:departments(name,code)").eq("archive_id", archiveId);
   if (error) console.error("Liens archive_departments :", error);
   (data || []).forEach(row => { if (row.entity) out.push({ name: row.entity.name, href: departmentUrl(row.entity.code) }); });
+  // Articles et pièces (collection, boutique) liés dans l'administration.
+  const more = [["archive_articles", "entity:articles(title,slug)", row => ({ name: row.entity.title, href: cleanUrl("article", row.entity.slug) })],
+    ["archive_specimens", SPECIMEN_COLUMNS, row => specimenLink(row.entity)], ["archive_shop_items", SHOP_COLUMNS, row => shopLink(row.entity)]];
+  await Promise.all(more.map(async ([table, select, toLink]) => {
+    const result = await client.from(table).select(select).eq("archive_id", archiveId);
+    if (result.error) { console.error(`Liens ${table} :`, result.error); return; }
+    (result.data || []).forEach(row => { if (row.entity) out.push(toLink(row)); });
+  }));
   return out;
 }
 
@@ -99,7 +113,9 @@ export async function loadArticleLinks(client) {
   const extra = [
     ["article_departments", "entity:departments(name,code)", row => ({ name: row.entity.name, href: departmentUrl(row.entity.code) })],
     ["article_regions", "entity:regions(name)", row => ({ name: row.entity.name, href: null })],
-    ["archive_articles", "entity:archive_documents(title,slug)", row => ({ name: row.entity.title, href: cleanUrl("archive", row.entity.slug) })]
+    ["archive_articles", "entity:archive_documents(title,slug)", row => ({ name: row.entity.title, href: cleanUrl("archive", row.entity.slug) })],
+    ["article_specimens", SPECIMEN_COLUMNS, row => specimenLink(row.entity)],
+    ["article_shop_items", SHOP_COLUMNS, row => shopLink(row.entity)]
   ];
   await Promise.all(extra.map(async ([table, select, toLink]) => {
     const { data, error } = await client.from(table).select(`article_id,${select}`);
