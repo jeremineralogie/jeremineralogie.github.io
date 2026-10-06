@@ -4,11 +4,12 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 const read = name => readFile(new URL(`../assets/js/${name}`, import.meta.url), "utf8");
 test("l'article, le spécimen de la collection et la pièce de la boutique partagent avec la carte des jeux", async () => {
-  const article = await read("article-page.js"), specimen = await read("specimen-page.js"), piece = await read("piece-page.js");
+  const entity = await read("entity-page.js"), article = await read("article-page.js"), specimen = await read("specimen-page.js"), piece = await read("piece-page.js");
   assert.match(article, /sharePanel\(/); assert.match(article, /label: "📲 Partager cet article"/); assert.match(article, /url: pageLink\(\)/);
   assert.match(specimen, /sharePanel\(/); assert.match(specimen, /label: "📲 Partager cette pièce"/);
   assert.match(piece, /sharePanel\(/); assert.match(piece, /label: "📲 Partager cette pièce"/);
-  for (const source of [article, specimen, piece]) assert.doesNotMatch(source, /shareButton/);
+  assert.match(entity, /sharePanel\(/); assert.match(entity, /label: "📲 Partager cette fiche"/);
+  for (const source of [entity, article, specimen, piece]) assert.doesNotMatch(source, /shareButton/);
 });
 test("la carte de partage accepte un lien, un libellé et un titre sur plusieurs lignes", async () => {
   const share = await read("share.js");
