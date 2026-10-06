@@ -10,7 +10,7 @@ import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 import { loadSimilar } from "./related.js";
 import { themeLinksOf } from "./themes.js";
-import { shareButton } from "./share-button.js";
+import { pageLink, sharePanel } from "./share.js";
 import { mineralAlt } from "./alt-text.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
@@ -102,9 +102,13 @@ async function load() {
       const credit = document.createElement("p"); credit.className = "photo-credit"; credit.textContent = entity.photo_credit; gallery.after(credit);
     }
     gallery.hidden = !photos.length && !commons;
-    document.querySelector("#fiche .fav-btn")?.remove(); document.querySelector("#fiche .share-btn")?.remove();
+    document.querySelector("#fiche .fav-btn")?.remove(); document.querySelector("#fiche .share")?.remove();
     subtitle.after(favoriteButton({ type: "mineral", id: entity.slug, name: entity.name, href: ficheUrl("mineral", entity.slug), meta: [entity.formula, entity.crystal_system].filter(Boolean).join(" · "), image: photos[0] ? publicUrl(photos[0]) : commons?.src || "" }));
-    document.querySelector("#fiche .fav-btn").after(shareButton({ title: entity.name, text: `${entity.name} — fiche minéral sur Jeremineralogie` }));
+    const shareCover = photos[0] ? publicUrl(photos[0]) : commons?.src || "";
+    document.querySelector("#fiche .fav-btn").after(sharePanel({
+      spec: { title: entity.name, wrapTitle: true, date: "Fiche minéral", note: [entity.formula, entity.crystal_system].filter(Boolean).join(" · "), logo: shareCover || "/assets/decor/logo-jeux.webp", logoWidth: 880, logoMaxHeight: 960, logoFrame: Boolean(shareCover), footer: "À découvrir sur Jeremineralogie" },
+      text: `${entity.name} — fiche minéral sur Jeremineralogie`, url: pageLink(), fileName: `mineral-${entity.slug}.png`, label: "📲 Partager cette fiche", previewAlt: "Image de la fiche à partager"
+    }));
     const back = document.querySelector("#fiche-back");
     back.href = "apprendre.html#mineraux"; back.textContent = "← Retour aux fiches minéraux";
     const learn = document.querySelector('.nav a[href="apprendre.html"]'); if (learn) learn.setAttribute("aria-current", "page");
