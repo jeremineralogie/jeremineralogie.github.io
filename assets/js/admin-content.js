@@ -641,6 +641,15 @@ async function saveRecord(form) {
       report("Fiche enregistrée. Traitement des médias…");
       if (section.links) await saveLinks(saved, form);
       if (pointTargets.length) await savePendingPoints(client, pointTool, pointTargets, target => target.id || (target.table === "mines" ? saved.mine_id : null) || (target.table !== "mines" && saved.locality_id && !form.elements.namedItem("link_localities") ? saved.locality_id : resolvedLocalities.get(normalizeName(target.name))));
+      // Fiche avec gisement : le point du gisement sert aussi de point à sa commune si elle n'en a pas encore.
+      if (pointTargets.length && saved.locality_id) {
+        const mineTarget = pointTargets.find(target => target.table === "mines");
+        const minePoint = mineTarget && (pointTool.pending.get(mineTarget.key) || (mineTarget.latitude != null && mineTarget.longitude != null ? mineTarget : null));
+        if (minePoint) {
+          const { error } = await client.from("localities").update({ latitude: minePoint.latitude, longitude: minePoint.longitude }).eq("id", saved.locality_id).is("latitude", null);
+          if (error) throw error;
+        }
+      }
       if (section.mediaTable) await uploadMedia(saved);
       if (section.singleFile) await saveArchiveFile(saved, current);
       if (section.mediaTable && current && current.publication_status !== saved.publication_status) await syncMedia(saved);
