@@ -11,7 +11,7 @@ import { applyGlossary, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pageLink, sharePanel } from "./share.js";
 import { specimenAlt } from "./alt-text.js";
-import { loadOthersOfMine, loadSimilar, relatedBlock } from "./related.js";
+import { loadLinkedPages, loadOthersOfMine, loadSimilar, pagesBlock, relatedBlock } from "./related.js";
 
 const slug = new URLSearchParams(window.JM_PARAMS ?? location.search).get("id");
 const client = getSupabase();
@@ -146,10 +146,10 @@ function renderSpecimen(specimen) {
   void loadNeighbours();
   // Maillage : autres minéraux du même gisement, minéraux similaires.
   const shown = current;
-  void Promise.all([loadOthersOfMine(client, specimen.mineSlug, specimen.mineralSlug), loadSimilar(client, specimen.mineralSlug)]).then(([others, similar]) => {
+  void Promise.all([loadOthersOfMine(client, specimen.mineSlug, specimen.mineralSlug), loadSimilar(client, specimen.mineralSlug), loadLinkedPages(client, "specimen", specimen.id)]).then(([others, similar, linked]) => {
     if (shown !== sequence) return;
     content.querySelectorAll(".related-block").forEach(node => node.remove());
-    const blocks = [relatedBlock("Autres minéraux de ce gisement", others), relatedBlock("Minéraux similaires", similar)].filter(Boolean);
+    const blocks = [pagesBlock("Articles liés", linked.articles), pagesBlock("Archives liées", linked.archives), relatedBlock("Autres minéraux de ce gisement", others), relatedBlock("Minéraux similaires", similar)].filter(Boolean);
     if (blocks.length) content.append(...blocks);
   });
 }

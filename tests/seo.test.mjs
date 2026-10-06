@@ -93,3 +93,12 @@ test("aucun lien cassé dans le contenu fabriqué par le générateur", async ()
   }
   assert.ok(checked > 50, `seulement ${checked} liens contrôlés`);
 });
+
+test("un article et une archive listent les pièces de la collection et de la boutique qui leur sont liées", async () => {
+  const article = visible(await read("lire/le-trait/index.html"));
+  assert.match(article, /Fiches liées :.*Fluorite — Saint-Jacques-d’Ambur/s);
+  assert.ok(article.includes('href="/pieces/jmquec1/"'), "pièce de la boutique disponible");
+  assert.ok(!article.includes("jmsold1"), "pièce vendue absente");
+  const archive = visible(await read("documents/les-mineraux/index.html"));
+  assert.ok(archive.includes('href="/specimens/fluorite-la-barre/"'), "spécimen de la collection");
+});

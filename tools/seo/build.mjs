@@ -126,7 +126,7 @@ const block = (heading, ...paragraphs) => `<h2>${esc(heading)}</h2>${paragraphs.
 async function main() {
   const cfg = await config();
   const read = (name, query) => fetchRows(cfg, name, query);
-  const [minerals, pieces, specimens, articles, archives, terms, mines, localities, departments, regions, occurrences, articleMines, articleLocalities, articleDepartments, archiveMines, archiveLocalities, archiveDepartments, articleMinerals, archiveMinerals] = await Promise.all([
+  const [minerals, pieces, specimens, articles, archives, terms, mines, localities, departments, regions, occurrences, articleMines, articleLocalities, articleDepartments, archiveMines, archiveLocalities, archiveDepartments, articleMinerals, archiveMinerals, articleSpecimens, articleShopItems, archiveSpecimens, archiveShopItems] = await Promise.all([
     read("minerals", `minerals?select=id,slug,name,rarity,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,colors,streak,luster,transparency,cleavage,fracture,habit,fluorescence,varieties,confusions,etymology,photo_credit,mineral_group,is_group,description,formation,updated_at,media:mineral_media(${MEDIA})&publication_status=eq.published&order=slug`),
     read("shop_items", `shop_items?select=slug,reference,sale_status,keywords,weight_grams,discovery_date_text,locality_name,locality:localities!shop_items_locality_id_fkey(name),region:regions!shop_items_region_id_fkey(name),associations:shop_item_associations(mineral:minerals(name)),title,mineral_name,mineral_id,mine_id,locality_id,department_code,provenance,price_cents,currency,description,dimensions,updated_at,mineral:minerals!shop_items_mineral_id_fkey(name,slug),mine:mines!shop_items_mine_id_fkey(name),department:departments!shop_items_department_code_fkey(name,region:regions!departments_region_id_fkey(name)),media:shop_item_media(${MEDIA})&publication_status=eq.published&sale_status=in.(available,sold)&order=reference`),
     read("specimens", `specimens?select=slug,dimensions,weight_text,weight_grams,keywords,discovery_date_text,region_name,associations:specimen_associations(mineral:minerals(name)),mine:mines!specimens_mine_id_fkey(name),mineral_name,mineral_id,mine_id,locality_id,department_code,provenance,locality_name,department_name,country,description,updated_at,mineral:minerals!specimens_mineral_id_fkey(name,slug),media:specimen_media(${MEDIA})&publication_status=eq.published&order=slug`),
@@ -140,7 +140,10 @@ async function main() {
     read("mineral_occurrences", `mineral_occurrences?select=mineral_id,department_code,locality_id`),
     read("article_mines", `article_mines?select=article_id,mine_id`), read("article_localities", `article_localities?select=article_id,locality_id`), read("article_departments", `article_departments?select=article_id,department_code`),
     read("archive_mines", `archive_mines?select=archive_id,mine_id`), read("archive_localities", `archive_localities?select=archive_id,locality_id`), read("archive_departments", `archive_departments?select=archive_id,department_code`),
-    read("article_minerals", `article_minerals?select=article_id,mineral_id`), read("archive_minerals", `archive_minerals?select=archive_id,mineral_id`)
+    read("article_minerals", `article_minerals?select=article_id,mineral_id`), read("archive_minerals", `archive_minerals?select=archive_id,mineral_id`),
+    // Pièces de la collection et de la boutique liées aux articles et aux archives (les pièces vendues ou masquées ne sont pas renvoyées par la base).
+    read("article_specimens", `article_specimens?select=article_id,piece:specimens(slug,mineral_name,locality_name)`), read("article_shop_items", `article_shop_items?select=article_id,piece:shop_items(slug,reference,mineral_name,locality_name)`),
+    read("archive_specimens", `archive_specimens?select=archive_id,piece:specimens(slug,mineral_name,locality_name)`), read("archive_shop_items", `archive_shop_items?select=archive_id,piece:shop_items(slug,reference,mineral_name,locality_name)`)
   ]);
   const templates = Object.fromEntries(await Promise.all([["fiche", "fiche.html"], ["departement", "departement.html"], ["theme", "theme.html"], ["piece", "piece.html"], ["specimen", "specimen.html"], ["article", "article.html"], ["document", "document.html"], ["apprendre", "apprendre.html"]]
     .map(async ([key, file]) => [key, await readFile(path.join(ROOT, file), "utf8")])));
@@ -294,17 +297,23 @@ async function main() {
     });
   });
   // Fiches liées à un article ou à un document (minéraux, gisements, communes, départements choisis dans l'admin) : [{ name, href }].
+  const shopSlugs = new Set(pieces.filter(item => item.sale_status === "available").map(item => item.slug));
+  const pieceName = row => [clean(row.mineral_name), clean(row.locality_name)].filter(Boolean).join(" — ") || "Pièce";
+  const specimenLinks = (rows, key, id) => rows.filter(link => link[key] === id && link.piece).map(link => ({ name: pieceName(link.piece), href: href("specimen", link.piece.slug) }));
+  const shopLinks = (rows, key, id) => rows.filter(link => link[key] === id && link.piece && shopSlugs.has(link.piece.slug)).map(link => ({ name: pieceName(link.piece), href: href("piece", link.piece.reference || link.piece.slug) }));
   const linksOfArticle = id => [
     ...articleMinerals.filter(link => link.article_id === id).map(link => mineralById.get(link.mineral_id)).filter(Boolean).map(row => ({ name: row.name, href: href("mineral", row.slug) })),
     ...articleMines.filter(link => link.article_id === id).map(link => mineById.get(link.mine_id)).filter(Boolean).map(row => ({ name: row.name, href: href("mine", row.slug) })),
     ...articleLocalities.filter(link => link.article_id === id).map(link => localityById.get(link.locality_id)).filter(Boolean).map(row => ({ name: row.name, href: href("locality", row.slug) })),
-    ...articleDepartments.filter(link => link.article_id === id).map(link => departmentByCode.get(link.department_code)).filter(Boolean).map(row => ({ name: row.name, href: href("department", departmentSlug(row)) }))
+    ...articleDepartments.filter(link => link.article_id === id).map(link => departmentByCode.get(link.department_code)).filter(Boolean).map(row => ({ name: row.name, href: href("department", departmentSlug(row)) })),
+    ...specimenLinks(articleSpecimens, "article_id", id), ...shopLinks(articleShopItems, "article_id", id)
   ];
   const linksOfArchive = id => [
     ...archiveMinerals.filter(link => link.archive_id === id).map(link => mineralById.get(link.mineral_id)).filter(Boolean).map(row => ({ name: row.name, href: href("mineral", row.slug) })),
     ...archiveMines.filter(link => link.archive_id === id).map(link => mineById.get(link.mine_id)).filter(Boolean).map(row => ({ name: row.name, href: href("mine", row.slug) })),
     ...archiveLocalities.filter(link => link.archive_id === id).map(link => localityById.get(link.locality_id)).filter(Boolean).map(row => ({ name: row.name, href: href("locality", row.slug) })),
-    ...archiveDepartments.filter(link => link.archive_id === id).map(link => departmentByCode.get(link.department_code)).filter(Boolean).map(row => ({ name: row.name, href: href("department", departmentSlug(row)) }))
+    ...archiveDepartments.filter(link => link.archive_id === id).map(link => departmentByCode.get(link.department_code)).filter(Boolean).map(row => ({ name: row.name, href: href("department", departmentSlug(row)) })),
+    ...specimenLinks(archiveSpecimens, "archive_id", id), ...shopLinks(archiveShopItems, "archive_id", id)
   ];
   const linkedLine = links => links.length ? `<p class="meta">Fiches liées : ${links.map(item => linkTo(item.name, item.href)).join(" · ")}</p>` : "";
   // « À lire aussi » : articles partageant des fiches liées ou la même catégorie, puis les plus récents (même règle que la page affichée par JavaScript).

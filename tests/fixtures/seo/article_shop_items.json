@@ -1,0 +1,20 @@
+[
+ {
+  "article_id": "a1",
+  "piece": {
+   "slug": "p1",
+   "reference": "JMQUEC1",
+   "mineral_name": "Quartz",
+   "locality_name": null
+  }
+ },
+ {
+  "article_id": "a1",
+  "piece": {
+   "slug": "p2",
+   "reference": "JMSOLD1",
+   "mineral_name": "Quartz",
+   "locality_name": null
+  }
+ }
+]
