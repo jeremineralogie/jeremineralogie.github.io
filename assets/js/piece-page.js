@@ -6,7 +6,7 @@ import { pieceTitle } from "./seo-titles.js";
 import { applyGlossary, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, renderNeighbours } from "./detail-nav.js";
-import { shareButton } from "./share-button.js";
+import { pageLink, sharePanel } from "./share.js";
 import { specimenAlt } from "./alt-text.js";
 import { loadOthersOfMine, loadSimilar, relatedBlock } from "./related.js";
 
@@ -81,7 +81,10 @@ function render(client, item) {
   else { contact.className = "btn"; contact.href = `contact.html?reference=${encodeURIComponent(item.reference)}`; contact.textContent = "Me contacter"; }
   const cover = photos[0] ? publicMediaUrl(client, photos[0]) : "";
   const favorite = favoriteButton({ type: "piece", id: item.reference || item.slug, name: shopItemName(item), href: pieceUrl(item), meta: [clean(item.mine?.name), clean(item.reference)].filter(Boolean).join(" · "), image: cover });
-  details.append(kicker, title, list, price, contact, favorite, shareButton({ title: name, text: `${name} — Jeremineralogie`, label: "Partager cette pièce", copyPrompt: "Copiez le lien de cette pièce :" }));
+  details.append(kicker, title, list, price, contact, favorite, sharePanel({
+    spec: { title: name, wrapTitle: true, date: "Boutique Jeremineralogie", note: [clean(item.mine?.name), localityName].filter(Boolean).join(" · "), logo: cover || "/assets/decor/logo-jeux.webp", logoWidth: 880, logoMaxHeight: 960, logoFrame: Boolean(cover), footer: "À découvrir dans ma boutique" },
+    text: `${name} — Jeremineralogie`, url: pageLink(), fileName: `piece-${item.reference || item.slug || "boutique"}.png`, label: "📲 Partager cette pièce", previewAlt: "Image de la pièce à partager"
+  }));
   wrap.append(left, details); root.replaceChildren(wrap);
   document.querySelector("[data-seo]")?.remove();
   renderCrumbs([["Accueil", "/"], ["Boutique", "/boutique.html"], [name]]);

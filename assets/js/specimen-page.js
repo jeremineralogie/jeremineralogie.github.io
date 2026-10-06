@@ -9,7 +9,7 @@ import { ficheUrl } from "./entity-links.js";
 import { specimenTitle } from "./seo-titles.js";
 import { applyGlossary, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
-import { shareButton } from "./share-button.js";
+import { pageLink, sharePanel } from "./share.js";
 import { specimenAlt } from "./alt-text.js";
 import { loadOthersOfMine, loadSimilar, relatedBlock } from "./related.js";
 
@@ -96,9 +96,13 @@ function renderSpecimen(specimen) {
   put("[data-associations]", (specimen.associations || []).join(", ")); put("[data-discovery-date]", specimen.discoveryDate);
   content.querySelector("[data-description]").textContent = specimen.description || "Non renseigné";
   if (specimen.description) void applyGlossary(content.querySelector("[data-description]"));
-  root.querySelector(".fav-btn")?.remove(); root.querySelector(".share-btn")?.remove();
+  root.querySelector(".fav-btn")?.remove(); root.querySelector(".share")?.remove();
   root.querySelector("[data-location-summary]").after(favoriteButton({ type: "specimen", id: specimen.id, name: specimen.mineral || "Spécimen", href: specimenUrl({ id: specimen.id }), meta: [specimen.provenance || specimen.locality, specimen.department].filter(Boolean).join(" · "), image: (specimen.photos || [])[0] || "" }));
-  root.querySelector(".fav-btn").after(shareButton({ title: specimen.mineral || "Spécimen", text: `${specimen.mineral || "Spécimen"} — collection Jeremineralogie`, label: "Partager cette pièce", copyPrompt: "Copiez le lien de cette pièce :" }));
+  const pieceName = specimen.mineral || "Spécimen";
+  root.querySelector(".fav-btn").after(sharePanel({
+    spec: { title: pieceName, wrapTitle: true, date: "Collection Jeremineralogie", note: [specimen.provenance || specimen.locality, specimen.department].filter(Boolean).join(" · "), logo: (specimen.photos || [])[0] || "/assets/decor/logo-jeux.webp", logoWidth: 880, logoMaxHeight: 960, logoFrame: Boolean((specimen.photos || [])[0]), footer: "Une pièce de ma collection" },
+    text: `${pieceName} — collection Jeremineralogie`, url: pageLink(), fileName: `piece-${specimen.id || "collection"}.png`, label: "📲 Partager cette pièce", previewAlt: "Image de la pièce à partager"
+  }));
   const linkField = (selector, text, href) => {
     const element = root.querySelector(selector);
     if (!text || !href) return;
