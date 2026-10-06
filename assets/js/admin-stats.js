@@ -1,6 +1,6 @@
 // Statistiques de l'admin (Paramètres → Statistiques) : périodes 1 / 3 / 7 / 15 / 30 jours, comparaison avec la période précédente, six onglets.
 // Données : agrégats SQL admin_page_stats, admin_more_stats, admin_event_stats, admin_account_stats (période choisie et période précédente).
-import { PERIODS, ranges, compareText, delta, percent, dailyPoints, hourlyPoints, niceStep, insights, toCsv } from "./admin-stats-logic.js";
+import { PERIODS, ranges, compareText, hasPrevious, bucketFor, groupPoints, delta, percent, dailyPoints, hourlyPoints, niceStep, insights, toCsv } from "./admin-stats-logic.js";
 import { loadResultNames, pagesSection, visitorsSection, gamesSection, accountsSection, fixSection } from "./admin-stats-more.js";
 const $ = selector => document.querySelector(selector);
 const SVG = "http://www.w3.org/2000/svg";
@@ -22,7 +22,7 @@ const recall = key => { try { return sessionStorage.getItem(`jm-stats-${key}`); 
 
 let client = null;
 let bound = false;
-let days = [1, 3, 7, 15, 30].includes(Number(recall("days"))) ? Number(recall("days")) : 7;
+let days = PERIODS.some(period => period.days === Number(recall("days"))) ? Number(recall("days")) : 7;
 let tab = TABS.some(([id]) => id === recall("tab")) ? recall("tab") : "overview";
 let entityFilter = "";
 let view = null;          // tout ce qui est affiché : données, période précédente, noms lisibles
@@ -52,7 +52,7 @@ export async function openStats(supabase) {
 }
 
 function markPeriod() {
-  document.querySelectorAll("#stats-periods .st-seg-btn").forEach(button => { const active = Number(button.dataset.days) === days; button.classList.toggle("is-active", active); button.setAttribute("aria-pressed", String(active)); });
+  document.querySelectorAll("#stats-periods .st-seg-btn").forEach(button => { const active = Number(button.dataset.days) === days; button.classList.toggle("is-active", active); button.setAttribute("aria-pressed", String(active)); if (active) button.scrollIntoView?.({ inline: "nearest", block: "nearest" }); });
 }
 
 async function load() {
@@ -60,17 +60,19 @@ async function load() {
   const status = $("#stats-status"), body = $("#stats-body");
   status.textContent = "Chargement des statistiques…"; status.hidden = false;
   const { from, to, previousFrom, previousTo } = ranges(days);
-  $("#stats-range").textContent = `${rangeText(from, to)} · comparé ${compareText(days)}`;
+  const compare = hasPrevious(previousFrom, to);
+  $("#stats-range").textContent = `${rangeText(from, to)} · ${compare ? `comparé ${compareText(days)}` : "comparaison indisponible (les données sont conservées 13 mois)"}`;
   const iso = date => date.toISOString();
   const pageArgs = (a, b) => ({ p_from: iso(a), p_to: iso(b), p_bucket: "day" });
   const span = (a, b) => ({ p_from: iso(a), p_to: iso(b) });
-  const [current, previous] = await Promise.all([client.rpc("admin_page_stats", pageArgs(from, to)), client.rpc("admin_page_stats", pageArgs(previousFrom, previousTo))]);
+  const none = { data: null, error: { message: "période précédente non conservée" } };
+  const [current, previous] = await Promise.all([client.rpc("admin_page_stats", pageArgs(from, to)), compare ? client.rpc("admin_page_stats", pageArgs(previousFrom, previousTo)) : none]);
   if (mine !== requestId) return;
   if (current.error) { status.textContent = `Impossible de charger les statistiques : ${current.error.message}`; body.hidden = true; return; }
   // Détails : si les fonctions SQL ne sont pas encore créées, le tableau de bord de base reste affiché.
   const [more, events, accounts, moreBefore, eventsBefore, accountsBefore] = await Promise.all([
     client.rpc("admin_more_stats", span(from, to)), client.rpc("admin_event_stats", span(from, to)), client.rpc("admin_account_stats", span(from, to)),
-    client.rpc("admin_more_stats", span(previousFrom, previousTo)), client.rpc("admin_event_stats", span(previousFrom, previousTo)), client.rpc("admin_account_stats", span(previousFrom, previousTo))
+    compare ? client.rpc("admin_more_stats", span(previousFrom, previousTo)) : none, compare ? client.rpc("admin_event_stats", span(previousFrom, previousTo)) : none, compare ? client.rpc("admin_account_stats", span(previousFrom, previousTo)) : none
   ]);
   if (mine !== requestId) return;
   const extra = more.error ? null : { more: more.data, events: events.error ? null : events.data, accounts: accounts.error ? null : accounts.data };
@@ -88,7 +90,7 @@ async function load() {
 }
 
 function rangeText(from, to) {
-  const day = date => date.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  const day = date => date.toLocaleDateString("fr-FR", { day: "numeric", month: "long", ...(days > 180 ? { year: "numeric" } : {}) });
   return days === 1 ? `Aujourd’hui, ${day(to)}` : `Du ${day(from)} au ${day(to)}`;
 }
 
@@ -163,6 +165,7 @@ function overviewSection(ctx) {
   const totals = data.totals, previousTotals = before;
   const points = ctx.days === 1 ? null : dailyPoints(data.series, from, to);
   const hourly = ctx.days === 1 ? hourlyPoints(extra?.more.hours, to) : null;
+  const sparkPoints = points ? groupPoints(points, bucketFor(ctx.days)) : null;
   const bounceNow = extra?.more.bounce?.visits ? percent(extra.more.bounce.single, extra.more.bounce.visits) : null;
   const bounceBefore = beforeExtra.more?.bounce?.visits ? percent(beforeExtra.more.bounce.single, beforeExtra.more.bounce.visits) : null;
   const plays = extra?.events ? extra.events.games.reduce((sum, row) => sum + (row.ends || 0), 0) : null;
@@ -174,8 +177,8 @@ function overviewSection(ctx) {
   const perVisit = totals.visits ? totals.views / totals.visits : 0;
   const perVisitBefore = previousTotals?.visits ? previousTotals.views / previousTotals.visits : null;
   const kpis = [
-    { label: "Visites", value: number(totals.visits), change: delta(totals.visits, previousTotals?.visits), spark: points?.map(point => point.visits) },
-    { label: "Pages vues", value: number(totals.views), change: delta(totals.views, previousTotals?.views), spark: points?.map(point => point.views) },
+    { label: "Visites", value: number(totals.visits), change: delta(totals.visits, previousTotals?.visits), spark: sparkPoints?.map(point => point.visits) },
+    { label: "Pages vues", value: number(totals.views), change: delta(totals.views, previousTotals?.views), spark: sparkPoints?.map(point => point.views) },
     { label: "Pages par visite", value: perVisit.toLocaleString("fr-FR", { maximumFractionDigits: 1 }), change: perVisitBefore == null ? null : delta(Math.round(perVisit * 10), Math.round(perVisitBefore * 10)) },
     { label: "Visites d’une page", value: bounceNow == null ? "—" : `${bounceNow} %`, change: bounceNow == null || bounceBefore == null ? null : delta(bounceNow, bounceBefore), goodWhen: "down" },
     { label: "Parties terminées", value: plays == null ? "—" : number(plays), change: plays == null || playsBefore == null ? null : delta(plays, playsBefore) },
@@ -223,10 +226,17 @@ function sparkline(values) {
 
 // Graphique principal : visites et pages vues, par heure (aujourd'hui) ou par jour.
 function chartCard(ctx, points, hourly) {
+  const bucket = bucketFor(ctx.days);
+  const dayText = (date, options) => date.toLocaleDateString("fr-FR", options);
+  const grouped = points ? groupPoints(points, bucket) : null;
+  const labelOf = point => bucket === "month" ? dayText(point.date, { month: "short", year: "2-digit" }) : dayText(point.date, { day: "numeric", month: "short" });
+  const longOf = point => bucket === "month" ? dayText(point.date, { month: "long", year: "numeric" })
+    : bucket === "week" ? `Semaine du ${dayText(point.start, { day: "numeric", month: "long" })} au ${dayText(point.end, { day: "numeric", month: "long" })}`
+    : dayText(point.date, { weekday: "long", day: "numeric", month: "long" });
   const series = hourly
     ? hourly.map(point => ({ label: `${point.hour} h`, long: `${point.hour} h – ${point.hour + 1} h`, visits: point.visits, views: point.views }))
-    : points.map(point => ({ label: point.date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }), long: point.date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" }), visits: point.visits, views: point.views }));
-  const box = card(hourly ? "Visites et pages vues, heure par heure" : "Visites et pages vues, jour par jour");
+    : grouped.map(point => ({ label: labelOf(point), long: longOf(point), visits: point.visits, views: point.views }));
+  const box = card(hourly ? "Visites et pages vues, heure par heure" : bucket === "month" ? "Visites et pages vues, mois par mois" : bucket === "week" ? "Visites et pages vues, semaine par semaine" : "Visites et pages vues, jour par jour");
   const legend = element("div", "stats-legend");
   [["visits", "Visites"], ["views", "Pages vues"]].forEach(([key, label]) => { const item = element("span", "stats-legend-item"); const swatch = element("i"); swatch.style.background = COLORS[key]; item.append(swatch, label); legend.append(item); });
   box.append(legend);

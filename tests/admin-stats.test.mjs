@@ -1,9 +1,28 @@
 // Statistiques de l'admin : périodes 1 / 3 / 7 / 15 / 30 jours, comparaisons, séries complétées, constats, export.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { PERIODS, ranges, compareText, delta, dailyPoints, hourlyPoints, insights, toCsv, percent } from "../assets/js/admin-stats-logic.js";
+import { PERIODS, ranges, compareText, hasPrevious, bucketFor, groupPoints, delta, dailyPoints, hourlyPoints, insights, toCsv, percent } from "../assets/js/admin-stats-logic.js";
 
-test("les cinq périodes demandées existent", () => assert.deepEqual(PERIODS.map(period => period.days), [1, 3, 7, 15, 30]));
+test("les périodes demandées existent : 1, 3, 7, 15, 30 jours, 3, 6 et 12 mois", () => {
+  assert.deepEqual(PERIODS.map(period => period.days), [1, 3, 7, 15, 30, 90, 180, 365]);
+  assert.deepEqual(PERIODS.map(period => period.label), ["1 j", "3 j", "7 j", "15 j", "30 j", "3 mois", "6 mois", "12 mois"]);
+  assert.equal(compareText(90), "aux 3 mois précédents"); assert.equal(compareText(365), "aux 12 mois précédents");
+});
+
+test("les longues périodes sont regroupées par semaine ou par mois, et la comparaison disparaît quand les données ne sont plus conservées", () => {
+  assert.deepEqual([30, 90, 180, 365].map(bucketFor), ["day", "week", "week", "month"]);
+  const now = new Date(2026, 9, 6, 12);
+  assert.equal(hasPrevious(ranges(180, now).previousFrom, now), true, "6 mois : encore comparable");
+  assert.equal(hasPrevious(ranges(365, now).previousFrom, now), false, "12 mois : la période précédente a été effacée");
+  const { from, to } = ranges(90, now);
+  const points = dailyPoints([{ t: "2026-10-05T00:00:00", visits: 4, views: 9 }, { t: "2026-10-06T00:00:00", visits: 1, views: 2 }, { t: "2026-09-29T00:00:00", visits: 2, views: 3 }], from, to);
+  const weeks = groupPoints(points, "week");
+  assert.ok(weeks.every(week => week.date.getDay() === 1), "les semaines commencent un lundi");
+  assert.deepEqual(weeks.slice(-2).map(week => week.visits), [2, 5]);
+  const months = groupPoints(dailyPoints([{ t: "2026-10-05T00:00:00", visits: 4, views: 9 }, { t: "2026-09-29T00:00:00", visits: 2, views: 3 }], ...Object.values(ranges(365, now)).slice(0, 2)), "month");
+  assert.equal(months.length, 13); assert.deepEqual(months.slice(-2).map(month => month.visits), [2, 4]);
+  assert.equal(months.reduce((sum, month) => sum + month.views, 0), 12);
+});
 
 test("« 7 j » couvre aujourd'hui et les 6 jours précédents, comparés aux 7 jours d'avant à la même heure", () => {
   const now = new Date(2026, 9, 6, 15, 30);

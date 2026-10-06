@@ -222,8 +222,8 @@ body.ce-open{overflow:hidden}
 /* Statistiques : en-tête, rubriques, indicateurs */
 .st-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 20px}
 .st-title h3{margin:0}.st-range{margin:4px 0 0;font-size:.9rem;color:#b9a5d8}
-.st-seg{display:inline-flex;padding:3px;border:1px solid #2a1846;border-radius:12px;background:#0b0711}
-.st-seg-btn{min-width:56px;padding:9px 14px;border:0;border-radius:9px;background:transparent;color:#cbb8e6;font:inherit;font-size:.9rem;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+.st-seg{display:inline-flex;max-width:100%;overflow-x:auto;scrollbar-width:none;padding:3px;border:1px solid #2a1846;border-radius:12px;background:#0b0711}
+.st-seg-btn{flex:none;min-width:56px;white-space:nowrap;padding:9px 14px;border:0;border-radius:9px;background:transparent;color:#cbb8e6;font:inherit;font-size:.9rem;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
 .st-seg-btn:hover{color:#fff}.st-seg-btn.is-active{background:#3a1d63;color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.08) inset}
 .st-tabs{position:sticky;top:var(--st-top,50px);z-index:5;display:flex;gap:4px;margin:18px -4px 6px;padding:6px 4px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #2a1846;background:#0b0711}
 .st-tabs::-webkit-scrollbar{display:none}
@@ -248,7 +248,7 @@ body.ce-open{overflow:hidden}
 .st-more{display:block;margin-top:12px;font-size:.88rem}
 .st-export{margin-top:12px}
 @media(max-width:900px){.st-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.st-seg{width:100%}.st-seg-btn{flex:1;min-width:0;padding:10px 4px}.st-kpi-value{font-size:1.5rem}.st-kpis-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.st-seg{width:100%}.st-seg-btn{min-width:0;padding:10px 12px}.st-kpi-value{font-size:1.5rem}.st-kpis-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 body.admin-page .admin-main .admin-panel .st-title h3{display:block!important;width:auto!important;margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;font-size:1.5rem;text-align:left}
 .st-kpi-label{text-wrap:balance}.stats-note+.stats-bars,.stats-big+.stats-note+.stats-bars{margin-top:14px}
 .st-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;height:190px;align-items:end}

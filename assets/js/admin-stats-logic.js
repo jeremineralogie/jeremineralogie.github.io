@@ -1,11 +1,15 @@
 // Statistiques de l'admin : calculs sans affichage (périodes, comparaisons, séries complétées, constats automatiques, export).
 export const PERIODS = [
-  { days: 1, label: "1 j", name: "Aujourd’hui" },
-  { days: 3, label: "3 j", name: "3 derniers jours" },
-  { days: 7, label: "7 j", name: "7 derniers jours" },
-  { days: 15, label: "15 j", name: "15 derniers jours" },
-  { days: 30, label: "30 j", name: "30 derniers jours" }
+  { days: 1, label: "1 j", name: "Aujourd’hui", compare: "à hier à la même heure" },
+  { days: 3, label: "3 j", name: "3 derniers jours", compare: "aux 3 jours précédents" },
+  { days: 7, label: "7 j", name: "7 derniers jours", compare: "aux 7 jours précédents" },
+  { days: 15, label: "15 j", name: "15 derniers jours", compare: "aux 15 jours précédents" },
+  { days: 30, label: "30 j", name: "30 derniers jours", compare: "aux 30 jours précédents" },
+  { days: 90, label: "3 mois", name: "3 derniers mois (90 jours)", compare: "aux 3 mois précédents" },
+  { days: 180, label: "6 mois", name: "6 derniers mois (180 jours)", compare: "aux 6 mois précédents" },
+  { days: 365, label: "12 mois", name: "12 derniers mois (365 jours)", compare: "aux 12 mois précédents" }
 ];
+const RETENTION_DAYS = 395; // les données de plus de 13 mois sont effacées
 
 const startOfDay = date => { const copy = new Date(date); copy.setHours(0, 0, 0, 0); return copy; };
 const shiftDays = (date, days) => { const copy = new Date(date); copy.setDate(copy.getDate() + days); return copy; };
@@ -17,8 +21,11 @@ export function ranges(days, now = new Date()) {
 }
 
 export function periodTitle(days) { return PERIODS.find(period => period.days === days)?.name || `${days} jours`; }
-// « à hier à la même heure » / « aux 7 jours précédents » : complément de « comparé » ou de « par rapport ».
-export function compareText(days) { return days === 1 ? "à hier à la même heure" : `aux ${days} jours précédents`; }
+// « à hier à la même heure » / « aux 7 jours précédents » / « aux 3 mois précédents » : complément de « comparé » ou de « par rapport ».
+export function compareText(days) { return PERIODS.find(period => period.days === days)?.compare || `aux ${days} jours précédents`; }
+
+// La période précédente n'existe que si elle est encore conservée (13 mois).
+export function hasPrevious(previousFrom, now = new Date()) { return previousFrom.getTime() >= shiftDays(now, -RETENTION_DAYS).getTime(); }
 
 // Évolution entre deux valeurs : { pct, direction } ; null quand il n'y a rien à comparer.
 export function delta(now, before) {
@@ -40,6 +47,21 @@ export function dailyPoints(series, from, to) {
     points.push({ date: new Date(cursor), views: row?.views || 0, visits: row?.visits || 0 });
   }
   return points;
+}
+
+// Regroupement des jours en semaines (du lundi) ou en mois pour les longues périodes.
+export const bucketFor = days => days > 180 ? "month" : days > 60 ? "week" : "day";
+export function groupPoints(points, bucket) {
+  if (bucket === "day") return points.map(point => ({ ...point, start: point.date, end: point.date }));
+  const groups = new Map();
+  points.forEach(point => {
+    const start = startOfDay(point.date);
+    if (bucket === "week") start.setDate(start.getDate() - ((start.getDay() + 6) % 7)); else start.setDate(1);
+    const key = keyOf(start);
+    const group = groups.get(key) || { date: start, start, end: point.date, views: 0, visits: 0 };
+    group.views += point.views; group.visits += point.visits; group.end = point.date; groups.set(key, group);
+  });
+  return [...groups.values()];
 }
 
 // Un point par heure (de minuit à l'heure actuelle) pour la période « aujourd'hui ».
