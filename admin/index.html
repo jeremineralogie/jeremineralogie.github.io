@@ -41,8 +41,11 @@
         <div id="home-body"></div>
       </section>
       <section id="stats-panel" class="admin-panel" aria-label="Statistiques de visite" hidden>
-        <div class="admin-toolbar"><h3 style="margin-right:auto">Statistiques de visite</h3>
-          <div class="stats-periods" role="group" aria-label="Période"><button type="button" class="admin-tab" data-days="7">7 jours</button><button type="button" class="admin-tab is-active" data-days="30">30 jours</button><button type="button" class="admin-tab" data-days="90">3 mois</button><button type="button" class="admin-tab" data-days="365">12 mois</button></div></div>
+        <header class="st-head">
+          <div class="st-title"><h3>Statistiques</h3><p class="st-range" id="stats-range"></p></div>
+          <div class="st-seg" id="stats-periods" role="group" aria-label="Période"></div>
+        </header>
+        <nav class="st-tabs" id="stats-tabs" role="tablist" aria-label="Rubriques des statistiques"></nav>
         <p class="admin-empty" id="stats-status" role="status" aria-live="polite"></p>
         <div id="stats-body" hidden></div>
         <p class="stats-note">Mesure sans cookie ni adresse IP. Vos passages quand vous êtes connecté à l’admin ne sont pas comptés. Une « visite » regroupe les pages vues d’affilée par une même personne (30 minutes sans activité = nouvelle visite) ; un visiteur revenu un autre jour compte comme une nouvelle visite. Les données de plus de 13 mois sont effacées automatiquement.</p>
