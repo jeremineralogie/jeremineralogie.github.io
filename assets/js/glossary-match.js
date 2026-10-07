@@ -8,7 +8,14 @@ export const GENERIC = new Set(["mineral", "roche", "cristal", "couleur", "densi
   "faille", "pli", "fluide", "datation", "silicate", "carbonate", "sulfure", "gemme", "synthetique", "traitement", "flexible", "elastique",
   "groupe mineral", "espece minerale", "systeme cristallin", "cubique", "quadratique", "hexagonal", "trigonal", "orthorhombique", "monoclinique",
   "triclinique", "amorphe", "couleur", "zonage", "calcaire", "argile", "gres", "grotte", "alluvion",
-  "massif", "pyramide", "enduit", "grenu", "granulaire", "cristallisation"]);
+  "massif", "pyramide", "enduit", "grenu", "granulaire", "cristallisation",
+  // Mots courants des termes ajoutés au glossaire (lot 2) : reliés seulement dans les champs précis, pas dans les textes.
+  "table", "couronne", "pavillon", "sable", "galet", "banc", "strate", "veine", "teneur", "sterile", "provenance", "atome", "ion", "cation", "anion",
+  "silice", "purete", "facette", "craie", "marne", "charbon", "houille", "tourbe", "sondage", "echantillon", "fragile", "friable", "ductile", "tenace",
+  "limpide", "laiteux", "hyalin", "diaphane", "equant", "radie", "etoile", "rubane", "cristallin", "pointement", "terminaison", "imitation", "doublet",
+  "triplet", "impurete", "substitution", "volcan", "eruption", "sediment", "sedimentation", "fracture", "intrusion", "extrusion", "dissolution",
+  "precipitation", "lithification", "compaction", "cimentation", "lessivage", "stratification", "plissement", "seisme", "scorie", "ponce", "cratere",
+  "doline", "moraine", "loess", "socle", "craton", "rift", "dome", "preparation", "reparation", "carotte", "veine", "sill", "dyke", "pluton"]);
 // Mots trop courants dans leur autre sens (« la taille des cristaux ») : jamais reliés automatiquement.
 const NEVER = new Set(["taille"]);
 export const isWordChar = character => Boolean(character) && /[\p{L}\p{N}]/u.test(character);
