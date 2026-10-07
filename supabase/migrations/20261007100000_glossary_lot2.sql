@@ -106,8 +106,8 @@ insert into public.glossary_terms (term, slug, domain, definition, see_also, rel
 select 'Paramètre de maille', 'parametre-de-maille', 'cristallographie', 'Longueur d''une arête de la maille d''un cristal, ou angle entre deux arêtes. Ces valeurs, mesurées par diffraction des rayons X, caractérisent chaque espèce minérale.', array['Maille', 'Diffraction des rayons X', 'Réseau cristallin']::text[], '{}'::text[]
 where not exists (select 1 from public.glossary_terms where slug = 'parametre-de-maille');
 insert into public.glossary_terms (term, slug, domain, definition, see_also, related_minerals)
-select 'Nœud du réseau', 'n-ud-du-reseau', 'cristallographie', 'Point qui représente chaque position répétée à l''identique dans un réseau cristallin. Relier les nœuds dessine la maille.', array['Réseau cristallin', 'Maille']::text[], '{}'::text[]
-where not exists (select 1 from public.glossary_terms where slug = 'n-ud-du-reseau');
+select 'Nœud du réseau', 'noeud-du-reseau', 'cristallographie', 'Point qui représente chaque position répétée à l''identique dans un réseau cristallin. Relier les nœuds dessine la maille.', array['Réseau cristallin', 'Maille']::text[], '{}'::text[]
+where not exists (select 1 from public.glossary_terms where slug = 'noeud-du-reseau');
 insert into public.glossary_terms (term, slug, domain, definition, see_also, related_minerals)
 select 'Motif cristallin', 'motif-cristallin', 'cristallographie', 'Groupe d''atomes qui, répété à chaque nœud du réseau, construit tout le cristal.', array['Réseau cristallin', 'Maille', 'Structure cristalline']::text[], '{}'::text[]
 where not exists (select 1 from public.glossary_terms where slug = 'motif-cristallin');
