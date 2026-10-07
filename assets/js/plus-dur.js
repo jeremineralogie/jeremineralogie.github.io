@@ -81,7 +81,7 @@ export function mountPlusDur(container, { client }) {
       feedback.className = `mq-feedback ${right ? "is-right" : "is-wrong"}`;
       const verdict = el("p", "mq-verdict", right ? "Bonne réponse ! " : "Raté… "); verdict.append(el("strong", "", `${pair.hard.name} (${durete(pair.hard)}) raye ${pair.soft.name} (${durete(pair.soft)}).`));
       const links = el("p", "mq-links");
-      [pair.hard, pair.soft].forEach((row, position) => { if (position) links.append(" · "); const link = el("a", "link", `Fiche ${row.name}`); link.href = ficheUrl("mineral", row.slug); links.append(link); });
+      [pair.hard, pair.soft].forEach((row, position) => { if (position) links.append(" · "); const link = el("a", "link", `Fiche ${row.name}`); link.href = ficheUrl("mineral", row.slug); link.dataset.fiche = ""; links.append(link); });
       const next = el("button", "pick-choice mq-start", right ? "Manche suivante" : "Voir ma série"); next.type = "button";
       next.addEventListener("click", () => right ? play(round + 1, used) : finish(round, false));
       feedback.append(verdict, links, next);

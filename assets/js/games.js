@@ -118,7 +118,7 @@ function renderQuiz(panel, mineral, minerals, client) {
       const image = el("img"); image.src = photo.src; image.alt = mineral.name; image.loading = "lazy";
       figure.append(image); if (photo.credit) figure.append(photo.credit); figure.hidden = false;
     }).catch(() => {});
-    const link = el("a", "link quiz-link", `Voir la fiche ${mineral.name} →`); link.href = ficheUrl("mineral", mineral.slug);
+    const link = el("a", "link quiz-link", `Voir la fiche ${mineral.name} →`); link.href = ficheUrl("mineral", mineral.slug); link.dataset.fiche = "";
     result.append(el("br"), link);
     const streak = store.get("jm-quiz-serie");
     if (streak?.count > 1 && correct) result.append(el("span", "quiz-streak", `Série en cours : ${streak.count} bonnes réponses d’affilée`));

@@ -20,7 +20,7 @@ export function mountCollectionneur(container) {
       icon.addEventListener("error", () => icon.remove());
       const [slug, name, why] = item.mineral;
       const note = el("p", "mq-mineral"); note.append(`Ton minéral : ${name}. ${why} `);
-      const link = el("a", "link mq-fiche", `Voir la fiche : ${name} →`); link.href = ficheUrl("mineral", slug);
+      const link = el("a", "link mq-fiche", `Voir la fiche : ${name} →`); link.href = ficheUrl("mineral", slug); link.dataset.fiche = "";
       return { before: [icon], after: [note, link], logo: src, logoWidth: 700, photos: [] };
     }
   });

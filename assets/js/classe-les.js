@@ -100,7 +100,7 @@ export function mountClasseLes(container, { client }) {
       draw();
       feedback.className = `mq-feedback ${perfect ? "is-right" : "is-wrong"}`;
       const verdict = el("p", "mq-verdict", perfect ? "Parfait ! " : "Raté… "); verdict.append(el("strong", "", perfect ? "Tout est à la bonne place." : `Le bon ordre : ${challenge.items.map(item => item.name).join(" → ")}.`));
-      const links = el("p", "mq-links"); challenge.items.forEach((item, position) => { if (position) links.append(" · "); const link = el("a", "link", item.name); link.href = ficheUrl("mineral", item.slug); links.append(link); });
+      const links = el("p", "mq-links"); challenge.items.forEach((item, position) => { if (position) links.append(" · "); const link = el("a", "link", item.name); link.href = ficheUrl("mineral", item.slug); link.dataset.fiche = ""; links.append(link); });
       const next = el("button", "pick-choice mq-start", perfect ? "Classement suivant" : "Voir ma série"); next.type = "button";
       next.addEventListener("click", () => perfect ? play(round + 1, used) : finish(round, false));
       feedback.append(verdict, links, next);

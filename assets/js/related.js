@@ -36,7 +36,7 @@ export function relatedBlock(title, minerals) {
   const box = document.createElement("div"); box.className = "content related-block";
   const heading = document.createElement("h2"); heading.textContent = title;
   const list = document.createElement("ul"); list.className = "fiche-list";
-  minerals.forEach(mineral => { const item = document.createElement("li"); const link = document.createElement("a"); link.className = "link"; link.href = ficheUrl("mineral", mineral.slug); link.textContent = mineral.name; item.append(link); list.append(item); });
+  minerals.forEach(mineral => { const item = document.createElement("li"); const link = document.createElement("a"); link.className = "link"; link.dataset.fiche = ""; link.href = ficheUrl("mineral", mineral.slug); link.textContent = mineral.name; item.append(link); list.append(item); });
   box.append(heading, list);
   return box;
 }
