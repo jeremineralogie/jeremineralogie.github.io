@@ -1,5 +1,5 @@
-// Statistiques de l'admin (Paramètres → Statistiques) : sélecteur de période, six pages (Visite, Boutique, Collection, Articles & archives, Jeux, Outils & glossaire).
-// Données : agrégats SQL admin_page_stats, admin_more_stats, admin_event_stats, admin_account_stats, admin_section_stats (période choisie et période précédente).
+// Statistiques de l'admin (Paramètres → Statistiques) : sélecteur de période, un onglet Général et un onglet par page du site.
+// Données : agrégats SQL admin_page_stats, admin_more_stats, admin_event_stats, admin_account_stats, admin_section_stats, admin_page_report (période choisie et période précédente).
 import { PERIODS, ranges, compareText, hasPrevious } from "./admin-stats-logic.js";
 import { PAGE_TABS, renderPage } from "./admin-stats-pages.js";
 import { loadResultNames, resultNames } from "./admin-stats-results.js";
@@ -11,7 +11,7 @@ const recall = key => { try { return sessionStorage.getItem(`jm-stats-${key}`); 
 let client = null;
 let bound = false;
 let days = PERIODS.some(period => period.days === Number(recall("days"))) ? Number(recall("days")) : 7;
-let tab = PAGE_TABS.some(([id]) => id === recall("tab")) ? recall("tab") : "visite";
+let tab = PAGE_TABS.some(([id]) => id === recall("tab")) ? recall("tab") : "general";
 let view = null;          // tout ce qui est affiché : données, période précédente, noms lisibles
 let names = new Map();
 let requestId = 0;
@@ -57,14 +57,15 @@ async function load() {
   if (mine !== requestId) return;
   if (current.error) { status.textContent = `Impossible de charger les statistiques : ${current.error.message}`; body.hidden = true; return; }
   // Détails : si une fonction SQL n'est pas encore créée, la page affiche ce qui est disponible.
-  const [more, events, accounts, sections, eventsBefore, accountsBefore, sectionsBefore] = await Promise.all([
-    client.rpc("admin_more_stats", span(from, to)), client.rpc("admin_event_stats", span(from, to)), client.rpc("admin_account_stats", span(from, to)), client.rpc("admin_section_stats", span(from, to)),
-    ask("admin_event_stats", span(previousFrom, previousTo), compare), ask("admin_account_stats", span(previousFrom, previousTo), compare), ask("admin_section_stats", span(previousFrom, previousTo), compare)
+  const [more, events, accounts, sections, report, eventsBefore, accountsBefore, sectionsBefore, reportBefore] = await Promise.all([
+    client.rpc("admin_more_stats", span(from, to)), client.rpc("admin_event_stats", span(from, to)), client.rpc("admin_account_stats", span(from, to)), client.rpc("admin_section_stats", span(from, to)), client.rpc("admin_page_report", span(from, to)),
+    ask("admin_event_stats", span(previousFrom, previousTo), compare), ask("admin_account_stats", span(previousFrom, previousTo), compare), ask("admin_section_stats", span(previousFrom, previousTo), compare), ask("admin_page_report", span(previousFrom, previousTo), compare)
   ]);
   if (mine !== requestId) return;
   const ok = result => result.error ? null : result.data;
-  [["admin_more_stats", more], ["admin_event_stats", events], ["admin_account_stats", accounts], ["admin_section_stats", sections]].forEach(([name, result]) => { if (result.error) console.warn(`Statistiques : ${name} indisponible :`, result.error.message); });
+  [["admin_more_stats", more], ["admin_event_stats", events], ["admin_account_stats", accounts], ["admin_section_stats", sections], ["admin_page_report", report]].forEach(([name, result]) => { if (result.error) console.warn(`Statistiques : ${name} indisponible :`, result.error.message); });
   const wanted = [...(current.data.entities || [])];
+  Object.values(ok(report) || {}).forEach(group => (group.entities || []).forEach(row => wanted.push({ type: row.type, slug: row.slug })));
   (ok(more)?.entries || []).forEach(row => { if (row.type && row.slug) wanted.push({ type: row.type, slug: row.slug }); });
   (ok(events)?.reads || []).forEach(row => wanted.push({ type: "article", slug: row.slug }));
   (ok(events)?.clicks || []).forEach(row => { if (row.name === "contact-piece" && row.detail) wanted.push({ type: "piece", slug: row.detail }); });
@@ -73,6 +74,7 @@ async function load() {
   if (mine !== requestId) return;
   view = {
     days, from, to, data: current.data, more: ok(more), events: ok(events), accounts: ok(accounts), sections: ok(sections),
+    report: ok(report), previousReport: ok(reportBefore),
     previous: { data: ok(previous), events: ok(eventsBefore), accounts: ok(accountsBefore), sections: ok(sectionsBefore) }
   };
   status.textContent = current.data.totals.views ? "" : "Aucune visite enregistrée sur cette période pour le moment.";
