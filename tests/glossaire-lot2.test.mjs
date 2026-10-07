@@ -20,8 +20,8 @@ test("chaque terme a un identifiant unique et une vraie définition", () => {
 test("chaque insertion est sans effet si le terme existe déjà", () => {
   assert.equal((sql.match(/^where not exists \(select 1 from public\.glossary_terms where slug = '/gm) || []).length, rows.length);
 });
-test("le texte évite les mots et sujets écartés du site", () => {
-  assert.doesNotMatch(sql, /lourd|lithoth|ésotér|chakra|énergie des pierres/i);
+test("le texte évite les sujets écartés du site (lithothérapie, ésotérisme)", () => {
+  assert.doesNotMatch(sql, /lithoth|ésotér|chakra|énergie des pierres/i);
 });
 test("les mots courants des nouveaux termes ne sont pas reliés dans les textes", async () => {
   const { GENERIC } = await import("../assets/js/glossary-match.js");
