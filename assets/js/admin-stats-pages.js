@@ -9,7 +9,9 @@ export const PAGE_TABS = [
 ];
 
 const PAGE_LABELS = {
-  index: "Accueil", recherche: "Recherche", contact: "Contact", reseaux: "Mes réseaux", favoris: "Mes favoris", legal: "Informations légales", apropos: "À propos", "mon-espace": "Mon espace", introuvable: "Page introuvable (lien cassé)"
+  index: "Accueil", boutique: "Boutique (liste)", piece: "Fiches boutique", collection: "Ma collection (liste)", specimen: "Fiches collection", articles: "Articles (liste)", article: "Articles (lecture)",
+  archives: "Archives & documentation (liste)", document: "Documents d’archive", carte: "Carte", fiche: "Fiches minéral, gisement, commune", departement: "Départements", theme: "Pages thèmes",
+  apprendre: "Apprendre & glossaire", jeux: "Jeux & quiz", identification: "Identification", recherche: "Recherche", contact: "Contact", reseaux: "Mes réseaux", favoris: "Mes favoris", legal: "Informations légales", apropos: "À propos", "mon-espace": "Mon espace", introuvable: "Page introuvable (lien cassé)"
 };
 const DEVICE_LABELS = { mobile: "Téléphone", tablette: "Tablette", ordinateur: "Ordinateur" };
 const WEEKDAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
@@ -71,8 +73,38 @@ function general(ctx) {
     grid(
       card("D’où viennent les visiteurs", rankTable([{ label: "Visiteurs", key: "visits", bar: true }], sources, { first: "Provenance", limit: 12, emptyText: "Aucune visite sur cette période." })),
       card("Appareils", rankTable([{ label: "Visiteurs", key: "visits", bar: true }], devices, { first: "Appareil", emptyText: "Aucune visite sur cette période." }))
-    )
+    ),
+    card("Pages les plus vues", rankTable([{ label: "Pages vues", key: "views", bar: true }, { label: "Visiteurs", key: "visits" }], (rep.pages || []).map(row => ({ label: label(row.page), views: row.views, visits: row.visits })), { first: "Page", limit: 10, emptyText: "Aucune page vue sur cette période." })),
+    card("Ce qui a été le plus vu dans chaque page", rankTable([{ label: "Page", key: "page", text: true }, { label: "Vues ou parties", key: "views", bar: true }], mostViewed(ctx), { first: "Le plus vu", limit: 20, emptyText: "Rien de consulté sur cette période." }), note("Pour les jeux, le nombre est celui des parties jouées."))
   ];
+}
+
+// Le contenu le plus consulté de chaque page : pièce, spécimen, article, document, fiche, terme, jeu.
+function mostViewed(ctx) {
+  const rows = [];
+  const topEntity = (group, type, page, kind) => {
+    const row = (ctx.report[group].entities || []).filter(item => item.type === type)[0];
+    if (!row) return;
+    const info = nameOf(ctx, type, row.slug);
+    rows.push({ label: info?.name || row.slug, tag: kind, href: info?.href, page, views: row.views });
+  };
+  topEntity("boutique", "piece", "Boutique", "Pièce la plus consultée");
+  const games = [...(ctx.events?.games || [])].filter(row => !row.name.startsWith("persona-")).sort((a, b) => b.ends - a.ends)[0];
+  if (games && games.ends) rows.push({ label: GAME_LABELS[games.name] || games.name, tag: "Jeu le plus joué", page: "Jeux & quiz", views: games.ends });
+  const quiz = [...(ctx.events?.games || [])].filter(row => row.name.startsWith("persona-")).sort((a, b) => b.ends - a.ends)[0];
+  if (quiz && quiz.ends) rows.push({ label: GAME_LABELS[quiz.name] || quiz.name, tag: "Quiz le plus passé", page: "Jeux & quiz", views: quiz.ends });
+  topEntity("collection", "specimen", "Ma collection", "Spécimen le plus consulté");
+  topEntity("articles", "article", "Articles", "Article le plus consulté");
+  topEntity("archives", "archive", "Archives & documentation", "Document le plus consulté");
+  topEntity("apprendre", "mineral", "Apprendre & fiches", "Fiche minéral la plus consultée");
+  topEntity("apprendre", "mine", "Apprendre & fiches", "Gisement le plus consulté");
+  topEntity("apprendre", "locality", "Apprendre & fiches", "Commune la plus consultée");
+  topEntity("apprendre", "departement", "Apprendre & fiches", "Département le plus consulté");
+  const term = (ctx.sections?.terms || [])[0];
+  if (term) { const info = nameOf(ctx, "term", term.slug); rows.push({ label: info?.name || term.slug, tag: "Terme du glossaire le plus consulté", href: info?.href, page: "Apprendre & fiches", views: term.views }); }
+  const other = (ctx.report.autres.pages || []).filter(row => row.page !== "introuvable")[0];
+  if (other) rows.push({ label: label(other.page), tag: "Page la plus vue", page: "Autres pages", views: other.views });
+  return rows;
 }
 
 // ───── Boutique ─────
