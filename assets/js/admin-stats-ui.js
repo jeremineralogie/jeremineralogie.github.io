@@ -166,8 +166,9 @@ export const duration = seconds => seconds == null ? "—" : seconds < 60 ? `${M
 
 // Histogramme en colonnes (heures de la journée, jours de la semaine) : la colonne la plus haute est mise en avant.
 // items : [{ label, value, long }]
-export function columnChart(title, items, { emptyText = "Pas encore de données.", every = 1 } = {}) {
+export function columnChart(title, items, { emptyText = "Pas encore de données.", every = 1, caption = null } = {}) {
   const box = card(title);
+  if (caption) box.append(element("p", "st-peak", caption));
   const max = Math.max(0, ...items.map(item => item.value));
   if (!max) { box.append(empty(emptyText)); return box; }
   const chart = element("div", "st-cols"); chart.style.gridTemplateColumns = `repeat(${items.length}, minmax(0, 1fr))`;
@@ -178,25 +179,5 @@ export function columnChart(title, items, { emptyText = "Pas encore de données.
     chart.append(column);
   });
   box.append(chart);
-  return box;
-}
-
-// Carte de chaleur jour de la semaine × heure (nombre de pages vues).
-export function heatmap(title, rows, days) {
-  const box = card(title);
-  const max = Math.max(0, ...rows.map(row => row.views));
-  if (!max) { box.append(empty("Pas encore de données.")); return box; }
-  const by = new Map(rows.map(row => [`${row.dow}-${row.h}`, row.views]));
-  const grid = element("div", "st-heat");
-  grid.append(element("span", "st-heat-corner"));
-  for (let hour = 0; hour < 24; hour += 1) grid.append(element("span", "st-heat-hour", hour % 3 === 0 ? String(hour) : ""));
-  days.forEach((label, index) => {
-    grid.append(element("span", "st-heat-day", label.slice(0, 3)));
-    for (let hour = 0; hour < 24; hour += 1) {
-      const value = by.get(`${index + 1}-${hour}`) || 0; const cell = element("i");
-      cell.style.opacity = value ? String(0.18 + 0.82 * (value / max)) : "0.06"; cell.title = `${label} ${hour} h : ${number(value)}`; grid.append(cell);
-    }
-  });
-  box.append(grid, note("Pages vues, heure de Paris. Plus la case est claire, plus il y a de trafic."));
   return box;
 }

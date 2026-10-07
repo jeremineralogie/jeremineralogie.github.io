@@ -247,7 +247,4 @@ body.admin-page .admin-main .admin-panel .st-title h3{display:block!important;wi
 .st-col i{align-self:end;display:block;width:100%;background:#6d4bb5;border-radius:3px 3px 0 0}
 .st-col.is-peak i{background:#b48cff}
 .st-col span{margin-top:4px;font-size:.7rem;color:#9d89bd;min-height:1em;white-space:nowrap}
-.st-heat{display:grid;grid-template-columns:auto repeat(24,minmax(0,1fr));gap:2px;align-items:center}
-.st-heat i{display:block;aspect-ratio:1;min-height:10px;border-radius:2px;background:#b48cff}
-.st-heat-day,.st-heat-hour{font-size:.68rem;color:#9d89bd;text-align:center;white-space:nowrap}
-.st-heat-day{padding-right:6px;text-align:right}
+.st-peak{margin:0 0 6px;color:#b48cff;font-size:.88rem}
