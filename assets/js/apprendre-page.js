@@ -17,6 +17,8 @@ const number = value => Number(value).toLocaleString("fr-FR", { maximumFractionD
 const range = (min, max) => min == null ? "" : max != null && Number(max) !== Number(min) ? `${number(min)} à ${number(max)}` : number(min);
 const element = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const link = (href, text, className = "link") => { const a = element("a", className, text); a.href = href; return a; };
+// Lien souligné vers une fiche : un clic ouvre d'abord l'aperçu (link-pop.js), avec le bouton « Voir la fiche ».
+const ficheLink = (href, text) => { const a = link(href, text); a.dataset.fiche = ""; return a; };
 
 let minerals = [];
 let photoCredits = {};
@@ -148,7 +150,7 @@ function renderGlossary() {
       const related = (item.related_minerals || []).map(name => byName.get(fold(name))).filter(Boolean);
       if (related.length) {
         const row = element("p", "learn-term-row"); row.append(element("span", "learn-term-label", "Minéraux : "));
-        related.forEach((mineral, index) => { if (index) row.append(", "); { const a = link(ficheUrl("mineral", mineral.slug), mineral.name); a.dataset.fiche = ""; row.append(a); } });
+        related.forEach((mineral, index) => { if (index) row.append(", "); row.append(ficheLink(ficheUrl("mineral", mineral.slug), mineral.name)); });
         entry.append(row);
       }
       // Liens vers la collection et la boutique pour les minéraux cités qui y sont présents.
@@ -268,7 +270,7 @@ const parse = input => { const value = Number(String(input.value).replace(",", "
 function matchList(container, items, detail, empty) {
   if (!items.length) { container.replaceChildren(element("p", "meta", empty)); return; }
   const list = element("ul", "tool-match-list");
-  items.forEach(mineral => { const item = element("li"); item.append(link(ficheUrl("mineral", mineral.slug), mineral.name), element("span", "tool-match-detail", detail(mineral))); list.append(item); });
+  items.forEach(mineral => { const item = element("li"); item.append(ficheLink(ficheUrl("mineral", mineral.slug), mineral.name), element("span", "tool-match-detail", detail(mineral))); list.append(item); });
   container.replaceChildren(list);
 }
 const densityText = mineral => mineral.density == null ? "" : `densité ${range(mineral.density, mineral.density_max)}`;

@@ -5,7 +5,7 @@ import { getSupabase } from "./supabase-client.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { ficheUrl } from "./entity-links.js";
 import { mineralTitle } from "./seo-titles.js";
-import { applyGlossary, linkProperties } from "./glossary-links.js";
+import { applyGlossary, glossLink, linkProperties } from "./glossary-links.js";
 import { favoriteButton } from "./favorites.js";
 import { pieceUrl, articleUrl, documentUrl } from "./detail-nav.js";
 import { loadSimilar } from "./related.js";
@@ -50,7 +50,7 @@ function cards(items) {
 }
 function linkList(items) {
   const list = document.createElement("ul"); list.className = "fiche-list";
-  items.forEach(item => { const li = document.createElement("li"); const a = document.createElement("a"); a.className = "link"; a.href = item.href; a.textContent = item.title; li.append(a); if (item.meta) li.append(` — ${item.meta}`); list.append(li); });
+  items.forEach(item => { const li = document.createElement("li"); const a = item.term ? glossLink(item.term, item.title, "link gloss") : Object.assign(document.createElement("a"), { className: "link", href: item.href, textContent: item.title }); if (!item.term) a.dataset.fiche = ""; li.append(a); if (item.meta) li.append(` — ${item.meta}`); list.append(li); });
   return list;
 }
 const unique = (items, key) => [...new Map(items.filter(item => item[key]).map(item => [item[key], item])).values()];
@@ -167,7 +167,7 @@ async function load() {
       const { data, error: e } = await client.from("glossary_terms").select("term,slug,domain").contains("related_minerals", [entity.name]).eq("publication_status", "published").order("term");
       if (e) throw e; return data || [];
     }, []);
-    if (related.length) section("Dans le glossaire", linkList(related.map(row => ({ title: row.term, meta: DOMAIN_LABELS[row.domain] || "", href: cleanUrl("term", row.slug) }))));
+    if (related.length) section("Dans le glossaire", linkList(related.map(row => ({ title: row.term, meta: DOMAIN_LABELS[row.domain] || "", href: cleanUrl("term", row.slug), term: row.slug }))));
   }
   if (kind === KINDS.mineral) {
     const available = await safely("thèmes", async () => { const response = await fetch("/themes/index.json"); if (!response.ok) throw new Error(response.status); return response.json(); }, null);

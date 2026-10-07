@@ -141,7 +141,7 @@ export async function renderMineralPhotoGame(panel, { client, minerals }) {
       const item = el("li", "geo-item");
       const thumb = el("img", "geo-thumb"); thumb.src = photo.src; thumb.alt = round.target.name; thumb.loading = "lazy";
       const text = el("div", "geo-item-text");
-      const link = el("a", "link", round.target.name); link.href = ficheUrl("mineral", round.target.slug);
+      const link = el("a", "link", round.target.name); link.href = ficheUrl("mineral", round.target.slug); link.dataset.fiche = "";
       text.append(link, el("span", result.correct ? "pick-ok" : "pick-ko", result.correct ? "Trouvé" : "Raté"));
       item.append(thumb, text); list.append(item);
     });

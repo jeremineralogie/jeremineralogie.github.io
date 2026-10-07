@@ -132,7 +132,7 @@ export function mountVraiFaux(container, { client }) {
       const verdict = el("p", "mq-verdict", right ? "Bonne réponse ! " : "Raté… "); verdict.append(el("strong", "", item.answer ? "C’est vrai." : "C’est faux."));
       feedback.append(verdict, el("p", "mq-explain", item.explain));
       const links = el("p", "mq-links");
-      item.rows.forEach((row, position) => { if (position) links.append(" · "); const link = el("a", "link", `Fiche ${row.name}`); link.href = ficheUrl("mineral", row.slug); links.append(link); });
+      item.rows.forEach((row, position) => { if (position) links.append(" · "); const link = el("a", "link", `Fiche ${row.name}`); link.href = ficheUrl("mineral", row.slug); link.dataset.fiche = ""; links.append(link); });
       const next = el("button", "pick-choice mq-start", index + 1 < statements.length ? "Affirmation suivante" : "Voir mon score"); next.type = "button";
       next.addEventListener("click", () => index + 1 < statements.length ? play(statements, index + 1, score + (right ? 1 : 0)) : finish(score + (right ? 1 : 0), statements.length));
       feedback.append(links, next);
