@@ -17,11 +17,11 @@ export function kpis(ctx, items) {
   const row = element("div", `st-kpis st-kpis-${items.length}`);
   items.forEach(item => {
     const tile = element("div", "st-kpi");
-    tile.append(element("span", "st-kpi-label", item.label), element("strong", "st-kpi-value", item.value == null ? "—" : number(item.value)));
+    tile.append(element("span", "st-kpi-label", item.label), element("strong", "st-kpi-value", item.text != null ? item.text : item.value == null ? "—" : item.decimals ? Number(item.value).toLocaleString("fr-FR", { maximumFractionDigits: item.decimals }) : number(item.value)));
     const foot = element("div", "st-kpi-foot");
-    if (item.value != null && item.before != null) {
-      const diff = item.value - item.before;
-      const chip = element("span", `st-chip${diff > 0 ? " is-good" : diff < 0 ? " is-bad" : " is-flat"}`, diff > 0 ? `▲ +${number(diff)}` : diff < 0 ? `▼ −${number(-diff)}` : "= stable");
+    if (item.value != null && item.before != null && item.text == null) {
+      const diff = Math.round((item.value - item.before) * 10) / 10;
+      const chip = element("span", `st-chip${diff > 0 ? " is-good" : diff < 0 ? " is-bad" : " is-flat"}`, diff > 0 ? `▲ +${diff.toLocaleString("fr-FR")}` : diff < 0 ? `▼ −${(-diff).toLocaleString("fr-FR")}` : "= stable");
       chip.title = `Par rapport ${compareText(ctx.days)}`;
       foot.append(chip);
     }
@@ -158,5 +158,45 @@ export function lineChart(ctx, title, { points, bucket, hourly }, series) {
   ["Période", ...series.map(item => item.label)].forEach(label => head.append(element("th", "", label))); table.append(head);
   rows.slice().reverse().forEach(row => { const tr = element("tr"); tr.append(element("td", "", row.long), ...series.map(item => element("td", "", number(row[item.key])))); table.append(tr); });
   const scroll = element("div", "stats-scroll"); scroll.append(table); details.append(scroll); box.append(details);
+  return box;
+}
+
+// Durée lisible : 125 s → « 2 min 05 s ».
+export const duration = seconds => seconds == null ? "—" : seconds < 60 ? `${Math.round(seconds)} s` : `${Math.floor(seconds / 60)} min ${String(Math.round(seconds % 60)).padStart(2, "0")} s`;
+
+// Histogramme en colonnes (heures de la journée, jours de la semaine) : la colonne la plus haute est mise en avant.
+// items : [{ label, value, long }]
+export function columnChart(title, items, { emptyText = "Pas encore de données.", every = 1 } = {}) {
+  const box = card(title);
+  const max = Math.max(0, ...items.map(item => item.value));
+  if (!max) { box.append(empty(emptyText)); return box; }
+  const chart = element("div", "st-cols"); chart.style.gridTemplateColumns = `repeat(${items.length}, minmax(0, 1fr))`;
+  items.forEach((item, index) => {
+    const column = element("div", `st-col${item.value === max ? " is-peak" : ""}`); column.title = `${item.long || item.label} : ${number(item.value)}`;
+    const bar = element("i"); bar.style.height = `${item.value ? Math.max(3, (item.value / max) * 100) : 0}%`;
+    column.append(element("b", "", item.value === max || items.length <= 7 ? number(item.value) : ""), bar, element("span", "", index % every === 0 ? item.label : ""));
+    chart.append(column);
+  });
+  box.append(chart);
+  return box;
+}
+
+// Carte de chaleur jour de la semaine × heure (nombre de pages vues).
+export function heatmap(title, rows, days) {
+  const box = card(title);
+  const max = Math.max(0, ...rows.map(row => row.views));
+  if (!max) { box.append(empty("Pas encore de données.")); return box; }
+  const by = new Map(rows.map(row => [`${row.dow}-${row.h}`, row.views]));
+  const grid = element("div", "st-heat");
+  grid.append(element("span", "st-heat-corner"));
+  for (let hour = 0; hour < 24; hour += 1) grid.append(element("span", "st-heat-hour", hour % 3 === 0 ? String(hour) : ""));
+  days.forEach((label, index) => {
+    grid.append(element("span", "st-heat-day", label.slice(0, 3)));
+    for (let hour = 0; hour < 24; hour += 1) {
+      const value = by.get(`${index + 1}-${hour}`) || 0; const cell = element("i");
+      cell.style.opacity = value ? String(0.18 + 0.82 * (value / max)) : "0.06"; cell.title = `${label} ${hour} h : ${number(value)}`; grid.append(cell);
+    }
+  });
+  box.append(grid, note("Pages vues, heure de Paris. Plus la case est claire, plus il y a de trafic."));
   return box;
 }
