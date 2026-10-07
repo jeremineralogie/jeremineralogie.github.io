@@ -4,10 +4,10 @@ import { publicMediaUrl, shopItemName } from "./content-repository.js";
 import { pieceUrl, articleUrl, documentUrl, specimenUrl } from "./detail-nav.js";
 import { ficheUrl } from "./entity-links.js";
 import { categoryLabel } from "./reference-resolver.js";
-import { dailyMinerals, mountGames } from "./games.js";
+import { dailyMinerals } from "./games.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 
-// Page d'accueil : nouveautés, minéral du jour, jeux du jour (trouve le minéral, quiz, devine le gisement), chiffres du site.
+// Page d'accueil : nouveautés (boutique, collection, articles, archives), minéral du jour, jeux du jour (trouve le minéral, quiz, devine le gisement), chiffres du site.
 const client = getSupabase();
 const home = document.querySelector("#home");
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
@@ -124,9 +124,9 @@ async function load() {
     safe("collection", () => rows(client.from("specimens").select("slug,mineral_name,provenance,locality_name,department_name,mineral:minerals!specimens_mineral_id_fkey(name),media:specimen_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").order("created_at", { ascending: false }).limit(4)), []),
     safe("articles", () => rows(client.from("articles").select("slug,title,category,published_on,excerpt,media:article_media(bucket_id,storage_path,position)")
-      .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false }).limit(1)), []),
+      .eq("publication_status", "published").order("published_on", { ascending: false, nullsFirst: false }).order("created_at", { ascending: false }).limit(4)), []),
     safe("archives", () => rows(client.from("archive_documents").select("slug,title,category,document_date,summary,cover_bucket,cover_path")
-      .eq("publication_status", "published").order("created_at", { ascending: false }).limit(1)), []),
+      .eq("publication_status", "published").order("created_at", { ascending: false }).limit(3)), []),
     safe("minéraux", () => rows(client.from("minerals").select("id,name,slug,photo_credit,rarity,mineral_group,is_group,formula,chemical_class,crystal_system,hardness,hardness_max,density,density_max,streak,luster,transparency,colors,description,media:mineral_media(bucket_id,storage_path,position)")
       .eq("publication_status", "published").order("slug")), []),
     safe("chiffres", () => Promise.all([
@@ -141,17 +141,14 @@ async function load() {
 
   fillGroup("#home-shop", shop.map(shopCard));
   fillGroup("#home-collection", specimens.map(specimenCard));
-  fillGroup("#home-reads", [...articles.map(row => readCard(row, "article")), ...archives.map(row => readCard(row, "archive"))]);
+  fillGroup("#home-articles", articles.map(row => readCard(row, "article")));
+  fillGroup("#home-archives", archives.map(row => readCard(row, "archive")));
 
   const { daily } = dailyMinerals(minerals);
   if (daily) void renderDaily(daily);
-  void mountGames(document.querySelector("#home-games [data-games]"), { client, minerals, collapsible: true });
-  const replay = document.querySelector("#home-replay"), quizzes = document.querySelector("#home-quiz");
-  if (replay || quizzes) {
-    const { mountQuizzes } = await import("./quiz-hub.js");
-    if (replay) mountQuizzes(replay, { client }, "jeu");
-    if (quizzes) mountQuizzes(quizzes, { client }, "quiz");
-  }
+  const { mountLevels, mountQuizzes } = await import("./quiz-hub.js");
+  void mountLevels(document.querySelector("#home-games [data-levels]"), { client, minerals });
+  mountQuizzes(document.querySelector("#home-quiz"), { client }, "quiz");
   const [specimenCount, shopCount, termCount, articleCount, archiveCount] = counts;
   const plural = (count, one, many) => count > 1 ? many : one;
   renderStats([
