@@ -108,7 +108,7 @@ test("Jeux & quiz : jeux rejouables dans « Jeux », quiz de personnalité dans 
   ["mineral", "prospecteur", "outil"].forEach(id => assert.equal(kindOf(id), "quiz", id));
   ["vrai-faux", "glossaire"].forEach(id => assert.equal(kindOf(id), "jeu", id));
   const jeux = await readFile(new URL("../jeux.html", import.meta.url), "utf8");
-  assert.match(jeux, /data-replay/);
+  assert.match(jeux, /data-levels/);
   const index = await readFile(new URL("../index.html", import.meta.url), "utf8");
   assert.match(index, /id="home-games-title">Jeux</);
   assert.match(index, /id="home-quizzes-title">Quiz</);
