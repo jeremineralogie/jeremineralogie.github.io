@@ -7,11 +7,23 @@ import { currentUser, onAccountChange } from "./account.js";
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const plural = (count, one, many) => `${count} ${count > 1 ? many : one}`;
 const GOALS = [7, 30, 90];
-// Résultats du carnet : clé de la progression, nom, logo, lien pour jouer.
-const RESULTS = [
-  ["mineral", "Trouve le minéral", "💎", "/jeux.html#jeux"], ["quiz", "Le quiz du jour", "🧪", "/jeux.html#jeux"], ["geo", "Devine le gisement", "🗺️", "/jeux.html#jeux"],
-  ["persona-mineral", "Quel minéral es-tu ?", "🪨", "/jeux.html#quiz"], ["persona-prospecteur", "Quel prospecteur es-tu ?", "⛏️", "/jeux.html#quiz"], ["persona-outil", "Quel outil de prospecteur es-tu ?", "🔨", "/jeux.html#quiz"], ["persona-collectionneur", "Quel collectionneur es-tu ?", "🗃️", "/jeux.html#quiz"], ["persona-forme", "Quelle forme cristalline es-tu ?", "💎", "/jeux.html#quiz"],
-  ["vrai-faux", "Vrai ou faux minéralogique", "✅", "/jeux.html#jeux"], ["plus-dur", "Plus dur ou moins dur ?", "⚖️", "/jeux.html#jeux"], ["pendu", "Le pendu minéralogique", "🔤", "/jeux.html#jeux"], ["classe-les", "Classe-les !", "📶", "/jeux.html#jeux"], ["glossaire", "Le glossaire en défi", "📖", "/jeux.html#jeux"]
+// Résultats du carnet : clé de la progression, nom, logo, lien pour jouer. Les jeux (à rejouer) et les quiz (un seul passage) sont présentés séparément.
+const RESULTS_GAMES = [
+  ["mineral", "Trouve le minéral", "💎", "/jeux.html#jeux"],
+  ["quiz", "Le quiz du jour", "🧪", "/jeux.html#jeux"],
+  ["geo", "Devine le gisement", "🗺️", "/jeux.html#jeux"],
+  ["vrai-faux", "Vrai ou faux minéralogique", "✅", "/jeux.html#jeux"],
+  ["plus-dur", "Plus dur ou moins dur ?", "⚖️", "/jeux.html#jeux"],
+  ["classe-les", "Classe-les !", "📶", "/jeux.html#jeux"],
+  ["pendu", "Le pendu minéralogique", "🔤", "/jeux.html#jeux"],
+  ["glossaire", "Le glossaire en défi", "📖", "/jeux.html#jeux"]
+];
+const RESULTS_QUIZ = [
+  ["persona-mineral", "Quel minéral es-tu ?", "🪨", "/jeux.html#quiz"],
+  ["persona-prospecteur", "Quel prospecteur es-tu ?", "⛏️", "/jeux.html#quiz"],
+  ["persona-outil", "Quel outil de prospecteur es-tu ?", "🔨", "/jeux.html#quiz"],
+  ["persona-collectionneur", "Quel collectionneur es-tu ?", "🗃️", "/jeux.html#quiz"],
+  ["persona-forme", "Quelle forme cristalline es-tu ?", "💎", "/jeux.html#quiz"]
 ];
 
 function connectionCard(state, stats) {
@@ -33,11 +45,11 @@ function connectionCard(state, stats) {
   return card;
 }
 
-function resultsCard(state) {
+function resultsCard(state, title, note, results) {
   const card = el("section", "carnet-card");
-  card.append(el("h3", "carnet-title", "Mes résultats"), el("p", "carnet-note", "Le dernier résultat de chaque jeu et de chaque quiz, à partager quand tu veux. Chaque résultat est gardé 7 jours, puis supprimé."));
+  card.append(el("h3", "carnet-title", title), el("p", "carnet-note", note));
   const list = el("ul", "carnet-results");
-  for (const [key, name, icon, link] of RESULTS) {
+  for (const [key, name, icon, link] of results) {
     const saved = state.cards?.[key];
     const item = el("li", "carnet-result");
     const head = el("div", "carnet-result-head"); head.append(el("span", "carnet-result-icon", icon), el("strong", "", name));
@@ -79,12 +91,15 @@ function badgesCard(state, stats) {
   return card;
 }
 
+const gameResultsCard = state => resultsCard(state, "Mes résultats : les jeux", "Le dernier résultat de chaque jeu, à partager quand tu veux. Chaque résultat est gardé 7 jours, puis supprimé.", RESULTS_GAMES);
+const quizResultsCard = state => resultsCard(state, "Mes résultats : les quiz", "Le résultat de chaque quiz, à partager quand tu veux. Chaque résultat est gardé 7 jours, puis supprimé.", RESULTS_QUIZ);
+
 export function mountCarnet(container) {
-  let connection, results, badges;
+  let connection, results, quizResults, badges;
   const drawAll = () => {
     const state = getProgress(), stats = statsOf(state);
-    connection = connectionCard(state, stats); results = resultsCard(state); badges = badgesCard(state, stats);
-    container.replaceChildren(connection, results, badges);
+    connection = connectionCard(state, stats); results = gameResultsCard(state); quizResults = quizResultsCard(state); badges = badgesCard(state, stats);
+    container.replaceChildren(connection, results, quizResults, badges);
   };
   // Un changement de progression (partage, connexion…) ne redessine que la série et les badges : un aperçu de partage ouvert reste en place.
   const drawLive = () => {

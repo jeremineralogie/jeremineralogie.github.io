@@ -1,4 +1,4 @@
-// Carnet de terrain : règles des 16 badges, séries, fusion entre appareils et compte.
+// Carnet de terrain : règles des 19 badges, séries, fusion entre appareils et compte.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { BADGES, CATEGORIES, awardBadges, statsOf, currentStreak, longestStreak, shift } from "../assets/js/badges.js";
@@ -9,10 +9,11 @@ const days = (count, end = TODAY) => Array.from({ length: count }, (_, index) =>
 const games = count => Object.fromEntries(days(count).map(day => [day, { score: 1 }]));
 const earned = state => Object.keys(awardBadges(state, TODAY).reduce((acc, badge) => ({ ...acc, [badge.id]: 1 }), {}));
 
-test("16 badges, 4 par catégorie, chacun avec nom, logo et condition", () => {
-  assert.equal(BADGES.length, 16);
-  assert.equal(new Set(BADGES.map(badge => badge.id)).size, 16);
-  for (const [category] of CATEGORIES) assert.equal(BADGES.filter(badge => badge.category === category).length, 4, category);
+test("19 badges : 4 connexion, 5 jeux, 6 quiz, 4 navigation, chacun avec nom, logo et condition", () => {
+  assert.equal(BADGES.length, 19);
+  assert.equal(new Set(BADGES.map(badge => badge.id)).size, 19);
+  const expected = { connexion: 4, jeux: 5, quiz: 6, navigation: 4 };
+  for (const [category] of CATEGORIES) assert.equal(BADGES.filter(badge => badge.category === category).length, expected[category], category);
   BADGES.forEach(badge => { assert.ok(badge.icon.length >= 1 && badge.name.length > 3 && badge.rule.length > 5, badge.id); });
 });
 test("séries : en cours (aujourd'hui ou hier) et plus longue", () => {
@@ -28,22 +29,32 @@ test("connexion : bienvenue, 7, 30 et 90 jours d'affilée", () => {
   const all = earned({ accountCreated: TODAY, visits: days(90) }); assert.ok(["connexion-7", "connexion-30", "connexion-90"].every(id => all.includes(id)));
   assert.ok(!earned({ visits: [...days(6), ...days(6, shift(TODAY, -10))] }).includes("connexion-7"), "7 jours non consécutifs");
 });
-test("jeux : première partie, trois jeux, séries de 7 et 30 jours sur chaque jeu", () => {
+const replayAll = plays => ({ "vrai-faux": { plays }, glossaire: { plays }, "plus-dur": { plays }, pendu: { plays }, "classe-les": { plays } });
+const personasAll = { mineral: { slug: "a" }, prospecteur: { slug: "b" }, outil: { slug: "c" }, collectionneur: { slug: "d" }, forme: { slug: "e" } };
+test("jeux : première partie (jeu du jour ou jeu à rejouer), une partie de chacun des jeux, séries de 7 et 30 jours sur les jeux du jour", () => {
   assert.deepEqual(earned({ mineral: games(1), quiz: {}, geo: {} }), ["jeux-premiere"]);
-  assert.deepEqual(earned({ mineral: games(1), quiz: games(1), geo: games(1) }).sort(), ["jeux-curieux", "jeux-premiere"]);
+  assert.deepEqual(earned({ quizzes: { pendu: { plays: 1 } } }), ["jeux-premiere"], "une partie d'un jeu à rejouer compte");
+  assert.ok(!earned({ mineral: games(1), quiz: games(1), geo: games(1) }).includes("jeux-curieux"), "les jeux à rejouer manquent");
+  assert.ok(!earned({ mineral: games(1), quiz: games(1), geo: games(1), quizzes: { ...replayAll(1), pendu: { plays: 0 } } }).includes("jeux-curieux"), "le pendu manque");
+  assert.ok(earned({ mineral: games(1), quiz: games(1), geo: games(1), quizzes: replayAll(1) }).includes("jeux-curieux"));
   assert.ok(!earned({ mineral: games(7), quiz: games(7), geo: games(6) }).includes("jeux-serie-7"), "un jeu à 6 jours seulement");
   assert.ok(earned({ mineral: games(7), quiz: games(7), geo: games(7) }).includes("jeux-serie-7"));
   assert.ok(earned({ mineral: games(30), quiz: games(30), geo: games(30) }).includes("jeux-serie-30"));
 });
-test("quiz : tous les quiz, partages, et 10 parties de chaque", () => {
-  const base = { personas: { mineral: { slug: "or" }, prospecteur: { slug: "x" }, outil: { slug: "y" }, collectionneur: { slug: "z" }, forme: { slug: "w" } }, quizzes: { "vrai-faux": { plays: 1 }, glossaire: { plays: 1 }, "plus-dur": { plays: 1 }, pendu: { plays: 1 }, "classe-les": { plays: 1 } } };
-  assert.ok(earned({ ...base }).includes("quiz-tous"));
-  assert.ok(!earned({ personas: base.personas, quizzes: { "vrai-faux": { plays: 3 } } }).includes("quiz-tous"), "glossaire et plus dur jamais joués");
-  assert.ok(!earned({ ...base }).includes("quiz-dix-fois"));
-  assert.ok(earned({ personas: base.personas, quizzes: { "vrai-faux": { plays: 10 }, glossaire: { plays: 12 }, "plus-dur": { plays: 10 }, pendu: { plays: 10 }, "classe-les": { plays: 10 } } }).includes("quiz-dix-fois"));
-  assert.deepEqual(earned({ shares: { "persona-mineral": TODAY } }), ["quiz-partage-mineral"]);
-  assert.deepEqual(earned({ shares: { "persona-prospecteur": TODAY } }), ["quiz-partage-prospecteur"]);
-  assert.deepEqual(earned({ shares: { mineral: TODAY } }), [], "le partage d'un jeu du jour ne donne pas ces badges");
+test("jeux : champion = 10 parties de chacun des jeux", () => {
+  assert.ok(!earned({ mineral: games(10), quiz: games(10), geo: games(10), quizzes: replayAll(9) }).includes("quiz-dix-fois"), "9 parties d'un jeu à rejouer");
+  assert.ok(!earned({ mineral: games(10), quiz: games(10), geo: games(9), quizzes: replayAll(10) }).includes("quiz-dix-fois"), "9 jours sur un jeu du jour");
+  assert.ok(earned({ mineral: games(10), quiz: games(10), geo: games(10), quizzes: replayAll(10) }).includes("quiz-dix-fois"));
+  assert.equal(BADGES.find(badge => badge.id === "quiz-dix-fois").category, "jeux");
+});
+test("quiz : faire tous les quiz (un seul passage chacun) et un badge de partage par quiz", () => {
+  assert.ok(earned({ personas: personasAll }).includes("quiz-tous"));
+  assert.ok(!earned({ personas: { mineral: { slug: "a" }, prospecteur: { slug: "b" } } }).includes("quiz-tous"), "trois quiz jamais faits");
+  assert.ok(!earned({ quizzes: replayAll(20) }).includes("quiz-tous"), "les jeux à rejouer ne sont pas des quiz");
+  assert.equal(BADGES.find(badge => badge.id === "quiz-tous").rule, "Faire tous les quiz");
+  const share = { mineral: "quiz-partage-mineral", prospecteur: "quiz-partage-prospecteur", outil: "quiz-partage-outil", collectionneur: "quiz-partage-collectionneur", forme: "quiz-partage-forme" };
+  for (const [kind, id] of Object.entries(share)) assert.deepEqual(earned({ shares: { [`persona-${kind}`]: TODAY } }), [id], kind);
+  assert.deepEqual(earned({ shares: { mineral: TODAY, "vrai-faux": TODAY } }), [], "le partage d'un jeu ne donne pas de badge de quiz");
 });
 test("navigation : pages, fiches minéraux et favoris", () => {
   const pages = n => Array.from({ length: n }, (_, index) => `/page-${index}/`);

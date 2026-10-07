@@ -19,10 +19,12 @@ export function longestStreak(dates) {
 }
 
 export const DAILY_GAMES = ["mineral", "quiz", "geo"];
-// Les quiz de personnalité (un seul passage) : pour en ajouter un, l'ajouter ici. Les jeux rejouables (vrai ou faux, glossaire, plus dur ou moins dur, pendu) sont comptés à part.
+// Vocabulaire du site : un QUIZ ne se passe qu'une seule fois (les cinq quiz de personnalité) ; un JEU se rejoue à volonté.
+// Les jeux sont les trois jeux du jour et les jeux à rejouer (vrai ou faux, glossaire, plus dur ou moins dur, pendu, classe-les) : ils restent ensemble dans la catégorie « Jeux ».
 export const PERSONAS = ["mineral", "prospecteur", "outil", "collectionneur", "forme"];
-export const REPLAY_QUIZZES = ["vrai-faux", "glossaire", "plus-dur", "pendu", "classe-les"];
-export const QUIZ_KEYS = [...PERSONAS.map(kind => `persona-${kind}`), ...REPLAY_QUIZZES];
+export const REPLAY_GAMES = ["vrai-faux", "glossaire", "plus-dur", "pendu", "classe-les"];
+export const QUIZ_KEYS = PERSONAS.map(kind => `persona-${kind}`);
+const GAME_COUNT = DAILY_GAMES.length + REPLAY_GAMES.length;
 
 export function statsOf(state, today = parisDay()) {
   const stats = {
@@ -34,11 +36,16 @@ export function statsOf(state, today = parisDay()) {
     stats[game] = { games: days.length, streak: currentStreak(days, today), longest: longestStreak(days) };
     stats.games.any += days.length;
   }
-  const done = Object.fromEntries(PERSONAS.map(kind => [`persona-${kind}`, Boolean(state.personas?.[kind])]));
+  // Jeux à rejouer : nombre de parties (gardé dans state.quizzes, nom historique de la progression).
   const plays = kind => Number(state.quizzes?.[kind]?.plays) || 0;
-  REPLAY_QUIZZES.forEach(kind => { done[kind] = plays(kind) >= 1; });
-  stats.quizzes = { done, all: QUIZ_KEYS.every(kind => done[kind]), plays: Object.fromEntries(REPLAY_QUIZZES.map(kind => [kind, plays(kind)])), shared: { mineral: Boolean(state.shares?.["persona-mineral"]), prospecteur: Boolean(state.shares?.["persona-prospecteur"]) } };
-  stats.quizzes.tenTimes = PERSONAS.every(kind => stats.quizzes.done[`persona-${kind}`]) && REPLAY_QUIZZES.every(kind => plays(kind) >= 10);
+  stats.games.plays = Object.fromEntries(REPLAY_GAMES.map(kind => [kind, plays(kind)]));
+  stats.games.any += REPLAY_GAMES.reduce((total, kind) => total + plays(kind), 0);
+  stats.games.tried = DAILY_GAMES.filter(game => stats[game].games >= 1).length + REPLAY_GAMES.filter(kind => plays(kind) >= 1).length;
+  stats.games.tenTimes = DAILY_GAMES.every(game => stats[game].games >= 10) && REPLAY_GAMES.every(kind => plays(kind) >= 10);
+  stats.games.tenProgress = DAILY_GAMES.reduce((total, game) => total + Math.min(10, stats[game].games), 0) + REPLAY_GAMES.reduce((total, kind) => total + Math.min(10, plays(kind)), 0);
+  // Quiz : les quiz de personnalité, un seul passage chacun.
+  const done = Object.fromEntries(PERSONAS.map(kind => [`persona-${kind}`, Boolean(state.personas?.[kind])]));
+  stats.quizzes = { done, all: QUIZ_KEYS.every(kind => done[kind]), shared: Object.fromEntries(PERSONAS.map(kind => [kind, Boolean(state.shares?.[`persona-${kind}`])])) };
   stats.nav = { pages: (state.nav?.pages || []).length, minerals: (state.nav?.minerals || []).length, favorites: Number(state.nav?.favMax) || 0 };
   return stats;
 }
@@ -54,15 +61,17 @@ export const BADGES = [
   badge("connexion-90", "connexion", "🏡", "Comme à la maison", "90 jours de connexion d’affilée", stats => stats.connect.longest >= 90, stats => [stats.connect.longest, 90]),
 
   badge("jeux-premiere", "jeux", "🎮", "Nouveau(elle) joueur(se)", "Terminer une première partie", stats => stats.games.any >= 1),
-  badge("jeux-curieux", "jeux", "🧭", "Joueur(euse) curieux(se)", "Une première partie de chacun des trois jeux", stats => DAILY_GAMES.every(game => stats[game].games >= 1), stats => [DAILY_GAMES.filter(game => stats[game].games >= 1).length, 3]),
-  badge("jeux-serie-7", "jeux", "🕹️", "Accro aux jeux", "7 jours d’affilée sur chacun des trois jeux", stats => eachGame(stats, "longest", 7), stats => [minOf(stats, "longest"), 7]),
-  badge("jeux-serie-30", "jeux", "👑", "Game master", "30 jours d’affilée sur chacun des trois jeux", stats => eachGame(stats, "longest", 30), stats => [minOf(stats, "longest"), 30]),
+  badge("jeux-curieux", "jeux", "🧭", "Joueur(euse) curieux(se)", "Une partie de chacun des jeux", stats => stats.games.tried >= GAME_COUNT, stats => [stats.games.tried, GAME_COUNT]),
+  badge("jeux-serie-7", "jeux", "🕹️", "Accro aux jeux", "7 jours d’affilée sur chacun des trois jeux du jour", stats => eachGame(stats, "longest", 7), stats => [minOf(stats, "longest"), 7]),
+  badge("jeux-serie-30", "jeux", "👑", "Game master", "30 jours d’affilée sur chacun des trois jeux du jour", stats => eachGame(stats, "longest", 30), stats => [minOf(stats, "longest"), 30]),
+  badge("quiz-dix-fois", "jeux", "🏆", "Champion(ne)", "10 parties de chacun des jeux", stats => stats.games.tenTimes, stats => [stats.games.tenProgress, 10 * GAME_COUNT]),
 
-  badge("quiz-tous", "quiz", "❓", "Encore une question ?", `Faire les ${["", "un", "deux", "trois", "quatre", "cinq", "six", "sept"][QUIZ_KEYS.length] || QUIZ_KEYS.length} quiz`, stats => stats.quizzes.all, stats => [QUIZ_KEYS.filter(kind => stats.quizzes.done[kind]).length, QUIZ_KEYS.length]),
+  badge("quiz-tous", "quiz", "❓", "Encore une question ?", "Faire tous les quiz", stats => stats.quizzes.all, stats => [QUIZ_KEYS.filter(kind => stats.quizzes.done[kind]).length, QUIZ_KEYS.length]),
   badge("quiz-partage-mineral", "quiz", "🪞", "J’assume en public", "Partager « Quel minéral es-tu ? »", stats => stats.quizzes.shared.mineral),
   badge("quiz-partage-prospecteur", "quiz", "🤝", "Merci du partage", "Partager « Quel prospecteur es-tu ? »", stats => stats.quizzes.shared.prospecteur),
-  badge("quiz-dix-fois", "quiz", "🏆", "Champion(ne)", "Faire chaque quiz : tous les quiz de personnalité, et 10 parties du vrai ou faux, du glossaire, de « Plus dur ou moins dur ? », du pendu et de « Classe-les ! »", stats => stats.quizzes.tenTimes,
-    stats => [REPLAY_QUIZZES.reduce((total, kind) => total + Math.min(10, stats.quizzes.plays[kind]), 0) + PERSONAS.filter(kind => stats.quizzes.done[`persona-${kind}`]).length, 10 * REPLAY_QUIZZES.length + PERSONAS.length]),
+  badge("quiz-partage-outil", "quiz", "🧰", "Toujours bien équipé(e)", "Partager « Quel outil de prospecteur es-tu ? »", stats => stats.quizzes.shared.outil),
+  badge("quiz-partage-collectionneur", "quiz", "🗃️", "Vitrine partagée", "Partager « Quel collectionneur es-tu ? »", stats => stats.quizzes.shared.collectionneur),
+  badge("quiz-partage-forme", "quiz", "💎", "Sous toutes les formes", "Partager « Quelle forme cristalline es-tu ? »", stats => stats.quizzes.shared.forme),
 
   badge("nav-pages", "navigation", "👀", "Curieux(se)", "Explorer 10 pages du site", stats => stats.nav.pages >= 10, stats => [stats.nav.pages, 10]),
   badge("nav-fiches", "navigation", "🎓", "Le savoir !", "Consulter 50 fiches minéraux", stats => stats.nav.minerals >= 50, stats => [stats.nav.minerals, 50]),
