@@ -126,7 +126,7 @@ function renderSpecimen(specimen) {
     thumbs.hidden = false;
     const main = document.createElement("img"); main.src = photos[0]; main.alt = altOf(0); gallery.append(main);
     photos.forEach((photo, index) => {
-      const thumb = document.createElement("img"); thumb.src = photo; thumb.alt = altOf(index);
+      const thumb = document.createElement("img"); thumb.src = specimen.thumbs?.[index] || photo; thumb.dataset.full = photo; thumb.alt = altOf(index);
       thumb.tabIndex = 0; thumb.setAttribute("role", "button");
       const choose = () => { main.src = photo; main.alt = thumb.alt; };
       thumb.addEventListener("click", choose); thumb.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });

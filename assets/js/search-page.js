@@ -1,4 +1,5 @@
 import { cleanUrl, departmentUrl } from "./clean-urls.js";
+import { thumbPathOf } from "./image-variants.js";
 import { shopItemName, publicMediaUrl } from "./content-repository.js";
 import { commonsPhoto, loadMineralPhotos } from "./mineral-photos.js";
 import { getSupabase } from "./supabase-client.js";
@@ -14,7 +15,7 @@ const media = table => `media:${table}(bucket_id,storage_path,alt_text,position)
 // Première photo publique d'une fiche (ordre choisi dans l'admin).
 const firstImage = rows => {
   const image = (rows || []).filter(item => item.bucket_id === "site-media-public" && item.storage_path).sort((a, b) => (a.position ?? 0) - (b.position ?? 0))[0];
-  return image ? { src: publicMediaUrl(client, image), alt: image.alt_text } : null;
+  return image ? { src: publicMediaUrl(client, image, "thumb"), alt: image.alt_text } : null;
 };
 let commons = {};
 const DOMAINS = { mineralogie: "Minéralogie", geologie: "Géologie", cristallographie: "Cristallographie" };
@@ -28,7 +29,7 @@ const sources = [
   { type: "Article", table: "articles", select: `slug,title,excerpt,category,${media("article_media")}`, wide: true,
     map: r => ({ title: r.title, meta: categoryLabel(r.category), href: articleUrl(r), image: firstImage(r.media), haystack: [r.title, r.excerpt, r.category] }) },
   { type: "Archive", table: "archive_documents", select: "slug,title,description,category,cover_bucket,cover_path", wide: true,
-    map: r => ({ title: r.title, meta: categoryLabel(r.category), href: documentUrl(r), image: r.cover_path ? { src: client.storage.from(r.cover_bucket || "site-media-public").getPublicUrl(r.cover_path).data.publicUrl } : null, haystack: [r.title, r.description, r.category] }) },
+    map: r => ({ title: r.title, meta: categoryLabel(r.category), href: documentUrl(r), image: r.cover_path ? { src: client.storage.from(r.cover_bucket || "site-media-public").getPublicUrl(thumbPathOf(r.cover_path) || r.cover_path).data.publicUrl } : null, haystack: [r.title, r.description, r.category] }) },
   { type: "Mine / gisement", table: "mines", select: "name,slug,description,locality:localities(department_code)",
     map: r => ({ title: r.name, meta: "", href: ficheUrl("mine", r.slug), haystack: [r.name, r.description] }) },
   { type: "Commune", table: "localities", select: "name,slug,department_code,notes",

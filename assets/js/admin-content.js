@@ -3,6 +3,7 @@ import { ensureDepartment, ensureNamed, isFrenchDepartmentCode, normalizeName, O
 import { enhanceCombobox, enhanceMulti } from "./combobox.js";
 import { backfillLocalities, communeLabel, communeUpdate, departmentOfCommune, findCommune, searchCommunes } from "./geo-communes.js";
 import { createPointTool, pickPoint, pointKey, savePendingPoints } from "./point-picker.js";
+import { CACHE_CONTROL, thumbPathOf, uploadImage } from "./image-variants.js";
 import { createContentEditor } from "./article-editor.js";
 import { blocksToText } from "./article-content.js";
 import { formatDiscoveryDate, parseDiscoveryDate, parseWeight } from "./specimen-fields.js";
@@ -589,9 +590,7 @@ async function saveRecord(form) {
         if (chosen) {
           const name = chosen.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
           const coverPath = `${section.path}/couvertures/${crypto.randomUUID()}-${name}`;
-          const { error: coverError } = await client.storage.from(PUBLIC_BUCKET).upload(coverPath, chosen, { upsert: false, contentType: chosen.type });
-          if (coverError) throw coverError;
-          value = coverPath; record.cover_bucket = PUBLIC_BUCKET;
+          value = await uploadImage(client, PUBLIC_BUCKET, coverPath, chosen); record.cover_bucket = PUBLIC_BUCKET;
         } else if (form.elements.namedItem(`${field.key}__remove`)?.checked) value = "";
       }
       if (field.array) value = value ? value.split(",").map(part => part.trim()).filter(Boolean) : [];
@@ -962,8 +961,8 @@ async function uploadMedia(parent) {
     const key = fileKey(file);
     if (uploadedFileKeys.has(key)) continue;
     const name = file.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
-    const path = `${activeSection.path}/${parent.slug}/${crypto.randomUUID()}-${name}`;
-    const { error: uploadError } = await client.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type }); if (uploadError) throw uploadError;
+    const basePath = `${activeSection.path}/${parent.slug}/${crypto.randomUUID()}-${name}`;
+    const path = await uploadImage(client, bucket, basePath, file);
     const position = currentPosition + index;
     const row = { [activeSection.foreignKey]: parent.id, bucket_id: bucket, storage_path: path, alt_text: file.name, position, ...activeSection.mediaRow?.(parent, file, position) };
     const { error: insertError } = await client.from(activeSection.mediaTable).insert(row);
@@ -986,9 +985,9 @@ async function replaceMedia(item, file, image, button) {
   if (!file) return;
   button.disabled = true; report("Remplacement du média…");
   const bucket = selectedRecord.publication_status === "published" ? PUBLIC_BUCKET : DRAFT_BUCKET;
-  const path = `${activeSection.path}/${selectedRecord.slug}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.-]+/g, "-")}`;
+  const basePath = `${activeSection.path}/${selectedRecord.slug}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.-]+/g, "-")}`;
   try {
-    const { error: uploadError } = await client.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type }); if (uploadError) throw uploadError;
+    const path = await uploadImage(client, bucket, basePath, file);
     const { error: updateError } = await client.from(activeSection.mediaTable).update({ bucket_id: bucket, storage_path: path, alt_text: file.name }).eq("id", item.id).select("id").single();
     if (updateError) { await removeStorageIfUnreferenced(bucket, path, activeSection.mediaTable); throw updateError; }
     await removeStorageIfUnreferenced(item.bucket_id, item.storage_path, activeSection.mediaTable);
@@ -1009,7 +1008,8 @@ async function removeStorageIfUnreferenced(bucket, path, exceptTable = null) {
   const { data: archiveRefs, error: archiveError } = await client.from("archive_documents").select("id").eq("bucket_id", bucket).eq("storage_path", path).limit(1);
   if (archiveError) throw archiveError;
   if (archiveRefs?.length) return;
-  const { error } = await client.storage.from(bucket).remove([path]); if (error) throw error;
+  const thumbPath = thumbPathOf(path);
+  const { error } = await client.storage.from(bucket).remove(thumbPath ? [path, thumbPath] : [path]); if (error) throw error;
 }
 
 async function syncMedia(parent) {
@@ -1018,10 +1018,21 @@ async function syncMedia(parent) {
   for (const item of data || []) {
     if (item.bucket_id === destinationBucket) continue;
     const { data: blob, error: downloadError } = await client.storage.from(item.bucket_id).download(item.storage_path); if (downloadError) throw downloadError;
-    const path = `${activeSection.path}/${parent.slug}/${crypto.randomUUID()}-${item.storage_path.split("/").pop()}`;
-    const { error: uploadError } = await client.storage.from(destinationBucket).upload(path, blob, { upsert: false }); if (uploadError) throw uploadError;
+    const fileName = item.storage_path.split("/").pop();
+    let path = `${activeSection.path}/${parent.slug}/${crypto.randomUUID()}-${fileName}`;
+    const thumbSource = thumbPathOf(item.storage_path);
+    if (thumbSource) {
+      // Photo déjà allégée : la grande version et la vignette suivent ensemble.
+      path = `o/${path}`;
+      const { data: thumbBlob, error: thumbError } = await client.storage.from(item.bucket_id).download(thumbSource); if (thumbError) throw thumbError;
+      const { error: copyError } = await client.storage.from(destinationBucket).upload(path, blob, { upsert: false, contentType: blob.type, cacheControl: CACHE_CONTROL }); if (copyError) throw copyError;
+      const { error: thumbCopyError } = await client.storage.from(destinationBucket).upload(thumbPathOf(path), thumbBlob, { upsert: false, contentType: thumbBlob.type, cacheControl: CACHE_CONTROL });
+      if (thumbCopyError) { await client.storage.from(destinationBucket).remove([path]); throw thumbCopyError; }
+    } else {
+      const { error: uploadError } = await client.storage.from(destinationBucket).upload(path, blob, { upsert: false }); if (uploadError) throw uploadError;
+    }
     const { error: updateError } = await client.from(activeSection.mediaTable).update({ bucket_id: destinationBucket, storage_path: path }).eq("id", item.id).select("id").single();
-    if (updateError) { await client.storage.from(destinationBucket).remove([path]); throw updateError; }
+    if (updateError) { await client.storage.from(destinationBucket).remove(thumbSource ? [path, thumbPathOf(path)] : [path]); throw updateError; }
     await removeStorageIfUnreferenced(item.bucket_id, item.storage_path, activeSection.mediaTable);
   }
 }

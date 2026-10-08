@@ -17,7 +17,7 @@ function render() {
   rows.forEach(article => {
     const card = document.createElement("a"); card.className = "card card-wide"; card.href = articleUrl(article);
     const image = (article.media || []).filter(item => item.bucket_id === "site-media-public").sort((a, b) => a.position - b.position)[0];
-    if (image) { const element = document.createElement("img"); element.src = publicMediaUrl(client, image); element.alt = image.alt_text || article.title; card.append(element); }
+    if (image) { const element = document.createElement("img"); element.src = publicMediaUrl(client, image, "thumb"); element.alt = image.alt_text || article.title; card.append(element); }
     const body = document.createElement("div"); body.className = "card-body";
     const category = document.createElement("div"); category.className = "kicker"; category.textContent = categoryLabel(article.category); body.append(category);
     const title = document.createElement("h3"); title.textContent = article.title; body.append(title);

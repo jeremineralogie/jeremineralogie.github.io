@@ -1,3 +1,4 @@
+import { thumbPathOf } from "./image-variants.js";
 import { getSupabase } from "./supabase-client.js";
 
 export async function loadPublishedContent(section) {
@@ -18,9 +19,11 @@ export async function loadPublishedContent(section) {
   return { client, data: rows };
 }
 
-export function publicMediaUrl(client, media) {
+// variant « thumb » : la vignette (listes, cartes) quand la photo a été allégée ; sinon la photo telle quelle.
+export function publicMediaUrl(client, media, variant = "full") {
   if (!media || media.bucket_id !== "site-media-public" || !media.storage_path) return "";
-  return client.storage.from(media.bucket_id).getPublicUrl(media.storage_path).data.publicUrl;
+  const path = variant === "thumb" ? thumbPathOf(media.storage_path) || media.storage_path : media.storage_path;
+  return client.storage.from(media.bucket_id).getPublicUrl(path).data.publicUrl;
 }
 
 export function watchContent(client, section, refresh) {

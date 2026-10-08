@@ -248,3 +248,8 @@ body.admin-page .admin-main .admin-panel .st-title h3{display:block!important;wi
 .st-col.is-peak i{background:#b48cff}
 .st-col span{margin-top:4px;font-size:.7rem;color:#9d89bd;min-height:1em;white-space:nowrap}
 .st-peak{margin:0 0 6px;color:#b48cff;font-size:.88rem}
+
+/* Outil Photos */
+#photos-body { display: grid; gap: .75rem; justify-items: start; }
+.photos-progress { width: 100%; max-width: 32rem; }
+.photos-errors { margin: 0; padding-left: 1.2rem; color: #b3261e; font-size: .9rem; overflow-wrap: anywhere; }
