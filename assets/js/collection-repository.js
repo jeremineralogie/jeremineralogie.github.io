@@ -1,4 +1,5 @@
 import { getSupabase } from "./supabase-client.js";
+import { thumbPathOf } from "./image-variants.js";
 
 const specimenSelect = [
   "id", "slug", "provenance", "department_code", "region_id", "dimensions", "weight_grams",
@@ -15,10 +16,11 @@ const specimenSelect = [
 ].join(",");
 
 function mapSpecimen(client, row) {
-  const photos = (row.media || [])
-    .filter(media => media.bucket_id === "site-media-public")
-    .sort((a, b) => a.position - b.position)
-    .map(media => client.storage.from(media.bucket_id).getPublicUrl(media.storage_path).data.publicUrl);
+  const media = (row.media || []).filter(item => item.bucket_id === "site-media-public").sort((a, b) => a.position - b.position);
+  const urlOf = (item, path) => client.storage.from(item.bucket_id).getPublicUrl(path).data.publicUrl;
+  const photos = media.map(item => urlOf(item, item.storage_path));
+  // Vignettes pour les listes (la photo elle-même tant qu'elle n'a pas été allégée).
+  const thumbs = media.map(item => urlOf(item, thumbPathOf(item.storage_path) || item.storage_path));
   const mineral = row.mineral || {};
   return {
     mineralSlug: mineral.slug || "", mineSlug: row.mine?.slug || "", localitySlug: row.locality?.slug || "",
@@ -33,7 +35,7 @@ function mapSpecimen(client, row) {
     description: row.description || "", history: row.history || "",
     discoveryDate: row.discovery_date_text ?? (row.discovered_on || (row.discovery_year && row.discovery_month
       ? `${String(row.discovery_month).padStart(2, "0")}/${row.discovery_year}`
-      : row.discovery_year || "")), photos,
+      : row.discovery_year || "")), photos, thumbs,
     scientific: {
       formula: mineral.formula, crystalSystem: mineral.crystal_system, hardness: mineral.hardness,
       density: mineral.density, colors: mineral.colors, luster: mineral.luster,

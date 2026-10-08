@@ -1,3 +1,4 @@
+import { thumbPathOf } from "./image-variants.js";
 import { loadPublishedContent, showLoadError, watchContent } from "./content-repository.js";
 import { categoryLabel } from "./reference-resolver.js";
 import { documentUrl } from "./detail-nav.js";
@@ -25,7 +26,7 @@ function render() {
   status.hidden = true;
   for (const documentRow of visible) {
     const card = document.createElement("a"); card.className = "card card-wide"; card.href = documentUrl(documentRow);
-    if (documentRow.cover_path) { const cover = document.createElement("img"); cover.src = client.storage.from(documentRow.cover_bucket || "site-media-public").getPublicUrl(documentRow.cover_path).data.publicUrl; cover.alt = documentRow.title; cover.loading = "lazy"; card.append(cover); }
+    if (documentRow.cover_path) { const cover = document.createElement("img"); cover.src = client.storage.from(documentRow.cover_bucket || "site-media-public").getPublicUrl(thumbPathOf(documentRow.cover_path) || documentRow.cover_path).data.publicUrl; cover.alt = documentRow.title; cover.loading = "lazy"; card.append(cover); }
     const body = document.createElement("div"); body.className = "card-body";
     const category = document.createElement("div"); category.className = "kicker"; category.textContent = categoryLabel(documentRow.category); body.append(category);
     const title = document.createElement("h3"); title.textContent = documentRow.title; body.append(title);

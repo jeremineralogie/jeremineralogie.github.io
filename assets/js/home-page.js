@@ -24,7 +24,7 @@ function cardPhoto(card, url, alt) {
 function shopCard(item) {
   const card = el("a", "card card-boutique"); card.href = pieceUrl(item);
   const photo = firstPhoto(item.media);
-  cardPhoto(card, photo && publicMediaUrl(client, photo), shopItemName(item));
+  cardPhoto(card, photo && publicMediaUrl(client, photo, "thumb"), shopItemName(item));
   const body = el("div", "card-body");
   body.append(el("h3", "", shopItemName(item)), el("div", "meta", item.mine?.name || item.provenance || item.locality_name || item.locality?.name || ""),
     el("div", "price", new Intl.NumberFormat("fr-FR", { style: "currency", currency: item.currency || "EUR" }).format((item.price_cents ?? 0) / 100)), el("div", "more", "Voir la fiche"));
@@ -33,7 +33,7 @@ function shopCard(item) {
 function specimenCard(row) {
   const card = el("a", "card card-specimen"); card.href = specimenUrl({ id: row.slug });
   const photo = firstPhoto(row.media); const name = row.mineral_name || row.mineral?.name || "Spécimen";
-  cardPhoto(card, photo && publicMediaUrl(client, photo), name);
+  cardPhoto(card, photo && publicMediaUrl(client, photo, "thumb"), name);
   const body = el("div", "card-body");
   body.append(el("h3", "", name), el("div", "place", [row.provenance || row.locality_name, row.department_name].filter(Boolean).join(" · ")));
   card.append(body); return card;
@@ -41,7 +41,7 @@ function specimenCard(row) {
 function readCard(row, kind) {
   const card = el("a", "card card-wide"); card.href = kind === "article" ? articleUrl(row) : documentUrl(row);
   const photo = kind === "article" ? firstPhoto(row.media) : row.cover_path ? { bucket_id: row.cover_bucket || "site-media-public", storage_path: row.cover_path } : null;
-  if (photo) { const image = el("img"); image.src = publicMediaUrl(client, photo); image.alt = row.title; image.loading = "lazy"; card.append(image); }
+  if (photo) { const image = el("img"); image.src = publicMediaUrl(client, photo, "thumb"); image.alt = row.title; image.loading = "lazy"; card.append(image); }
   const body = el("div", "card-body");
   body.append(el("div", "kicker", kind === "article" ? "Article" : "Archive"), el("h3", "", row.title),
     el("div", "meta", [categoryLabel(row.category), dateFr(kind === "article" ? row.published_on : row.document_date)].filter(Boolean).join(" · ")));

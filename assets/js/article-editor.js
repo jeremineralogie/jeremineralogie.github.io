@@ -2,6 +2,7 @@
 // Images, PDF et liens s'insèrent à l'endroit du curseur, n'importe où dans le texte (même entre deux mots).
 // Une image touchée se règle (taille, position dans le texte / à gauche / centrée / à droite), se déplace
 // par glisser-déposer (ordinateur) ou avec « Déplacer » puis un toucher dans le texte (téléphone), et se pince pour changer de taille.
+import { uploadImage } from "./image-variants.js";
 import { FONTS, FONT_SIZES, blocksToRichHtml, sanitizeRich } from "./article-content.js";
 
 const el = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
@@ -11,9 +12,7 @@ const POSITIONS = [["inline", "Dans le texte"], ["left", "À gauche"], ["center"
 async function uploadFile(client, file) {
   const name = file.name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-");
   const path = `articles/contenu/${crypto.randomUUID()}-${name}`;
-  const { error } = await client.storage.from("site-media-public").upload(path, file, { upsert: false, contentType: file.type });
-  if (error) throw error;
-  return { bucket: "site-media-public", path };
+  return { bucket: "site-media-public", path: await uploadImage(client, "site-media-public", path, file) };
 }
 function pickFile(accept) {
   return new Promise(resolve => {

@@ -29,9 +29,9 @@ function render(client, item) {
     if (photos.length > 1) {
       const thumbs = document.createElement("div"); thumbs.className = "thumbs";
       photos.forEach((photo, index) => {
-        const thumb = document.createElement("img"); thumb.src = publicMediaUrl(client, photo); thumb.alt = altOf(photo, index);
+        const thumb = document.createElement("img"); thumb.src = publicMediaUrl(client, photo, "thumb"); thumb.dataset.full = publicMediaUrl(client, photo); thumb.alt = altOf(photo, index);
         thumb.tabIndex = 0; thumb.setAttribute("role", "button");
-        const choose = () => { main.src = thumb.src; main.alt = thumb.alt; };
+        const choose = () => { main.src = thumb.dataset.full; main.alt = thumb.alt; };
         thumb.addEventListener("click", choose); thumb.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); choose(); } });
         thumbs.append(thumb);
       });

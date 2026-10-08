@@ -10,10 +10,12 @@ const contentManager = document.querySelector("#content-manager");
 const appearancePanel = document.querySelector("#appearance-panel");
 const messagesPanel = document.querySelector("#messages-panel");
 const statsPanel = document.querySelector("#stats-panel");
+const photosPanel = document.querySelector("#photos-panel");
 const homePanel = document.querySelector("#home-panel");
 const client = getSupabase();
 let homeModule = null;
 let statsModule = null;
+let optimizeModule = null;
 let messagesModule = null;
 let contentModule = null;
 let activeMain = "accueil";
@@ -137,12 +139,14 @@ async function showMainSection(id) {
     if (active) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
   });
   document.querySelectorAll("#settings-menu [data-main]").forEach(button => button.classList.toggle("is-active", button.dataset.main === id));
-  document.querySelector("#settings-toggle").classList.toggle("is-active", ["accueil", "messages", "stats", "referentiels", "appearance"].includes(id));
+  document.querySelector("#settings-toggle").classList.toggle("is-active", ["accueil", "messages", "stats", "photos", "referentiels", "appearance"].includes(id));
   const isAppearance = id === "appearance";
   const isMessages = id === "messages";
   const isStats = id === "stats";
   const isHome = id === "accueil";
-  contentManager.hidden = isAppearance || isMessages || isStats || isHome;
+  const isPhotos = id === "photos";
+  contentManager.hidden = isAppearance || isMessages || isStats || isHome || isPhotos;
+  photosPanel.hidden = !isPhotos;
   statsPanel.hidden = !isStats;
   homePanel.hidden = !isHome;
   if (isHome) {
@@ -162,6 +166,16 @@ async function showMainSection(id) {
   appearancePanel.hidden = !isAppearance;
   messagesPanel.hidden = !isMessages;
   if (isAppearance) return;
+  if (isPhotos) {
+    try {
+      optimizeModule ??= await import("./admin-optimize.js");
+      await optimizeModule.openOptimize(client);
+    } catch (error) {
+      console.error("Impossible de charger l'outil Photos :", error);
+      message(`L’outil Photos n’a pas pu être chargé : ${describeError(error)}`, true);
+    }
+    return;
+  }
   if (isStats) {
     try {
       statsModule ??= await import("./admin-stats.js");
