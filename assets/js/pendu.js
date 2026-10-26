@@ -69,6 +69,7 @@ export function mountPendu(container, { client }) {
     };
     const end = won => {
       stopKeys(); draw(!won);
+      track("answer", "pendu", word.slug, won ? 1 : 0);
       buttons.forEach(button => { button.disabled = true; }); hintButton.hidden = true;
       feedback.className = `mq-feedback ${won ? "is-right" : "is-wrong"}`;
       const verdict = el("p", "mq-verdict", won ? "Bien vu ! " : "Raté… "); verdict.append(el("strong", "", `C’était « ${word.term} ».`));

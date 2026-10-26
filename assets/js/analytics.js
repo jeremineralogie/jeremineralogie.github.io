@@ -53,15 +53,45 @@
     }).catch(() => {});
 
     // Événements d'usage (jeux, quiz, partages, clics utiles, lectures) : window.jmTrack(type, nom, détail, valeur). Même visite anonyme, aucune donnée personnelle.
-    window.jmTrack = (kind, name = null, detail = null, value = null) => {
-      try { post("site_events", { visit_id: visit.id, kind, name: clip(name, 60), detail: clip(detail, 200), value: value == null || Number.isNaN(Number(value)) ? null : Number(value) }); } catch { /* sans suite */ }
+    // Identifiant de joueur anonyme : un nombre aléatoire gardé sur l'appareil, ajouté seulement aux événements de jeu pour savoir si un joueur revient le lendemain.
+    const playerId = () => {
+      try {
+        let id = localStorage.getItem("jm-pid");
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id || "")) { id = uuid(); localStorage.setItem("jm-pid", id); }
+        return id;
+      } catch { return null; }
     };
+    const GAME_KINDS = ["start", "end", "answer"];
+    window.jmTrack = (kind, name = null, detail = null, value = null) => {
+      try {
+        post("site_events", { visit_id: visit.id, kind, name: clip(name, 60), detail: clip(detail, 200), value: value == null || Number.isNaN(Number(value)) ? null : Number(value),
+          ...(GAME_KINDS.includes(kind) ? { player_id: playerId() } : {}) });
+      } catch { /* sans suite */ }
+    };
+    window.jmContext = { page, type: entitySlug ? entityType : null, slug: entitySlug || null };
 
     // Clics utiles : « Me contacter » (avec la référence de la pièce), page Contact, page Réseaux, liens vers les réseaux sociaux.
     document.addEventListener("click", event => {
       try {
         const link = event.target.closest?.("a[href]"); if (!link) return;
         const url = new URL(link.getAttribute("href"), location.href);
+        const text = (link.textContent || "").replace(/\s+/g, " ").trim().slice(0, 60);
+        // Navigation : menu du haut, logo, fil d'Ariane, précédent / suivant / retour dans les fiches.
+        if (link.closest(".site-header .nav")) window.jmTrack("click", "menu", text);
+        else if (link.closest(".site-header .brand")) window.jmTrack("click", "menu", "Logo");
+        else if (link.closest(".crumbs")) window.jmTrack("click", "fil-ariane", text);
+        else if (link.closest(".fiche-nav, .fiche-back")) window.jmTrack("click", "fiche-nav", text);
+        // Liens cliqués dans le texte d'un article (hors « À lire aussi »).
+        if (page === "article" && entitySlug && link.closest(".article-full") && !link.closest(".read-more")) {
+          window.jmTrack("click", "lien-article", `${entitySlug}|${url.origin === location.origin ? url.pathname + url.search : url.hostname}`);
+        }
+        // Fiche ouverte juste après une erreur dans un jeu (le lien est dans le message « Raté… »).
+        if (link.closest(".is-wrong")) {
+          const area = link.closest("[id^='quiz-']");
+          const title = link.closest(".home-game")?.querySelector(".game-name")?.textContent || "";
+          const game = area ? area.id.slice(5) : ({ "Trouve le minéral": "mineral", "Le quiz du jour": "quiz", "Devine le gisement": "geo" })[title] || "jeu";
+          window.jmTrack("click", "fiche-apres-erreur", `${game}|${url.origin === location.origin ? url.pathname + url.search : url.hostname}`);
+        }
         if (url.origin === location.origin) {
           if (/^\/contact(\.html)?\/?$/.test(url.pathname)) { const reference = url.searchParams.get("reference"); window.jmTrack("click", reference ? "contact-piece" : "contact", reference || page); }
           else if (/^\/reseaux(\.html)?\/?$/.test(url.pathname)) window.jmTrack("click", "page-reseaux", page);
@@ -81,6 +111,29 @@
         if (height > innerHeight * 1.5 && (scrollY + innerHeight) / height >= 0.9) { done = true; window.jmTrack("read", "article", entitySlug); }
       };
       addEventListener("scroll", check, { passive: true });
+    }
+
+    // Temps réellement passé (page visible) et profondeur de défilement : une mesure par page vue, envoyée quand la page passe en arrière-plan ou se ferme.
+    {
+      let visibleMs = 0, shownAt = document.visibilityState === "visible" ? Date.now() : null, deepest = 0, sent = false;
+      const depth = () => { const room = document.documentElement.scrollHeight - innerHeight; return room <= 8 ? 100 : Math.max(0, Math.min(100, Math.round((scrollY / room) * 100))); };
+      deepest = depth();
+      addEventListener("scroll", () => { deepest = Math.max(deepest, depth()); }, { passive: true });
+      const flush = () => {
+        if (shownAt) { visibleMs += Date.now() - shownAt; shownAt = null; }
+        if (sent) return; sent = true;
+        const seconds = Math.min(1800, Math.round(visibleMs / 1000));
+        if (seconds < 1) return;
+        window.jmTrack("engage", page, entitySlug, seconds);
+        window.jmTrack("scroll", page, entitySlug, Math.max(deepest, depth()));
+      };
+      document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flush(); else if (!sent) shownAt = Date.now(); });
+      addEventListener("pagehide", flush);
+    }
+    // Langue du navigateur et fuseau horaire (une fois par visite) : donnent une idée du pays, jamais le pays exact.
+    if (isEntry) {
+      let zone = null; try { zone = Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch { zone = null; }
+      window.jmTrack("env", navigator.language || null, zone);
     }
 
     post("page_views", {

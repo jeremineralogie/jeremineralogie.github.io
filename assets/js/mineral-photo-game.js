@@ -8,6 +8,7 @@ import { EASY_RARITIES, byRarity } from "./rarity.js";
 import { fold } from "./answer-match.js";
 import { commonsPhoto, creditLine, loadMineralPhotos } from "./mineral-photos.js";
 import { dateFr, sharePanel } from "./share.js";
+import { track } from "./track.js";
 
 const ROUNDS = 5, CHOICES = 4;
 const SAVE_KEY = "jm-trouve-mineral-jour";
@@ -105,6 +106,7 @@ export async function renderMineralPhotoGame(panel, { client, minerals }) {
     const round = rounds[answers.length];
     const correct = choice.id === round.target.id;
     answers.push({ slug: round.target.slug, choice: choice.slug, correct });
+    track("answer", "mineral", round.target.slug, correct ? 1 : 0);
     save();
     grid.querySelectorAll(".pick-choice").forEach(button => {
       button.disabled = true;

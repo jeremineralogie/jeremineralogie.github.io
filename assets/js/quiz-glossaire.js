@@ -73,6 +73,7 @@ export function mountGlossaire(container, { client }) {
       const button = el("button", "pick-choice mq-answer", choice.term); button.type = "button";
       button.addEventListener("click", () => {
         const right = choice.slug === item.slug;
+        track("answer", "glossaire", item.slug, right ? 1 : 0);
         list.querySelectorAll("button").forEach(other => { other.disabled = true; if (other.textContent === item.term) other.classList.add("is-good"); });
         if (!right) button.classList.add("is-bad");
         const verdict = el("p", "mq-verdict", right ? "Bonne réponse ! " : "Raté… "); verdict.append(el("strong", "", item.term));

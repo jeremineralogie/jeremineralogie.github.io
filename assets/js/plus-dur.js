@@ -73,6 +73,7 @@ export function mountPlusDur(container, { client }) {
     });
     const answer = (chosen, chosenButton) => {
       const right = chosen === pair.hard;
+      track("answer", "plus-dur", pair.hard.slug || pair.hard.name, right ? 1 : 0);
       cards.forEach(({ item, button }) => {
         button.disabled = true;
         const label = el("span", "pd-value", `${durete(item)} sur l’échelle de Mohs`); button.append(label);
