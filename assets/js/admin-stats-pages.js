@@ -2,6 +2,7 @@
 // Règle : chaque information n'apparaît qu'une seule fois sur l'ensemble des onglets ; une page ne montre que ce qui la concerne.
 // Données : admin_page_report (une entrée par rubrique), événements (jeux, clics, lectures), comptes, termes du glossaire.
 import { kpis, card, grid, note, empty, rankTable, lineChart, columnChart, timeline, dayMap, duration, number } from "./admin-stats-ui.js";
+import { timeAndScroll, audienceOrigin, navigationClicks, fullscreenPhotos, salesCard, specimenTime, articleReading, articleLinks, replayCard, answerCards, afterErrorCard, seriesAndBadges } from "./admin-stats-extra.js";
 
 export const PAGE_TABS = [
   ["general", "Général"], ["boutique", "Boutique"], ["jeux", "Jeux & quiz"], ["collection", "Ma collection"], ["articles", "Articles"],
@@ -27,6 +28,7 @@ const clicks = (events, test) => events ? (events.clicks || []).filter(row => te
 const notReady = () => [card("Statistiques", empty("Ces statistiques seront disponibles dès que la mise à jour de la base de données aura été appliquée (fonction admin_page_report)."))];
 const peak = (rows, key, text) => { const top = (rows || []).reduce((best, row) => (row.views > (best?.views ?? -1) ? row : best), null); return top && top.views ? text(top[key]) : null; };
 const label = page => PAGE_LABELS[page] || page;
+const helpers = { label, nameOf };
 
 // Courbe d'une page : pages vues et visiteurs jour par jour.
 function curve(ctx, rep, title) {
@@ -75,7 +77,10 @@ function general(ctx) {
       card("Appareils", rankTable([{ label: "Visiteurs", key: "visits", bar: true }], devices, { first: "Appareil", emptyText: "Aucune visite sur cette période." }))
     ),
     card("Pages les plus vues", rankTable([{ label: "Pages vues", key: "views", bar: true }, { label: "Visiteurs", key: "visits" }], (rep.pages || []).map(row => ({ label: label(row.page), views: row.views, visits: row.visits })), { first: "Page", limit: 10, emptyText: "Aucune page vue sur cette période." })),
-    card("Ce qui a été le plus vu dans chaque page", rankTable([{ label: "Page", key: "page", text: true }, { label: "Vues ou parties", key: "views", bar: true }], mostViewed(ctx), { first: "Le plus vu", limit: 20, emptyText: "Rien de consulté sur cette période." }), note("Pour les jeux, le nombre est celui des parties jouées."))
+    card("Ce qui a été le plus vu dans chaque page", rankTable([{ label: "Page", key: "page", text: true }, { label: "Vues ou parties", key: "views", bar: true }], mostViewed(ctx), { first: "Le plus vu", limit: 20, emptyText: "Rien de consulté sur cette période." }), note("Pour les jeux, le nombre est celui des parties jouées.")),
+    timeAndScroll(ctx, helpers),
+    audienceOrigin(ctx),
+    navigationClicks(ctx)
   ];
 }
 
@@ -113,7 +118,9 @@ function boutique(ctx) {
   return [
     pageFigures(ctx, "boutique", "la boutique", [{ label: "Clics « Me contacter » sur une pièce", value: clicks(ctx.events, name => name === "contact-piece"), before: clicks(ctx.previous.events, name => name === "contact-piece") }]),
     curve(ctx, ctx.report.boutique, "Pages vues de la boutique par jour"),
-    contents(ctx, "boutique", "piece", "Pièces les plus consultées", "Pièce", { extra: [{ label: "Me contacter", key: "contacts" }], fill: row => ({ contacts: contacts.get(row.slug) || 0 }) })
+    contents(ctx, "boutique", "piece", "Pièces les plus consultées", "Pièce", { extra: [{ label: "Me contacter", key: "contacts" }], fill: row => ({ contacts: contacts.get(row.slug) || 0 }) }),
+    fullscreenPhotos(ctx, helpers),
+    salesCard(ctx)
   ];
 }
 
@@ -143,13 +150,14 @@ function jeux(ctx) {
     card("Images partagées par jeu", rankTable([{ label: "Partages", key: "n", bar: true }], shares, { first: "Image", limit: 20, emptyText: "Aucun partage sur cette période." }))
   ];
   for (let index = 0; index < results.length; index += 2) out.push(results.length - index > 1 ? grid(results[index], results[index + 1]) : results[index]);
+  out.push(replayCard(ctx), ...answerCards(ctx, helpers), afterErrorCard(ctx, helpers), ...seriesAndBadges(ctx));
   if (accountRows.length) out.push(card("Comptes joueurs", rankTable([{ label: "Nombre", key: "n" }], accountRows, { first: "Comptes", limit: 10 })));
   return out;
 }
 
 // ───── Ma collection ─────
 function collection(ctx) {
-  return [pageFigures(ctx, "collection", "Ma collection"), curve(ctx, ctx.report.collection, "Pages vues de Ma collection par jour"), contents(ctx, "collection", "specimen", "Spécimens les plus consultés", "Spécimen")];
+  return [pageFigures(ctx, "collection", "Ma collection"), curve(ctx, ctx.report.collection, "Pages vues de Ma collection par jour"), contents(ctx, "collection", "specimen", "Spécimens les plus consultés", "Spécimen"), specimenTime(ctx, helpers)];
 }
 
 // ───── Articles ─────
@@ -159,7 +167,9 @@ function articles(ctx) {
     pageFigures(ctx, "articles", "les articles", [{ label: "Articles lus jusqu’au bout", value: ctx.events ? sum(ctx.events.reads, "n") : null, before: ctx.previous.events ? sum(ctx.previous.events.reads, "n") : null }]),
     curve(ctx, ctx.report.articles, "Pages vues des articles par jour"),
     contents(ctx, "articles", "article", "Articles les plus consultés", "Article", { extra: [{ label: "Lus jusqu’au bout", key: "finished" }], fill: row => ({ finished: reads.get(row.slug) || 0 }) }),
-    note("« Lu jusqu’au bout » : au moins 15 secondes sur l’article et 90 % de la page parcourue.")
+    note("« Lu jusqu’au bout » : au moins 15 secondes sur l’article et 90 % de la page parcourue."),
+    articleReading(ctx, helpers),
+    articleLinks(ctx, helpers)
   ];
 }
 

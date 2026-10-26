@@ -126,6 +126,7 @@ export function mountVraiFaux(container, { client }) {
     const feedback = el("div", "mq-feedback"); feedback.setAttribute("aria-live", "polite");
     const answer = value => {
       const right = value === item.answer;
+      track("answer", "vrai-faux", String(item.id ?? item.slug ?? item.text).slice(0, 120), right ? 1 : 0);
       choices.querySelectorAll("button").forEach(button => { button.disabled = true; if ((button.textContent === "Vrai") === item.answer) button.classList.add("is-good"); });
       if (!right) choices.querySelectorAll("button").forEach(button => { if ((button.textContent === "Vrai") === value) button.classList.add("is-bad"); });
       feedback.className = `mq-feedback ${right ? "is-right" : "is-wrong"}`;

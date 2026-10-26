@@ -35,7 +35,7 @@ document.addEventListener('click',e=>{
  const full=t=>t.dataset&&t.dataset.full||t.src;
  list=tl.length?tl.map(t=>({src:full(t),alt:t.alt})):[...document.querySelectorAll('main img')].filter(pick).map(t=>({src:full(t),alt:t.alt}));
  i=Math.max(0,list.findIndex(x=>x.src===full(img)));if(!list.length)list=[{src:full(img),alt:img.alt}];
- show();box.hidden=false;document.documentElement.style.overflow='hidden';box.querySelector('.lb-close').focus();
+ show();box.hidden=false;document.documentElement.style.overflow='hidden';box.querySelector('.lb-close').focus();try{const c=window.jmContext;if(window.jmTrack&&c)window.jmTrack('click','plein-ecran',c.page+':'+(c.slug||''))}catch(e){}
 });
 })();
 

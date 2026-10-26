@@ -253,3 +253,9 @@ body.admin-page .admin-main .admin-panel .st-title h3{display:block!important;wi
 #photos-body { display: grid; gap: .75rem; justify-items: start; }
 .photos-progress { width: 100%; max-width: 32rem; }
 .photos-errors { margin: 0; padding-left: 1.2rem; color: #b3261e; font-size: .9rem; overflow-wrap: anywhere; }
+
+/* Statistiques : enregistrement d'une vente */
+.st-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;align-items:end;margin-top:12px}
+.st-form select,.st-form input{min-height:44px;width:100%}
+.st-form .stats-note{grid-column:1/-1;margin:0}
+.st-table button.link{background:none;border:0;padding:0;cursor:pointer;color:#c9a7ff;text-decoration:underline;font:inherit}

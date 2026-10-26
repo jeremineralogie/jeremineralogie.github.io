@@ -138,6 +138,7 @@ function renderQuiz(panel, mineral, minerals, client) {
     const yesterday = new Intl.DateTimeFormat("fr-CA", { timeZone: "Europe/Paris" }).format(new Date(Date.now() - 86400000));
     store.set("jm-quiz-serie", correct ? { count: streak.last === yesterday ? streak.count + 1 : 1, last: today } : { count: 0, last: today });
     recordGame("quiz", { correct, hints: hintsUsed, family: mineral.chemical_class || null });
+    track("answer", "quiz", mineral.slug, correct ? 1 : 0);
     showResult(answer, correct, how);
   });
 }

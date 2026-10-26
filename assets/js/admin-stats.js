@@ -3,6 +3,7 @@
 import { PERIODS, ranges, compareText, hasPrevious } from "./admin-stats-logic.js";
 import { PAGE_TABS, renderPage } from "./admin-stats-pages.js";
 import { loadResultNames, resultNames } from "./admin-stats-results.js";
+import { parseFicheTarget } from "./admin-stats-engagement.js";
 const $ = selector => document.querySelector(selector);
 const element = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const remember = (key, value) => { try { sessionStorage.setItem(`jm-stats-${key}`, String(value)); } catch { /* stockage indisponible */ } };
@@ -62,6 +63,10 @@ async function load() {
     ask("admin_event_stats", span(previousFrom, previousTo), compare), ask("admin_account_stats", span(previousFrom, previousTo), compare), ask("admin_section_stats", span(previousFrom, previousTo), compare), ask("admin_page_report", span(previousFrom, previousTo), compare)
   ]);
   if (mine !== requestId) return;
+  // Engagement (temps passé, langue, réponses aux jeux…) et progression des comptes : indisponibles tant que la mise à jour de la base n'est pas appliquée.
+  const [engagementResult, progressResult] = await Promise.all([client.rpc("admin_engagement_stats", span(from, to)), client.rpc("admin_progress_stats")]);
+  if (mine !== requestId) return;
+  [["admin_engagement_stats", engagementResult], ["admin_progress_stats", progressResult]].forEach(([name, result]) => { if (result.error) console.warn(`Statistiques : ${name} indisponible (${result.error.message})`); });
   const ok = result => result.error ? null : result.data;
   [["admin_more_stats", more], ["admin_event_stats", events], ["admin_account_stats", accounts], ["admin_section_stats", sections], ["admin_page_report", report]].forEach(([name, result]) => { if (result.error) console.warn(`Statistiques : ${name} indisponible :`, result.error.message); });
   const wanted = [...(current.data.entities || [])];
@@ -70,10 +75,21 @@ async function load() {
   (ok(events)?.reads || []).forEach(row => wanted.push({ type: "article", slug: row.slug }));
   (ok(events)?.clicks || []).forEach(row => { if (row.name === "contact-piece" && row.detail) wanted.push({ type: "piece", slug: row.detail }); });
   (ok(sections)?.terms || []).forEach(row => wanted.push({ type: "term", slug: row.slug }));
+  const engagement = ok(engagementResult);
+  if (engagement) {
+    [...(engagement.time_entities || []), ...(engagement.scroll_entities || [])].forEach(row => { if (row.slug) wanted.push({ type: row.page, slug: row.slug }); });
+    (engagement.fullscreen || []).forEach(row => { const [type, ...rest] = String(row.detail).split(":"); if (type === "piece" && rest.length) wanted.push({ type: "piece", slug: rest.join(":") }); });
+    (engagement.answers || []).forEach(row => {
+      if (["mineral", "quiz", "plus-dur"].includes(row.game)) wanted.push({ type: "mineral", slug: row.key });
+      else if (["glossaire", "pendu"].includes(row.game)) wanted.push({ type: "term", slug: row.key });
+    });
+    [...(engagement.after_error || []), ...(engagement.article_links || [])].forEach(row => { const target = parseFicheTarget(row.target); if (target) wanted.push(target); });
+    (engagement.article_links || []).forEach(row => wanted.push({ type: "article", slug: row.slug }));
+  }
   [names] = await Promise.all([resolveNames(wanted), loadResultNames()]);
   if (mine !== requestId) return;
   view = {
-    days, from, to, data: current.data, more: ok(more), events: ok(events), accounts: ok(accounts), sections: ok(sections),
+    days, from, to, client, engagement, progress: ok(progressResult), data: current.data, more: ok(more), events: ok(events), accounts: ok(accounts), sections: ok(sections),
     report: ok(report), previousReport: ok(reportBefore),
     previous: { data: ok(previous), events: ok(eventsBefore), accounts: ok(accountsBefore), sections: ok(sectionsBefore) }
   };
