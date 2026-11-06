@@ -3,6 +3,7 @@
 // Données : admin_page_report (une entrée par rubrique), événements (jeux, clics, lectures), comptes, termes du glossaire.
 import { kpis, card, grid, note, empty, rankTable, lineChart, columnChart, timeline, dayMap, duration, number } from "./admin-stats-ui.js";
 import { timeAndScroll, audienceOrigin, navigationClicks, fullscreenPhotos, salesCard, specimenTime, articleReading, articleLinks, replayCard, answerCards, afterErrorCard, seriesAndBadges } from "./admin-stats-extra.js";
+import { pieceKey } from "./admin-stats-engagement.js";
 
 export const PAGE_TABS = [
   ["general", "Général"], ["boutique", "Boutique"], ["jeux", "Jeux & quiz"], ["collection", "Ma collection"], ["articles", "Articles"],
@@ -23,7 +24,7 @@ const shareLabel = file => ({ "vrai-faux-mineralogique": "Vrai ou faux minéralo
 const PERSONAS = ["persona-mineral", "persona-prospecteur", "persona-outil", "persona-collectionneur", "persona-forme"];
 
 const sum = (rows, key) => (rows || []).reduce((total, row) => total + (Number(row[key]) || 0), 0);
-const nameOf = (ctx, type, slug) => ctx.names.get(`${type}:${slug}`);
+const nameOf = (ctx, type, slug) => ctx.names.get(`${type}:${type === "piece" ? pieceKey(slug) : slug}`);
 const clicks = (events, test) => events ? (events.clicks || []).filter(row => test(row.name)).reduce((total, row) => total + row.n, 0) : null;
 const notReady = () => [card("Statistiques", empty("Ces statistiques seront disponibles dès que la mise à jour de la base de données aura été appliquée (fonction admin_page_report)."))];
 const peak = (rows, key, text) => { const top = (rows || []).reduce((best, row) => (row.views > (best?.views ?? -1) ? row : best), null); return top && top.views ? text(top[key]) : null; };
