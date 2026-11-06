@@ -80,3 +80,17 @@ export function salesFigures(sales, from, to) {
   return { count: inRange.length, total, average: inRange.length ? Math.round(total / inRange.length) : 0, months: [...months.values()].sort((a, b) => b.month.localeCompare(a.month)), rows: inRange };
 }
 export const euros = cents => new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: cents % 100 ? 2 : 0 }).format((Number(cents) || 0) / 100);
+
+// Références des pièces de la boutique : les majuscules ne comptent pas (JMFLCL4 et jmflcl4 sont la même pièce).
+export const pieceKey = slug => String(slug ?? "").toLowerCase();
+// Fusionne les lignes d'une même pièce ouverte avec des majuscules et avec des minuscules. Les visiteurs sont additionnés : une personne qui a ouvert les deux écritures est comptée deux fois.
+export function mergePieceCases(rows) {
+  const merged = new Map(), others = [];
+  (rows || []).forEach(row => {
+    if (row.type !== "piece") { others.push(row); return; }
+    const key = pieceKey(row.slug), known = merged.get(key);
+    if (known) { known.views = (Number(known.views) || 0) + (Number(row.views) || 0); known.visits = (Number(known.visits) || 0) + (Number(row.visits) || 0); }
+    else merged.set(key, { ...row, slug: key });
+  });
+  return [...others, ...merged.values()].sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0));
+}

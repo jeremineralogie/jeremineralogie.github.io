@@ -1,7 +1,7 @@
 // Statistiques d'engagement de l'admin : langue, région estimée, réponses aux jeux, fiches ouvertes après une erreur, joueurs qui reviennent, ventes.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { languageName, countryOfTimezone, groupByCountry, mostMissed, bestKnown, hardestQuestions, parseFicheTarget, replayFigures, salesFigures, euros, percent } from "../assets/js/admin-stats-engagement.js";
+import { languageName, countryOfTimezone, groupByCountry, mostMissed, bestKnown, hardestQuestions, parseFicheTarget, replayFigures, salesFigures, euros, percent, pieceKey, mergePieceCases } from "../assets/js/admin-stats-engagement.js";
 import { readFileSync } from "node:fs";
 
 test("langue du navigateur : nom français, code inconnu conservé", () => {
@@ -59,4 +59,11 @@ test("la mesure d'audience envoie les nouvelles mesures sans identifier personne
   assert.ok(/shop_sales[\s\S]*revoke all on public\.shop_sales from anon/.test(migration), "les ventes ne sont lisibles que par l'administrateur");
   const script = readFileSync(new URL("../script.js", import.meta.url), "utf8");
   assert.ok(script.includes("plein-ecran"), "l'ouverture d'une photo en plein écran est mesurée");
+});
+
+test("pièces de la boutique : majuscules et minuscules forment une seule ligne", () => {
+  assert.equal(pieceKey("JMFLCL4"), "jmflcl4");
+  const rows = [{ type: "piece", slug: "JMFLCL4", views: 3, visits: 2 }, { type: "piece", slug: "jmflcl4", views: 2, visits: 1 }, { type: "piece", slug: "JMGRNI1", views: 9, visits: 4 }, { type: "mineral", slug: "Quartz", views: 1, visits: 1 }];
+  assert.deepEqual(mergePieceCases(rows), [{ type: "piece", slug: "jmgrni1", views: 9, visits: 4 }, { type: "piece", slug: "jmflcl4", views: 5, visits: 3 }, { type: "mineral", slug: "Quartz", views: 1, visits: 1 }]);
+  assert.deepEqual(mergePieceCases(null), []);
 });

@@ -3,7 +3,7 @@
 import { PERIODS, ranges, compareText, hasPrevious } from "./admin-stats-logic.js";
 import { PAGE_TABS, renderPage } from "./admin-stats-pages.js";
 import { loadResultNames, resultNames } from "./admin-stats-results.js";
-import { parseFicheTarget } from "./admin-stats-engagement.js";
+import { parseFicheTarget, pieceKey, mergePieceCases } from "./admin-stats-engagement.js";
 const $ = selector => document.querySelector(selector);
 const element = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; };
 const remember = (key, value) => { try { sessionStorage.setItem(`jm-stats-${key}`, String(value)); } catch { /* stockage indisponible */ } };
@@ -90,12 +90,18 @@ async function load() {
   if (mine !== requestId) return;
   view = {
     days, from, to, client, engagement, progress: ok(progressResult), data: current.data, more: ok(more), events: ok(events), accounts: ok(accounts), sections: ok(sections),
-    report: ok(report), previousReport: ok(reportBefore),
+    report: mergeReportPieces(ok(report)), previousReport: mergeReportPieces(ok(reportBefore)),
     previous: { data: ok(previous), events: ok(eventsBefore), accounts: ok(accountsBefore), sections: ok(sectionsBefore) }
   };
   status.textContent = current.data.totals.views ? "" : "Aucune visite enregistrée sur cette période pour le moment.";
   status.hidden = !status.textContent;
   render();
+}
+
+// Une même pièce ouverte avec des majuscules et des minuscules ne forme qu'une ligne.
+function mergeReportPieces(report) {
+  if (!report) return report;
+  return Object.fromEntries(Object.entries(report).map(([name, group]) => [name, group?.entities ? { ...group, entities: mergePieceCases(group.entities) } : group]));
 }
 
 function rangeText(from, to) {
@@ -111,11 +117,11 @@ async function resolveNames(entities) {
   const fetchers = {
     specimen: slugs => client.from("specimens").select("slug,mineral_name,provenance,mineral:minerals!specimens_mineral_id_fkey(name)").in("slug", slugs)
       .then(({ data }) => (data || []).forEach(row => map.set(`specimen:${row.slug}`, { name: row.mineral_name || row.mineral?.name || row.slug, detail: row.provenance || "", href: `../specimen.html?id=${encodeURIComponent(row.slug)}` }))),
-    piece: slugs => client.from("shop_items").select("slug,reference,mineral_name,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name)").or(`reference.in.(${slugs.map(quote).join(",")}),slug.in.(${slugs.map(quote).join(",")})`)
+    piece: slugs => { const variants = [...new Set(slugs.flatMap(slug => [slug, slug.toUpperCase(), slug.toLowerCase()]))]; return client.from("shop_items").select("slug,reference,mineral_name,mineral:minerals!shop_items_mineral_id_fkey(name),mine:mines!shop_items_mine_id_fkey(name)").or(`reference.in.(${variants.map(quote).join(",")}),slug.in.(${variants.map(quote).join(",")})`)
       .then(({ data }) => (data || []).forEach(row => {
         const entry = { name: row.mineral_name || row.mineral?.name || row.reference, detail: [row.reference, row.mine?.name].filter(Boolean).join(" · "), href: `../piece.html?ref=${encodeURIComponent(row.reference || row.slug)}` };
-        map.set(`piece:${row.reference}`, entry); map.set(`piece:${row.slug}`, entry);
-      })),
+        map.set(`piece:${pieceKey(row.reference)}`, entry); map.set(`piece:${pieceKey(row.slug)}`, entry);
+      })); },
     mineral: slugs => simple("minerals", "mineral", slugs, row => `../fiche.html?type=mineral&id=${encodeURIComponent(row.slug)}`),
     mine: slugs => simple("mines", "mine", slugs, row => `../fiche.html?type=mine&id=${encodeURIComponent(row.slug)}`),
     locality: slugs => simple("localities", "locality", slugs, row => `../fiche.html?type=locality&id=${encodeURIComponent(row.slug)}`),
