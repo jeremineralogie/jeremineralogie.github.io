@@ -945,3 +945,10 @@ body.acct-open{overflow:hidden}
 .cl-arrows button{width:34px;height:28px;border:1px solid rgba(160,110,240,.55);border-radius:4px;background:#1a0f2b;color:#f3eaff;cursor:pointer}
 .cl-arrows button:disabled{opacity:.3;cursor:default}
 .article-share{display:flex;justify-content:center;margin:26px 0 8px}
+
+/* ===== Ordinateur (≥ 1100 px) : listes Articles et Archives plus compactes =====
+   Les grands cadres horizontaux faisaient 780 px de large, un seul par rangée : ils passent à deux par rangée (600 px au plus).
+   Le texte du cadre suit sa largeur. Téléphone et tablette ne sont pas touchés. */
+@media(min-width:1100px){
+  #articles-grid>.card.card-wide,#archives-grid>.card.card-wide{flex:0 1 calc((100% - 26px)/2);max-width:600px}
+}
